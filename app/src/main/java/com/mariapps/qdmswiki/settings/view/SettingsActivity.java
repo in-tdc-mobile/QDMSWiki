@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import com.mariapps.qdmswiki.BuildConfig;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.SessionManager;
+import com.mariapps.qdmswiki.applicationinfo.view.ApplicationInfoActivity;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.settings.adapter.SettingsAdapter;
@@ -74,14 +75,10 @@ public class SettingsActivity extends BaseActivity{
                     case 1:
                         break;
                     case 2:
+                        Intent intent = new Intent(SettingsActivity.this, ApplicationInfoActivity.class);
+                        startActivity(intent);
                         break;
                     case 3:
-                        break;
-                    case 4:
-                        break;
-                    case 5:
-                        break;
-                    case 6:
                         break;
                 }
             }
@@ -97,7 +94,7 @@ public class SettingsActivity extends BaseActivity{
         settingsItems.clear();
         settingsItems.add(new SettingsItem(R.drawable.ic_settings_inactive,"Settings",R.color.black));
         settingsItems.add(new SettingsItem(R.drawable.ic_help,"Help",R.color.black));
-        settingsItems.add(new SettingsItem(R.drawable.ic_app_info,"App Info",R.color.black));
+        settingsItems.add(new SettingsItem(R.drawable.ic_help,"App Info",R.color.black));
         settingsItems.add(new SettingsItem(R.drawable.ic_logout,"Logout",R.color.red_900));
         return settingsItems;
     }

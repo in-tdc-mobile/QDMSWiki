@@ -2,10 +2,13 @@ package com.mariapps.qdmswiki.home.view;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -15,6 +18,7 @@ import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -34,6 +38,10 @@ public class HomeActivity extends BaseActivity{
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.frameLayoutOne)
+    FrameLayout frameLayoutOne;
+    @BindView(R.id.frameLayoutTwo)
+    FrameLayout frameLayoutTwo;
     @BindView(R.id.navFL)
     FrameLayout navFL;
     @BindView(R.id.drawer_layout)
@@ -48,6 +56,9 @@ public class HomeActivity extends BaseActivity{
     AppCompatImageView userImageIV;
     @BindView(R.id.notificationIV)
     AppCompatImageView notificationIV;
+    @BindView(R.id.appBarMain)
+    AppBarLayout appBarMain;
+
 
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
@@ -55,6 +66,8 @@ public class HomeActivity extends BaseActivity{
     private MainViewPager mainViewPager;
     private ActionBar actionBar;
     private NavigationDrawerFragment navigationDrawerFragment;
+    private int currentPosition = 0;
+    private int newPosition = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,42 +75,6 @@ public class HomeActivity extends BaseActivity{
         setContentView(R.layout.activity_home);
 
         setSupportActionBar(toolbar);
-
-//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-//                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//        drawerLayout.addDrawerListener(toggle);
-//        toggle.syncState();
-//        navigationView.setNavigationItemSelectedListener(this);
-//        loadingSpinner.setVisibility(View.GONE);
-//
-//        actionBar = getSupportActionBar();
-//
-//        if (actionBar != null) {
-//            actionBar.setDisplayHomeAsUpEnabled(true);
-//            actionBar.setHomeButtonEnabled(true);
-//        }
-//
-//        mDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
-//                R.string.app_name, // nav drawer open - description for accessibility
-//                R.string.app_name // nav drawer close - description for accessibility
-//        ) {
-//            public void onDrawerClosed(View view) {
-//                //actionBar.setTitle("QDMS");
-//                // calling onPrepareOptionsMenu() to show action bar icons
-//                invalidateOptionsMenu();
-//            }
-//
-//            public void onDrawerOpened(View drawerView) {
-//                final InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-//                imm.hideSoftInputFromWindow(drawerView.getWindowToken(), 0);
-//            }
-//
-//        };
-//        drawerLayout.setDrawerListener(mDrawerToggle);
-//        mDrawerToggle.setDrawerIndicatorEnabled(false); //disable "hamburger to arrow" drawable
-//        mDrawerToggle.setHomeAsUpIndicator(R.drawable.ic_menu); //set your own
-//        mDrawerToggle.syncState();
-
         initViewpager();
         initNavDrawer();
         initBottomNavigation();
@@ -171,8 +148,25 @@ public class HomeActivity extends BaseActivity{
         setupFragments(findFragmentById(AppConfig.FRAG_NAV_DRAWER), false, false);
     }
 
-
     private void initBottomNavigation() {
+        bottom_navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case 0:
+                        mainVP.setCurrentItem(0);
+                        return true;
+                    case 1:
+                        mainVP.setCurrentItem(1);
+                        return true;
+                    case 2:
+                        mainVP.setCurrentItem(2);
+                        return true;
+                }
+                return false;
+            }
+        });
+
         bottom_navigation.getMenu().clear();
         Menu menu = bottom_navigation.getMenu();
         menu.add(Menu.NONE, 0, Menu.NONE, "___")
@@ -199,6 +193,7 @@ public class HomeActivity extends BaseActivity{
         mainViewPager = new MainViewPager(getSupportFragmentManager());
         mainViewPager.setCount(3);
 
+
         mainVP.setOffscreenPageLimit(3);
         mainVP.setAdapter(mainViewPager);
         mainVP.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -209,6 +204,10 @@ public class HomeActivity extends BaseActivity{
 
             @Override
             public void onPageSelected(int newPos) {
+                newPosition = newPos;
+                bottom_navigation.setSelectedItemId(newPosition);
+                currentPosition = newPosition;
+
             }
 
             @Override

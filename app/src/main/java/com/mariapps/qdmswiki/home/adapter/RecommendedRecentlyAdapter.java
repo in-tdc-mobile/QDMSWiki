@@ -2,6 +2,7 @@ package com.mariapps.qdmswiki.home.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,10 +23,12 @@ public class RecommendedRecentlyAdapter extends RecyclerView.Adapter<Recommended
     private Context mContext;
     private ArrayList<RecommendedRecentlyModel> departmentList;
     private RowClickListener rowClickListener;
+    private String fromPage;
 
-    public RecommendedRecentlyAdapter(Context context, ArrayList<RecommendedRecentlyModel> list) {
+    public RecommendedRecentlyAdapter(Context context, ArrayList<RecommendedRecentlyModel> list, String fromActivity) {
         mContext = context;
         departmentList = list;
+        fromPage = fromActivity;
     }
 
     @NonNull
@@ -37,9 +40,9 @@ public class RecommendedRecentlyAdapter extends RecyclerView.Adapter<Recommended
 
     @Override
     public void onBindViewHolder(@NonNull final RecommendedRecentlyAdapter.RecommendedRecentlyVH holder, int i) {
-        holder.tvHeadingText.setText(departmentList.get(i).getName());
-        holder.tvCategory.setText(departmentList.get(i).getCategory());
-        holder.tvVersion.setText(departmentList.get(i).getVersionNo());
+        holder.headingTextTV.setText(departmentList.get(i).getName());
+        holder.categoryTV.setText(departmentList.get(i).getCategory());
+        holder.versionTV.setText(departmentList.get(i).getVersionNo());
 
         holder.rowLL.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,6 +50,15 @@ public class RecommendedRecentlyAdapter extends RecyclerView.Adapter<Recommended
                 rowClickListener.onItemClicked(departmentList.get(holder.getAdapterPosition()));
             }
         });
+
+        if(fromPage.equals("HOME")){
+            holder.arrowIV.setVisibility(View.GONE);
+            holder.historyIV.setVisibility(View.GONE);
+        }
+        else{
+            holder.versionTV.setVisibility(View.GONE);
+        }
+
     }
 
     @Override
@@ -57,12 +69,17 @@ public class RecommendedRecentlyAdapter extends RecyclerView.Adapter<Recommended
     static class RecommendedRecentlyVH extends RecyclerView.ViewHolder {
         @BindView(R.id.rowLL)
         LinearLayout rowLL;
-        @BindView(R.id.tvHeadingText)
-        CustomTextView tvHeadingText;
-        @BindView(R.id.tvCategory)
-        CustomTextView tvCategory;
-        @BindView(R.id.tvVersion)
-        CustomTextView tvVersion;
+        @BindView(R.id.headingTextTV)
+        CustomTextView headingTextTV;
+        @BindView(R.id.categoryTV)
+        CustomTextView categoryTV;
+        @BindView(R.id.versionTV)
+        CustomTextView versionTV;
+
+        @BindView(R.id.arrowIV)
+        AppCompatImageView arrowIV;
+        @BindView(R.id.historyIV)
+        AppCompatImageView historyIV;
 
         public RecommendedRecentlyVH(@NonNull View itemView) {
             super(itemView);

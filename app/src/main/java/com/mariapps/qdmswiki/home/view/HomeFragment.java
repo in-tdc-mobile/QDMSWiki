@@ -54,11 +54,12 @@ public class HomeFragment extends BaseFragment {
     CustomProgressBar customProgressBar;
     @BindView(R.id.overViewLL)
     LinearLayout overViewLL;
-    @BindView(R.id.pullToRefresh)
-    SwipeRefreshLayout pullToRefresh;
+//    @BindView(R.id.pullToRefresh)
+//    SwipeRefreshLayout pullToRefresh;
     @BindView(R.id.viewPager)
     ViewPager viewPager;
 
+    private BlurListener blurListener;
     private FragmentManager fragmentManager;
     private HomeFragmentAdapter homeFragmentAdapter;
 
@@ -105,5 +106,22 @@ public class HomeFragment extends BaseFragment {
         viewPager.setCurrentItem(0);
         viewPager.getAdapter().notifyDataSetChanged();
         viewPager.invalidate();
+    }
+
+    public void setBlurListener(BlurListener blurListener) {
+        this.blurListener = blurListener;
+    }
+
+    public interface BlurListener {
+
+
+        void onPrimaryUnblurred();
+
+
+        void onSecondaryBlurred(String menuCode, String tileCode);
+
+        void onSecondaryUnBlurred();
+
+
     }
 }

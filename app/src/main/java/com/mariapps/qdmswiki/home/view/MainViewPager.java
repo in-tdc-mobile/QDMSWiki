@@ -16,6 +16,7 @@ public class MainViewPager extends FragmentPagerAdapter {
     private Fragment currentFragment;
     public int fragCount=0;
 
+    private MainVPListener mainVPListener;
     HomeFragment homeFragment;
     DocumentsFragment documentsFragment;
     ArticlesFragment articlesFragment;
@@ -28,6 +29,26 @@ public class MainViewPager extends FragmentPagerAdapter {
         //Home Fragment
 
         homeFragment=new HomeFragment();
+
+        homeFragment.setBlurListener(new HomeFragment.BlurListener() {
+
+            @Override
+            public void onPrimaryUnblurred() {
+                mainVPListener.onDashBoardFragUnclicked();
+            }
+
+            @Override
+            public void onSecondaryBlurred(String menuCode, String tileCode) {
+                mainVPListener.onDashBoardSecondaryClicked(menuCode,tileCode);
+            }
+
+            @Override
+            public void onSecondaryUnBlurred() {
+                mainVPListener.onSecondaryUnClicked();
+            }
+
+        });
+
         fragments.add(homeFragment);
 
         //Documents Fragment
@@ -75,6 +96,23 @@ public class MainViewPager extends FragmentPagerAdapter {
         return currentFragment;
     }
 
+    public void setMainVPListener(MainVPListener mainVPListener){
+        this.mainVPListener = mainVPListener;
+    }
+
+    public interface MainVPListener {
+
+        //DashBoard Fragment
+        void onPrimaryUnblur();
+
+        void onDashBoardFragUnclicked();
+
+        void onDashBoardSecondaryClicked(String menuCode, String tileCode);
+
+        void onSecondaryUnClicked();
+    }
+
 }
+
 
 
