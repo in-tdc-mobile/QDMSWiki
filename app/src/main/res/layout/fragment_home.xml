@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:id="@+id/mainLL">
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/pullToRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+            <RelativeLayout
+                android:id="@+id/relMainLL"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fitsSystemWindows="true">
+
+                <LinearLayout
+                    android:gravity="center"
+                    android:padding="@dimen/dimen_30dp"
+                    android:background="@color/colorAccent"
+                    android:id="@+id/overViewLL"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:orientation="vertical">
+
+                    <com.mariapps.qdmswiki.custom.CustomTextView
+                        android:gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/primary_text_size"
+                        android:textColor="@color/colorPrimary"
+                        android:text="@string/str_search"/>
+
+                    <com.mariapps.qdmswiki.custom.CustomEditText
+                        android:layout_marginTop="@dimen/dimen_15dp"
+                        android:id="@+id/searchET"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:layout_centerInParent="true"
+                        android:background="@drawable/drawable_curved_editttext_white"
+                        android:drawableRight="@drawable/ic_search_icon"
+                        android:drawablePadding="@dimen/dimen_8dp"
+                        android:hint="Search"
+                        android:textColorHint="@color/searchHint"
+                        android:paddingStart="@dimen/dimen_10dp"
+                        android:paddingTop="1dp"
+                        android:paddingEnd="@dimen/dimen_10dp"
+                        android:paddingBottom="1dp"
+                        android:singleLine="true" />
+
+
+                </LinearLayout>
+
+                <com.mariapps.qdmswiki.custom.CustomProgressBar
+                    android:id="@+id/customProgressBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dimen_15dp"
+                    android:layout_centerInParent="true"
+                    android:visibility="gone"
+                    app:amount="10"
+                    app:animationDirection="left"
+                    app:duration="20"
+                    app:endColor="@color/blue_A200"
+                    app:startColor="@color/grey_500"
+                    android:layout_below="@+id/overViewLL"
+                    android:layout_marginTop="@dimen/dimen_40dp"/>
+
+                <com.mariapps.qdmswiki.custom.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/loadingDasgTV"
+                    android:text="@string/string_loading_data"
+                    android:textColor="@color/black"
+                    app:fontface="@string/string_roboto_medium"
+                    android:layout_below="@+id/customProgressBar"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    />
+
+
+                <RelativeLayout
+                    android:padding="@dimen/dimen_10dp"
+                    android:id="@+id/relLL"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/overViewLL"
+                    android:layout_marginTop="@dimen/dimen_5dp"
+                    android:layout_marginBottom="@dimen/dimen_5dp">
+
+                    <LinearLayout
+                        android:id="@+id/linLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:background="@color/white">
+
+                        <android.support.design.widget.TabLayout
+                            android:id="@+id/slidingTabs"
+                            style="@style/MyCustomTabLayout"
+                            app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            app:tabMaxWidth="0dp"
+                            android:layout_gravity="center"
+                            app:tabGravity="fill"
+                            app:tabMode="fixed"
+                            app:tabTextColor="@color/black" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/grey_200"/>
+
+                        <android.support.v4.view.ViewPager
+                            android:id="@+id/viewPager"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/white"
+                            android:layout_weight="1" />
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/noDataLL"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <com.mariapps.qdmswiki.custom.CustomTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="No Tile Found" />
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+</RelativeLayout>

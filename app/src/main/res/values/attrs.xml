@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CustomTextView">
+        <attr name="fontface" format="string" />
+        <attr name="fontColor" format="color" />
+    </declare-styleable>
+
+    -<declare-styleable name="BottomNavigationBehavior_Params">
+
+    <attr name="tabLayoutId" format="reference"/>
+    <attr name="selectedBackgroundVisible" format="boolean"/>
+    <attr name="translucentNavigationEnabled" format="boolean"/>
+    <attr name="colored" format="boolean"/>
+    <attr name="accentColor" format="color"/>
+    <attr name="inactiveColor" format="color"/>
+    <attr name="disableColor" format="color"/>
+    <attr name="coloredActive" format="color"/>
+    <attr name="coloredInactive" format="color"/>
+
+</declare-styleable>
+
+    <declare-styleable name="LinearLayoutAnimation">
+        <attr name="startAnimation" format="boolean" />
+        <attr name="startRecursiveAnimation" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="CustomProgressBar">
+        <attr name="interval" format="integer" />
+        <attr name="animationDuration" format="integer" />
+        <attr name="indicatorHeight" format="integer" />
+        <attr name="indicatorColor" format="color" />
+        <attr name="indicatorRadius" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="ScreenshotHighlightButton">
+        <attr name="fill_color" format="color" />
+        <attr name="border_color" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="ShaderImageView">
+        <attr name="siSquare" format="boolean" />
+        <attr name="siBorderColor" format="color" />
+        <attr name="siBorderWidth" format="dimension" />
+        <attr name="siBorderAlpha" format="float" />
+        <attr name="siForeground" format="integer|reference" />
+        <!-- Rounded Image View -->
+        <attr name="siRadius" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="ProgressBarCustom">
+        <attr name="startColor" format="color"/>
+        <attr name="endColor" format="color"/>
+        <attr name="duration" format="integer"/>
+        <attr name="amount" format="integer"/>
+        <attr name="animationDirection" format="enum">
+            <enum name="right" value="1"/>
+            <enum name="left" value="-1"/>
+        </attr>
+    </declare-styleable>
+</resources>

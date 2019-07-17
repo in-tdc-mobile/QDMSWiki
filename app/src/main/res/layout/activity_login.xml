@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey_200"
+    tools:context=".login.view.LoginActivity">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/splashIV"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dimen_200dp"
+            android:layout_centerHorizontal="true"
+            android:padding="@dimen/dimen_40dp"
+            app:srcCompat="@drawable/ic_mariapps_logo"
+
+            />
+
+        <LinearLayout
+            android:id="@+id/linWelcome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/splashIV"
+            android:layout_marginBottom="@dimen/activity_horizontal_margin"
+            android:orientation="vertical">
+
+            <com.mariapps.qdmswiki.custom.CustomTextView
+                android:id="@+id/welcomeTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:gravity="center"
+                android:text="@string/welcome_message"
+                android:textColor="@color/black"
+                android:textSize="@dimen/dimen_25sp"
+                android:textStyle="bold" />
+
+            <com.mariapps.qdmswiki.custom.CustomTextView
+                android:id="@+id/welcome2TV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:gravity="center"
+                android:text="@string/login_screen_message"
+                android:textColor="@color/grey_700"
+                android:textSize="@dimen/dimen_17sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <com.mariapps.qdmswiki.custom.AnimateLinearLayout
+            android:id="@+id/animALL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/linWelcome"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
+            android:padding="@dimen/dimen_20dp"
+            app:startAnimation="true">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/TextInputEtTheme">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/usernameET"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/str_username"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/dimen_15sp" />
+
+            </android.support.design.widget.TextInputLayout>
+
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_10dp"
+                android:theme="@style/TextInputEtTheme"
+                app:passwordToggleDrawable="@drawable/drawable_pasword_selector"
+                app:passwordToggleEnabled="true"
+                app:passwordToggleTint="@color/white">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/passwordET"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/str_password"
+                    android:inputType="textPassword"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/dimen_15sp" />
+
+            </android.support.design.widget.TextInputLayout>
+
+
+        </com.mariapps.qdmswiki.custom.AnimateLinearLayout>
+
+        <LinearLayout
+            android:id="@+id/loginLL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/animALL"
+            android:orientation="vertical"
+            android:padding="@dimen/dimen_20dp">
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.mariapps.qdmswiki.custom.CustomButton
+                    android:id="@+id/loginBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/drawable_rounded_corner"
+                    android:text="@string/str_login"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/dimen_12sp"
+
+                    />
+
+                <com.mariapps.qdmswiki.custom.CustomProgressBar
+                    android:id="@+id/loadinLoadingPB"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:visibility="visible"
+                    app:indicatorColor="@color/white"
+                    app:indicatorHeight="5">
+
+                </com.mariapps.qdmswiki.custom.CustomProgressBar>
+
+            </RelativeLayout>
+        </LinearLayout>
+
+
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="70dp"
+            android:layout_height="@dimen/dimen_50dp"
+            android:layout_below="@+id/loginLL"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/dimen_20dp"
+            android:layout_marginBottom="@dimen/dimen_10dp"
+            android:background="@color/blue_600"
+            app:srcCompat="@drawable/ic_mariapps_logo" />
+
+
+    </RelativeLayout>
+</ScrollView>

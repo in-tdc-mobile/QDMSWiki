@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:paddingRight="@dimen/dimen_10dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    >
+
+    <com.mariapps.qdmswiki.custom.CustomTextView
+        android:gravity="center_vertical"
+        android:id="@+id/tvHeadingText"
+        android:background="@drawable/drawable_curved_editttext_white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@color/black" />
+
+</LinearLayout>
+
