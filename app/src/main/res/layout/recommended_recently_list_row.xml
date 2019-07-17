@@ -13,10 +13,11 @@
     android:paddingLeft="@dimen/dimen_16dp">
 
     <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/historyIV"
+        android:layout_width="wrap_content"
+        android:layout_height="14dp"
         android:layout_gravity="center_vertical"
-        android:src="@mipmap/history"
-        android:layout_width="@dimen/dimen_20dp"
-        android:layout_height="@dimen/dimen_20dp"/>
+        android:src="@mipmap/history" />
 
     <LinearLayout
         android:layout_weight="0.18"
@@ -27,7 +28,7 @@
 
 
         <com.mariapps.qdmswiki.custom.CustomTextView
-            android:id="@+id/tvHeadingText"
+            android:id="@+id/headingTextTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.10"
@@ -48,7 +49,7 @@
                 android:textSize="@dimen/sec_text_size"/>
 
             <com.mariapps.qdmswiki.custom.CustomTextView
-                android:id="@+id/tvCategory"
+                android:id="@+id/categoryTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/sec_text_size"/>
@@ -67,7 +68,7 @@
 
         <com.mariapps.qdmswiki.custom.CustomTextView
             android:background="@drawable/drawable_version_type"
-            android:id="@+id/tvVersion"
+            android:id="@+id/versionTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="V1"
@@ -78,7 +79,8 @@
             android:id="@+id/arrowIV"
             android:layout_width="@dimen/dimen_20dp"
             android:layout_height="@dimen/dimen_20dp"
-            android:textSize="@dimen/primary_text_size" />
+            android:textSize="@dimen/primary_text_size"
+            android:background="@drawable/ic_arrow_inactive"/>
 
     </LinearLayout>
 

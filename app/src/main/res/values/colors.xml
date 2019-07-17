@@ -322,6 +322,9 @@
     //tab
     <color name="tabIndicator">#CC3A59</color>
 
+    //application info
+    <color name="application_item">#666666</color>
+
     //walkthrough color codes
     <!-- dots inactive colors -->
     <color name="dot_dark_screen1">@color/grey_400</color>

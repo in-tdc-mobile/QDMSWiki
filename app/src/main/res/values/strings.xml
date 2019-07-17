@@ -24,6 +24,7 @@
     <string name="string_articles_published">Articles Published</string>
     <string name="string_notifications">Notifications</string>
     <string name="string_settings">My Account</string>
+    <string name="string_application_info">Application Info</string>
 
     //fonts
     <string name="string_roboto_bold">Roboto-Bold.ttf</string>
@@ -32,5 +33,12 @@
     <string name="string_roboto_light_italic">Roboto-LightItalic.ttf</string>
     <string name="string_roboto_regular">Roboto-Regular.ttf</string>
     <string name="string_roboto_medium">Roboto-Medium.ttf</string>
+
+    //Application info
+    <string name="string_application_name">Application Name</string>
+    <string name="string_application_version">Application Version</string>
+    <string name="string_date">Date</string>
+    <string name="string_environment">Environment</string>
+    <string name="string_client_name">Client</string>
 
 </resources>
