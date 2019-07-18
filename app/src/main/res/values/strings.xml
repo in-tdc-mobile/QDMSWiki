@@ -39,6 +39,7 @@
     <string name="string_application_version">Application Version</string>
     <string name="string_date">Date</string>
     <string name="string_environment">Environment</string>
-    <string name="string_client_name">Client</string>
-
+    <string name="string_client">Client</string>
+    <string name="string_environment_name">Office</string>
+    <string name="string_client_name">BSM</string>
 </resources>

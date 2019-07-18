@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 import android.webkit.WebView;
 
 import com.mariapps.qdmswiki.R;
@@ -15,38 +16,39 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
-public class DocumetViewActivity extends BaseActivity {
+public class DocumentViewActivity extends BaseActivity {
 
-    @BindView(R.id.webView)
-    WebView webView;
-    @BindView(R.id.searchET)
-    CustomEditText searchET;
+//    @BindView(R.id.webView)
+//    WebView webView;
+//    @BindView(R.id.searchET)
+//    CustomEditText searchET;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_document_view);
 
-        String htmlText = readData("html.txt");
-
-        webView.loadData(htmlText, "text/html", null);
-        searchET.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                webView.findAllAsync(s.toString());
-            }
-        });
+//        String htmlText = readData("html.txt");
+//
+//        webView.loadData(htmlText, "text/html", null);
+//        searchET.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//                webView.findAllAsync(s.toString());
+//            }
+//        });
 
     }
 
@@ -58,6 +60,15 @@ public class DocumetViewActivity extends BaseActivity {
     @Override
     protected void isNetworkAvailable(boolean isConnected) {
 
+    }
+
+    @OnClick({R.id.backBtn})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.backBtn:
+                onBackPressed();
+                break;
+        }
     }
 
     public String readData(String inFile) {

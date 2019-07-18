@@ -234,7 +234,7 @@
            <com.mariapps.qdmswiki.custom.CustomTextView
                android:layout_weight="0.50"
                android:layout_gravity="center"
-               android:text="@string/string_client_name"
+               android:text="@string/string_client"
                android:textSize="@dimen/primary_text_size"
                android:textColor="@color/application_item"
                android:layout_width="match_parent"

@@ -10,11 +10,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseFragment;
-import com.mariapps.qdmswiki.documents.view.DocumetViewActivity;
+import com.mariapps.qdmswiki.documents.view.DocumentViewActivity;
 import com.mariapps.qdmswiki.home.adapter.RecommendedRecentlyAdapter;
 import com.mariapps.qdmswiki.home.model.RecommendedRecentlyModel;
 
@@ -72,7 +71,7 @@ public class HomeDetailFragment extends BaseFragment {
         recommendedRecentlyAdapter.setRowClickListener(new RecommendedRecentlyAdapter.RowClickListener() {
             @Override
             public void onItemClicked(RecommendedRecentlyModel recommendedRecentlyModel) {
-                Intent intent = new Intent(getActivity(), DocumetViewActivity.class);
+                Intent intent = new Intent(getActivity(), DocumentViewActivity.class);
                 startActivity(intent);
 
             }

@@ -66,8 +66,8 @@ public class ApplicationInfoActivity extends BaseActivity {
         applicationNameTV.setText(getResources().getString(R.string.app_name));
         applicationVersionTV.setText(BuildConfig.VERSION_NAME);
         dateTV.setText("06-MAY-2019");
-        environmentTV.setText("Office");
-        clientTV.setText("BSM");
+        environmentTV.setText(getResources().getString(R.string.string_environment_name));
+        clientTV.setText(getResources().getString(R.string.string_client_name));
     }
 
     @Override
