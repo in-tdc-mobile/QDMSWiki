@@ -1,16 +1,23 @@
 package com.mariapps.qdmswiki.documents.view;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.AppCompatImageView;
+import android.view.DisplayCutout;
+import android.view.Gravity;
 import android.view.View;
-import android.webkit.WebView;
-
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.custom.CustomEditText;
+import com.mariapps.qdmswiki.custom.CustomRecyclerView;
+import com.mariapps.qdmswiki.custom.CustomTextView;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,10 +27,14 @@ import butterknife.OnClick;
 
 public class DocumentViewActivity extends BaseActivity {
 
-//    @BindView(R.id.webView)
-//    WebView webView;
-//    @BindView(R.id.searchET)
-//    CustomEditText searchET;
+    @BindView(R.id.folderRV)
+    CustomRecyclerView folderRV;
+    @BindView(R.id.headingTV)
+    CustomTextView headingTV;
+    @BindView(R.id.searchET)
+    CustomEditText searchET;
+    @BindView(R.id.showMenuFab)
+    AppCompatImageView showMenuFab;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,11 +73,37 @@ public class DocumentViewActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.backBtn})
+    @OnClick({R.id.backBtn, R.id.showMenuFab})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.backBtn:
                 onBackPressed();
+                break;
+            case R.id.showMenuFab:
+                View popupView = View.inflate(DocumentViewActivity.this, R.layout.menu_pop_up, null);
+                PopupWindow popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+                popupWindow.showAtLocation(popupView, Gravity.BOTTOM, 50, 50);
+                popupWindow.setOutsideTouchable(false);
+
+                View container = (View) popupWindow.getContentView().getParent();
+                WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+                WindowManager.LayoutParams p = (WindowManager.LayoutParams) container.getLayoutParams();
+                p.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+                p.dimAmount = 0.3f;
+                wm.updateViewLayout(container, p);
+
+                LinearLayout linInfo = popupView.findViewById(R.id.linInfo);
+                LinearLayout linBookmark = popupView.findViewById(R.id.linBookmark);
+                LinearLayout linDownload = popupView.findViewById(R.id.linDownload);
+
+                linInfo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(DocumentViewActivity.this,DocumentInfoViewActivity.class);
+                        startActivity(intent);
+                    }
+                });
+
                 break;
         }
     }

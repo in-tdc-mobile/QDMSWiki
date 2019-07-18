@@ -60,7 +60,7 @@
 
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <com.mariapps.qdmswiki.custom.CustomRecyclerView
         android:id="@+id/rvDocuments"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

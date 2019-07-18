@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.mariapps.qdmswiki.R;
+import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
 
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.NotificationsVH> {
+public class NotificationAdapter extends CustomRecyclerView.Adapter<NotificationAdapter.NotificationsVH> {
 
     private Context mContext;
     private ArrayList<NotificationModel> notificationList;
@@ -45,7 +46,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         return notificationList != null ? notificationList.size() : 0;
     }
 
-    static class NotificationsVH extends RecyclerView.ViewHolder {
+    static class NotificationsVH extends CustomRecyclerView.ViewHolder {
         @BindView(R.id.tvHeadingText)
         CustomTextView tvHeadingText;
         @BindView(R.id.statusTV)

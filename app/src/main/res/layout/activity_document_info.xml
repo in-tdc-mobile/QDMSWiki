@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        layout="@layout/common_layout_with_breadcrumb"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey_200" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dimen_50dp"
+                android:layout_marginLeft="@dimen/dimen_16dp"
+                android:layout_marginRight="@dimen/dimen_16dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <com.mariapps.qdmswiki.custom.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.50"
+                    android:text="@string/string_document_number"
+                    android:textColor="@color/application_item"
+                    android:textSize="@dimen/primary_text_size" />
+
+                <com.mariapps.qdmswiki.custom.CustomTextView
+                    android:id="@+id/documentNumberTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|left"
+                    android:layout_weight="0.50"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/primary_text_size"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_marginLeft="@dimen/dimen_16dp"
+                android:layout_marginRight="@dimen/dimen_16dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/grey_200" />
+
+            <LinearLayout
+                android:layout_marginLeft="@dimen/dimen_16dp"
+                android:layout_marginRight="@dimen/dimen_16dp"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dimen_50dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <com.mariapps.qdmswiki.custom.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.50"
+                    android:text="@string/string_document_version"
+                    android:textColor="@color/application_item"
+                    android:textSize="@dimen/primary_text_size" />
+
+                <com.mariapps.qdmswiki.custom.CustomTextView
+                    android:id="@+id/documentVersionTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|left"
+                    android:layout_weight="0.50"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/primary_text_size"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_marginLeft="@dimen/dimen_16dp"
+                android:layout_marginRight="@dimen/dimen_16dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/grey_200" />
+
+            <LinearLayout
+                android:layout_marginLeft="@dimen/dimen_16dp"
+                android:layout_marginRight="@dimen/dimen_16dp"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dimen_50dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <com.mariapps.qdmswiki.custom.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.50"
+                    android:text="@string/string_location"
+                    android:textColor="@color/application_item"
+                    android:textSize="@dimen/primary_text_size" />
+
+                <com.mariapps.qdmswiki.custom.CustomTextView
+                    android:id="@+id/locationTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|left"
+                    android:layout_weight="0.50"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/primary_text_size"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_marginLeft="@dimen/dimen_16dp"
+                android:layout_marginRight="@dimen/dimen_16dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/grey_200" />
+
+            <LinearLayout
+                android:layout_marginLeft="@dimen/dimen_16dp"
+                android:layout_marginRight="@dimen/dimen_16dp"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dimen_50dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <com.mariapps.qdmswiki.custom.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.50"
+                    android:text="@string/string_published_on"
+                    android:textColor="@color/application_item"
+                    android:textSize="@dimen/primary_text_size" />
+
+                <com.mariapps.qdmswiki.custom.CustomTextView
+                    android:id="@+id/publishedOnTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|left"
+                    android:layout_weight="0.50"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/primary_text_size"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_marginLeft="@dimen/dimen_16dp"
+                android:layout_marginRight="@dimen/dimen_16dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/grey_200" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dimen_50dp"
+                android:layout_marginLeft="@dimen/dimen_16dp"
+                android:layout_marginRight="@dimen/dimen_16dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <com.mariapps.qdmswiki.custom.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.50"
+                    android:text="@string/string_approved_by"
+                    android:textColor="@color/application_item"
+                    android:textSize="@dimen/primary_text_size" />
+
+                <com.mariapps.qdmswiki.custom.CustomTextView
+                    android:id="@+id/approvedByTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|left"
+                    android:layout_weight="0.50"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/primary_text_size"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="@dimen/dimen_16dp"
+                android:layout_marginRight="@dimen/dimen_16dp"
+                android:background="@color/grey_200" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dimen_50dp"
+                android:layout_marginLeft="@dimen/dimen_16dp"
+                android:layout_marginRight="@dimen/dimen_16dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <com.mariapps.qdmswiki.custom.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.50"
+                    android:text="@string/string_sites"
+                    android:textColor="@color/application_item"
+                    android:textSize="@dimen/primary_text_size" />
+
+                <com.mariapps.qdmswiki.custom.CustomTextView
+                    android:id="@+id/sitesTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|left"
+                    android:layout_weight="0.50"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/primary_text_size"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="@dimen/dimen_16dp"
+                android:layout_marginRight="@dimen/dimen_16dp"
+                android:background="@color/grey_200" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dimen_50dp"
+                android:layout_marginLeft="@dimen/dimen_16dp"
+                android:layout_marginRight="@dimen/dimen_16dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <com.mariapps.qdmswiki.custom.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.50"
+                    android:text="@string/string_tags"
+                    android:textColor="@color/application_item"
+                    android:textSize="@dimen/primary_text_size" />
+
+                <LinearLayout
+                    android:layout_weight="0.50"
+                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.mariapps.qdmswiki.custom.CustomRecyclerView
+                        android:id="@+id/tagsRV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    </com.mariapps.qdmswiki.custom.CustomRecyclerView>
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_marginLeft="@dimen/dimen_16dp"
+                android:layout_marginRight="@dimen/dimen_16dp"
+                android:layout_height="1dp"
+                android:background="@color/grey_200" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dimen_50dp"
+                android:layout_marginLeft="@dimen/dimen_16dp"
+                android:layout_marginRight="@dimen/dimen_16dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <com.mariapps.qdmswiki.custom.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.50"
+                    android:text="@string/string_no_of_users_viewed"
+                    android:textColor="@color/application_item"
+                    android:textSize="@dimen/primary_text_size" />
+
+                <LinearLayout
+                    android:id="@+id/linNum"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal">
+
+                    <com.mariapps.qdmswiki.custom.CustomTextView
+                        android:id="@+id/numberTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|left"
+                        android:text="25"
+                        android:textColor="@color/searchType"
+                        android:textSize="@dimen/sec_text_size"
+                        android:textStyle="bold" />
+
+                    <android.support.v7.widget.AppCompatImageView
+                        android:id="@+id/arrowIV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:tint="@color/searchType"
+                        app:srcCompat="@drawable/down_arrow" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/grey_200" />
+
+            <LinearLayout
+                android:id="@+id/linUsers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.mariapps.qdmswiki.custom.CustomTextView
+                    android:background="@color/grey_200"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dimen_40dp"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/dimen_16dp"
+                    android:text="@string/string_read_by"
+                    android:textColor="@color/black" />
+
+                <com.mariapps.qdmswiki.custom.CustomRecyclerView
+                    android:id="@+id/usersRV"
+                    android:layout_marginLeft="@dimen/dimen_16dp"
+                    android:layout_marginRight="@dimen/dimen_16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </com.mariapps.qdmswiki.custom.CustomRecyclerView>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </android.support.v4.widget.NestedScrollView>
+
+</LinearLayout>

@@ -8,10 +8,9 @@
 
     <com.mariapps.qdmswiki.custom.CustomTextView
         android:gravity="center_vertical"
-        android:id="@+id/tvHeadingText"
-        android:background="@drawable/drawable_curved_for_tag"
+        android:id="@+id/tvUser"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/dimen_30dp"
+        android:layout_height="@dimen/dimen_40dp"
         android:layout_gravity="center"
         android:textColor="@color/black" />
 

@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.SessionManager;
 import com.mariapps.qdmswiki.baseclasses.BaseFragment;
+import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -22,7 +23,7 @@ public class NavigationDrawerFragment extends BaseFragment {
     @BindView(R.id.linearProfile)
     LinearLayout linearProfile;
     @BindView(R.id.navigationRV)
-    RecyclerView navigationRV;
+    CustomRecyclerView navigationRV;
     @BindView(R.id.navRL)
     RelativeLayout navRL;
 

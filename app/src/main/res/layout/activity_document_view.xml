@@ -1,23 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <include
-        android:id="@+id/appbar"
-        layout="@layout/activity_common_search"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/folderDetailsRV"
+    <LinearLayout
+        android:id="@+id/linLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/grey_200" />
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/appbar"
+            layout="@layout/layout_common_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
 
-</LinearLayout>
+        <com.mariapps.qdmswiki.custom.CustomRecyclerView
+            android:id="@+id/folderDetailsRV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/grey_200" />
+
+    </LinearLayout>
+
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/showMenuFab"
+        android:layout_width="@dimen/dimen_40dp"
+        android:layout_height="@dimen/dimen_40dp"
+        android:layout_alignEnd="@+id/linLayout"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="18dp"
+        android:tint="@color/searchType"
+        app:layout_anchor="@id/linLayout"
+        app:layout_anchorGravity="bottom|right|end"
+        app:srcCompat="@drawable/download" />
+
+
+    <!--<android.support.design.widget.FloatingActionButton-->
+    <!---->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignEnd="@+id/linLayout"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:layout_alignRight="@+id/linLayout"-->
+    <!--android:layout_marginBottom="18dp"-->
+    <!--android:layout_marginEnd="16dp"-->
+    <!--android:layout_marginRight="16dp"-->
+    <!--app:srcCompat="@drawable/notes"-->
+    <!--android:tint="@color/searchType"-->
+    <!--app:layout_anchor="@id/linLayout"-->
+    <!--app:layout_anchorGravity="bottom|right|end" />-->
+
+
+</RelativeLayout>

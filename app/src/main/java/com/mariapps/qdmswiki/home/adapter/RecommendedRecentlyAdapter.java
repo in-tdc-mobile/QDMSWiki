@@ -3,22 +3,20 @@ package com.mariapps.qdmswiki.home.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.AppCompatImageView;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.mariapps.qdmswiki.R;
+import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
-import com.mariapps.qdmswiki.documents.model.DepartmentModel;
 import com.mariapps.qdmswiki.home.model.RecommendedRecentlyModel;
-
 import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class RecommendedRecentlyAdapter extends RecyclerView.Adapter<RecommendedRecentlyAdapter.RecommendedRecentlyVH> {
+public class RecommendedRecentlyAdapter extends CustomRecyclerView.Adapter<RecommendedRecentlyAdapter.RecommendedRecentlyVH> {
 
     private Context mContext;
     private ArrayList<RecommendedRecentlyModel> departmentList;
@@ -66,7 +64,7 @@ public class RecommendedRecentlyAdapter extends RecyclerView.Adapter<Recommended
         return departmentList != null ? departmentList.size() : 0;
     }
 
-    static class RecommendedRecentlyVH extends RecyclerView.ViewHolder {
+    static class RecommendedRecentlyVH extends CustomRecyclerView.ViewHolder {
         @BindView(R.id.rowLL)
         LinearLayout rowLL;
         @BindView(R.id.headingTextTV)

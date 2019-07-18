@@ -45,21 +45,21 @@
         android:layout_height="1dp"
         android:background="@color/grey_200"/>
 
-    <android.support.v7.widget.RecyclerView
+    <com.mariapps.qdmswiki.custom.CustomRecyclerView
         android:id="@+id/rvSearchType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    </android.support.v7.widget.RecyclerView>
+    </com.mariapps.qdmswiki.custom.CustomRecyclerView>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/grey_200"/>
 
-    <android.support.v7.widget.RecyclerView
+    <com.mariapps.qdmswiki.custom.CustomRecyclerView
         android:id="@+id/rvSearchList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    </android.support.v7.widget.RecyclerView>
+    </com.mariapps.qdmswiki.custom.CustomRecyclerView>
 
 </LinearLayout>

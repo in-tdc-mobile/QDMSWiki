@@ -83,12 +83,12 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-            <android.support.v7.widget.RecyclerView
+            <com.mariapps.qdmswiki.custom.CustomRecyclerView
                 android:id="@+id/rvDepartments"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-            </android.support.v7.widget.RecyclerView>
+            </com.mariapps.qdmswiki.custom.CustomRecyclerView>
 
         </LinearLayout>
 

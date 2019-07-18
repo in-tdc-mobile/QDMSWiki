@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:weightSum="1"
+    android:padding="@dimen/dimen_30dp"
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    android:background="@drawable/drawable_curved_editttext_white"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:id="@+id/linInfo"
+        android:gravity="center"
+        android:layout_weight="0.30"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="@dimen/dimen_40dp"
+            android:layout_height="@dimen/dimen_40dp"
+            android:tint="@color/searchType"
+            app:srcCompat="@drawable/info"
+            />
+
+        <com.mariapps.qdmswiki.custom.CustomTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/string_info"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linBookmark"
+        android:gravity="center"
+        android:layout_weight="0.30"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="@dimen/dimen_40dp"
+            android:layout_height="@dimen/dimen_40dp"
+            android:tint="@color/searchType"
+            app:srcCompat="@drawable/ic_bookmark_inactive"
+            />
+
+        <com.mariapps.qdmswiki.custom.CustomTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/string_book_mark"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linDownload"
+        android:gravity="center"
+        android:layout_weight="0.30"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="@dimen/dimen_40dp"
+            android:layout_height="@dimen/dimen_40dp"
+            android:tint="@color/searchType"
+            app:srcCompat="@drawable/download"
+            />
+
+        <com.mariapps.qdmswiki.custom.CustomTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/string_download"/>
+
+    </LinearLayout>
+
+</LinearLayout>

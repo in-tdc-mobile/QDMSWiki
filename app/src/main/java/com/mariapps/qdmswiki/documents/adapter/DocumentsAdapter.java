@@ -2,19 +2,14 @@ package com.mariapps.qdmswiki.documents.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.mariapps.qdmswiki.R;
-import com.mariapps.qdmswiki.custom.CustomGridManager;
+import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.documents.model.DocumentsModel;
 
@@ -23,7 +18,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DocumentsAdapter extends RecyclerView.Adapter<DocumentsAdapter.DocumentsVH> {
+public class DocumentsAdapter extends CustomRecyclerView.Adapter<DocumentsAdapter.DocumentsVH> {
 
     private Context mContext;
     private ArrayList<DocumentsModel> documentsList;
@@ -50,8 +45,8 @@ public class DocumentsAdapter extends RecyclerView.Adapter<DocumentsAdapter.Docu
         holder.rvDepartments.setLayoutManager(new LinearLayoutManager(mContext, LinearLayout.HORIZONTAL, false));
         holder.rvDepartments.setHasFixedSize(true);
 
-        DepartmentsAdapter departmentsAdapter = new DepartmentsAdapter(mContext,documentsList.get(i).getDepartments());
-        holder.rvDepartments.setAdapter(departmentsAdapter);
+        TagsAdapter tagsAdapter = new TagsAdapter(mContext,documentsList.get(i).getDepartments());
+        holder.rvDepartments.setAdapter(tagsAdapter);
     }
 
     @Override
@@ -59,7 +54,7 @@ public class DocumentsAdapter extends RecyclerView.Adapter<DocumentsAdapter.Docu
         return documentsList != null ? documentsList.size() : 0;
     }
 
-    static class DocumentsVH extends RecyclerView.ViewHolder {
+    static class DocumentsVH extends CustomRecyclerView.ViewHolder {
         @BindView(R.id.tvHeadingText)
         CustomTextView tvHeadingText;
         @BindView(R.id.tvCategory)
@@ -69,7 +64,7 @@ public class DocumentsAdapter extends RecyclerView.Adapter<DocumentsAdapter.Docu
         @BindView(R.id.tvTime)
         CustomTextView tvTime;
         @BindView(R.id.rvDepartments)
-        RecyclerView rvDepartments;
+        CustomRecyclerView rvDepartments;
 
         public DocumentsVH(@NonNull View itemView) {
             super(itemView);

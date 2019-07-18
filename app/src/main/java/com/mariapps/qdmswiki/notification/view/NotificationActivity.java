@@ -13,6 +13,7 @@ import android.view.View;
 import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
+import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.notification.adapter.NotificationAdapter;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
@@ -30,7 +31,7 @@ public class NotificationActivity extends BaseActivity {
     @BindView(R.id.backBtn)
     AppCompatImageView backBtn;
     @BindView(R.id.rvNotifications)
-    RecyclerView rvNotifications;
+    CustomRecyclerView rvNotifications;
 
     private NotificationAdapter notificationAdapter;
     private ArrayList<NotificationModel> notificationList = new ArrayList<>();

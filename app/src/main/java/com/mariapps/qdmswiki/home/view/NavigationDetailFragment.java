@@ -3,8 +3,6 @@ package com.mariapps.qdmswiki.home.view;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseFragment;
+import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,7 +25,7 @@ public class NavigationDetailFragment extends BaseFragment {
     @BindView(R.id.headingLL)
     LinearLayout headingLL;
     @BindView(R.id.navigationRV)
-    RecyclerView navigationRV;
+    CustomRecyclerView navigationRV;
     @BindView(R.id.navRL)
     RelativeLayout navRL;
 

@@ -37,7 +37,7 @@
             app:fontface="@string/string_roboto_regular" />
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <com.mariapps.qdmswiki.custom.CustomRecyclerView
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:layout_below="@+id/headingLL"
@@ -47,7 +47,7 @@
         android:divider="@null"
         android:scrollbars="vertical"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager">
-    </android.support.v7.widget.RecyclerView>
+    </com.mariapps.qdmswiki.custom.CustomRecyclerView>
 
 
 </RelativeLayout>

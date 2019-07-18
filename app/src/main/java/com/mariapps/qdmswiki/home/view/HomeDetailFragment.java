@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseFragment;
+import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.documents.view.DocumentViewActivity;
 import com.mariapps.qdmswiki.home.adapter.RecommendedRecentlyAdapter;
 import com.mariapps.qdmswiki.home.model.RecommendedRecentlyModel;
@@ -25,7 +26,7 @@ import butterknife.ButterKnife;
 public class HomeDetailFragment extends BaseFragment {
 
     @BindView(R.id.rvDocuments)
-    RecyclerView rvDocuments;
+    CustomRecyclerView rvDocuments;
 
     private RecommendedRecentlyAdapter recommendedRecentlyAdapter;
     private ArrayList<RecommendedRecentlyModel> documentsList = new ArrayList<>();

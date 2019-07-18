@@ -6,12 +6,12 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.widget.LinearLayout;
 
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.custom.CustomEditText;
+import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.documents.view.DocumentViewActivity;
 import com.mariapps.qdmswiki.home.adapter.RecommendedRecentlyAdapter;
 import com.mariapps.qdmswiki.home.model.RecommendedRecentlyModel;
@@ -30,9 +30,9 @@ public class SearchActivity extends BaseActivity {
     @BindView(R.id.searchET)
     CustomEditText searchET;
     @BindView(R.id.rvSearchType)
-    RecyclerView rvSearchType;
+    CustomRecyclerView rvSearchType;
     @BindView(R.id.rvSearchList)
-    RecyclerView rvSearchList;
+    CustomRecyclerView rvSearchList;
 
     private ArrayList<SearchTypeModel> searchType = new ArrayList<>();
     private SearchTypeAdapter searchTypeAdapter;

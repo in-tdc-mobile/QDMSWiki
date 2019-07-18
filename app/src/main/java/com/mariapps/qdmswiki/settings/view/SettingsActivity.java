@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import com.mariapps.qdmswiki.BuildConfig;
@@ -14,6 +13,7 @@ import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.SessionManager;
 import com.mariapps.qdmswiki.applicationinfo.view.ApplicationInfoActivity;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
+import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.login.view.LoginActivity;
 import com.mariapps.qdmswiki.settings.adapter.SettingsAdapter;
@@ -36,7 +36,7 @@ public class SettingsActivity extends BaseActivity{
     @BindView(R.id.appBarMain)
     AppBarLayout appBarMain;
     @BindView(R.id.listRV)
-    RecyclerView listRV;
+    CustomRecyclerView listRV;
 
     private SettingsAdapter settingsAdapter;
     private List<SettingsItem> settingsItems=new ArrayList<>();

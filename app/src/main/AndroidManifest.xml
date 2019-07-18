@@ -61,6 +61,10 @@
             android:windowSoftInputMode="stateHidden|adjustResize"
             android:configChanges="orientation|screenSize|keyboardHidden" />
 
+        <activity
+            android:name=".documents.view.DocumentInfoViewActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
 
     </application>
 

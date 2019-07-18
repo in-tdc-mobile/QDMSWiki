@@ -2,26 +2,16 @@ package com.mariapps.qdmswiki.applicationinfo.view;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.DocumentsContract;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.AppCompatImageView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.HorizontalScrollView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
 import com.mariapps.qdmswiki.BuildConfig;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.SessionManager;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.home.view.HomeActivity;
-import com.mariapps.qdmswiki.notification.view.NotificationActivity;
 import com.mariapps.qdmswiki.settings.view.SettingsActivity;
-
 import java.util.ArrayList;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -31,10 +21,10 @@ public class ApplicationInfoActivity extends BaseActivity {
     CustomTextView headingTV;
     @BindView(R.id.homeTV)
     CustomTextView homeTV;
-    @BindView(R.id.accountsTV)
-    CustomTextView accountsTV;
-    @BindView(R.id.applicationInfoTV)
-    CustomTextView applicationInfoTV;
+    @BindView(R.id.nameTV)
+    CustomTextView nameTV;
+    @BindView(R.id.titleTV)
+    CustomTextView titleTV;
     @BindView(R.id.applicationNameTV)
     CustomTextView applicationNameTV;
     @BindView(R.id.applicationVersionTV)
@@ -63,6 +53,8 @@ public class ApplicationInfoActivity extends BaseActivity {
     }
 
     private void setDetails() {
+        nameTV.setText("Accounts");
+        titleTV.setText("Application Info");
         applicationNameTV.setText(getResources().getString(R.string.app_name));
         applicationVersionTV.setText(BuildConfig.VERSION_NAME);
         dateTV.setText("06-MAY-2019");
@@ -89,7 +81,7 @@ public class ApplicationInfoActivity extends BaseActivity {
         onBackPressed();
     }
 
-    @OnClick({R.id.backBtn, R.id.homeTV, R.id.accountsTV})
+    @OnClick({R.id.backBtn, R.id.homeTV, R.id.nameTV})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.backBtn:
@@ -99,7 +91,7 @@ public class ApplicationInfoActivity extends BaseActivity {
                 Intent homeIntent = new Intent(ApplicationInfoActivity.this, HomeActivity.class);
                 startActivity(homeIntent);
                 break;
-            case R.id.accountsTV:
+            case R.id.nameTV:
                 Intent settingsIntent = new Intent(ApplicationInfoActivity.this, SettingsActivity.class);
                 startActivity(settingsIntent);
                 break;

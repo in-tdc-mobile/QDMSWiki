@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import com.mariapps.qdmswiki.R;
+import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.settings.model.SettingsItem;
 
@@ -21,7 +22,7 @@ import butterknife.ButterKnife;
 /**
  * Created by elby.samson on 21,February,2019
  */
-public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.SettingsVH> {
+public class SettingsAdapter extends CustomRecyclerView.Adapter<SettingsAdapter.SettingsVH> {
 
 
 
@@ -60,7 +61,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
         return settingsItems != null ? settingsItems.size() : 0;
     }
 
-    static class SettingsVH extends RecyclerView.ViewHolder {
+    static class SettingsVH extends CustomRecyclerView.ViewHolder {
         @BindView(R.id.iconIV)
         AppCompatImageView iconIV;
         @BindView(R.id.settingNameTV)

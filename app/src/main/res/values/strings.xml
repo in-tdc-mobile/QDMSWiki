@@ -42,4 +42,22 @@
     <string name="string_client">Client</string>
     <string name="string_environment_name">Office</string>
     <string name="string_client_name">BSM</string>
+
+    //popup menu
+    <string name="string_info">Info</string>
+    <string name="string_book_mark">Book Mark</string>
+    <string name="string_download">Download</string>
+
+    //Document view
+    <string name="string_document_details">Document Details</string>
+    <string name="string_document_number">Document Number</string>
+    <string name="string_document_version">Document Version</string>
+    <string name="string_location">Location</string>
+    <string name="string_published_on">Published on</string>
+    <string name="string_approved_by">Approved by</string>
+    <string name="string_sites">Sites</string>
+    <string name="string_tags">Tags</string>
+    <string name="string_no_of_users_viewed">No. of users viewed</string>
+    <string name="string_read_by">Read By</string>
+
 </resources>

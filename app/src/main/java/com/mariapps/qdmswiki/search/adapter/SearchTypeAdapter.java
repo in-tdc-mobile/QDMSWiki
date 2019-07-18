@@ -3,15 +3,14 @@ package com.mariapps.qdmswiki.search.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.mariapps.qdmswiki.R;
+import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
-import com.mariapps.qdmswiki.search.model.SearchFilterItem;
 import com.mariapps.qdmswiki.search.model.SearchTypeModel;
 
 import java.util.ArrayList;
@@ -19,7 +18,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SearchTypeAdapter extends RecyclerView.Adapter<SearchTypeAdapter.SearchTypeVH> {
+public class SearchTypeAdapter extends CustomRecyclerView.Adapter<SearchTypeAdapter.SearchTypeVH> {
 
     private Context mContext;
     private ArrayList<SearchTypeModel> searchTypeList;
@@ -61,7 +60,7 @@ public class SearchTypeAdapter extends RecyclerView.Adapter<SearchTypeAdapter.Se
         return searchTypeList != null ? searchTypeList.size() : 0;
     }
 
-    static class SearchTypeVH extends RecyclerView.ViewHolder {
+    static class SearchTypeVH extends CustomRecyclerView.ViewHolder {
         @BindView(R.id.mainLL)
         LinearLayout mainLL;
         @BindView(R.id.searchTypeTV)
