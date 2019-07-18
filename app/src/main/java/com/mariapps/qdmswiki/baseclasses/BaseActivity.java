@@ -85,4 +85,13 @@ public abstract class BaseActivity extends AppCompatActivity{
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
+    protected void startActivityWithFlag(Class<? extends BaseActivity> activity, int... flags) {
+
+        Intent intent = new Intent(this, activity);
+        for (int i = 0; i < flags.length; i++) {
+            intent.setFlags(flags[i]);
+        }
+        startActivity(intent);
+    }
+
 }

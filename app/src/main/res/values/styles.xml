@@ -6,9 +6,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-
-        <!--<item name="actionBarStyle">@style/myTheme.ActionBar</item>-->
-        <!--<item name="actionBarTheme">@style/ThemeOverlay.AppTheme.ActionBar</item>-->
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

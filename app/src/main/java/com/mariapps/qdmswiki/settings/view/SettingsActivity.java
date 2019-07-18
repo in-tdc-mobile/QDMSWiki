@@ -15,6 +15,7 @@ import com.mariapps.qdmswiki.SessionManager;
 import com.mariapps.qdmswiki.applicationinfo.view.ApplicationInfoActivity;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.custom.CustomTextView;
+import com.mariapps.qdmswiki.login.view.LoginActivity;
 import com.mariapps.qdmswiki.settings.adapter.SettingsAdapter;
 import com.mariapps.qdmswiki.settings.model.SettingsItem;
 
@@ -79,6 +80,10 @@ public class SettingsActivity extends BaseActivity{
                         startActivity(intent);
                         break;
                     case 3:
+                        sessionManager.setLoggedin(false);
+                        Intent logoutIntent = new Intent(SettingsActivity.this, LoginActivity.class);
+                        logoutIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(logoutIntent);
                         break;
                 }
             }

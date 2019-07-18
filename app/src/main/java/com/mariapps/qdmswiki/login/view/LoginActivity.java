@@ -12,6 +12,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import com.mariapps.qdmswiki.R;
+import com.mariapps.qdmswiki.SessionManager;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.custom.CustomButton;
 import com.mariapps.qdmswiki.custom.CustomProgressBar;
@@ -33,13 +34,15 @@ public class LoginActivity extends BaseActivity {
     @BindView(R.id.passwordET)
     TextInputEditText passwordET;
 
+    private SessionManager sessionManager;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sessionManager = new SessionManager(LoginActivity.this);
+
         setContentView(R.layout.activity_login);
-
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-
         Animation slide_up = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.anim_slide_up);
         // Start animation
@@ -71,6 +74,7 @@ public class LoginActivity extends BaseActivity {
 
                         @Override
                         public void onAnimationEnd(Animation animation) {
+                          sessionManager.setLoggedin(true);
                           Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                           startActivity(intent);
                         }
