@@ -6,15 +6,19 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.AppCompatImageView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.DisplayCutout;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.webkit.WebView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
+import com.mariapps.qdmswiki.bookmarks.view.BookmarkActivity;
 import com.mariapps.qdmswiki.custom.CustomEditText;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
@@ -35,31 +39,33 @@ public class DocumentViewActivity extends BaseActivity {
     CustomEditText searchET;
     @BindView(R.id.showMenuFab)
     AppCompatImageView showMenuFab;
+    @BindView(R.id.webView)
+    WebView webView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_document_view);
 
-//        String htmlText = readData("html.txt");
-//
-//        webView.loadData(htmlText, "text/html", null);
-//        searchET.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//                webView.findAllAsync(s.toString());
-//            }
-//        });
+        String htmlText = readData("html.txt");
+
+        webView.loadData(htmlText, "text/html", null);
+        searchET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                webView.findAllAsync(s.toString());
+            }
+        });
 
     }
 
@@ -100,6 +106,14 @@ public class DocumentViewActivity extends BaseActivity {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(DocumentViewActivity.this,DocumentInfoViewActivity.class);
+                        startActivity(intent);
+                    }
+                });
+
+                linBookmark.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(DocumentViewActivity.this, BookmarkActivity.class);
                         startActivity(intent);
                     }
                 });

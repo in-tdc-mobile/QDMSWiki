@@ -25,6 +25,7 @@
     <string name="string_notifications">Notifications</string>
     <string name="string_settings">My Account</string>
     <string name="string_application_info">Application Info</string>
+    <string name="string_bookmarks">Bookmarks</string>
 
     //fonts
     <string name="string_roboto_bold">Roboto-Bold.ttf</string>

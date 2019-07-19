@@ -326,6 +326,9 @@
     //application info
     <color name="application_item">#666666</color>
 
+    //bookmark
+    <color name="bookmark_delete">#D2526D</color>
+
     //walkthrough color codes
     <!-- dots inactive colors -->
     <color name="dot_dark_screen1">@color/grey_400</color>
