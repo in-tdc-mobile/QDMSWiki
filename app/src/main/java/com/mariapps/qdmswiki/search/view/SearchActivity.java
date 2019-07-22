@@ -15,7 +15,9 @@ import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.documents.view.DocumentViewActivity;
 import com.mariapps.qdmswiki.home.adapter.RecommendedRecentlyAdapter;
 import com.mariapps.qdmswiki.home.model.RecommendedRecentlyModel;
+import com.mariapps.qdmswiki.search.adapter.SearchAdapter;
 import com.mariapps.qdmswiki.search.adapter.SearchTypeAdapter;
+import com.mariapps.qdmswiki.search.model.SearchModel;
 import com.mariapps.qdmswiki.search.model.SearchTypeModel;
 
 import java.util.ArrayList;
@@ -36,9 +38,8 @@ public class SearchActivity extends BaseActivity {
 
     private ArrayList<SearchTypeModel> searchType = new ArrayList<>();
     private SearchTypeAdapter searchTypeAdapter;
-
-    private RecommendedRecentlyAdapter recommendedRecentlyAdapter;
-    private ArrayList<RecommendedRecentlyModel> documentsList = new ArrayList<>();
+    private SearchAdapter searchAdapter;
+    private ArrayList<SearchModel> searchList = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -92,23 +93,22 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void setSearchList() {
-        documentsList.add(new RecommendedRecentlyModel(1, "General Data Protection Manual", "GDPR Manual", "V1"));
-        documentsList.add(new RecommendedRecentlyModel(2, "ECDIS Manual", "Information Technology", "V2"));
-        documentsList.add(new RecommendedRecentlyModel(3, "ISO Ethical Ship Operations Policy", "Ethical Ship Operations Policy", "V1"));
-        documentsList.add(new RecommendedRecentlyModel(4, "Safety Management Manual Appendix", "Safety Management Manual", "V1"));
-        documentsList.add(new RecommendedRecentlyModel(5, "LPG Carrier Manual", "LPG Carrier Manual", "V2"));
-        documentsList.add(new RecommendedRecentlyModel(6, "General Data Protection Manual", "GDPR Manual", "V1"));
-        documentsList.add(new RecommendedRecentlyModel(7, "ECDIS Manual", "Information Technology", "V2"));
+        searchList.add(new SearchModel(1, "Folder", "GDPR Manual", "General Data Protection Manual"));
+        searchList.add(new SearchModel(2, "File", "Information Technology", "ECDIS Manual"));
+        searchList.add(new SearchModel(3, "Folder", "Ethical Ship Operations Policy", "ISO Ethical Ship Operations Policy"));
+        searchList.add(new SearchModel(4, "File", "Safety Management Manual", "Safety Management Manual Appendix"));
+        searchList.add(new SearchModel(5, "File", "LPG Carrier Manual", "LPG Carrier Manual"));
+        searchList.add(new SearchModel(6, "Folder", "GDPR Manual", "General Data Protection Manual"));
+        searchList.add(new SearchModel(7, "File", "Information Technology", "ECDIS Manual"));
 
-        recommendedRecentlyAdapter = new RecommendedRecentlyAdapter(this, documentsList, "SEARCH");
-        rvSearchList.setAdapter(recommendedRecentlyAdapter);
+        searchAdapter = new SearchAdapter(this, searchList);
+        rvSearchList.setAdapter(searchAdapter);
 
-        recommendedRecentlyAdapter.setRowClickListener(new RecommendedRecentlyAdapter.RowClickListener() {
+        searchAdapter.setItemClickListener(new SearchAdapter.ItemClickListener() {
             @Override
-            public void onItemClicked(RecommendedRecentlyModel recommendedRecentlyModel) {
+            public void onItemClicked(SearchModel item) {
                 Intent intent = new Intent(SearchActivity.this, DocumentViewActivity.class);
                 startActivity(intent);
-
             }
         });
     }

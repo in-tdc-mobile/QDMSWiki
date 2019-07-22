@@ -66,7 +66,7 @@ public class HomeDetailFragment extends BaseFragment {
         documentsList.add(new RecommendedRecentlyModel(6, "General Data Protection Manual","GDPR Manual","V1"));
         documentsList.add(new RecommendedRecentlyModel(7, "ECDIS Manual","Information Technology","V2"));
 
-        recommendedRecentlyAdapter = new RecommendedRecentlyAdapter(getActivity(), documentsList, "HOME");
+        recommendedRecentlyAdapter = new RecommendedRecentlyAdapter(getActivity(), documentsList);
         rvDocuments.setAdapter(recommendedRecentlyAdapter);
 
         recommendedRecentlyAdapter.setRowClickListener(new RecommendedRecentlyAdapter.RowClickListener() {

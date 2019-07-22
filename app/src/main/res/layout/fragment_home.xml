@@ -21,7 +21,7 @@
                 <LinearLayout
                     android:gravity="center"
                     android:padding="@dimen/dimen_30dp"
-                    android:background="@color/colorAccent"
+                    android:background="@drawable/ic_search_bg"
                     android:id="@+id/overViewLL"
                     android:layout_width="match_parent"
                     android:layout_height="150dp"

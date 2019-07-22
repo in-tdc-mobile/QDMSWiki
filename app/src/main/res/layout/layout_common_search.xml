@@ -36,7 +36,7 @@
                     android:layout_gravity="center"
                     android:layout_marginStart="@dimen/dimen_8dp"
                     android:padding="@dimen/dimen_back_icon_padding"
-                    app:srcCompat="@drawable/ic_back_arrow" />
+                    app:srcCompat="@drawable/ic_back_icon" />
 
                 <com.mariapps.qdmswiki.custom.CustomTextView
                     android:id="@+id/headingTV"

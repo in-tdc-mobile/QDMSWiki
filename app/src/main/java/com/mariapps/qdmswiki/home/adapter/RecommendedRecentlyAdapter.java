@@ -21,12 +21,10 @@ public class RecommendedRecentlyAdapter extends CustomRecyclerView.Adapter<Recom
     private Context mContext;
     private ArrayList<RecommendedRecentlyModel> departmentList;
     private RowClickListener rowClickListener;
-    private String fromPage;
 
-    public RecommendedRecentlyAdapter(Context context, ArrayList<RecommendedRecentlyModel> list, String fromActivity) {
+    public RecommendedRecentlyAdapter(Context context, ArrayList<RecommendedRecentlyModel> list) {
         mContext = context;
         departmentList = list;
-        fromPage = fromActivity;
     }
 
     @NonNull
@@ -49,14 +47,6 @@ public class RecommendedRecentlyAdapter extends CustomRecyclerView.Adapter<Recom
             }
         });
 
-        if(fromPage.equals("HOME")){
-            holder.arrowIV.setVisibility(View.GONE);
-            holder.historyIV.setVisibility(View.GONE);
-        }
-        else{
-            holder.versionTV.setVisibility(View.GONE);
-        }
-
     }
 
     @Override
@@ -74,10 +64,6 @@ public class RecommendedRecentlyAdapter extends CustomRecyclerView.Adapter<Recom
         @BindView(R.id.versionTV)
         CustomTextView versionTV;
 
-        @BindView(R.id.arrowIV)
-        AppCompatImageView arrowIV;
-        @BindView(R.id.historyIV)
-        AppCompatImageView historyIV;
 
         public RecommendedRecentlyVH(@NonNull View itemView) {
             super(itemView);

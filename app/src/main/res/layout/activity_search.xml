@@ -7,7 +7,7 @@
     android:orientation="vertical">
 
     <RelativeLayout
-        android:layout_margin="@dimen/dimen_16dp"
+        android:layout_margin="@dimen/dimen_12dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -18,7 +18,7 @@
             android:padding="@dimen/dimen_back_icon_padding"
             android:layout_centerVertical="true"
             android:layout_gravity="center"
-            app:srcCompat="@drawable/ic_back_arrow" />
+            app:srcCompat="@drawable/ic_back_icon" />
 
         <com.mariapps.qdmswiki.custom.CustomEditText
             android:layout_toRightOf="@+id/backBtn"

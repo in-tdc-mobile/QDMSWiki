@@ -20,7 +20,7 @@
             android:layout_width="@dimen/dimen_40dp"
             android:layout_height="@dimen/dimen_40dp"
             android:tint="@color/searchType"
-            app:srcCompat="@drawable/info"
+            app:srcCompat="@drawable/ic_app_info"
             />
 
         <com.mariapps.qdmswiki.custom.CustomTextView

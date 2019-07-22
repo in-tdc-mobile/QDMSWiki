@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/grey_200"
+    android:background="@drawable/ic_landing_bg"
     tools:context=".login.view.LoginActivity">
 
 
@@ -15,13 +15,10 @@
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/splashIV"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/dimen_200dp"
             android:layout_centerHorizontal="true"
-            android:padding="@dimen/dimen_40dp"
-            app:srcCompat="@drawable/ic_mariapps_logo"
-
-            />
+            app:srcCompat="@drawable/ic_qdms_logo"/>
 
         <LinearLayout
             android:id="@+id/linWelcome"
@@ -153,14 +150,13 @@
 
 
         <android.support.v7.widget.AppCompatImageView
-            android:layout_width="70dp"
-            android:layout_height="@dimen/dimen_50dp"
+            android:layout_width="@dimen/dimen_100dp"
+            android:layout_height="@dimen/dimen_100dp"
             android:layout_below="@+id/loginLL"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/dimen_20dp"
+            android:layout_marginTop="@dimen/dimen_60dp"
             android:layout_marginBottom="@dimen/dimen_10dp"
-            android:background="@color/blue_600"
             app:srcCompat="@drawable/ic_mariapps_logo" />
 
 

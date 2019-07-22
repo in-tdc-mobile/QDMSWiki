@@ -99,7 +99,7 @@ public class SettingsActivity extends BaseActivity{
         settingsItems.clear();
         settingsItems.add(new SettingsItem(R.drawable.ic_settings_inactive,"Settings",R.color.black));
         settingsItems.add(new SettingsItem(R.drawable.ic_help,"Help",R.color.black));
-        settingsItems.add(new SettingsItem(R.drawable.ic_help,"App Info",R.color.black));
+        settingsItems.add(new SettingsItem(R.drawable.ic_app_info,"App Info",R.color.black));
         settingsItems.add(new SettingsItem(R.drawable.ic_logout,"Logout",R.color.red_900));
         return settingsItems;
     }

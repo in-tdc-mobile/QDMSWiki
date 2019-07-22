@@ -21,8 +21,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="@dimen/dimen_8dp"
             android:padding="@dimen/dimen_back_icon_padding"
-            android:tint="@color/white"
-            app:srcCompat="@drawable/ic_back_arrow" />
+            app:srcCompat="@drawable/ic_back_icon" />
 
 
         <com.mariapps.qdmswiki.custom.CustomTextView
