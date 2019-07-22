@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 
 import com.mariapps.qdmswiki.articles.view.ArticlesFragment;
 import com.mariapps.qdmswiki.documents.view.DocumentsFragment;
@@ -29,25 +30,6 @@ public class MainViewPager extends FragmentPagerAdapter {
         //Home Fragment
 
         homeFragment=new HomeFragment();
-
-        homeFragment.setBlurListener(new HomeFragment.BlurListener() {
-
-            @Override
-            public void onPrimaryUnblurred() {
-                mainVPListener.onDashBoardFragUnclicked();
-            }
-
-            @Override
-            public void onSecondaryBlurred(String menuCode, String tileCode) {
-                mainVPListener.onDashBoardSecondaryClicked(menuCode,tileCode);
-            }
-
-            @Override
-            public void onSecondaryUnBlurred() {
-                mainVPListener.onSecondaryUnClicked();
-            }
-
-        });
 
         fragments.add(homeFragment);
 
@@ -102,14 +84,6 @@ public class MainViewPager extends FragmentPagerAdapter {
 
     public interface MainVPListener {
 
-        //DashBoard Fragment
-        void onPrimaryUnblur();
-
-        void onDashBoardFragUnclicked();
-
-        void onDashBoardSecondaryClicked(String menuCode, String tileCode);
-
-        void onSecondaryUnClicked();
     }
 
 }

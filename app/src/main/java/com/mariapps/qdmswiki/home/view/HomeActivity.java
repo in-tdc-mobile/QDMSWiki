@@ -1,6 +1,7 @@
 package com.mariapps.qdmswiki.home.view;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,6 +9,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -15,6 +17,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,7 +31,11 @@ import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.custom.CustomViewPager;
 import com.mariapps.qdmswiki.notification.view.NotificationActivity;
 import com.mariapps.qdmswiki.settings.view.SettingsActivity;
+import com.mariapps.qdmswiki.splash.view.SplashScreenActivity;
 import com.mariapps.qdmswiki.utils.ScreenUtils;
+
+import java.io.Serializable;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -45,8 +52,8 @@ public class HomeActivity extends BaseActivity{
     FrameLayout navFL;
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
-    @BindView(R.id.loading_spinner)
-    ProgressBar loadingSpinner;
+//    @BindView(R.id.loading_spinner)
+//    ProgressBar loadingSpinner;
     @BindView(R.id.mainVP)
     CustomViewPager mainVP;
     @BindView(R.id.bottom_navigation)
@@ -166,6 +173,7 @@ public class HomeActivity extends BaseActivity{
             }
         });
 
+        bottom_navigation.setItemIconTintList(null);
         bottom_navigation.getMenu().clear();
         Menu menu = bottom_navigation.getMenu();
         menu.add(Menu.NONE, 0, Menu.NONE, "___")

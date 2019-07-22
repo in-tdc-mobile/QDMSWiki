@@ -9,13 +9,13 @@
     >
 
 
-    <ProgressBar
-        android:id="@+id/loading_spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:indeterminateTint="@color/blue_A200"
-        android:indeterminateTintMode="src_atop" />
+    <!--<ProgressBar-->
+        <!--android:id="@+id/loading_spinner"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:indeterminateTint="@color/searchType"-->
+        <!--android:indeterminateTintMode="src_atop" />-->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -44,18 +44,14 @@
                     android:layout_height="match_parent"
                     android:weightSum="1">
 
-                    <com.mariapps.qdmswiki.custom.CustomTextView
-                        android:id="@+id/headingTV"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                    <android.support.v7.widget.AppCompatImageView
+                        android:id="@+id/headingIV"
+                        android:layout_width="@dimen/dimen_80dp"
+                        android:layout_height="@dimen/dimen_100dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_weight="1"
-                        android:text="QDMS"
-                        android:gravity="center"
-                        android:singleLine="true"
-                        android:textStyle="bold"
-                        android:textColor="@color/colorAccent"
-                        android:textSize="@dimen/heading_text_size" />
+                        android:background="@drawable/ic_qdms_logo"
+                        android:gravity="center" />
 
                     <LinearLayout
                         android:layout_alignParentEnd="true"
