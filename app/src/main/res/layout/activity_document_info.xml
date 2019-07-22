@@ -325,11 +325,12 @@
                         android:textStyle="bold" />
 
                     <android.support.v7.widget.AppCompatImageView
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="@dimen/dimen_5dp"
                         android:id="@+id/arrowIV"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:tint="@color/searchType"
-                        app:srcCompat="@drawable/down_arrow" />
+                        android:layout_width="@dimen/dimen_12dp"
+                        android:layout_height="@dimen/dimen_12dp"
+                        app:srcCompat="@drawable/ic_expand_arrow" />
 
                 </LinearLayout>
 

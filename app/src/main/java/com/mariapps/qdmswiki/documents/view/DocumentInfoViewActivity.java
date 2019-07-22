@@ -156,12 +156,12 @@ public class DocumentInfoViewActivity extends BaseActivity {
                 if(documentInfoModel.isUserShown){
                     linUsers.setVisibility(View.GONE);
                     documentInfoModel.setUserShown(false);
-                    arrowIV.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.down_arrow,null));
+                    arrowIV.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.ic_expand_arrow,null));
                 }
                 else{
                     linUsers.setVisibility(View.VISIBLE);
                     documentInfoModel.setUserShown(true);
-                    arrowIV.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.up_arrow,null));
+                    arrowIV.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.ic_collapse_arrow,null));
                 }
 
                 break;

@@ -8,7 +8,6 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -170,13 +169,13 @@ public class HomeActivity extends BaseActivity{
         bottom_navigation.getMenu().clear();
         Menu menu = bottom_navigation.getMenu();
         menu.add(Menu.NONE, 0, Menu.NONE, "___")
-                .setIcon(R.drawable.drawable_dashboard_selecter);
+                .setIcon(R.drawable.drawable_home_selecter);
 
         menu.add(Menu.NONE, 1, Menu.NONE, "___")
-                .setIcon(R.drawable.drawable_search_selector);
+                .setIcon(R.drawable.drawable_document_selector);
 
         menu.add(Menu.NONE, 2, Menu.NONE, "___")
-                .setIcon(R.drawable.drawable_notification_selector);
+                .setIcon(R.drawable.drawable_article_selector);
     }
 
     @Override

@@ -74,4 +74,14 @@
         <!--<item name="android:windowBackground">@drawable/splash_bg</item>-->
     </style>
 
+    <style name="TextLabelLogin" parent="AppTheme">
+        <item name="android:textSize">@dimen/primary_text_size</item>
+        <item name="android:textColorHint">@color/black</item>
+        <item name="counterOverflowTextAppearance">@style/TextAppearance.Design.Counter.Overflow
+        </item>
+        <item name="colorControlNormal">@color/black</item>
+        <item name="colorControlActivated">@color/black</item>
+        <item name="colorControlHighlight">@color/black</item>
+    </style>
+
 </resources>

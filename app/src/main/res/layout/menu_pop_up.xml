@@ -11,17 +11,15 @@
     <LinearLayout
         android:id="@+id/linInfo"
         android:gravity="center"
-        android:layout_weight="0.30"
+        android:layout_weight="0.35"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <android.support.v7.widget.AppCompatImageView
-            android:layout_width="@dimen/dimen_40dp"
-            android:layout_height="@dimen/dimen_40dp"
-            android:tint="@color/searchType"
-            app:srcCompat="@drawable/ic_app_info"
-            />
+            android:layout_width="@dimen/dimen_30dp"
+            android:layout_height="@dimen/dimen_30dp"
+            app:srcCompat="@drawable/ic_more_info" />
 
         <com.mariapps.qdmswiki.custom.CustomTextView
             android:layout_width="wrap_content"
@@ -39,10 +37,9 @@
         android:orientation="vertical">
 
         <android.support.v7.widget.AppCompatImageView
-            android:layout_width="@dimen/dimen_40dp"
-            android:layout_height="@dimen/dimen_40dp"
-            android:tint="@color/searchType"
-            app:srcCompat="@drawable/ic_bookmark_inactive"
+            android:layout_width="@dimen/dimen_30dp"
+            android:layout_height="@dimen/dimen_30dp"
+            app:srcCompat="@drawable/ic_more_bookmark"
             />
 
         <com.mariapps.qdmswiki.custom.CustomTextView
@@ -55,16 +52,15 @@
     <LinearLayout
         android:id="@+id/linDownload"
         android:gravity="center"
-        android:layout_weight="0.30"
+        android:layout_weight="0.33"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <android.support.v7.widget.AppCompatImageView
-            android:layout_width="@dimen/dimen_40dp"
-            android:layout_height="@dimen/dimen_40dp"
-            android:tint="@color/searchType"
-            app:srcCompat="@drawable/download"
+            android:layout_width="@dimen/dimen_30dp"
+            android:layout_height="@dimen/dimen_30dp"
+            app:srcCompat="@drawable/ic_more_download"
             />
 
         <com.mariapps.qdmswiki.custom.CustomTextView
