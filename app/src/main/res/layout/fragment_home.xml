@@ -44,7 +44,7 @@
                         android:focusableInTouchMode="true"
                         android:layout_centerInParent="true"
                         android:background="@drawable/drawable_curved_editttext_white"
-                        android:drawableRight="@drawable/ic_search_icon"
+                        android:drawableRight="@drawable/ic_main_search"
                         android:drawablePadding="@dimen/dimen_8dp"
                         android:hint="Search"
                         android:textColorHint="@color/searchHint"

@@ -46,12 +46,11 @@
 
                     <android.support.v7.widget.AppCompatImageView
                         android:id="@+id/headingIV"
-                        android:layout_width="@dimen/dimen_80dp"
-                        android:layout_height="@dimen/dimen_100dp"
+                        android:layout_width="@dimen/dimen_50dp"
+                        android:layout_height="match_parent"
                         android:layout_gravity="center_horizontal"
-                        android:layout_weight="1"
-                        android:background="@drawable/ic_qdms_logo"
-                        android:gravity="center" />
+                        app:srcCompat="@drawable/ic_qdms_logo"
+                        android:gravity="center_vertical" />
 
                     <LinearLayout
                         android:layout_alignParentEnd="true"

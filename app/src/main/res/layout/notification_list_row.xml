@@ -31,9 +31,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.10"
             android:singleLine="false"
-            android:textColor="@color/def_font_color"
+            android:textColor="@color/black"
             android:textSize="@dimen/primary_text_size"
-            app:fontface="@string/string_roboto_medium" />
+            app:fontface="@string/string_roboto_bold" />
 
         <LinearLayout
             android:weightSum="1"
@@ -47,14 +47,14 @@
                 android:id="@+id/statusTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/primary_text_size"/>
+                android:textSize="@dimen/sec_text_size"/>
 
             <com.mariapps.qdmswiki.custom.CustomTextView
                 android:layout_weight="0.70"
                 android:id="@+id/updatedByTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/primary_text_size"/>
+                android:textSize="@dimen/sec_text_size"/>
 
         </LinearLayout>
 
@@ -69,7 +69,7 @@
                 android:id="@+id/tvTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/primary_text_size"/>
+                android:textSize="@dimen/sec_text_size"/>
 
         </LinearLayout>
 
