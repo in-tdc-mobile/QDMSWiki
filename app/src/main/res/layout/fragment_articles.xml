@@ -62,10 +62,7 @@
         android:id="@+id/rvDocuments"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="@dimen/dimen_10dp"
-        android:layout_marginRight="8dp" />
+        android:layout_below="@+id/toolbar"/>
 
 </LinearLayout>
 
