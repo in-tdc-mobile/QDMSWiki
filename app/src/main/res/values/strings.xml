@@ -61,4 +61,11 @@
     <string name="string_no_of_users_viewed">No. of users viewed</string>
     <string name="string_read_by">Read By</string>
 
+    //No results
+    <string name="string_no_recently_found">We did not find any recently viewed files</string>
+    <string name="string_no_recommended_found">We did not find any recommended files</string>
+    <string name="string_no_documents_found">We did not find any documents</string>
+    <string name="string_no_articles_found">We did not find any articles</string>
+
+
 </resources>

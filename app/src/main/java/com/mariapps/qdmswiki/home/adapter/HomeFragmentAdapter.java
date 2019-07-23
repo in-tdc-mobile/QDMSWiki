@@ -28,7 +28,7 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return  HomeDetailFragment.newInstance();
+        return  HomeDetailFragment.newInstance(documentTypes.get(position));
     }
 
     @Override

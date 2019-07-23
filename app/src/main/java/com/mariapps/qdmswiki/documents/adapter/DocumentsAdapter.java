@@ -6,26 +6,35 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.LinearLayout;
 
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.documents.model.DocumentsModel;
+import com.mariapps.qdmswiki.home.adapter.RecommendedRecentlyAdapter;
+import com.mariapps.qdmswiki.home.model.RecommendedRecentlyModel;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DocumentsAdapter extends CustomRecyclerView.Adapter<DocumentsAdapter.DocumentsVH> {
+public class DocumentsAdapter extends CustomRecyclerView.Adapter<DocumentsAdapter.DocumentsVH> implements Filterable {
 
     private Context mContext;
     private ArrayList<DocumentsModel> documentsList;
+    private ArrayList<DocumentsModel> filterdDocumentsList;
+    private RowClickListener rowClickListener;
+    private String type;
 
-    public DocumentsAdapter(Context context, ArrayList<DocumentsModel> list) {
+    public DocumentsAdapter(Context context, ArrayList<DocumentsModel> list,String type) {
         mContext = context;
-        documentsList = list;
+        this.documentsList = list;
+        this.filterdDocumentsList = list;
+        this.type = type;
     }
 
     @NonNull
@@ -37,24 +46,75 @@ public class DocumentsAdapter extends CustomRecyclerView.Adapter<DocumentsAdapte
 
     @Override
     public void onBindViewHolder(@NonNull final DocumentsVH holder, int i) {
-        holder.tvHeadingText.setText(documentsList.get(i).getDocumentName());
-        holder.tvCategory.setText(documentsList.get(i).getCategory());
-        holder.tvDate.setText(documentsList.get(i).getDate());
-        holder.tvTime.setText(documentsList.get(i).getTime());
+
+        DocumentsModel documentsModel = filterdDocumentsList.get(i);
+
+        holder.tvHeadingText.setText(documentsModel.getDocumentName());
+        holder.tvCategory.setText(documentsModel.getCategory());
+        holder.tvDate.setText(documentsModel.getDate());
+        holder.tvTime.setText(documentsModel.getTime());
 
         holder.rvDepartments.setLayoutManager(new LinearLayoutManager(mContext, LinearLayout.HORIZONTAL, false));
         holder.rvDepartments.setHasFixedSize(true);
 
-        TagsAdapter tagsAdapter = new TagsAdapter(mContext,documentsList.get(i).getDepartments());
+        TagsAdapter tagsAdapter = new TagsAdapter(mContext,documentsModel.getDepartments());
         holder.rvDepartments.setAdapter(tagsAdapter);
+
+        holder.rowLL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(type.equals("DOCUMENTS"))
+                    rowClickListener.onItemClicked(documentsList.get(holder.getAdapterPosition()));
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return documentsList != null ? documentsList.size() : 0;
+        return filterdDocumentsList != null ? filterdDocumentsList.size() : 0;
     }
 
+    @Override
+    public Filter getFilter() {
+            return new Filter() {
+                @Override
+                protected FilterResults performFiltering(CharSequence charSequence) {
+
+                    String charString = charSequence.toString();
+
+                    if (charString.isEmpty()) {
+
+                        filterdDocumentsList = documentsList;
+                    } else {
+
+                        ArrayList<DocumentsModel> filteredList = new ArrayList<>();
+
+                        for (DocumentsModel documentsModel : documentsList) {
+                            if (documentsModel.getDocumentName().toLowerCase().contains(charString.toLowerCase())) {
+
+                                filteredList.add(documentsModel);
+                            }
+                        }
+
+                        filterdDocumentsList = filteredList;
+                    }
+
+                    FilterResults filterResults = new FilterResults();
+                    filterResults.values = filterdDocumentsList;
+                    return filterResults;
+                }
+
+                @Override
+                protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                    filterdDocumentsList = (ArrayList<DocumentsModel>) filterResults.values;
+                    notifyDataSetChanged();
+                }
+            };
+        }
+
     static class DocumentsVH extends CustomRecyclerView.ViewHolder {
+        @BindView(R.id.rowLL)
+        LinearLayout rowLL;
         @BindView(R.id.tvHeadingText)
         CustomTextView tvHeadingText;
         @BindView(R.id.tvCategory)
@@ -70,6 +130,14 @@ public class DocumentsAdapter extends CustomRecyclerView.Adapter<DocumentsAdapte
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
+    }
+
+    public void setRowClickListener(RowClickListener rowClickListener) {
+        this.rowClickListener = rowClickListener;
+    }
+
+    public interface RowClickListener {
+        void onItemClicked(DocumentsModel documentsModel) ;
     }
 
 }

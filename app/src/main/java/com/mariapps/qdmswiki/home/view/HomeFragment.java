@@ -59,7 +59,6 @@ public class HomeFragment extends BaseFragment {
     @BindView(R.id.viewPager)
     ViewPager viewPager;
 
-    private BlurListener blurListener;
     private FragmentManager fragmentManager;
     private HomeFragmentAdapter homeFragmentAdapter;
 
@@ -108,20 +107,4 @@ public class HomeFragment extends BaseFragment {
         viewPager.invalidate();
     }
 
-    public void setBlurListener(BlurListener blurListener) {
-        this.blurListener = blurListener;
-    }
-
-    public interface BlurListener {
-
-
-        void onPrimaryUnblurred();
-
-
-        void onSecondaryBlurred(String menuCode, String tileCode);
-
-        void onSecondaryUnBlurred();
-
-
-    }
 }
