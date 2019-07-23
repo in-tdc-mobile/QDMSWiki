@@ -23,6 +23,6 @@
         android:gravity="center"
         android:textColor="@color/def_font_color"
         android:textSize="@dimen/primary_text_size"
-        app:fontface="@string/string_roboto_medium" />
+        app:fontface="@string/string_lato_regular" />
 
 </LinearLayout>

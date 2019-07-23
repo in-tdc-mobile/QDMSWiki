@@ -66,11 +66,8 @@ public class HomeActivity extends BaseActivity{
     AppBarLayout appBarMain;
 
 
-    private CharSequence mDrawerTitle;
-    private CharSequence mTitle;
     private ActionBarDrawerToggle mDrawerToggle;
     private MainViewPager mainViewPager;
-    private ActionBar actionBar;
     private NavigationDrawerFragment navigationDrawerFragment;
     private int currentPosition = 0;
     private int newPosition = 0;
@@ -124,7 +121,6 @@ public class HomeActivity extends BaseActivity{
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mTitle = mDrawerTitle = getTitle();
 
         mDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
                 toolbar, R.string.navigation_drawer_open,

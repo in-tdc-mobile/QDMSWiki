@@ -10,7 +10,7 @@ import com.mariapps.qdmswiki.R;
 
 public class CustomTextView extends AppCompatTextView {
 
-    String defaultFont = "Roboto-Regular.ttf";
+    String defaultFont = "Lato-Regular.ttf";
 
     public CustomTextView(Context context) {
         super(context);

@@ -27,9 +27,9 @@
             android:id="@+id/nameTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fontface="@string/string_roboto_bold"
-            android:textColor="@color/searchType"
-            android:textSize="@dimen/primary_text_size"/>
+            app:fontface="@string/string_lato_semi_bold"
+            android:textColor="@color/searchDocument"
+            android:textSize="@dimen/ter_text_size"/>
 
         <com.mariapps.qdmswiki.custom.CustomTextView
             android:layout_marginTop="@dimen/dimen_5dp"
@@ -37,8 +37,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.70"
-
-            android:textSize="@dimen/sec_text_size" />
+            app:fontface="@string/string_lato_regular"
+            android:textColor="@color/searchDocumentCategory"
+            android:textSize="@dimen/small_text_size" />
 
     </LinearLayout>
 

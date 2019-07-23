@@ -7,9 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:layout_marginLeft="@dimen/dimen_10dp"
-    android:layout_marginTop="@dimen/dimen_10dp"
-    android:layout_marginBottom="@dimen/dimen_10dp">
+    android:layout_margin="@dimen/dimen_15sp">
 
     <LinearLayout
         android:layout_weight="0.20"
@@ -26,8 +24,8 @@
             android:layout_weight="0.10"
             android:singleLine="true"
             android:textColor="@color/black"
-            android:textSize="@dimen/primary_text_size"
-            app:fontface="@string/string_roboto_bold" />
+            android:textSize="@dimen/ter_text_size"
+            app:fontface="@string/string_lato_semi_bold" />
 
         <LinearLayout
             android:layout_marginTop="@dimen/dimen_5dp"
@@ -39,13 +37,15 @@
                 android:text="Category : "
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/sec_text_size"/>
+                app:fontface="@string/string_lato_regular"
+                android:textSize="@dimen/medium_text_size"/>
 
             <com.mariapps.qdmswiki.custom.CustomTextView
                 android:id="@+id/categoryTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/sec_text_size"/>
+                app:fontface="@string/string_lato_regular"
+                android:textSize="@dimen/medium_text_size"/>
 
         </LinearLayout>
 

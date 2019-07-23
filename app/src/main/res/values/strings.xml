@@ -28,12 +28,8 @@
     <string name="string_bookmarks">Bookmarks</string>
 
     //fonts
-    <string name="string_roboto_bold">Roboto-Bold.ttf</string>
-    <string name="string_roboto_bold_italic">Roboto-BoldItalic.ttf</string>
-    <string name="string_roboto_light">Roboto-Light.ttf</string>
-    <string name="string_roboto_light_italic">Roboto-LightItalic.ttf</string>
-    <string name="string_roboto_regular">Roboto-Regular.ttf</string>
-    <string name="string_roboto_medium">Roboto-Medium.ttf</string>
+    <string name="string_lato_regular">Lato-Regular.ttf</string>
+    <string name="string_lato_semi_bold">Lato-SemiBold.ttf</string>
 
     //Application info
     <string name="string_application_name">Application Name</string>

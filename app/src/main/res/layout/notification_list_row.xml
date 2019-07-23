@@ -5,10 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingTop="@dimen/dimen_16dp"
-    android:paddingBottom="@dimen/dimen_16dp"
-    android:paddingRight="@dimen/dimen_10dp"
-    android:paddingLeft="@dimen/dimen_16dp">
+    android:layout_margin="@dimen/dimen_15sp">
 
 
     <android.support.v7.widget.AppCompatImageView
@@ -32,8 +29,8 @@
             android:layout_weight="0.10"
             android:singleLine="false"
             android:textColor="@color/black"
-            android:textSize="@dimen/primary_text_size"
-            app:fontface="@string/string_roboto_bold" />
+            android:textSize="@dimen/ter_text_size"
+            app:fontface="@string/string_lato_semi_bold" />
 
         <LinearLayout
             android:weightSum="1"
@@ -47,14 +44,16 @@
                 android:id="@+id/statusTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/sec_text_size"/>
+                app:fontface="@string/string_lato_regular"
+                android:textSize="@dimen/medium_text_size"/>
 
             <com.mariapps.qdmswiki.custom.CustomTextView
                 android:layout_weight="0.70"
                 android:id="@+id/updatedByTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/sec_text_size"/>
+                app:fontface="@string/string_lato_regular"
+                android:textSize="@dimen/medium_text_size"/>
 
         </LinearLayout>
 
@@ -69,7 +68,8 @@
                 android:id="@+id/tvTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/sec_text_size"/>
+                app:fontface="@string/string_lato_regular"
+                android:textSize="@dimen/medium_text_size"/>
 
         </LinearLayout>
 

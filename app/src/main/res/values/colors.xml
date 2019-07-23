@@ -319,6 +319,8 @@
     <color name="searchType">#CC3A59</color>
     <color name="searchHint">#EFBBC1</color>
     <color name="searchFilter">#E7ACB8</color>
+    <color name="searchDocument">#A43358</color>
+    <color name="searchDocumentCategory">#393939</color>
 
     //tab
     <color name="tabIndicator">#CC3A59</color>

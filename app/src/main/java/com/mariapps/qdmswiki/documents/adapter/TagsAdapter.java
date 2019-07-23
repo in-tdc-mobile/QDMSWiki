@@ -28,7 +28,7 @@ public class TagsAdapter extends CustomRecyclerView.Adapter<TagsAdapter.Departme
     @NonNull
     @Override
     public TagsAdapter.DepartmentsVH onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.department_list_row, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.tag_list_row, viewGroup, false);
         return new TagsAdapter.DepartmentsVH(view);
     }
 

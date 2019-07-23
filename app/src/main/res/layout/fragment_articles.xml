@@ -19,8 +19,8 @@
         android:singleLine="true"
         android:text="@string/string_articles_published"
         android:textColor="@color/black"
-        android:textSize="@dimen/heading_text_size"
-        app:fontface="@string/string_roboto_bold" />
+        android:textSize="@dimen/primary_text_size"
+        app:fontface="@string/string_lato_semi_bold" />
 
 
     <LinearLayout

@@ -10,7 +10,7 @@ import com.mariapps.qdmswiki.R;
 
 public class CustomEditText extends AppCompatEditText {
 
-    String defaultFont = "Roboto-Regular.ttf";
+    String defaultFont = "Lato-Regular.ttf";
     public CustomEditText(Context context) {
         super(context);
         initAttributes(null);

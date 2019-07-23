@@ -47,9 +47,9 @@ public class DocumentViewActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_document_view);
 
-        String htmlText = readData("html.txt");
-
-        webView.loadData(htmlText, "text/html", null);
+//        String htmlText = readData("html.txt");
+//
+//        webView.loadData(htmlText, "text/html", null);
         searchET.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

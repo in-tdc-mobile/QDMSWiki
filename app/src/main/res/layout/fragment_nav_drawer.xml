@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:id="@+id/linearProfile"
+        android:background="@color/grey_200"
         android:padding="@dimen/dimen_15dp">
 
 
@@ -25,8 +26,9 @@
             android:gravity="center_vertical"
             android:textColor="@color/searchType"
             android:textAllCaps="true"
+            android:textSize="@dimen/primary_text_size"
             android:text="@string/string_navigation"
-            app:fontface="@string/string_roboto_regular" />
+            app:fontface="@string/string_lato_semi_bold" />
 
 
     </LinearLayout>

@@ -19,8 +19,8 @@
         android:singleLine="true"
         android:text="@string/string_documents_published"
         android:textColor="@color/black"
-        android:textSize="@dimen/heading_text_size"
-        app:fontface="@string/string_roboto_bold" />
+        android:textSize="@dimen/primary_text_size"
+        app:fontface="@string/string_lato_semi_bold" />
 
 
     <LinearLayout
@@ -62,10 +62,7 @@
         android:id="@+id/rvDocuments"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="@dimen/dimen_10dp"
-        android:layout_marginRight="8dp" />
-
+        android:divider="@color/grey_200"
+        android:dividerHeight="0.5dp"/>
 </LinearLayout>
 
