@@ -67,7 +67,6 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginEnd="@dimen/dimen_5dp"
                         android:padding="7dp"
-                        android:tint="@color/searchType"
                         app:srcCompat="@drawable/ic_user_icon" />
 
                     <android.support.v7.widget.AppCompatImageView
@@ -79,7 +78,6 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginEnd="@dimen/dimen_5dp"
                         android:padding="7dp"
-                        android:tint="@color/searchType"
                         app:srcCompat="@drawable/ic_notification" />
 
                     </LinearLayout>
