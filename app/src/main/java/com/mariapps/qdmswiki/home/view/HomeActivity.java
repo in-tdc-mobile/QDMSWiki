@@ -172,13 +172,13 @@ public class HomeActivity extends BaseActivity{
         bottom_navigation.setItemIconTintList(null);
         bottom_navigation.getMenu().clear();
         Menu menu = bottom_navigation.getMenu();
-        menu.add(Menu.NONE, 0, Menu.NONE, "___")
+        menu.add(Menu.NONE, 0, Menu.NONE, "HOME")
                 .setIcon(R.drawable.drawable_home_selecter);
 
-        menu.add(Menu.NONE, 1, Menu.NONE, "___")
+        menu.add(Menu.NONE, 1, Menu.NONE, "DOCUMENTS")
                 .setIcon(R.drawable.drawable_document_selector);
 
-        menu.add(Menu.NONE, 2, Menu.NONE, "___")
+        menu.add(Menu.NONE, 2, Menu.NONE, "ARTICLES")
                 .setIcon(R.drawable.drawable_article_selector);
     }
 
