@@ -1,13 +1,13 @@
 package com.mariapps.qdmswiki.search.model;
 
 
-public class SearchTypeModel {
+public class SearchFilterModel {
 
     public Integer id;
     public String searchType;
     private boolean isSelected;
 
-    public SearchTypeModel(Integer id, String searchType, boolean isSelected) {
+    public SearchFilterModel(Integer id, String searchType, boolean isSelected) {
         this.id = id;
         this.searchType = searchType;
         this.isSelected = isSelected;
