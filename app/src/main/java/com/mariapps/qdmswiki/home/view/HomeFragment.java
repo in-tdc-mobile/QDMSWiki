@@ -1,34 +1,24 @@
 package com.mariapps.qdmswiki.home.view;
 
 import android.app.ActivityOptions;
-import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseFragment;
 import com.mariapps.qdmswiki.custom.CustomEditText;
 import com.mariapps.qdmswiki.custom.CustomProgressBar;
-import com.mariapps.qdmswiki.custom.CustomViewPager;
 import com.mariapps.qdmswiki.home.adapter.HomeFragmentAdapter;
 import com.mariapps.qdmswiki.search.view.SearchActivity;
 

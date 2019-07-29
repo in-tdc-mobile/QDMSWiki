@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/breadCrumbMain"
+    android:layout_width="wrap_content"
+    android:layout_height="35dp">
+
+
+    <android.support.v7.widget.AppCompatImageView
+        android:layout_gravity="center"
+        android:id="@+id/appCompatImageView"
+        android:layout_width="@dimen/dimen_icon"
+        android:layout_height="@dimen/dimen_icon"
+        android:padding="@dimen/dimen_non_clickable_icon_padding"
+        app:srcCompat="@drawable/ic_arrow_inactive" />
+
+
+    <com.mariapps.qdmswiki.custom.CustomTextView
+        android:layout_gravity="center"
+        android:id="@+id/titleTV"
+        android:text="hfjghjhgjghjghjghjghjghjghjghjgh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/appCompatImageView"
+        android:paddingBottom="@dimen/dimen_1dp"
+        app:layout_constraintStart_toEndOf="@+id/appCompatImageView" />
+
+
+</LinearLayout>
+

@@ -75,6 +75,13 @@
         <!--<item name="android:windowBackground">@drawable/splash_bg</item>-->
     </style>
 
+    <style name="FolderStructureTheme" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+
+
     <style name="TextLabelLogin" parent="AppTheme">
         <item name="android:textSize">@dimen/primary_text_size</item>
         <item name="android:textColorHint">@color/black</item>

@@ -62,7 +62,7 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
         holder.mainLL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                itemClickListener.onItemClicked(searchList.get(holder.getAdapterPosition()));
+                itemClickListener.onItemClicked(filteredItems.get(holder.getAdapterPosition()));
             }
         });
     }

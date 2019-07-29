@@ -6,15 +6,14 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
-import android.view.View;
 import android.widget.LinearLayout;
 
 import com.google.gson.Gson;
+import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.custom.CustomEditText;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
-import com.mariapps.qdmswiki.documents.view.DocumentViewActivity;
 import com.mariapps.qdmswiki.search.adapter.SearchResultAdapter;
 import com.mariapps.qdmswiki.search.adapter.SearchFilterAdapter;
 import com.mariapps.qdmswiki.search.model.FilterBooleanItem;
@@ -88,9 +87,6 @@ public class SearchActivity extends BaseActivity {
         searchFilterAdapter.setItemClickListener(new SearchFilterAdapter.ItemClickListener() {
             @Override
             public void onItemClicked(SearchFilterModel item) {
-//                    for (int i = 0; i < 1; i++) {
-//                        searchList.get(i).setSelected(false);
-//                    }
                     if (item.getSearchType().equals("Folder")) {
                         if (item.isSelected()) {
                             item.setSelected(false);
@@ -136,35 +132,24 @@ public class SearchActivity extends BaseActivity {
                         }
 
                     }
-
-//                if (! && !isPortSelected && !isVesselSelected && !isSmcSelected) {
-//                    searchList.get(0).setSelected(true);
-//                }
                 searchFilterAdapter.notifyDataSetChanged();
-//                    if (item.isSelected()) {
-//                        item.setSelected(false);
-//                    } else {
-//                        item.setSelected(true);
-//                    }
-//
-//                searchFilterAdapter.notifyDataSetChanged();
 
             }
         });
     }
 
     private void setSearchList() {
-        searchList.add(new SearchModel(1, "Folder", "GDPR Manual", "General Data Protection Manual"));
-        searchList.add(new SearchModel(2, "Forms", "Information Technology", "ECDIS Manual"));
-        searchList.add(new SearchModel(3, "Folder", "Ethical Ship Operations Policy", "ISO Ethical Ship Operations Policy"));
-        searchList.add(new SearchModel(4, "Forms", "Safety Management Manual", "Safety Management Manual Appendix"));
-        searchList.add(new SearchModel(5, "Forms", "LPG Carrier Manual", "LPG Carrier Manual"));
-        searchList.add(new SearchModel(6, "Folder", "GDPR Manual", "General Data Protection Manual"));
-        searchList.add(new SearchModel(7, "Forms", "Information Technology", "ECDIS Manual"));
-        searchList.add(new SearchModel(8, "Article", "Safety Management Manual", "Safety Management Manual Appendix"));
-        searchList.add(new SearchModel(9, "Document", "LPG Carrier Manual", "LPG Carrier Manual"));
-        searchList.add(new SearchModel(10, "Article", "GDPR Manual", "General Data Protection Manual"));
-        searchList.add(new SearchModel(11, "Document", "Information Technology", "ECDIS Manual"));
+        searchList.add(new SearchModel(1, -1,"Folder", "GDPR Manual", "General Data Protection Manual"));
+        searchList.add(new SearchModel(2, 1,"Forms", "Information Technology", "ECDIS Manual"));
+        searchList.add(new SearchModel(3, -1,"Folder", "Ethical Ship Operations Policy", "ISO Ethical Ship Operations Policy"));
+        searchList.add(new SearchModel(4, 3,"Forms", "Safety Management Manual", "Safety Management Manual Appendix"));
+        searchList.add(new SearchModel(5, 1,"Forms", "LPG Carrier Manual", "LPG Carrier Manual"));
+        searchList.add(new SearchModel(6, -1,"Folder", "GDPR Manual", "General Data Protection Manual"));
+        searchList.add(new SearchModel(7, 1,"Forms", "Information Technology", "ECDIS Manual"));
+        searchList.add(new SearchModel(8, 6,"Article", "Safety Management Manual", "Safety Management Manual Appendix"));
+        searchList.add(new SearchModel(9, 3,"Document", "LPG Carrier Manual", "LPG Carrier Manual"));
+        searchList.add(new SearchModel(10, 1,"Article", "GDPR Manual", "General Data Protection Manual"));
+        searchList.add(new SearchModel(11, 1,"Document", "Information Technology", "ECDIS Manual"));
 
         searchResultAdapter = new SearchResultAdapter(this, searchList);
         rvSearchList.setAdapter(searchResultAdapter);
@@ -172,8 +157,12 @@ public class SearchActivity extends BaseActivity {
         searchResultAdapter.setItemClickListener(new SearchResultAdapter.ItemClickListener() {
             @Override
             public void onItemClicked(SearchModel item) {
-                Intent intent = new Intent(SearchActivity.this, DocumentViewActivity.class);
+                Intent intent = new Intent(SearchActivity.this, FolderStructureActivity.class);
+                intent.putExtra(AppConfig.BUNDLE_TYPE,item.getType());
+                intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,item.getName());
+                intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,item.getId());
                 startActivity(intent);
+
             }
         });
     }

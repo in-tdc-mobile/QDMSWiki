@@ -21,6 +21,7 @@ import com.mariapps.qdmswiki.documents.model.DocumentsModel;
 import com.mariapps.qdmswiki.documents.model.TagModel;
 import com.mariapps.qdmswiki.home.adapter.RecommendedRecentlyAdapter;
 import com.mariapps.qdmswiki.home.model.RecommendedRecentlyModel;
+import com.mariapps.qdmswiki.search.view.FolderStructureActivity;
 
 import java.util.ArrayList;
 
@@ -85,7 +86,7 @@ public class DocumentsFragment extends BaseFragment {
         documentsAdapter.setRowClickListener(new DocumentsAdapter.RowClickListener() {
             @Override
             public void onItemClicked(DocumentsModel documentsModel) {
-                Intent intent = new Intent(getActivity(), DocumentViewActivity.class);
+                Intent intent = new Intent(getActivity(), FolderStructureActivity.class);
                 startActivity(intent);
 
             }

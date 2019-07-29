@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <RelativeLayout
-        android:id="@+id/searchRL"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/grey_300">
-
         <com.mariapps.qdmswiki.custom.CustomEditText
             android:id="@+id/searchET"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/dimen_50dp"
             android:layout_centerInParent="true"
             android:layout_margin="@dimen/dimen_8dp"
             android:background="@drawable/drawable_search_edittext_white"
@@ -24,17 +17,18 @@
             android:paddingEnd="@dimen/dimen_10dp"
             android:singleLine="true" />
 
-    </RelativeLayout>
+        <com.mariapps.qdmswiki.custom.CustomRecyclerView
+            android:id="@+id/searchTypeRV"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimen_50dp">
+        </com.mariapps.qdmswiki.custom.CustomRecyclerView>
 
-    <com.mariapps.qdmswiki.custom.CustomProgressBar
-        android:id="@+id/lfProgress"
+
+    <com.mariapps.qdmswiki.custom.CustomRecyclerView
+        android:id="@+id/searchResultRV"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dimen_15dp"
-        android:visibility="gone"
-        app:amount="10"
-        app:animationDirection="left"
-        app:duration="20"
-        app:endColor="@color/blue_A200"
-        app:startColor="@color/grey_500" />
+        android:layout_height="match_parent">
+    </com.mariapps.qdmswiki.custom.CustomRecyclerView>
+
 
 </LinearLayout>

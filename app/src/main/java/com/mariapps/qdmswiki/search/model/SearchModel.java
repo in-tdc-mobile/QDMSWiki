@@ -8,6 +8,8 @@ public class SearchModel implements Serializable {
 
     @SerializedName("pId")
     public Integer id;
+    @SerializedName("pFolderId")
+    public Integer folderId;
     @SerializedName("pType")
     public String type;
     @SerializedName("pName")
@@ -15,8 +17,9 @@ public class SearchModel implements Serializable {
     @SerializedName("pDescription")
     public String description;
 
-    public SearchModel(Integer id, String type, String name, String description) {
+    public SearchModel(Integer id, Integer folderId, String type, String name, String description) {
         this.id = id;
+        this.folderId = folderId;
         this.type = type;
         this.name = name;
         this.description = description;
@@ -52,5 +55,13 @@ public class SearchModel implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Integer getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(Integer folderId) {
+        this.folderId = folderId;
     }
 }

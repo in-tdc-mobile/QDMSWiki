@@ -15,8 +15,8 @@ import com.mariapps.qdmswiki.bookmarks.model.BookmarkModel;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.documents.view.DocumentInfoViewActivity;
-import com.mariapps.qdmswiki.documents.view.DocumentViewActivity;
 import com.mariapps.qdmswiki.home.view.HomeActivity;
+import com.mariapps.qdmswiki.search.view.FolderStructureActivity;
 
 import java.util.ArrayList;
 
@@ -76,7 +76,7 @@ public class BookmarkActivity extends BaseActivity {
         bookmarkAdapter.setRowClickListener(new BookmarkAdapter.RowClickListener() {
             @Override
             public void onItemClicked(BookmarkModel bookmarkModel) {
-                Intent intent = new Intent(BookmarkActivity.this, DocumentViewActivity.class);
+                Intent intent = new Intent(BookmarkActivity.this, FolderStructureActivity.class);
                 startActivity(intent);
             }
         });
