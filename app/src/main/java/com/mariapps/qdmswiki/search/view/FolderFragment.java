@@ -160,7 +160,7 @@ public class FolderFragment extends BaseFragment {
         searchList.add(new SearchModel(7, 1,"Document", "Information Technology", "ECDIS Manual"));
         searchList.add(new SearchModel(8, 6,"Document", "Safety Management Manual", "Safety Management Manual Appendix"));
         searchList.add(new SearchModel(9, 3,"Document", "LPG Carrier Manual", "LPG Carrier Manual"));
-        searchList.add(new SearchModel(10, 1,"Folder", "GDPR Manual", "General Data Protection Manual"));
+        searchList.add(new SearchModel(10, 1,"Folder", "Ethical Ship Operations Policy", "General Data Protection Manual"));
         searchList.add(new SearchModel(11, 10,"Document", "Information Technology", "ECDIS Manual"));
 
         ArrayList<SearchModel> selectedList = new ArrayList<>();
@@ -185,11 +185,16 @@ public class FolderFragment extends BaseFragment {
                     FolderFragment folderFragment = new FolderFragment();
                     Bundle args = new Bundle();
                     args.putInt(AppConfig.BUNDLE_FOLDER_ID, id);
+                    args.putString(AppConfig.BUNDLE_FOLDER_NAME, folderName);
                     folderFragment.setArguments(args);
-                    ((FolderStructureActivity) getActivity()).replaceFragments(folderFragment);
+                    ((FolderStructureActivity) getActivity()).replaceFragments(folderFragment,id,folderName);
                 }
                 else{
-                    ((FolderStructureActivity) getActivity()).replaceFragments(new DocumentViewFragment());
+                    DocumentViewFragment documentViewFragment = new DocumentViewFragment();
+                    Bundle args = new Bundle();
+                    args.putString(AppConfig.BUNDLE_FOLDER_NAME, folderName);
+                    documentViewFragment.setArguments(args);
+                    ((FolderStructureActivity) getActivity()).replaceFragments(documentViewFragment,id,folderName);
                 }
                 ((FolderStructureActivity)getActivity()).initBreadCrumb(folderName,id);
             }

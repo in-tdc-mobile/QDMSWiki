@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.LinearLayoutManager;
+import android.view.KeyEvent;
 import android.view.View;
 
 import com.mariapps.qdmswiki.AppConfig;
@@ -50,16 +51,15 @@ public class FolderStructureActivity extends BaseActivity {
             type = getIntent().getExtras().getString(AppConfig.BUNDLE_TYPE);
             folderName = getIntent().getExtras().getString(AppConfig.BUNDLE_FOLDER_NAME);
             id = getIntent().getExtras().getInt(AppConfig.BUNDLE_FOLDER_ID);
+            headingTV.setText(folderName);
         }
 
-        if(type.equals("Document")){
+        if (type.equals("Document")) {
             // Begin the transaction
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-
             ft.replace(R.id.frameLayout, new DocumentViewFragment());
             ft.commit();
-        }
-        else{
+        } else {
             // Begin the transaction
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             FolderFragment folderFragment = new FolderFragment();
@@ -70,30 +70,30 @@ public class FolderStructureActivity extends BaseActivity {
             ft.commit();
         }
 
-        initBreadCrumb(folderName,id);
+        initBreadCrumb(folderName, id);
     }
 
     public void initBreadCrumb(String folderName, Integer id) {
         breadCrumbRV.setHasFixedSize(true);
         breadCrumbRV.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        breadCrumbAdapter = new BreadCrumbAdapter(initBreadCrumbList(folderName,id), this);
+        breadCrumbAdapter = new BreadCrumbAdapter(initBreadCrumbList(folderName, id), this);
         breadCrumbAdapter.setBreadCrumbListener(new BreadCrumbAdapter.BreadCrumbListener() {
 
             @Override
-            public void onClick(int count, Integer id) {
-                    popUptoPosition(count,id);
+            public void onClick(int count, Integer id, String heading) {
+                popUptoPosition(count, id, heading);
             }
         });
 
         breadCrumbRV.setAdapter(breadCrumbAdapter);
     }
 
-    private List<BreadCrumbItem> initBreadCrumbList (String folderName,Integer id){
+    private List<BreadCrumbItem> initBreadCrumbList(String folderName, Integer id) {
         breadCrumbItems.add(new BreadCrumbItem(folderName, id));
         return breadCrumbItems;
     }
 
-    private void popUptoPosition(int count, Integer id) {
+    private void popUptoPosition(int count, Integer id, String heading) {
         FragmentManager fm = getSupportFragmentManager();
         for (int i = 0; i < count; i++) {
             fm.popBackStack();
@@ -103,8 +103,9 @@ public class FolderStructureActivity extends BaseActivity {
         FolderFragment folderFragment = new FolderFragment();
         Bundle args = new Bundle();
         args.putInt(AppConfig.BUNDLE_FOLDER_ID, id);
+        args.putString(AppConfig.BUNDLE_FOLDER_NAME, heading);
         folderFragment.setArguments(args);
-        replaceFragments(folderFragment);
+        replaceFragments(folderFragment,id,heading);
     }
 
     @Override
@@ -118,7 +119,7 @@ public class FolderStructureActivity extends BaseActivity {
     }
 
 
-    @OnClick({R.id.backBtn,R.id.homeTV})
+    @OnClick({R.id.backBtn, R.id.homeTV})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.backBtn:
@@ -128,13 +129,37 @@ public class FolderStructureActivity extends BaseActivity {
                 finish();
                 break;
         }
-
-        onBackPressed();
     }
 
-    public void replaceFragments(Fragment fragment) {
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if ((keyCode == KeyEvent.KEYCODE_BACK))
+        {
+            onBackButtonClick();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    public void onBackButtonClick() {
+        int galleryCount = breadCrumbItems.size();
+        if(galleryCount == 1)
+            finish();
+        else {
+            id = breadCrumbItems.get(breadCrumbItems.size()- 2).getId();
+            folderName = breadCrumbItems.get(breadCrumbItems.size()- 2).getHeading();
+            popUptoPosition(1, id,folderName);
+        }
+    }
+
+
+    public void replaceFragments(Fragment fragment,int newId, String newName) {
         // Insert the fragment by replacing any existing fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
+        id = newId;
+        folderName = newName;
+        headingTV.setText(folderName);
         fragmentManager.beginTransaction().replace(R.id.frameLayout, fragment)
                 .commit();
     }
