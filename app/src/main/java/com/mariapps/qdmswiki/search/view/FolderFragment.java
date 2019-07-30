@@ -188,6 +188,7 @@ public class FolderFragment extends BaseFragment {
                     args.putString(AppConfig.BUNDLE_FOLDER_NAME, folderName);
                     folderFragment.setArguments(args);
                     ((FolderStructureActivity) getActivity()).replaceFragments(folderFragment,id,folderName);
+                    ((FolderStructureActivity)getActivity()).initBreadCrumb(folderName,id);
                 }
                 else{
                     DocumentViewFragment documentViewFragment = new DocumentViewFragment();
@@ -196,7 +197,7 @@ public class FolderFragment extends BaseFragment {
                     documentViewFragment.setArguments(args);
                     ((FolderStructureActivity) getActivity()).replaceFragments(documentViewFragment,id,folderName);
                 }
-                ((FolderStructureActivity)getActivity()).initBreadCrumb(folderName,id);
+
             }
         });
     }

@@ -54,14 +54,19 @@ public class BreadCrumbAdapter extends RecyclerView.Adapter<BreadCrumbAdapter.Br
             holder.titleTV.setTextColor(Color.parseColor("#000000"));
             holder.titleTV.setAlpha(0.54f);
         }
+
         holder.breadCrumbMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    breadCrumbListener.onClick((breadCrumbList.size()-1)-holder.getAdapterPosition(),
-                            breadCrumbList.get(i).getId(),breadCrumbList.get(i).getHeading());
+
+                breadCrumbListener.onClick((breadCrumbList.size()-1)-holder.getAdapterPosition(),
+                        breadCrumbList.get(i).getId(),breadCrumbList.get(i).getHeading());
+
 
             }
         });
+
+
     }
 
     @Override

@@ -81,19 +81,31 @@ public class FolderStructureActivity extends BaseActivity {
 
             @Override
             public void onClick(int count, Integer id, String heading) {
-                popUptoPosition(count, id, heading);
+                popUptoPosition(count, id, heading,"ITEM_CLICKED");
             }
         });
 
         breadCrumbRV.setAdapter(breadCrumbAdapter);
     }
 
+
     private List<BreadCrumbItem> initBreadCrumbList(String folderName, Integer id) {
         breadCrumbItems.add(new BreadCrumbItem(folderName, id));
         return breadCrumbItems;
     }
 
-    private void popUptoPosition(int count, Integer id, String heading) {
+    @Override
+    public void onBackPressed() {
+        if(breadCrumbItems.size() == 0)
+            finish();
+        else {
+            id = breadCrumbItems.get(breadCrumbItems.size() - 1).getId();
+            folderName = breadCrumbItems.get(breadCrumbItems.size() - 1).getHeading();
+            popUptoPosition(breadCrumbItems.size() - 1 - (breadCrumbItems.size() - 1), id, folderName, "BACK_CLICKED");
+        }
+    }
+
+    private void popUptoPosition(int count, Integer id, String heading,String from) {
         FragmentManager fm = getSupportFragmentManager();
         for (int i = 0; i < count; i++) {
             fm.popBackStack();
@@ -106,18 +118,19 @@ public class FolderStructureActivity extends BaseActivity {
         args.putString(AppConfig.BUNDLE_FOLDER_NAME, heading);
         folderFragment.setArguments(args);
         replaceFragments(folderFragment,id,heading);
+
+        if(from.equals("BACK_CLICKED"))
+            breadCrumbItems.remove(breadCrumbItems.size()-1);
     }
 
     @Override
     protected void setUpPresenter() {
-
     }
 
     @Override
     protected void isNetworkAvailable(boolean isConnected) {
 
     }
-
 
     @OnClick({R.id.backBtn, R.id.homeTV})
     public void onClick(View view) {
@@ -130,29 +143,6 @@ public class FolderStructureActivity extends BaseActivity {
                 break;
         }
     }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)
-    {
-        if ((keyCode == KeyEvent.KEYCODE_BACK))
-        {
-            onBackButtonClick();
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-    public void onBackButtonClick() {
-        int galleryCount = breadCrumbItems.size();
-        if(galleryCount == 1)
-            finish();
-        else {
-            id = breadCrumbItems.get(breadCrumbItems.size()- 2).getId();
-            folderName = breadCrumbItems.get(breadCrumbItems.size()- 2).getHeading();
-            popUptoPosition(1, id,folderName);
-        }
-    }
-
 
     public void replaceFragments(Fragment fragment,int newId, String newName) {
         // Insert the fragment by replacing any existing fragment
