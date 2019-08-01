@@ -57,7 +57,12 @@ public class FolderStructureActivity extends BaseActivity {
         if (type.equals("Document")) {
             // Begin the transaction
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.frameLayout, new DocumentViewFragment());
+            DocumentViewFragment documentViewFragment = new DocumentViewFragment();
+            Bundle args = new Bundle();
+            args.putInt(AppConfig.BUNDLE_FOLDER_ID, id);
+            args.putString(AppConfig.BUNDLE_FOLDER_NAME, folderName);
+            documentViewFragment.setArguments(args);
+            ft.replace(R.id.frameLayout, documentViewFragment);
             ft.commit();
         } else {
             // Begin the transaction

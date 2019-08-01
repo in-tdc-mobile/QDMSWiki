@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.applicationinfo.view.ApplicationInfoActivity;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
@@ -25,6 +26,7 @@ import com.mariapps.qdmswiki.home.view.HomeActivity;
 import java.util.ArrayList;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class DocumentInfoViewActivity extends BaseActivity {
@@ -65,6 +67,8 @@ public class DocumentInfoViewActivity extends BaseActivity {
     private DocumentInfoModel documentInfoModel;
     private ArrayList<TagModel> tagList = new ArrayList<>();
     private ArrayList<UserModel> usersList = new ArrayList<>();
+    private String folderName;
+    private Integer id;
 
     @Override
     protected void setUpPresenter() {
@@ -80,6 +84,14 @@ public class DocumentInfoViewActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_document_info);
+        ButterKnife.bind(this);
+
+        try{
+            Bundle bundle = getIntent().getExtras();
+            id = bundle.getInt(AppConfig.BUNDLE_FOLDER_ID);
+            folderName = bundle.getString(AppConfig.BUNDLE_FOLDER_NAME);
+        }
+        catch (Exception e){}
 
         tagsRV.setLayoutManager(new LinearLayoutManager(this, LinearLayout.HORIZONTAL, false));
         tagsRV.setHasFixedSize(true);
@@ -88,6 +100,7 @@ public class DocumentInfoViewActivity extends BaseActivity {
         usersRV.setLayoutManager(new LinearLayoutManager(this));
         usersRV.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         headingTV.setText(getResources().getString(R.string.string_document_details));
+        nameTV.setText(folderName);
 
         setTagList();
         setUserList();
@@ -142,10 +155,13 @@ public class DocumentInfoViewActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.backBtn, R.id.homeTV, R.id.linNum})
+    @OnClick({R.id.backBtn, R.id.homeTV,R.id.nameTV, R.id.linNum})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.backBtn:
+                onBackPressed();
+                break;
+            case R.id.nameTV:
                 onBackPressed();
                 break;
             case R.id.homeTV:

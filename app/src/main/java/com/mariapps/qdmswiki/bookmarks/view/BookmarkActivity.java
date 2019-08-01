@@ -8,6 +8,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
+import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.bookmarks.adapter.BookmarkAdapter;
@@ -38,6 +39,9 @@ public class BookmarkActivity extends BaseActivity {
 
     private BookmarkAdapter bookmarkAdapter;
     private ArrayList<BookmarkModel> bookMarkList = new ArrayList<>();
+    private String folderName;
+    private Integer id;
+
 
     @Override
     protected void setUpPresenter() {
@@ -55,9 +59,17 @@ public class BookmarkActivity extends BaseActivity {
         setContentView(R.layout.activity_bookmark);
         ButterKnife.bind(this);
 
+        try{
+            Bundle bundle = getIntent().getExtras();
+            id = bundle.getInt(AppConfig.BUNDLE_FOLDER_ID);
+            folderName = bundle.getString(AppConfig.BUNDLE_FOLDER_NAME);
+        }
+        catch (Exception e){}
+
         bookmarksRV.setHasFixedSize(true);
         bookmarksRV.setLayoutManager(new LinearLayoutManager(this));
         bookmarksRV.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        nameTV.setText(folderName);
 
         initView();
         initRecyclerView();
@@ -87,10 +99,13 @@ public class BookmarkActivity extends BaseActivity {
         titleTV.setText(getString(R.string.string_bookmarks));
     }
 
-    @OnClick({R.id.backBtn, R.id.homeTV})
+    @OnClick({R.id.backBtn, R.id.nameTV, R.id.homeTV})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.backBtn:
+                onBackPressed();
+                break;
+            case R.id.nameTV:
                 onBackPressed();
                 break;
             case R.id.homeTV:

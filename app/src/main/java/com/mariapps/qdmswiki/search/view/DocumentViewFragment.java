@@ -16,6 +16,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
+import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseFragment;
 import com.mariapps.qdmswiki.bookmarks.view.BookmarkActivity;
@@ -36,6 +37,9 @@ public class DocumentViewFragment extends BaseFragment {
     @BindView(R.id.webView)
     WebView webView;
 
+    private String folderName;
+    private Integer id;
+
     @Override
     protected void setUpPresenter() {
 
@@ -46,6 +50,13 @@ public class DocumentViewFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_document_view, container, false);
         ButterKnife.bind(this, view);
+
+        try{
+            Bundle args = getArguments();
+            id= args.getInt(AppConfig.BUNDLE_FOLDER_ID, 0);
+            folderName= args.getString(AppConfig.BUNDLE_FOLDER_NAME, "");
+        }
+        catch (Exception e){}
 
         return view;
     }
@@ -83,6 +94,8 @@ public class DocumentViewFragment extends BaseFragment {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getActivity(), DocumentInfoViewActivity.class);
+                        intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,folderName);
+                        intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,id);
                         startActivity(intent);
                     }
                 });
@@ -91,6 +104,8 @@ public class DocumentViewFragment extends BaseFragment {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getActivity(), BookmarkActivity.class);
+                        intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,folderName);
+                        intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,id);
                         startActivity(intent);
                     }
                 });
