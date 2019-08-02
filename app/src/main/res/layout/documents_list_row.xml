@@ -30,7 +30,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.10"
-            android:singleLine="true"
             android:textColor="@color/black"
             android:textSize="@dimen/ter_text_size"
             app:fontface="@string/string_lato_semi_bold" />
