@@ -44,13 +44,18 @@
                     android:layout_height="match_parent"
                     android:weightSum="1">
 
-                    <android.support.v7.widget.AppCompatImageView
-                        android:id="@+id/headingIV"
-                        android:layout_width="@dimen/dimen_50dp"
+                    <LinearLayout
+                        android:layout_width="@dimen/dimen_70dp"
                         android:layout_height="match_parent"
-                        android:layout_gravity="center_horizontal"
-                        app:srcCompat="@drawable/ic_qdms_logo"
-                        android:gravity="center_vertical" />
+                        android:background="@drawable/ic_qdms_logo"
+                        android:orientation="horizontal"/>
+
+                    <!--<android.support.v7.widget.AppCompatImageView-->
+                        <!--android:id="@+id/headingIV"-->
+                        <!--android:layout_width="@dimen/dimen_50dp"-->
+                        <!--android:layout_height="500dp"-->
+                        <!--android:layout_gravity="center_vertical"-->
+                        <!--app:srcCompat="@drawable/ic_qdms_logo" />-->
 
                     <LinearLayout
                         android:layout_alignParentEnd="true"
@@ -60,8 +65,8 @@
 
                         <android.support.v7.widget.AppCompatImageView
                         android:id="@+id/userImageIV"
-                        android:layout_width="@dimen/dimen_clickable_icon"
-                        android:layout_height="@dimen/dimen_clickable_icon"
+                        android:layout_width="@dimen/dimen_40dp"
+                        android:layout_height="@dimen/dimen_40dp"
                         android:layout_alignParentEnd="true"
                         android:layout_centerInParent="true"
                         android:layout_gravity="center_vertical"
@@ -71,8 +76,8 @@
 
                     <android.support.v7.widget.AppCompatImageView
                         android:id="@+id/notificationIV"
-                        android:layout_width="@dimen/dimen_clickable_icon"
-                        android:layout_height="@dimen/dimen_clickable_icon"
+                        android:layout_width="@dimen/dimen_40dp"
+                        android:layout_height="@dimen/dimen_40dp"
                         android:layout_alignParentEnd="true"
                         android:layout_centerInParent="true"
                         android:layout_gravity="center_vertical"

@@ -19,6 +19,7 @@ import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseFragment;
 import com.mariapps.qdmswiki.custom.CustomEditText;
 import com.mariapps.qdmswiki.custom.CustomProgressBar;
+import com.mariapps.qdmswiki.custom.CustomViewPager;
 import com.mariapps.qdmswiki.home.adapter.HomeFragmentAdapter;
 import com.mariapps.qdmswiki.search.view.SearchActivity;
 
@@ -47,7 +48,7 @@ public class HomeFragment extends BaseFragment {
 //    @BindView(R.id.pullToRefresh)
 //    SwipeRefreshLayout pullToRefresh;
     @BindView(R.id.viewPager)
-    ViewPager viewPager;
+    CustomViewPager viewPager;
 
     private FragmentManager fragmentManager;
     private HomeFragmentAdapter homeFragmentAdapter;
