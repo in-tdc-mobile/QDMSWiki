@@ -10,9 +10,12 @@ public class AppConfig {
     public static final String BUNDLE_TYPE = "type";
     public static final String BUNDLE_FOLDER_NAME= "foldername";
     public static final String BUNDLE_FOLDER_ID= "folderid";
+    public static final String BUNDLE_NAV_DETAILS_OBJECT = "bundlenavdetailsobject";
+    public static final String BUNDLE_NAV_DETAILS_LIST = "bundlenavdetailslist";
 
     //Fragments
     public static final String FRAG_HOME = "fragmenthome";
     public static final String FRAG_NAV_DRAWER = "fragmentnavdrawer";
+    public static final String FRAG_NAV_DETAILS_DRAWER = "fragmentnavdetailsdrawer";
 
 }

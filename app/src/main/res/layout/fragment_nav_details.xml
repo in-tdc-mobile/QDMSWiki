@@ -30,9 +30,8 @@
             android:layout_height="match_parent"
             android:layout_marginStart="@dimen/dimen_8dp"
             android:gravity="center_vertical"
-            android:text="@string/string_heading"
-            android:textColor="@color/white"
-            android:textSize="@dimen/dimen_20sp"
+            android:textColor="@color/searchType"
+            android:textSize="@dimen/primary_text_size"
             app:fontface="@string/string_lato_semi_bold" />
     </LinearLayout>
 
@@ -43,7 +42,6 @@
         android:layout_gravity="left|start"
         android:id="@+id/navigationRV"
         android:choiceMode="singleChoice"
-        android:divider="@null"
         android:scrollbars="vertical"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager">
     </com.mariapps.qdmswiki.custom.CustomRecyclerView>

@@ -1,7 +1,6 @@
 package com.mariapps.qdmswiki.home.view;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,38 +8,35 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.Toolbar;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ProgressBar;
+
 import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.custom.CustomViewPager;
+import com.mariapps.qdmswiki.home.model.NavDrawerObj;
 import com.mariapps.qdmswiki.notification.view.NotificationActivity;
 import com.mariapps.qdmswiki.settings.view.SettingsActivity;
-import com.mariapps.qdmswiki.splash.view.SplashScreenActivity;
 import com.mariapps.qdmswiki.utils.ScreenUtils;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class HomeActivity extends BaseActivity{
+public class HomeActivity extends BaseActivity {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -52,7 +48,7 @@ public class HomeActivity extends BaseActivity{
     FrameLayout navFL;
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
-//    @BindView(R.id.loading_spinner)
+    //    @BindView(R.id.loading_spinner)
 //    ProgressBar loadingSpinner;
     @BindView(R.id.mainVP)
     CustomViewPager mainVP;
@@ -69,6 +65,9 @@ public class HomeActivity extends BaseActivity{
     private ActionBarDrawerToggle mDrawerToggle;
     private MainViewPager mainViewPager;
     private NavigationDrawerFragment navigationDrawerFragment;
+    private ArrayList<NavDrawerObj.MenuItemsEntity> menuItemsEntities;
+    private NavDrawerObj.MenuItemsEntity menuItemsEntity;
+    private NavDrawerObj navDrawerObj;
     private int currentPosition = 0;
     private int newPosition = 0;
 
@@ -77,10 +76,37 @@ public class HomeActivity extends BaseActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+
+        initNavigationDrawerItems();
         setSupportActionBar(toolbar);
         initViewpager();
-        initNavDrawer();
         initBottomNavigation();
+    }
+
+    private void initNavigationDrawerItems() {
+        navDrawerObj = new NavDrawerObj();
+        menuItemsEntities = new ArrayList<>();
+        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(1, -1, "ISO AND ISM Manual", "ISO AND ISM Manual", "ISO AND ISM Manual", false, 1, "Folder"));
+        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(2, -1, "Data Protection", "Data Protection", "Data Protection", false, 2, "Folder"));
+        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(3, -1, "Shore Procedures", "Shore Procedures", "Shore Procedures", false, 3, "Folder"));
+        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(4, -1, "Ship Procedures", "Ship Procedures", "Ship Procedures", false, 4, "Folder"));
+        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(5, -1, "BSM Circulars", "BSM Circulars", "BSM Circulars", false, 5, "Folder"));
+
+        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(6, 1, "Ship Manual test", "Ship Manual test", "Ship Manual test", false, 1, "File"));
+        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(7, 1, "Draft DOC_QA", "Draft DOC_QA", "Draft DOC_QA", false, 2, "File"));
+        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(8, 1, "Normative References", "Normative References", "Normative References", false, 3, "Folder"));
+        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(9, 1, "Terms and definitions", "Terms and definitions", "Terms and definitions", false, 4, "Folder"));
+        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(10, 2, "Management System", "Management System", "Management System", false, 5, "Folder"));
+
+        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(11, 8, "Draft DOC_QA", "Draft DOC_QA", "Draft DOC_QA", false, 1, "File"));
+        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(12, 3, "Data Protection", "Data Protection", "Data Protection", false, 2, "Folder"));
+        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(13, 3, "Shore Procedures", "Shore Procedures", "Shore Procedures", false, 3, "Folder"));
+        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(14, 4, "Ship Procedures", "Ship Procedures", "Ship Procedures", false, 4, "Folder"));
+        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(15, 13, "BSM Circulars", "BSM Circulars", "BSM Circulars", false, 5, "Folder"));
+
+        navDrawerObj.setMenuItemsEntities(menuItemsEntities);
+
+        initNavDrawer();
     }
 
     @OnClick({R.id.userImageIV, R.id.notificationIV})
@@ -143,11 +169,14 @@ public class HomeActivity extends BaseActivity{
 
         });
 
-        drawerLayout.setDrawerListener(mDrawerToggle);
+        drawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.setDrawerIndicatorEnabled(false);
         mDrawerToggle.setHomeAsUpIndicator(R.drawable.ic_menu);
         mDrawerToggle.syncState();
+
         setupFragments(findFragmentById(AppConfig.FRAG_NAV_DRAWER), false, false);
+
+
     }
 
     private void initBottomNavigation() {
@@ -237,10 +266,33 @@ public class HomeActivity extends BaseActivity{
             case AppConfig.FRAG_NAV_DRAWER:
                 navigationDrawerFragment = new NavigationDrawerFragment();
                 Bundle bundlenavDrawer = new Bundle();
-              //  bundlenavDrawer.putSerializable(AppConfig.BUNDLE_NAV_DRAWER, (Serializable) navDrawerResponseObj);
+                bundlenavDrawer.putSerializable(AppConfig.BUNDLE_NAV_DRAWER, (Serializable) navDrawerObj);
+                navigationDrawerFragment.setNavigationListener(new NavigationDrawerFragment.NavigationListener() {
+                    @Override
+                    public void onItemClicked(NavDrawerObj.MenuItemsEntity menuEntity) {
+                        menuItemsEntity = menuEntity;
+                        setupFragments(findFragmentById(AppConfig.FRAG_NAV_DETAILS_DRAWER), true, true);
+                    }
+                });
+
                 navigationDrawerFragment.setArguments(bundlenavDrawer);
                 return navigationDrawerFragment;
+            case AppConfig.FRAG_NAV_DETAILS_DRAWER:
+                NavigationDetailFragment navigationDetailFragment = new NavigationDetailFragment();
+                navigationDetailFragment.setNavigationDetailListener(new NavigationDetailFragment.NavigationDetailListener() {
+                    @Override
+                    public void onItemClicked(NavDrawerObj.MenuItemsEntity menuEntity) {
+                        menuItemsEntity = menuEntity;
+                        if(menuItemsEntity.getType().equals("Folder"))
+                            setupFragments(findFragmentById(AppConfig.FRAG_NAV_DETAILS_DRAWER), true, true);
+                    }
 
+                });
+                Bundle bundleNavDetail = new Bundle();
+                bundleNavDetail.putSerializable(AppConfig.BUNDLE_NAV_DETAILS_OBJECT, (Serializable) menuItemsEntity);
+                bundleNavDetail.putSerializable(AppConfig.BUNDLE_NAV_DETAILS_LIST, (Serializable) navDrawerObj);
+                navigationDetailFragment.setArguments(bundleNavDetail);
+                return navigationDetailFragment;
             default:
 
                 return null;
@@ -248,3 +300,4 @@ public class HomeActivity extends BaseActivity{
     }
 
 }
+

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/itemLayout"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/dimen_60dp"
+    android:orientation="vertical"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="?attr/selectableItemBackground">
+
+
+    <LinearLayout
+        android:weightSum="1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:id="@+id/mainRL"
+        android:padding="@dimen/dimen_8dp">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_weight="0.01"
+            android:id="@+id/drawer_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:padding="@dimen/dimen_5dp"/>
+
+        <com.mariapps.qdmswiki.custom.CustomTextView
+            android:layout_weight="0.80"
+            android:text="ghghgfhfghfghgfh"
+            android:id="@+id/drawer_itemName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/dimen_8dp"
+            android:layout_toEndOf="@+id/drawer_icon"
+            android:textColor="@color/black"
+            android:textSize="@dimen/primary_text_size"
+            app:fontface="@string/string_lato_regular" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_weight="0.01"
+            android:layout_marginRight="@dimen/dimen_10dp"
+            android:id="@+id/arrowIV"
+            android:layout_width="@dimen/dimen_30dp"
+            android:layout_height="@dimen/dimen_30dp"
+            android:layout_gravity="center_vertical"
+            android:padding="@dimen/dimen_non_clickable_icon_padding"
+            android:tint="@color/black" />
+
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_1dp"
+        android:alpha="0.5"
+        android:id="@+id/seperatorView"
+        android:background="@color/white"
+        android:visibility="gone"
+        android:paddingTop="@dimen/dimen_10dp"/>
+
+
+</LinearLayout>
+
+
