@@ -29,11 +29,13 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
     private ArrayList<SearchModel> filteredItems;
     private ArrayList<SearchModel> searchList;
     private SearchResultAdapter.ItemClickListener itemClickListener;
+    private String fromPage;
 
-    public SearchResultAdapter(Context context, ArrayList<SearchModel> list) {
+    public SearchResultAdapter(Context context, ArrayList<SearchModel> list, String page) {
         mContext = context;
         searchList = list;
         this.filteredItems = list;
+        this.fromPage = page;
     }
 
     @NonNull
@@ -48,6 +50,9 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
         SearchModel searchModel = filteredItems.get(holder.getAdapterPosition());
         holder.nameTV.setText(searchModel.getName());
         holder.descriptionTV.setText(searchModel.getDescription());
+
+        if(fromPage.equals("FOLDER"))
+            holder.openIV.setVisibility(View.GONE);
 
         if(searchModel.getType().equals("Folder"))
             holder.typeIV.setBackground(ResourcesCompat.getDrawable(mContext.getResources(),R.drawable.ic_folder_inactive,null));

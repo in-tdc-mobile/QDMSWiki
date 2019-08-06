@@ -172,7 +172,7 @@ public class FolderFragment extends BaseFragment {
         }
 
 
-        searchResultAdapter = new SearchResultAdapter(getActivity(), selectedList);
+        searchResultAdapter = new SearchResultAdapter(getActivity(), selectedList,"FOLDER");
         searchResultRV.setAdapter(searchResultAdapter);
         searchResultAdapter.notifyDataSetChanged();
 

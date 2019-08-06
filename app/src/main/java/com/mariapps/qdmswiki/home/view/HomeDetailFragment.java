@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseFragment;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
@@ -78,11 +79,11 @@ public class HomeDetailFragment extends BaseFragment {
         if(documentType.equals("Recently Viewed"))
             documentsList = new ArrayList<>();
         else {
-            documentsList.add(new RecommendedRecentlyModel(1, "General Data Protection Manual General Data Protection Manual General Data Protection Manual", "GDPR Manual", "V1"));
-            documentsList.add(new RecommendedRecentlyModel(2, "ECDIS Manual fsgsgsdfgsdfgdfgdfg", "Information Technology General Data Protection Manual", "V2"));
-            documentsList.add(new RecommendedRecentlyModel(3, "ISO Ethical Ship Operations Policy", "Ethical Ship Operations Policy General Data Protection Manual", "V1"));
-            documentsList.add(new RecommendedRecentlyModel(4, "Safety Management Manual Appendix General Data Protection Manual General Data Protection Manual", "Safety Management Manual", "V1"));
-            documentsList.add(new RecommendedRecentlyModel(5, "LPG Carrier Manual", "LPG Carrier Manual General Data Protection Manual General Data Protection Manual General Data Protection Manual", "V2"));
+            documentsList.add(new RecommendedRecentlyModel(1, "General Data Protection Manual", "GDPR Manual", "V1"));
+            documentsList.add(new RecommendedRecentlyModel(2, "ECDIS Manual", "Information Technology", "V2"));
+            documentsList.add(new RecommendedRecentlyModel(3, "ISO Ethical Ship Operations Policy", "Ethical Ship Operations Policy", "V1"));
+            documentsList.add(new RecommendedRecentlyModel(4, "Safety Management Manual Appendix", "Safety Management Manual", "V1"));
+            documentsList.add(new RecommendedRecentlyModel(5, "LPG Carrier Manual", "LPG Carrier Manual", "V2"));
             documentsList.add(new RecommendedRecentlyModel(6, "General Data Protection Manual", "GDPR Manual", "V1"));
             documentsList.add(new RecommendedRecentlyModel(7, "ECDIS Manual", "Information Technology", "V2"));
         }
@@ -100,6 +101,9 @@ public class HomeDetailFragment extends BaseFragment {
             @Override
             public void onItemClicked(RecommendedRecentlyModel recommendedRecentlyModel) {
                 Intent intent = new Intent(getActivity(), FolderStructureActivity.class);
+                intent.putExtra(AppConfig.BUNDLE_TYPE,"Document");
+                intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,recommendedRecentlyModel.getName());
+                intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,recommendedRecentlyModel.getId());
                 startActivity(intent);
 
             }

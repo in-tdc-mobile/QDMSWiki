@@ -151,7 +151,7 @@ public class SearchActivity extends BaseActivity {
         searchList.add(new SearchModel(10, 1,"Article", "GDPR Manual", "General Data Protection Manual"));
         searchList.add(new SearchModel(11, 1,"Document", "Information Technology", "ECDIS Manual"));
 
-        searchResultAdapter = new SearchResultAdapter(this, searchList);
+        searchResultAdapter = new SearchResultAdapter(this, searchList,"SEARCH");
         rvSearchList.setAdapter(searchResultAdapter);
 
         searchResultAdapter.setItemClickListener(new SearchResultAdapter.ItemClickListener() {

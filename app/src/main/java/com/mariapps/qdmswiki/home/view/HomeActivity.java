@@ -15,6 +15,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +28,7 @@ import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.custom.CustomViewPager;
 import com.mariapps.qdmswiki.home.model.NavDrawerObj;
 import com.mariapps.qdmswiki.notification.view.NotificationActivity;
+import com.mariapps.qdmswiki.search.view.FolderStructureActivity;
 import com.mariapps.qdmswiki.settings.view.SettingsActivity;
 import com.mariapps.qdmswiki.utils.ScreenUtils;
 
@@ -76,9 +78,8 @@ public class HomeActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-
-        initNavigationDrawerItems();
         setSupportActionBar(toolbar);
+        initNavigationDrawerItems();
         initViewpager();
         initBottomNavigation();
     }
@@ -92,13 +93,13 @@ public class HomeActivity extends BaseActivity {
         menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(4, -1, "Ship Procedures", "Ship Procedures", "Ship Procedures", false, 4, "Folder"));
         menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(5, -1, "BSM Circulars", "BSM Circulars", "BSM Circulars", false, 5, "Folder"));
 
-        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(6, 1, "Ship Manual test", "Ship Manual test", "Ship Manual test", false, 1, "File"));
-        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(7, 1, "Draft DOC_QA", "Draft DOC_QA", "Draft DOC_QA", false, 2, "File"));
+        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(6, 1, "Ship Manual test", "Ship Manual test", "Ship Manual test", false, 1, "Document"));
+        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(7, 1, "Draft DOC_QA", "Draft DOC_QA", "Draft DOC_QA", false, 2, "Document"));
         menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(8, 1, "Normative References", "Normative References", "Normative References", false, 3, "Folder"));
         menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(9, 1, "Terms and definitions", "Terms and definitions", "Terms and definitions", false, 4, "Folder"));
         menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(10, 2, "Management System", "Management System", "Management System", false, 5, "Folder"));
 
-        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(11, 8, "Draft DOC_QA", "Draft DOC_QA", "Draft DOC_QA", false, 1, "File"));
+        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(11, 8, "Draft DOC_QA", "Draft DOC_QA", "Draft DOC_QA", false, 1, "Document"));
         menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(12, 3, "Data Protection", "Data Protection", "Data Protection", false, 2, "Folder"));
         menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(13, 3, "Shore Procedures", "Shore Procedures", "Shore Procedures", false, 3, "Folder"));
         menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(14, 4, "Ship Procedures", "Ship Procedures", "Ship Procedures", false, 4, "Folder"));
@@ -144,6 +145,7 @@ public class HomeActivity extends BaseActivity {
         layoutParams.width = (ScreenUtils.getScreenWidth(this) * 3) / 4;
         navFL.setLayoutParams(layoutParams);
 
+
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -164,16 +166,19 @@ public class HomeActivity extends BaseActivity {
         mDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                drawerLayout.openDrawer(GravityCompat.START);
+                if (drawerLayout.isDrawerOpen(GravityCompat.START))
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                else
+                    drawerLayout.openDrawer((int) Gravity.START);
             }
 
         });
 
         drawerLayout.addDrawerListener(mDrawerToggle);
+
         mDrawerToggle.setDrawerIndicatorEnabled(false);
         mDrawerToggle.setHomeAsUpIndicator(R.drawable.ic_menu);
         mDrawerToggle.syncState();
-
         setupFragments(findFragmentById(AppConfig.FRAG_NAV_DRAWER), false, false);
 
 
@@ -285,6 +290,14 @@ public class HomeActivity extends BaseActivity {
                         menuItemsEntity = menuEntity;
                         if(menuItemsEntity.getType().equals("Folder"))
                             setupFragments(findFragmentById(AppConfig.FRAG_NAV_DETAILS_DRAWER), true, true);
+                        else
+                        {
+                            Intent intent = new Intent(HomeActivity.this, FolderStructureActivity.class);
+                            intent.putExtra(AppConfig.BUNDLE_TYPE,menuItemsEntity.getType());
+                            intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,"");
+                            intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,1);
+                            startActivity(intent);
+                        }
                     }
 
                 });

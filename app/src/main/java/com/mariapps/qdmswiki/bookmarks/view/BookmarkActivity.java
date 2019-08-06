@@ -89,6 +89,9 @@ public class BookmarkActivity extends BaseActivity {
             @Override
             public void onItemClicked(BookmarkModel bookmarkModel) {
                 Intent intent = new Intent(BookmarkActivity.this, FolderStructureActivity.class);
+                intent.putExtra(AppConfig.BUNDLE_TYPE,"Document");
+                intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,bookmarkModel.getBookMark());
+                intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,bookmarkModel.getId());
                 startActivity(intent);
             }
         });
