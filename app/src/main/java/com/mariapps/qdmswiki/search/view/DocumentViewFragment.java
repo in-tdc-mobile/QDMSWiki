@@ -23,6 +23,7 @@ import com.mariapps.qdmswiki.bookmarks.view.BookmarkActivity;
 import com.mariapps.qdmswiki.custom.CustomEditText;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.documents.view.DocumentInfoViewActivity;
+import com.mariapps.qdmswiki.home.database.HomeDao;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,6 +40,7 @@ public class DocumentViewFragment extends BaseFragment {
 
     private String folderName;
     private Integer id;
+    private HomeDao homeDao;
 
     @Override
     protected void setUpPresenter() {
@@ -58,7 +60,15 @@ public class DocumentViewFragment extends BaseFragment {
         }
         catch (Exception e){}
 
+        homeDao = new HomeDao(getActivity());
+        loadDocument();
+
         return view;
+    }
+
+    private void loadDocument() {
+        String document = homeDao.fetchDocumentData();
+        webView.loadData(document, "text/html; charset=utf-8", "UTF-8");
     }
 
     @OnClick({R.id.showMenuFab})

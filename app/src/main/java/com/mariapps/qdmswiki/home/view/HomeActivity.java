@@ -1,9 +1,19 @@
 package com.mariapps.qdmswiki.home.view;
 
+import android.app.DownloadManager;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -21,24 +31,38 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.custom.CustomViewPager;
+import com.mariapps.qdmswiki.home.database.HomeDao;
 import com.mariapps.qdmswiki.home.model.NavDrawerObj;
 import com.mariapps.qdmswiki.notification.view.NotificationActivity;
 import com.mariapps.qdmswiki.search.view.FolderStructureActivity;
 import com.mariapps.qdmswiki.settings.view.SettingsActivity;
 import com.mariapps.qdmswiki.utils.ScreenUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class HomeActivity extends BaseActivity {
+public class HomeActivity extends BaseActivity{
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -50,8 +74,6 @@ public class HomeActivity extends BaseActivity {
     FrameLayout navFL;
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
-    //    @BindView(R.id.loading_spinner)
-//    ProgressBar loadingSpinner;
     @BindView(R.id.mainVP)
     CustomViewPager mainVP;
     @BindView(R.id.bottom_navigation)
@@ -70,15 +92,43 @@ public class HomeActivity extends BaseActivity {
     private ArrayList<NavDrawerObj.MenuItemsEntity> menuItemsEntities;
     private NavDrawerObj.MenuItemsEntity menuItemsEntity;
     private NavDrawerObj navDrawerObj;
-    private int currentPosition = 0;
+    int currentPosition = 0;
     private int newPosition = 0;
+    private HomeActivity context;
+    private ProgressDialog progressDialog;
+    private JSONObject jObj;
+    private long downloadID;
+    private HomeDao homeDao;
 
+    private BroadcastReceiver onDownloadComplete = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Fetching the download id received with the broadcast
+            long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+            //Checking if the received broadcast is for our enqueued download by matching download id
+            if (downloadID == id) {
+                Toast.makeText(HomeActivity.this, "Download Completed", Toast.LENGTH_SHORT).show();
+                try {
+                    unzip(Environment.getExternalStorageDirectory()+"/QDMSWiki/Import",Environment.getExternalStorageDirectory()+"/QDMSWiki");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        progressDialog = new ProgressDialog(HomeActivity.this);
+        homeDao = new HomeDao(HomeActivity.this);
+
+        registerReceiver(onDownloadComplete,new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+        context = this;
         setSupportActionBar(toolbar);
+        beginDownload();
         initNavigationDrawerItems();
         initViewpager();
         initBottomNavigation();
@@ -312,5 +362,123 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void beginDownload(){
+        File file=new File(Environment.getExternalStorageDirectory(),"/QDMSWiki/Import");
+        if(file.exists())
+            return;
+
+        progressDialog.setMessage("Downloading files...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        DownloadManager.Request request=new DownloadManager.Request(Uri.parse("https://autoupdater.mariapps.com/Web/Extract1.zip"))
+                .setTitle("Dummy File")// Title of the Download Notification
+                .setDescription("Downloading")// Description of the Download Notification
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)// Visibility of the download Notification
+                .setDestinationUri(Uri.fromFile(file))// Uri of the destination file
+                .setRequiresCharging(false)// Set if charging is required to begin the download
+                .setAllowedOverMetered(true)// Set if download is allowed on Mobile network
+                .setMimeType("application/zip")
+                .setAllowedOverRoaming(true);// Set if download is allowed on roaming network
+
+        DownloadManager downloadManager= (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+        downloadID = downloadManager.enqueue(request);// enqueue puts the download request in the queue.
+    }
+
+    public void unzip(String zipFilePath, String destDirectory) throws IOException {
+        File destDir = new File(destDirectory);
+        if (!destDir.exists()) {
+            destDir.mkdir();
+        }
+        ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath));
+        ZipEntry entry = zipIn.getNextEntry();
+        // iterates over entries in the zip file
+        while (entry != null) {
+            String filePath = destDirectory + File.separator + entry.getName();
+            if (!entry.isDirectory()) {
+                // if the entry is a file, extracts it
+                extractFile(zipIn, filePath);
+            } else {
+                // if the entry is a directory, make the directory
+                File dir = new File(filePath);
+                dir.mkdir();
+            }
+            zipIn.closeEntry();
+            entry = zipIn.getNextEntry();
+        }
+        ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
+        readAndInsertJsonData.execute();
+        zipIn.close();
+    }
+    /**
+     * Extracts a zip entry (file entry)
+     * @param zipIn
+     * @param filePath
+     * @throws IOException
+     */
+    private void extractFile(ZipInputStream zipIn, String filePath) throws IOException {
+        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
+        byte[] bytesIn = new byte[1024];
+        int read = 0;
+        while ((read = zipIn.read(bytesIn)) != -1) {
+            bos.write(bytesIn, 0, read);
+        }
+        bos.close();
+    }
+
+    public class ReadAndInsertJsonData extends AsyncTask<String, Integer, JSONObject> {
+
+        JSONObject jsonObject;
+
+        public ReadAndInsertJsonData() {
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog.setMessage("Extracting files...");
+            progressDialog.show();
+        }
+
+        @Override
+        protected JSONObject doInBackground(String... params) {
+            try {
+
+                String result = "";
+                File file = new File(Environment.getExternalStorageDirectory(),"/QDMSWiki/Extract1/MasterList.json");
+                BufferedReader br = new BufferedReader(new FileReader(file));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    result += line;
+                }
+                jsonObject = new JSONObject(result);
+                br.close();
+
+            } catch (IOException e) {
+                progressDialog.dismiss();
+            } catch (JSONException e) {
+                progressDialog.dismiss();
+                e.printStackTrace();
+            }
+
+            return jsonObject;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            progressDialog.setProgress(values[0]);
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject result) {
+            super.onPostExecute(result);
+            jObj = result;
+            homeDao.insertdocumentCollectionList(jObj,HomeActivity.this);
+            String html= homeDao.fetchDocumentData();
+            progressDialog.dismiss();
+        }
+
+    }
 }
 

@@ -1,7 +1,6 @@
 package com.mariapps.qdmswiki.documents.view;
 
 import android.content.Intent;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,11 +17,8 @@ import com.mariapps.qdmswiki.baseclasses.BaseFragment;
 import com.mariapps.qdmswiki.custom.CustomEditText;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.documents.adapter.DocumentsAdapter;
-import com.mariapps.qdmswiki.documents.model.DepartmentModel;
 import com.mariapps.qdmswiki.documents.model.DocumentsModel;
 import com.mariapps.qdmswiki.documents.model.TagModel;
-import com.mariapps.qdmswiki.home.adapter.RecommendedRecentlyAdapter;
-import com.mariapps.qdmswiki.home.model.RecommendedRecentlyModel;
 import com.mariapps.qdmswiki.search.view.FolderStructureActivity;
 
 import java.util.ArrayList;

@@ -2,7 +2,6 @@ package com.mariapps.qdmswiki.home.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.AppCompatImageView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +10,8 @@ import android.widget.LinearLayout;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
-import com.mariapps.qdmswiki.home.model.RecommendedRecentlyModel;
+import com.mariapps.qdmswiki.documents.model.DocumentsModel;
+
 import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -19,10 +19,10 @@ import butterknife.ButterKnife;
 public class RecommendedRecentlyAdapter extends CustomRecyclerView.Adapter<RecommendedRecentlyAdapter.RecommendedRecentlyVH> {
 
     private Context mContext;
-    private ArrayList<RecommendedRecentlyModel> departmentList;
+    private ArrayList<DocumentsModel> departmentList;
     private RowClickListener rowClickListener;
 
-    public RecommendedRecentlyAdapter(Context context, ArrayList<RecommendedRecentlyModel> list) {
+    public RecommendedRecentlyAdapter(Context context, ArrayList<DocumentsModel> list) {
         mContext = context;
         departmentList = list;
     }
@@ -36,7 +36,7 @@ public class RecommendedRecentlyAdapter extends CustomRecyclerView.Adapter<Recom
 
     @Override
     public void onBindViewHolder(@NonNull final RecommendedRecentlyAdapter.RecommendedRecentlyVH holder, int i) {
-        holder.headingTextTV.setText(departmentList.get(i).getName());
+        holder.headingTextTV.setText(departmentList.get(i).getDocumentName());
         holder.categoryTV.setText(departmentList.get(i).getCategory());
         holder.versionTV.setText(departmentList.get(i).getVersionNo());
 
@@ -76,7 +76,7 @@ public class RecommendedRecentlyAdapter extends CustomRecyclerView.Adapter<Recom
     }
 
     public interface RowClickListener {
-        void onItemClicked(RecommendedRecentlyModel recommendedRecentlyModel) ;
+        void onItemClicked(DocumentsModel documentsModel) ;
     }
 
 }

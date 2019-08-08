@@ -14,8 +14,6 @@ import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.documents.model.DocumentsModel;
-import com.mariapps.qdmswiki.home.adapter.RecommendedRecentlyAdapter;
-import com.mariapps.qdmswiki.home.model.RecommendedRecentlyModel;
 
 import java.util.ArrayList;
 

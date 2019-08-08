@@ -17,6 +17,8 @@ public class DocumentsModel implements Serializable {
     public String date;
     @SerializedName("pTime")
     public String time;
+    @SerializedName("pVersionNo")
+    public String versionNo;
     @SerializedName("pDepartments")
     public ArrayList<TagModel> departments;
 
@@ -27,6 +29,13 @@ public class DocumentsModel implements Serializable {
         this.date = date;
         this.time = time;
         this.departments = departments;
+    }
+
+    public DocumentsModel(Integer id, String documentName, String category, String versionNo) {
+        this.id = id;
+        this.documentName = documentName;
+        this.category = category;
+        this.versionNo = versionNo;
     }
 
     public Integer getId() {
@@ -51,5 +60,9 @@ public class DocumentsModel implements Serializable {
 
     public ArrayList<TagModel> getDepartments() {
         return departments;
+    }
+
+    public String getVersionNo() {
+        return versionNo;
     }
 }

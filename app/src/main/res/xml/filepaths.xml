@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <external-cache-path name="picturesext" path="QDMSWiki/" />
+    <cache-path name="picturesint" path="QDMSWiki/" />
+    <external-path name="cache" path="QDMSWiki/" />
+    <external-cache-path name="files" path="QDMSWiki/" />
+    <external-path name="my_cache" path="." />
+    <external-files-path name="files" path="QDMSWiki/" />
+
+</paths>
