@@ -9,23 +9,33 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.ColorInt;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.Transformation;
+import android.widget.RelativeLayout;
 
 import com.mariapps.qdmswiki.R;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
 
-public class CustomProgressBar extends View {
+public class CustomProgressBar extends RelativeLayout {
 
+    private static final int INTERVAL_DEF = 150;
+    private static final int INDICATOR_COUNT_DEF = 5;
+    private static final int ANIMATION_DURATION_DEF = 1800;
+    private static final int INDICATOR_HEIGHT_DEF = 7;
+    private static final int INDICATOR_RADIUS_DEF = 0;
     public static final int RIGHT_DIRECTION = 1;
     public static final int LEFT_DIRECTION = -1;
 
@@ -44,6 +54,11 @@ public class CustomProgressBar extends View {
     /**
      * Animation tools
      */
+    private int interval;
+    private int animationDuration;
+    private int indicatorHeight;
+    private int indicatorColor;
+    private int indicatorRadius;
     private long animationTime;
     private float animatedRadius;
     private boolean isFirstLaunch = true;
@@ -72,30 +87,64 @@ public class CustomProgressBar extends View {
      * {@link CustomProgressBar#RIGHT_DIRECTION} and {@link CustomProgressBar#LEFT_DIRECTION}
      * */
     private int animationDirection;
+    private Handler handler;
+    private int progressBarCount = 0;
+    private ArrayList<CustomProgressIndicator> customProgressIndicators;
+    private boolean isShowing = false;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public CustomProgressBar(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        initializeAttributes(attrs);
+        initialize(attrs);
         init();
     }
 
     public CustomProgressBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        initializeAttributes(attrs);
+        initialize(attrs);
         init();
     }
 
     public CustomProgressBar(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initializeAttributes(attrs);
+        initialize(attrs);
         init();
     }
 
     public CustomProgressBar(Context context) {
         super(context);
-        initializeAttributes(null);
+        initialize(null);
         init();
+    }
+    private void initialize(@Nullable AttributeSet attrs) {
+        this.handler = new Handler();
+        this.setRotation(-25);
+        setAttributes(attrs);
+        initializeIndicators();
+    }
+
+    private void initializeIndicators() {
+        this.removeAllViews();
+        ArrayList<CustomProgressIndicator> CustomProgressIndicators = new ArrayList<>();
+        for (int i = 0; i < INDICATOR_COUNT_DEF; i++) {
+            CustomProgressIndicator customProgressIndicator = new CustomProgressIndicator(getContext(), indicatorHeight, indicatorColor, indicatorRadius, i);
+//                wp10Indicator.setRotation(i * 14);
+            CustomProgressIndicators.add(customProgressIndicator);
+            this.addView(customProgressIndicator);
+        }
+        this.customProgressIndicators = CustomProgressIndicators;
+    }
+
+
+    private void setAttributes(AttributeSet attributeSet) {
+        TypedArray typedArray = getContext().obtainStyledAttributes(attributeSet, R.styleable.CustomProgressBar);
+        interval = typedArray.getInt(R.styleable.CustomProgressBar_interval, INTERVAL_DEF);
+        animationDuration = typedArray.getInt(R.styleable.CustomProgressBar_animationDuration, ANIMATION_DURATION_DEF);
+        indicatorHeight = typedArray.getInt(R.styleable.CustomProgressBar_indicatorHeight, INDICATOR_HEIGHT_DEF);
+        indicatorRadius = typedArray.getInt(R.styleable.CustomProgressBar_indicatorRadius, INDICATOR_RADIUS_DEF);
+        indicatorColor = typedArray.getColor(R.styleable.CustomProgressBar_indicatorColor,
+                ContextCompat.getColor(getContext(), R.color.colorAccent));
+        typedArray.recycle();
     }
 
     public static int darker(int color, float factor) {
@@ -415,6 +464,42 @@ public class CustomProgressBar extends View {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         startAnimation();
+    }
+
+    public void showProgressBar() {
+        progressBarCount++;
+        if (progressBarCount == 1) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    CustomProgressBar.this.show();
+                }
+            });
+        }
+    }
+
+    private void show() {
+        if (isShowing)
+            return;
+        isShowing = true;
+        showAnimation();
+    }
+
+    private void hide() {
+        clearIndicatorsAnimations();
+        isShowing = false;
+    }
+
+    private void showAnimation() {
+        for (int i = 0; i < customProgressIndicators.size(); i++) {
+            customProgressIndicators.get(i).startAnim(animationDuration, (5 - i) * interval);
+        }
+    }
+
+    private void clearIndicatorsAnimations() {
+        for (CustomProgressIndicator customProgressIndicator : customProgressIndicators) {
+            customProgressIndicator.removeAnim();
+        }
     }
 
     @Retention(RetentionPolicy.SOURCE)

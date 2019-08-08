@@ -53,26 +53,12 @@ public class LoginActivity extends BaseActivity {
         if (ContextCompat.checkSelfPermission(LoginActivity.this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-
-            // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(LoginActivity.this,
                     android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-
             } else {
-
-                // No explanation needed, we can request the permission.
-
                 ActivityCompat.requestPermissions(LoginActivity.this,
                         new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE);
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
             }
         }
 
@@ -98,7 +84,7 @@ public class LoginActivity extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.loginBtn:
-               // if(!usernameET.getText().toString().equals("") && !passwordET.getText().toString().equals("")) {
+                if (!usernameET.getText().toString().equals("") && !passwordET.getText().toString().equals("")) {
                     Animation animation1 = AnimationUtils.loadAnimation(getApplicationContext(),
                             R.anim.anim_scale_down);
                     animation1.setAnimationListener(new Animation.AnimationListener() {
@@ -109,9 +95,12 @@ public class LoginActivity extends BaseActivity {
 
                         @Override
                         public void onAnimationEnd(Animation animation) {
-                          sessionManager.setLoggedin(true);
-                          Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                          startActivity(intent);
+                            loginBtn.setVisibility(View.GONE);
+                            loadinLoadingPB.showProgressBar();
+                            loadinLoadingPB.setVisibility(View.VISIBLE);
+                            sessionManager.setLoggedin(true);
+                            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                            startActivity(intent);
                         }
 
                         @Override
@@ -120,9 +109,9 @@ public class LoginActivity extends BaseActivity {
                         }
                     });
                     loginBtn.startAnimation(animation1);
-//                }else {
-//                    Toast.makeText(this, "Please enter username and password", Toast.LENGTH_SHORT).show();
-//                }
+                } else {
+                    Toast.makeText(this, "Please enter username and password", Toast.LENGTH_SHORT).show();
+                }
 
                 break;
 

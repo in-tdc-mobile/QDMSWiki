@@ -13,18 +13,28 @@
         android:layout_height="match_parent">
 
 
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/splashIV"
+        <LinearLayout
+            android:id="@+id/linSplash"
+            android:layout_marginTop="@dimen/dimen_100dp"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dimen_200dp"
-            android:layout_centerHorizontal="true"
-            app:srcCompat="@drawable/ic_qdms_logo"/>
+            android:layout_height="@dimen/dimen_150dp">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/splashIV"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dimen_200dp"
+                android:layout_centerHorizontal="true"
+                app:srcCompat="@drawable/ic_qdms_logo"/>
+
+        </LinearLayout>
+
+
 
         <LinearLayout
             android:id="@+id/linWelcome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/splashIV"
+            android:layout_below="@+id/linSplash"
             android:layout_marginBottom="@dimen/activity_horizontal_margin"
             android:orientation="vertical">
 
@@ -140,7 +150,7 @@
                     android:layout_centerInParent="true"
                     android:layout_gravity="center"
                     android:visibility="visible"
-                    app:indicatorColor="@color/white"
+                    app:indicatorColor="@color/black"
                     app:indicatorHeight="5">
 
                 </com.mariapps.qdmswiki.custom.CustomProgressBar>

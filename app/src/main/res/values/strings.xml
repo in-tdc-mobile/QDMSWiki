@@ -27,6 +27,10 @@
     <string name="string_application_info">Application Info</string>
     <string name="string_bookmarks">Bookmarks</string>
 
+
+    //Search
+    <string name="string_search_hint">Search...</string>
+
     //fonts
     <string name="string_lato_regular">Lato-Regular.ttf</string>
     <string name="string_lato_semi_bold">Lato-SemiBold.ttf</string>

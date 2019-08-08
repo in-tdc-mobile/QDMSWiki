@@ -321,6 +321,7 @@
     <color name="searchFilter">#E7ACB8</color>
     <color name="searchDocument">#A43358</color>
     <color name="searchDocumentCategory">#393939</color>
+    <color name="searchTypeBg">#E8E8E8</color>
 
     //tab
     <color name="tabIndicator">#CC3A59</color>
