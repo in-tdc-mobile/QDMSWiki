@@ -371,7 +371,7 @@ public class HomeActivity extends BaseActivity{
         progressDialog.setMessage("Downloading files...");
         progressDialog.setCancelable(false);
         progressDialog.show();
-        DownloadManager.Request request=new DownloadManager.Request(Uri.parse("https://autoupdater.mariapps.com/Web/Extract1.zip"))
+        DownloadManager.Request request=new DownloadManager.Request(Uri.parse("https://drive.google.com/uc?export=download&id=1GhFztZFLtlif6j1YXFXHwdggqttN17Ox"))
                 .setTitle("Dummy File")// Title of the Download Notification
                 .setDescription("Downloading")// Description of the Download Notification
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)// Visibility of the download Notification
