@@ -17,7 +17,7 @@
 
     <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">
         <item name="textAllCaps">false</item>
-        <item name="android:textSize">@dimen/ter_text_size</item>
+        <item name="android:textSize">@dimen/primary_text_size</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

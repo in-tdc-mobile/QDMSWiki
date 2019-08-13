@@ -11,7 +11,7 @@
     <LinearLayout
         android:id="@+id/linInfo"
         android:gravity="center"
-        android:layout_weight="0.30"
+        android:layout_weight="0.50"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -31,7 +31,7 @@
     <LinearLayout
         android:id="@+id/linBookmark"
         android:gravity="center"
-        android:layout_weight="0.40"
+        android:layout_weight="0.50"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -50,6 +50,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:visibility="gone"
         android:id="@+id/linDownload"
         android:gravity="center"
         android:layout_weight="0.30"

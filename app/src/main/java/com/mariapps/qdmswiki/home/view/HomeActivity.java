@@ -14,6 +14,8 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.design.internal.BottomNavigationItemView;
+import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -26,11 +28,13 @@ import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mariapps.qdmswiki.AppConfig;
@@ -256,7 +260,7 @@ public class HomeActivity extends BaseActivity{
         bottom_navigation.setItemIconTintList(null);
         bottom_navigation.getMenu().clear();
         Menu menu = bottom_navigation.getMenu();
-        menu.add(Menu.NONE, 0, Menu.NONE, "HOME")
+        menu.add(Menu.NONE,0, Menu.NONE, "HOME")
                 .setIcon(R.drawable.drawable_home_selecter);
 
         menu.add(Menu.NONE, 1, Menu.NONE, "DOCUMENTS")
@@ -264,6 +268,19 @@ public class HomeActivity extends BaseActivity{
 
         menu.add(Menu.NONE, 2, Menu.NONE, "ARTICLES")
                 .setIcon(R.drawable.drawable_article_selector);
+
+       setNotificationBadge();
+    }
+
+    private void setNotificationBadge()
+    {
+        BottomNavigationMenuView menuView = (BottomNavigationMenuView) bottom_navigation.getChildAt(0);
+        BottomNavigationItemView itemView = (BottomNavigationItemView) menuView.getChildAt(1);
+
+        View notificationBadge = LayoutInflater.from(this).inflate(R.layout.notification_badge, menuView, false);
+        TextView textView = notificationBadge.findViewById(R.id.notificationsBadgeTextView);
+        textView.setText("15");
+        itemView.addView(notificationBadge);
     }
 
     @Override

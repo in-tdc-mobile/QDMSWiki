@@ -100,7 +100,7 @@
                 android:layout_marginTop="@dimen/dimen_10dp"
                 app:passwordToggleDrawable="@drawable/drawable_pasword_selector"
                 app:passwordToggleEnabled="true"
-                app:passwordToggleTint="@color/black"
+                app:passwordToggleTint="@color/searchType"
                 android:theme="@style/TextInputEtTheme">
 
                 <android.support.design.widget.TextInputEditText
@@ -137,9 +137,10 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/drawable_rounded_corner"
                     android:text="@string/str_login"
+                    android:textStyle="normal"
                     android:textAllCaps="true"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/dimen_12sp"
+                    android:textSize="@dimen/primary_text_size"
 
                     />
 
@@ -160,8 +161,8 @@
 
 
         <android.support.v7.widget.AppCompatImageView
-            android:layout_width="@dimen/dimen_100dp"
-            android:layout_height="@dimen/dimen_100dp"
+            android:layout_width="@dimen/dimen_80dp"
+            android:layout_height="@dimen/dimen_80dp"
             android:layout_below="@+id/loginLL"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
