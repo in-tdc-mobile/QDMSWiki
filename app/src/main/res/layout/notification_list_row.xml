@@ -40,20 +40,21 @@
             android:orientation="horizontal">
 
             <com.mariapps.qdmswiki.custom.CustomTextView
-                android:layout_weight="0.30"
                 android:id="@+id/statusTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:fontface="@string/string_lato_regular"
+                android:textColor="@color/black"
                 android:textSize="@dimen/medium_text_size"/>
 
             <com.mariapps.qdmswiki.custom.CustomTextView
-                android:layout_weight="0.70"
                 android:id="@+id/updatedByTV"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:fontface="@string/string_lato_regular"
-                android:textSize="@dimen/medium_text_size"/>
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/dimen_5dp"
+                android:textColor="@color/black"
+                android:textSize="@dimen/medium_text_size"
+                app:fontface="@string/string_lato_regular" />
 
         </LinearLayout>
 
@@ -68,6 +69,7 @@
                 android:id="@+id/tvTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/black"
                 app:fontface="@string/string_lato_regular"
                 android:textSize="@dimen/medium_text_size"/>
 

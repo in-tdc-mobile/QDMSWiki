@@ -42,7 +42,8 @@
                     android:layout_toRightOf="@+id/backBtn"
                     android:layout_marginLeft="@dimen/dimen_20dp"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/dimen_18sp" />
+                    app:fontface="@string/string_lato_semi_bold"
+                    android:textSize="@dimen/heading_text_size" />
 
                 <View
                     android:layout_width="match_parent"
