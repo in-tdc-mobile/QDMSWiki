@@ -5,17 +5,16 @@
     android:id="@+id/frameLayoutOne"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    >
+    android:fitsSystemWindows="true">
 
 
     <!--<ProgressBar-->
-        <!--android:id="@+id/loading_spinner"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:indeterminateTint="@color/searchType"-->
-        <!--android:indeterminateTintMode="src_atop" />-->
+    <!--android:id="@+id/loading_spinner"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="center"-->
+    <!--android:indeterminateTint="@color/searchType"-->
+    <!--android:indeterminateTintMode="src_atop" />-->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -34,9 +33,9 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                android:background="@color/white"
                 android:theme="@style/NavigationDrawerTheme"
                 app:contentInsetStart="0dp"
-                android:background="@color/white"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
                 <RelativeLayout
@@ -48,42 +47,55 @@
                         android:layout_width="@dimen/dimen_70dp"
                         android:layout_height="match_parent"
                         android:background="@drawable/ic_qdms_logo"
-                        android:orientation="horizontal"/>
-
-                    <!--<android.support.v7.widget.AppCompatImageView-->
-                        <!--android:id="@+id/headingIV"-->
-                        <!--android:layout_width="@dimen/dimen_50dp"-->
-                        <!--android:layout_height="500dp"-->
-                        <!--android:layout_gravity="center_vertical"-->
-                        <!--app:srcCompat="@drawable/ic_qdms_logo" />-->
+                        android:orientation="horizontal" />
 
                     <LinearLayout
-                        android:layout_alignParentEnd="true"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
+                        android:layout_alignParentEnd="true"
                         android:orientation="horizontal">
 
                         <android.support.v7.widget.AppCompatImageView
-                        android:id="@+id/userImageIV"
-                        android:layout_width="@dimen/dimen_40dp"
-                        android:layout_height="@dimen/dimen_40dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerInParent="true"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginEnd="@dimen/dimen_5dp"
-                        android:padding="7dp"
-                        app:srcCompat="@drawable/ic_user_icon" />
+                            android:id="@+id/userImageIV"
+                            android:layout_width="@dimen/dimen_40dp"
+                            android:layout_height="@dimen/dimen_40dp"
+                            android:layout_alignParentTop="true"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginEnd="@dimen/dimen_5dp"
+                            android:padding="7dp"
+                            app:srcCompat="@drawable/ic_user_icon" />
 
-                    <android.support.v7.widget.AppCompatImageView
-                        android:id="@+id/notificationIV"
-                        android:layout_width="@dimen/dimen_40dp"
-                        android:layout_height="@dimen/dimen_40dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerInParent="true"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginEnd="@dimen/dimen_5dp"
-                        android:padding="7dp"
-                        app:srcCompat="@drawable/ic_notification" />
+                        <RelativeLayout
+                            android:layout_gravity="center"
+                            android:layout_width="@dimen/dimen_50dp"
+                            android:layout_height="wrap_content">
+
+                            <android.support.v7.widget.AppCompatImageView
+                                android:id="@+id/notificationIV"
+                                android:layout_width="@dimen/dimen_40dp"
+                                android:layout_height="@dimen/dimen_40dp"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerInParent="true"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginEnd="@dimen/dimen_5dp"
+                                android:padding="7dp"
+                                app:srcCompat="@drawable/ic_notification" />
+
+                            <com.mariapps.qdmswiki.custom.CustomTextView
+                                android:id="@+id/notificationsBadgeTextView"
+                                android:layout_width="@dimen/dimen_20dp"
+                                android:layout_height="@dimen/dimen_20dp"
+                                android:layout_alignParentEnd="true"
+                                android:layout_marginRight="@dimen/dimen_5dp"
+                                android:layout_gravity="top|center_horizontal"
+                                android:background="@drawable/notification_dot"
+                                android:ellipsize="end"
+                                android:gravity="center"
+                                android:textColor="@color/white"
+                                android:textSize="9dp" />
+
+                        </RelativeLayout>
+
 
                     </LinearLayout>
 
@@ -112,12 +124,11 @@
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         android:layout_marginStart="0dp"
         android:layout_marginEnd="0dp"
         android:background="?android:attr/windowBackground"
-        android:layout_gravity="bottom"
-        app:labelVisibilityMode="labeled"
         app:itemTextColor="@drawable/selected_bottom_navigation_text_color"
-        />
+        app:labelVisibilityMode="labeled" />
 
 </FrameLayout>

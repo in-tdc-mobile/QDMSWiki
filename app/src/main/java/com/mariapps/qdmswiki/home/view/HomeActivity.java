@@ -40,6 +40,7 @@ import android.widget.Toast;
 import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
+import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.custom.CustomViewPager;
 import com.mariapps.qdmswiki.home.database.HomeDao;
 import com.mariapps.qdmswiki.home.model.NavDrawerObj;
@@ -88,7 +89,8 @@ public class HomeActivity extends BaseActivity{
     AppCompatImageView notificationIV;
     @BindView(R.id.appBarMain)
     AppBarLayout appBarMain;
-
+    @BindView(R.id.notificationsBadgeTextView)
+    CustomTextView notificationsBadgeTextView;
 
     private ActionBarDrawerToggle mDrawerToggle;
     private MainViewPager mainViewPager;
@@ -136,6 +138,7 @@ public class HomeActivity extends BaseActivity{
         initNavigationDrawerItems();
         initViewpager();
         initBottomNavigation();
+        setNotificationCount();
     }
 
     private void initNavigationDrawerItems() {
@@ -269,10 +272,10 @@ public class HomeActivity extends BaseActivity{
         menu.add(Menu.NONE, 2, Menu.NONE, "ARTICLES")
                 .setIcon(R.drawable.drawable_article_selector);
 
-       setNotificationBadge();
+       setBadgeCount();
     }
 
-    private void setNotificationBadge()
+    private void setBadgeCount()
     {
         BottomNavigationMenuView menuView = (BottomNavigationMenuView) bottom_navigation.getChildAt(0);
         BottomNavigationItemView itemView = (BottomNavigationItemView) menuView.getChildAt(1);
@@ -281,6 +284,11 @@ public class HomeActivity extends BaseActivity{
         TextView textView = notificationBadge.findViewById(R.id.notificationsBadgeTextView);
         textView.setText("15");
         itemView.addView(notificationBadge);
+    }
+
+    private void setNotificationCount()
+    {
+        notificationsBadgeTextView.setText("10");
     }
 
     @Override
