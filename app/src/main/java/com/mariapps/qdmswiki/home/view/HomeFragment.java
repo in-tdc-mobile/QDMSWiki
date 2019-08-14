@@ -80,8 +80,9 @@ public class HomeFragment extends BaseFragment {
         switch (view.getId()) {
             case R.id.searchET:
                 Intent intent = new Intent(getActivity(), SearchActivity.class);
-                Bundle bundle = ActivityOptions.makeCustomAnimation(getActivity(), R.anim.slide_up, R.anim.slide_down).toBundle();
-                this.startActivity(intent,bundle);
+                this.startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
+
                 break;
         }
     }

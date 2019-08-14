@@ -60,15 +60,13 @@ public class DocumentViewFragment extends BaseFragment {
         }
         catch (Exception e){}
 
-        homeDao = new HomeDao(getActivity());
         loadDocument();
 
         return view;
     }
 
     private void loadDocument() {
-        String document = homeDao.fetchDocumentData();
-        webView.loadData(document, "text/html; charset=utf-8", "UTF-8");
+        webView.loadData("", "text/html; charset=utf-8", "UTF-8");
     }
 
     @OnClick({R.id.showMenuFab})

@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linLayout"
-    android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
@@ -14,31 +14,40 @@
         android:background="@color/searchTypeBg"
         android:orientation="vertical">
 
-    <com.mariapps.qdmswiki.custom.CustomEditText
-        android:id="@+id/searchET"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dimen_50dp"
-        android:layout_centerInParent="true"
-        android:layout_margin="@dimen/dimen_8dp"
-        android:background="@drawable/drawable_search_edittext_white"
-        android:drawableEnd="@drawable/ic_search_grey"
-        android:hint="@string/string_search_hint"
-        android:paddingStart="@dimen/dimen_8dp"
-        android:paddingEnd="@dimen/dimen_10dp"
-        android:singleLine="true" />
+        <com.mariapps.qdmswiki.custom.CustomEditText
+            android:id="@+id/searchET"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimen_50dp"
+            android:layout_centerInParent="true"
+            android:layout_margin="@dimen/dimen_8dp"
+            android:background="@drawable/drawable_search_edittext_white"
+            android:drawableEnd="@drawable/ic_search_grey"
+            android:hint="@string/string_search_hint"
+            android:paddingStart="@dimen/dimen_8dp"
+            android:paddingEnd="@dimen/dimen_10dp"
+            android:singleLine="true" />
 
-    <com.mariapps.qdmswiki.custom.CustomRecyclerView
-        android:id="@+id/searchFilterRV"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dimen_50dp">
-    </com.mariapps.qdmswiki.custom.CustomRecyclerView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimen_60dp">
+
+            <com.mariapps.qdmswiki.custom.CustomRecyclerView
+                android:id="@+id/searchFilterRV"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dimen_50dp"
+                android:layout_gravity="center">
+
+            </com.mariapps.qdmswiki.custom.CustomRecyclerView>
+
+        </LinearLayout>
 
     </LinearLayout>
 
     <com.mariapps.qdmswiki.custom.CustomRecyclerView
         android:id="@+id/searchResultRV"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </com.mariapps.qdmswiki.custom.CustomRecyclerView>
+        android:layout_height="match_parent"
+        android:layout_gravity="center"></com.mariapps.qdmswiki.custom.CustomRecyclerView>
 
 </LinearLayout>

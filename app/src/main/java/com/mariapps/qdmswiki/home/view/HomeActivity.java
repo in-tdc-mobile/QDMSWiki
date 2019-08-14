@@ -44,8 +44,10 @@ import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.custom.CustomViewPager;
 import com.mariapps.qdmswiki.home.database.HomeDao;
 import com.mariapps.qdmswiki.home.model.NavDrawerObj;
+import com.mariapps.qdmswiki.home.presenter.HomePresenter;
 import com.mariapps.qdmswiki.notification.view.NotificationActivity;
 import com.mariapps.qdmswiki.search.view.FolderStructureActivity;
+import com.mariapps.qdmswiki.serviceclasses.APIException;
 import com.mariapps.qdmswiki.settings.view.SettingsActivity;
 import com.mariapps.qdmswiki.utils.ScreenUtils;
 
@@ -67,7 +69,7 @@ import java.util.zip.ZipInputStream;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class HomeActivity extends BaseActivity{
+public class HomeActivity extends BaseActivity implements HomeView{
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -93,6 +95,7 @@ public class HomeActivity extends BaseActivity{
     CustomTextView notificationsBadgeTextView;
 
     private ActionBarDrawerToggle mDrawerToggle;
+    private HomePresenter homePresenter;
     private MainViewPager mainViewPager;
     private NavigationDrawerFragment navigationDrawerFragment;
     private ArrayList<NavDrawerObj.MenuItemsEntity> menuItemsEntities;
@@ -128,13 +131,9 @@ public class HomeActivity extends BaseActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        progressDialog = new ProgressDialog(HomeActivity.this);
-        homeDao = new HomeDao(HomeActivity.this);
-
         registerReceiver(onDownloadComplete,new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
         context = this;
         setSupportActionBar(toolbar);
-        beginDownload();
         initNavigationDrawerItems();
         initViewpager();
         initBottomNavigation();
@@ -291,9 +290,13 @@ public class HomeActivity extends BaseActivity{
         notificationsBadgeTextView.setText("10");
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void setUpPresenter() {
-
+        progressDialog = new ProgressDialog(HomeActivity.this);
+        homePresenter = new HomePresenter(this, this);
+        String url = homePresenter.getDownloadUrl();
+        beginDownload(url);
     }
 
     @Override
@@ -388,7 +391,7 @@ public class HomeActivity extends BaseActivity{
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void beginDownload(){
+    private void beginDownload(String url){
         File file=new File(Environment.getExternalStorageDirectory(),"/QDMSWiki/Import");
         if(file.exists())
             return;
@@ -397,7 +400,7 @@ public class HomeActivity extends BaseActivity{
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-        DownloadManager.Request request=new DownloadManager.Request(Uri.parse("https://drive.google.com/uc?export=download&id=1su4nzOn6-wHOay-uCkF1ajOgj47ajbiC"))
+        DownloadManager.Request request=new DownloadManager.Request(Uri.parse(url))
                 .setTitle("Dummy File")// Title of the Download Notification
                 .setDescription("Downloading")// Description of the Download Notification
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)// Visibility of the download Notification
@@ -452,6 +455,17 @@ public class HomeActivity extends BaseActivity{
         bos.close();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    public void onGetDownloadUrlSuccess(String url) {
+
+    }
+
+    @Override
+    public void onGetDownloadUrlError(APIException e) {
+
+    }
+
     public class ReadAndInsertJsonData extends AsyncTask<String, Integer, JSONObject> {
 
         JSONObject jsonObject;
@@ -463,6 +477,7 @@ public class HomeActivity extends BaseActivity{
         protected void onPreExecute() {
             super.onPreExecute();
             progressDialog.setMessage("Extracting files...");
+            progressDialog.setCancelable(false);
             progressDialog.show();
         }
 
@@ -500,8 +515,6 @@ public class HomeActivity extends BaseActivity{
         protected void onPostExecute(JSONObject result) {
             super.onPostExecute(result);
             jObj = result;
-            homeDao.insertdocumentCollectionList(jObj,HomeActivity.this);
-            String html= homeDao.fetchDocumentData();
             progressDialog.dismiss();
         }
 

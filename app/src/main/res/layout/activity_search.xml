@@ -44,11 +44,18 @@
         android:layout_height="1dp"
         android:background="@color/grey_200"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_60dp">
+
     <com.mariapps.qdmswiki.custom.CustomRecyclerView
+        android:layout_gravity="center"
         android:id="@+id/rvSearchType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     </com.mariapps.qdmswiki.custom.CustomRecyclerView>
+
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"
