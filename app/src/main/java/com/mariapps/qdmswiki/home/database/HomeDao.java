@@ -8,6 +8,7 @@ import android.arch.persistence.room.Query;
 import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.CategoryModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.home.model.MainModel;
 import com.mariapps.qdmswiki.home.model.TagModel;
 
 @Dao
@@ -25,8 +26,8 @@ public interface HomeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertCategory(CategoryModel categoryModel);
 
-    @Query("SELECT * FROM DocumentEntity")
-    DocumentModel getDocuments();
+    @Query("SELECT DocumentData FROM DocumentEntity")
+    String getDocuments();
 
     @Query("SELECT * FROM ArticleEntity")
     DocumentModel getArtcles();

@@ -19,7 +19,7 @@ public class TagModel implements Parcelable {
 
     @ColumnInfo(name = "Id")
     @SerializedName("_id")
-    private Integer id;
+    private String id;
 
     @ColumnInfo(name = "AppId")
     @SerializedName("appId")
@@ -33,18 +33,18 @@ public class TagModel implements Parcelable {
     @SerializedName("IsActive")
     private boolean isActive;
 
-    public TagModel(Integer id, String appId, String name, boolean isActive) {
+    public TagModel(String id, String appId, String name, boolean isActive) {
         this.id = id;
         this.appId = appId;
         this.name = name;
         this.isActive = isActive;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -73,7 +73,7 @@ public class TagModel implements Parcelable {
     }
 
     protected TagModel(Parcel in) {
-        id = in.readInt();
+        id = in.readString();
         appId = in.readString();
         name = in.readString();
         isActive = in.readByte() != 0;
@@ -81,7 +81,7 @@ public class TagModel implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
+        dest.writeString(id);
         dest.writeString(appId);
         dest.writeString(name);
         dest.writeByte((byte) (isActive ? 1 : 0));

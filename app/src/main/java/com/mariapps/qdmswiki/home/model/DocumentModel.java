@@ -21,7 +21,7 @@ public class DocumentModel implements Parcelable {
 
     @ColumnInfo(name = "Id")
     @SerializedName("_id")
-    public Integer id;
+    public String id;
 
     @ColumnInfo(name = "CategoryId")
     @SerializedName("CategoryId")
@@ -42,28 +42,21 @@ public class DocumentModel implements Parcelable {
     @SerializedName("Tags")
     private List<TagModel> tagModelList;
 
-    @SerializedName("CategoryModel")
-    private List<CategoryModel> categoryModelList;
 
-    @SerializedName("ArticleModel")
-    private List<ArticleModel> articleModelList;
-
-    public DocumentModel(Integer id, String categoryId, String documentCode, String documentName, String documentData, List<TagModel> tagModelList, List<CategoryModel> categoryModelList, List<ArticleModel> articleModelList) {
+    public DocumentModel(String id, String categoryId, String documentCode, String documentName, String documentData, List<TagModel> tagModelList) {
         this.id = id;
         this.categoryId = categoryId;
         this.documentCode = documentCode;
         this.documentName = documentName;
         this.documentData = documentData;
         this.tagModelList = tagModelList;
-        this.categoryModelList = categoryModelList;
-        this.articleModelList = articleModelList;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -107,22 +100,6 @@ public class DocumentModel implements Parcelable {
         this.tagModelList = tagModelList;
     }
 
-    public List<CategoryModel> getCategoryModelList() {
-        return categoryModelList;
-    }
-
-    public void setCategoryModelList(List<CategoryModel> categoryModelList) {
-        this.categoryModelList = categoryModelList;
-    }
-
-    public List<ArticleModel> getArticleModelList() {
-        return articleModelList;
-    }
-
-    public void setArticleModelList(List<ArticleModel> articleModelList) {
-        this.articleModelList = articleModelList;
-    }
-
     @Override
     public int describeContents() {
         return 0;
@@ -138,9 +115,7 @@ public class DocumentModel implements Parcelable {
         documentCode = in.readString();
         documentName = in.readString();
         documentData = in.readString();
-        articleModelList = in.createTypedArrayList(ArticleModel.CREATOR);
         tagModelList = in.createTypedArrayList(TagModel.CREATOR);
-        categoryModelList = in.createTypedArrayList(CategoryModel.CREATOR);
     }
 
     @Override
@@ -155,9 +130,7 @@ public class DocumentModel implements Parcelable {
         dest.writeString(documentCode);
         dest.writeString(documentName);
         dest.writeString(documentData);
-        dest.writeTypedList(articleModelList);
         dest.writeTypedList(tagModelList);
-        dest.writeTypedList(categoryModelList);
     }
 
     public static final Creator<DocumentModel> CREATOR = new Creator<DocumentModel>() {

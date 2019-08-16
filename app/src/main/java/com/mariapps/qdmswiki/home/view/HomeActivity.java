@@ -37,12 +37,14 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.custom.CustomViewPager;
 import com.mariapps.qdmswiki.home.database.HomeDao;
+import com.mariapps.qdmswiki.home.model.DocumentModel;
 import com.mariapps.qdmswiki.home.model.NavDrawerObj;
 import com.mariapps.qdmswiki.home.presenter.HomePresenter;
 import com.mariapps.qdmswiki.notification.view.NotificationActivity;
@@ -51,6 +53,7 @@ import com.mariapps.qdmswiki.serviceclasses.APIException;
 import com.mariapps.qdmswiki.settings.view.SettingsActivity;
 import com.mariapps.qdmswiki.utils.ScreenUtils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -108,6 +111,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
     private JSONObject jObj;
     private long downloadID;
     private HomeDao homeDao;
+    private Gson gson;
 
     private BroadcastReceiver onDownloadComplete = new BroadcastReceiver() {
         @Override
@@ -469,6 +473,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
     public class ReadAndInsertJsonData extends AsyncTask<String, Integer, JSONObject> {
 
         JSONObject jsonObject;
+        DocumentModel documentModel;
 
         public ReadAndInsertJsonData() {
         }
@@ -484,7 +489,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
         @Override
         protected JSONObject doInBackground(String... params) {
             try {
-
+                gson = new Gson();
                 String result = "";
                 File file = new File(Environment.getExternalStorageDirectory(),"/QDMSWiki/Extract1/MasterList.json");
                 BufferedReader br = new BufferedReader(new FileReader(file));
@@ -495,11 +500,8 @@ public class HomeActivity extends BaseActivity implements HomeView{
                 jsonObject = new JSONObject(result);
                 br.close();
 
-            } catch (IOException e) {
+            } catch (Exception e) {
                 progressDialog.dismiss();
-            } catch (JSONException e) {
-                progressDialog.dismiss();
-                e.printStackTrace();
             }
 
             return jsonObject;
@@ -512,9 +514,17 @@ public class HomeActivity extends BaseActivity implements HomeView{
         }
 
         @Override
-        protected void onPostExecute(JSONObject result) {
-            super.onPostExecute(result);
-            jObj = result;
+        protected void onPostExecute(JSONObject jsonObject) {
+            super.onPostExecute(jsonObject);
+            try {
+                JSONArray jsonArray = jsonObject.getJSONArray("DocumentCollection");
+                String jsonString =jsonArray.getString(0);
+                DocumentModel documentModel = gson.fromJson(jsonString, DocumentModel.class);
+                homePresenter.deleteDocuments(documentModel);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             progressDialog.dismiss();
         }
 

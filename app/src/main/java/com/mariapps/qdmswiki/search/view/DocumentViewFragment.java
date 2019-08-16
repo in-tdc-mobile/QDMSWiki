@@ -24,10 +24,18 @@ import com.mariapps.qdmswiki.custom.CustomEditText;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.documents.view.DocumentInfoViewActivity;
 import com.mariapps.qdmswiki.home.database.HomeDao;
+import com.mariapps.qdmswiki.home.database.HomeDatabase;
+import com.mariapps.qdmswiki.home.model.DocumentModel;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
+import io.reactivex.schedulers.Schedulers;
 
 public class DocumentViewFragment extends BaseFragment {
 
@@ -39,8 +47,9 @@ public class DocumentViewFragment extends BaseFragment {
     WebView webView;
 
     private String folderName;
+    private String documentData;
     private Integer id;
-    private HomeDao homeDao;
+    private HomeDatabase homeDatabase;
 
     @Override
     protected void setUpPresenter() {
@@ -60,13 +69,36 @@ public class DocumentViewFragment extends BaseFragment {
         }
         catch (Exception e){}
 
+        homeDatabase = HomeDatabase.getInstance(getActivity());
         loadDocument();
 
         return view;
     }
 
-    private void loadDocument() {
-        webView.loadData("", "text/html; charset=utf-8", "UTF-8");
+    public void loadDocument() {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                documentData = homeDatabase.homeDao().getDocuments();
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                webView.loadData(documentData, "text/html; charset=utf-8", "UTF-8");
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
     }
 
     @OnClick({R.id.showMenuFab})

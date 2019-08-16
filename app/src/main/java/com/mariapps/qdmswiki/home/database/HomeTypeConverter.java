@@ -6,6 +6,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.CategoryModel;
+import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.home.model.MainModel;
 import com.mariapps.qdmswiki.home.model.TagModel;
 
 import java.lang.reflect.Type;
@@ -15,6 +17,37 @@ import java.util.List;
 public class HomeTypeConverter {
 
     private static Gson gson = new Gson();
+    @TypeConverter
+    public static List<MainModel> mainEntityToList(String data) {
+        if (data == null) {
+            return Collections.emptyList();
+        }
+
+        Type listType = new TypeToken<List<MainModel>>() {}.getType();
+
+        return gson.fromJson(data, listType);
+    }
+
+    @TypeConverter
+    public static String mainEntityToString(List<MainModel> mainModelList) {
+        return gson.toJson(mainModelList);
+    }
+
+    @TypeConverter
+    public static List<DocumentModel> documentEntityToList(String data) {
+        if (data == null) {
+            return Collections.emptyList();
+        }
+
+        Type listType = new TypeToken<List<DocumentModel>>() {}.getType();
+
+        return gson.fromJson(data, listType);
+    }
+
+    @TypeConverter
+    public static String documentEntityToString(List<DocumentModel> documentModelList) {
+        return gson.toJson(documentModelList);
+    }
 
     @TypeConverter
     public static List<TagModel> tagEntityToList(String data) {
