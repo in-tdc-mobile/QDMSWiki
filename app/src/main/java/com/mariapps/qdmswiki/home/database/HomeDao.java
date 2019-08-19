@@ -12,6 +12,7 @@ import com.mariapps.qdmswiki.home.model.MainModel;
 import com.mariapps.qdmswiki.home.model.TagModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Dao
 public interface HomeDao {
@@ -32,16 +33,16 @@ public interface HomeDao {
     String getDocumentData();
 
     @Query("SELECT * FROM DocumentEntity")
-    ArrayList<DocumentModel> getDocuments();
+    DocumentModel getDocuments();
 
     @Query("SELECT * FROM ArticleEntity")
-    ArrayList<ArticleModel> getArticles();
+    ArticleModel getArtcles();
 
     @Query("SELECT * FROM TagEntity")
-    ArrayList<TagModel> getTags();
+    TagModel getTags();
 
     @Query("SELECT * FROM CategoryEntity")
-    ArrayList<CategoryModel> getCategory();
+    CategoryModel getCategory();
 
     @Query("DELETE FROM DocumentEntity")
     void deleteDocumentEntity();

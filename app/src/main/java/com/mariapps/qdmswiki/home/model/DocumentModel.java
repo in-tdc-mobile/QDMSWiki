@@ -39,16 +39,26 @@ public class DocumentModel implements Parcelable {
     @SerializedName("DocumentData")
     public String documentData;
 
+    @ColumnInfo(name = "Version")
+    @SerializedName("Version")
+    public String version;
+
+    @ColumnInfo(name = "IsPublished")
+    @SerializedName("IsPublished")
+    public boolean isPublished;
+
     @SerializedName("Tags")
     private List<TagModel> tagModelList;
 
 
-    public DocumentModel(String id, String categoryId, String documentCode, String documentName, String documentData, List<TagModel> tagModelList) {
+    public DocumentModel(String id, String categoryId, String documentCode, String documentName, String documentData, String version, boolean isPublished, List<TagModel> tagModelList) {
         this.id = id;
         this.categoryId = categoryId;
         this.documentCode = documentCode;
         this.documentName = documentName;
         this.documentData = documentData;
+        this.version = version;
+        this.isPublished = isPublished;
         this.tagModelList = tagModelList;
     }
 
@@ -92,6 +102,23 @@ public class DocumentModel implements Parcelable {
         this.documentData = documentData;
     }
 
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public boolean isPublished() {
+        return isPublished;
+    }
+
+    public void setPublished(boolean published) {
+        isPublished = published;
+    }
+
     public List<TagModel> getTagModelList() {
         return tagModelList;
     }
@@ -115,6 +142,8 @@ public class DocumentModel implements Parcelable {
         documentCode = in.readString();
         documentName = in.readString();
         documentData = in.readString();
+        version = in.readString();
+        isPublished = in.readInt() == 1;
         tagModelList = in.createTypedArrayList(TagModel.CREATOR);
     }
 
@@ -130,6 +159,8 @@ public class DocumentModel implements Parcelable {
         dest.writeString(documentCode);
         dest.writeString(documentName);
         dest.writeString(documentData);
+        dest.writeString(version);
+        dest.writeInt(isPublished ? 1 : 0);
         dest.writeTypedList(tagModelList);
     }
 

@@ -136,6 +136,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
             }
         }
     };
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -564,6 +565,12 @@ public class HomeActivity extends BaseActivity implements HomeView{
             progressDialog.dismiss();
         }
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(onDownloadComplete);
     }
 }
 

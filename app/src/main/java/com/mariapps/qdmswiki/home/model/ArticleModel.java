@@ -9,6 +9,7 @@ import android.os.Parcelable;
 import com.google.gson.annotations.SerializedName;
 import com.mariapps.qdmswiki.home.database.HomeTypeConverter;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity(tableName = "ArticleEntity")
 @TypeConverters(HomeTypeConverter.class)
@@ -39,13 +40,13 @@ public class ArticleModel implements Parcelable {
 
     @ColumnInfo(name = "CategoryIds")
     @SerializedName("CategoryId")
-    public ArrayList<String> categoryIds;
+    public List<String> categoryIds;
 
     @ColumnInfo(name = "IsActive")
     @SerializedName("IsActive")
     private boolean isActive;
 
-    public ArticleModel(String id, String appId, String draftId, String articleName, String documentData, ArrayList<String> categoryIds, boolean isActive) {
+    public ArticleModel(String id, String appId, String draftId, String articleName, String documentData, List<String> categoryIds, boolean isActive) {
         this.id = id;
         this.appId = appId;
         this.draftId = draftId;
@@ -103,7 +104,7 @@ public class ArticleModel implements Parcelable {
         this.documentData = documentData;
     }
 
-    public ArrayList<String> getCategoryIds() {
+    public List<String> getCategoryIds() {
         return categoryIds;
     }
 
