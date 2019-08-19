@@ -79,7 +79,7 @@ public class DocumentViewFragment extends BaseFragment {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-                documentData = homeDatabase.homeDao().getDocuments();
+                documentData = homeDatabase.homeDao().getDocumentData();
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {

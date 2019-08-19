@@ -19,7 +19,7 @@ public class CategoryModel implements Parcelable {
 
     @ColumnInfo(name = "Id")
     @SerializedName("_id")
-    private Integer id;
+    private String id;
 
     @ColumnInfo(name = "AppId")
     @SerializedName("appId")
@@ -37,7 +37,7 @@ public class CategoryModel implements Parcelable {
     @SerializedName("IsActive")
     private boolean isActive;
 
-    public CategoryModel(Integer id, String appId, String name, String parent, boolean isActive) {
+    public CategoryModel(String id, String appId, String name, String parent, boolean isActive) {
         this.id = id;
         this.appId = appId;
         this.name = name;
@@ -45,11 +45,11 @@ public class CategoryModel implements Parcelable {
         this.isActive = isActive;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -92,7 +92,7 @@ public class CategoryModel implements Parcelable {
 
 
     protected CategoryModel(Parcel in) {
-        id = in.readInt();
+        id = in.readString();
         appId = in.readString();
         name = in.readString();
         parent = in.readString();
@@ -101,7 +101,7 @@ public class CategoryModel implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
+        dest.writeString(id);
         dest.writeString(appId);
         dest.writeString(name);
         dest.writeString(parent);

@@ -19,7 +19,7 @@ public class ArticleModel implements Parcelable {
 
     @ColumnInfo(name = "Id")
     @SerializedName("_id")
-    private Integer id;
+    private String id;
 
     @ColumnInfo(name = "AppId")
     @SerializedName("appId")
@@ -45,7 +45,7 @@ public class ArticleModel implements Parcelable {
     @SerializedName("IsActive")
     private boolean isActive;
 
-    public ArticleModel(Integer id, String appId, String draftId, String articleName, String documentData, ArrayList<String> categoryIds, boolean isActive) {
+    public ArticleModel(String id, String appId, String draftId, String articleName, String documentData, ArrayList<String> categoryIds, boolean isActive) {
         this.id = id;
         this.appId = appId;
         this.draftId = draftId;
@@ -63,11 +63,11 @@ public class ArticleModel implements Parcelable {
         this.uId = uId;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -125,7 +125,7 @@ public class ArticleModel implements Parcelable {
     }
 
     protected ArticleModel(Parcel in) {
-        id = in.readInt();
+        id = in.readString();
         appId = in.readString();
         draftId = in.readString();
         articleName = in.readString();
@@ -136,7 +136,7 @@ public class ArticleModel implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
+        dest.writeString(id);
         dest.writeString(appId);
         dest.writeString(draftId);
         dest.writeString(articleName);

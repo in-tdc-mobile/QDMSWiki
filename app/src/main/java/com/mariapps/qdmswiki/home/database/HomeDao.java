@@ -11,32 +11,37 @@ import com.mariapps.qdmswiki.home.model.DocumentModel;
 import com.mariapps.qdmswiki.home.model.MainModel;
 import com.mariapps.qdmswiki.home.model.TagModel;
 
+import java.util.ArrayList;
+
 @Dao
 public interface HomeDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertDocument(DocumentModel documentModel);
+    void insertDocument(ArrayList<DocumentModel> documentModel);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertArticle(ArticleModel articleModel);
+    void insertArticle(ArrayList<ArticleModel> articleModel);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertTag(TagModel tagModel);
+    void insertTag(ArrayList<TagModel> tagModel);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertCategory(CategoryModel categoryModel);
+    void insertCategory(ArrayList<CategoryModel> categoryModel);
 
     @Query("SELECT DocumentData FROM DocumentEntity")
-    String getDocuments();
+    String getDocumentData();
+
+    @Query("SELECT * FROM DocumentEntity")
+    ArrayList<DocumentModel> getDocuments();
 
     @Query("SELECT * FROM ArticleEntity")
-    DocumentModel getArtcles();
+    ArrayList<ArticleModel> getArticles();
 
     @Query("SELECT * FROM TagEntity")
-    DocumentModel getTags();
+    ArrayList<TagModel> getTags();
 
     @Query("SELECT * FROM CategoryEntity")
-    DocumentModel getCategory();
+    ArrayList<CategoryModel> getCategory();
 
     @Query("DELETE FROM DocumentEntity")
     void deleteDocumentEntity();

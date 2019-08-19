@@ -3,12 +3,17 @@ package com.mariapps.qdmswiki.home.presenter;
 import android.content.Context;
 
 import com.mariapps.qdmswiki.home.database.HomeDatabase;
+import com.mariapps.qdmswiki.home.model.ArticleModel;
+import com.mariapps.qdmswiki.home.model.CategoryModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.home.model.TagModel;
 import com.mariapps.qdmswiki.home.view.HomeView;
 import com.mariapps.qdmswiki.serviceclasses.APIException;
 import com.mariapps.qdmswiki.serviceclasses.ApiServiceFactory;
 import com.mariapps.qdmswiki.serviceclasses.ServiceController;
 import com.mariapps.qdmswiki.serviceclasses.SimpleObserver;
+
+import java.util.ArrayList;
 
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
@@ -56,7 +61,7 @@ public class HomePresenter {
 //                });
     }
 
-    public void deleteDocuments(DocumentModel documentModel) {
+    public void deleteDocuments(ArrayList<DocumentModel> documentModels) {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
@@ -71,7 +76,7 @@ public class HomePresenter {
 
             @Override
             public void onComplete() {
-                insertDocuments(documentModel);
+                insertDocuments(documentModels);
             }
 
 
@@ -82,12 +87,174 @@ public class HomePresenter {
         });
     }
 
-    public void insertDocuments(final DocumentModel documentModel) {
+    public void insertDocuments(final ArrayList<DocumentModel> documentModels) {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-                if (documentModel != null) {
-                    homeDatabase.homeDao().insertDocument(documentModel);
+                if (documentModels != null) {
+                    homeDatabase.homeDao().insertDocument(documentModels);
+                }
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void deleteTags(ArrayList<TagModel> tagModelArrayList) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                homeDatabase.homeDao().deleteTagEntity();
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                insertTags(tagModelArrayList);
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void insertTags(final ArrayList<TagModel> tagModelArrayList) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                if (tagModelArrayList != null) {
+                    homeDatabase.homeDao().insertTag(tagModelArrayList);
+                }
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void deleteArticles(ArrayList<ArticleModel> articleModelArrayList) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                homeDatabase.homeDao().deleteArticleEntity();
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                insertArticles(articleModelArrayList);
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void insertArticles(final ArrayList<ArticleModel> articleModelArrayList) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                if (articleModelArrayList != null) {
+                    homeDatabase.homeDao().insertArticle(articleModelArrayList);
+                }
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void deleteCategories(ArrayList<CategoryModel> categoryModelArrayList) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                homeDatabase.homeDao().deleteCategoryEntity();
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                insertCategories(categoryModelArrayList);
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void insertCategories(final ArrayList<CategoryModel> categoryModelArrayList) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                if (categoryModelArrayList != null) {
+                    homeDatabase.homeDao().insertCategory(categoryModelArrayList);
                 }
             }
         }).observeOn(AndroidSchedulers.mainThread())

@@ -38,14 +38,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.custom.CustomViewPager;
 import com.mariapps.qdmswiki.home.database.HomeDao;
+import com.mariapps.qdmswiki.home.model.ArticleModel;
+import com.mariapps.qdmswiki.home.model.CategoryModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
 import com.mariapps.qdmswiki.home.model.NavDrawerObj;
+import com.mariapps.qdmswiki.home.model.TagModel;
 import com.mariapps.qdmswiki.home.presenter.HomePresenter;
 import com.mariapps.qdmswiki.notification.view.NotificationActivity;
 import com.mariapps.qdmswiki.search.view.FolderStructureActivity;
@@ -65,10 +69,13 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -517,10 +524,39 @@ public class HomeActivity extends BaseActivity implements HomeView{
         protected void onPostExecute(JSONObject jsonObject) {
             super.onPostExecute(jsonObject);
             try {
-                JSONArray jsonArray = jsonObject.getJSONArray("DocumentCollection");
-                String jsonString =jsonArray.getString(0);
-                DocumentModel documentModel = gson.fromJson(jsonString, DocumentModel.class);
-                homePresenter.deleteDocuments(documentModel);
+
+                //inserting documents
+                JSONArray documentArray = jsonObject.getJSONArray("DocumentCollection");
+                ArrayList<DocumentModel> documentModelList;
+                Type documentType = new TypeToken<ArrayList<DocumentModel>>() {}.getType();
+                documentModelList= new Gson().fromJson(documentArray.toString(), documentType);
+                homePresenter.deleteDocuments(documentModelList);
+
+                //inserting tags
+                for (int i = 0; i < documentArray.length(); i++)
+                {
+                    JSONObject jOBJ = documentArray.getJSONObject(i);
+                    JSONArray tagArray = jOBJ.getJSONArray("Tags");
+                    ArrayList<TagModel> tagModelArrayList;
+                    Type tagType = new TypeToken<ArrayList<TagModel>>() {}.getType();
+                    tagModelArrayList= new Gson().fromJson(tagArray.toString(), tagType);
+                    homePresenter.deleteTags(tagModelArrayList);
+                }
+
+
+                //inserting articles
+                JSONArray articleArray = jsonObject.getJSONArray("Article");
+                ArrayList<ArticleModel> articleModelArrayList;
+                Type articleType = new TypeToken<ArrayList<ArticleModel>>() {}.getType();
+                articleModelArrayList= new Gson().fromJson(articleArray.toString(), articleType);
+                homePresenter.deleteArticles(articleModelArrayList);
+
+                //inserting categories
+                JSONArray categoryArray = jsonObject.getJSONArray("Category");
+                ArrayList<CategoryModel> categoryModelArrayList;
+                Type categoryType = new TypeToken<ArrayList<ArticleModel>>() {}.getType();
+                categoryModelArrayList= new Gson().fromJson(categoryArray.toString(), categoryType);
+                homePresenter.deleteCategories(categoryModelArrayList);
 
             } catch (JSONException e) {
                 e.printStackTrace();
