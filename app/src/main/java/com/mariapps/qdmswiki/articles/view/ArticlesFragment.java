@@ -11,11 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.mariapps.qdmswiki.R;
+import com.mariapps.qdmswiki.articles.adapter.ArticlesAdapter;
 import com.mariapps.qdmswiki.baseclasses.BaseFragment;
 import com.mariapps.qdmswiki.custom.CustomEditText;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.documents.adapter.DocumentsAdapter;
 import com.mariapps.qdmswiki.home.database.HomeDatabase;
+import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
 
 import java.util.ArrayList;
@@ -30,6 +32,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.internal.connection.StreamAllocation;
 
 public class ArticlesFragment extends BaseFragment {
 
@@ -39,8 +42,8 @@ public class ArticlesFragment extends BaseFragment {
     CustomEditText searchET;
 
     private FragmentManager fragmentManager;
-    private DocumentsAdapter documentsAdapter;
-    private List<DocumentModel> documentsList = new ArrayList<>();
+    private ArticlesAdapter articlesAdapter;
+    private List<ArticleModel> articleList = new ArrayList<>();
     private HomeDatabase homeDatabase;
 
     @Override
@@ -60,20 +63,20 @@ public class ArticlesFragment extends BaseFragment {
         rvDocuments.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
         homeDatabase = HomeDatabase.getInstance(getActivity());
 
-        setData();
+        getArticlesList();
         return view;
     }
 
     private void setData() {
-        documentsAdapter = new DocumentsAdapter(getActivity(), documentsList,"ARTICLES");
-        rvDocuments.setAdapter(documentsAdapter);
+        articlesAdapter = new ArticlesAdapter(getActivity(), articleList);
+        rvDocuments.setAdapter(articlesAdapter);
     }
 
-    public void getDocumentList() {
+    public void getArticlesList() {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-                documentsList = homeDatabase.homeDao().getArticles();
+                articleList = homeDatabase.homeDao().getArticles();
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
@@ -95,11 +98,10 @@ public class ArticlesFragment extends BaseFragment {
         });
     }
 
-
     @OnTextChanged(R.id.searchET)
     void onTextChanged() {
-        if (documentsAdapter != null) {
-            documentsAdapter.getFilter().filter(searchET.getText().toString());
+        if (articlesAdapter != null) {
+            articlesAdapter.getFilter().filter(searchET.getText().toString());
         }
 
     }

@@ -88,28 +88,28 @@ public interface HomeDao {
     List<SearchModel> getAllDocumentsAndArticles();
 
     @Query("SELECT document.Id as id, " +
-            " document.DocumentName as documentName, " +
-            " document.CategoryId as categoryId," +
-            " document.Version as version," +
-            " document.tags as tags," +
-            " document.Date as date," +
+            " document.DocumentName, " +
+            " document.CategoryId," +
+            " document.Version," +
+            " document.tags," +
+            " document.Date," +
             " category.CategoryName as categoryName " +
             " FROM DocumentEntity as document " +
             " LEFT JOIN CategoryEntity as category" +
             " ON category.Id = document.CategoryId")
     List<DocumentModel> getDocuments();
 
-    @Query("SELECT article.Id as id, " +
-            " article.ArticleName as documentName, " +
-            " article.CategoryIds as categoryIds," +
-            " article.Version as version," +
-            " article.tags as tags," +
-            " article.Date as date," +
+    @Query("SELECT article.Id, " +
+            " article.ArticleName, " +
+            " article.CategoryIds," +
+            " article.Version," +
+            " article.tags," +
+            " article.Date," +
             " category.CategoryName as categoryName " +
             " FROM ArticleEntity as article " +
-            " INNER JOIN CategoryEntity  as category "+
-            " ON category.Id = article.CategoryIds")
-    List<DocumentModel> getArticles();
+            " LEFT JOIN CategoryEntity as category "+
+            " ON category.Id IN (article.CategoryIds)")
+    List<ArticleModel> getArticles();
 
     @Query("SELECT category.Id as folderid, " +
             " category.CategoryName as categoryName, " +
@@ -132,6 +132,9 @@ public interface HomeDao {
             " FROM DocumentEntity as document " +
             " WHERE document.CategoryId =:parentId")
     List<DocumentModel> getChildFoldersList(String parentId);
+
+    @Query("SELECT CategoryName FROM CategoryEntity WHERE Id = :id")
+    String getCategoryName(String id);
 
     @Query("SELECT * FROM TagEntity")
     List<TagModel> getTags();

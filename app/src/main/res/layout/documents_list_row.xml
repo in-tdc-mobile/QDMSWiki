@@ -49,6 +49,7 @@
 
             <com.mariapps.qdmswiki.custom.CustomTextView
                 android:id="@+id/tvCategory"
+                android:singleLine="false"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:fontface="@string/string_lato_regular"
@@ -64,7 +65,7 @@
 
             <com.mariapps.qdmswiki.custom.CustomTextView
                 android:id="@+id/tvDate"
-                android:layout_width="79dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textSize="@dimen/medium_text_size" />
 
@@ -104,7 +105,8 @@
         <com.mariapps.qdmswiki.custom.CustomTextView
             android:background="@drawable/drawable_version_type"
             android:id="@+id/tvVersion"
-            android:layout_width="wrap_content"
+            android:layout_width="40dp"
+            android:gravity="center"
             android:layout_height="wrap_content"
             android:text="V1"
             android:textColor="@color/searchType"

@@ -14,7 +14,7 @@ import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
-import com.mariapps.qdmswiki.home.model.TagModel;
+import com.mariapps.qdmswiki.utils.DateUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +51,8 @@ public class DocumentsAdapter extends CustomRecyclerView.Adapter<DocumentsAdapte
 
         holder.tvHeadingText.setText(documentsModel.getDocumentName());
         holder.tvCategory.setText(documentsModel.getCategoryName());
-        holder.tvDate.setText(documentsModel.getDate());
+        holder.tvDate.setText(DateUtils.getFormattedDate(documentsModel.getDate()));
+        holder.tvVersion.setText(documentsModel.getVersion());
 
         holder.rvDepartments.setLayoutManager(new LinearLayoutManager(mContext, LinearLayout.HORIZONTAL, false));
         holder.rvDepartments.setHasFixedSize(true);
@@ -120,8 +121,8 @@ public class DocumentsAdapter extends CustomRecyclerView.Adapter<DocumentsAdapte
         CustomTextView tvCategory;
         @BindView(R.id.tvDate)
         CustomTextView tvDate;
-//        @BindView(R.id.tvTime)
-//        CustomTextView tvTime;
+        @BindView(R.id.tvVersion)
+        CustomTextView tvVersion;
         @BindView(R.id.rvDepartments)
         CustomRecyclerView rvDepartments;
 

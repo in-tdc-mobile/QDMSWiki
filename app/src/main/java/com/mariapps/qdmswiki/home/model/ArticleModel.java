@@ -55,7 +55,7 @@ public class ArticleModel implements Parcelable {
 //    private boolean isActive;
 
     @SerializedName("Tags")
-    private List<TagModel> tags = null;
+    private List<TagModel> tags;
 
     @ColumnInfo(name = "Version")
     @SerializedName("Version")
