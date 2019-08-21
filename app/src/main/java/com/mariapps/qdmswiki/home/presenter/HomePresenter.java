@@ -39,8 +39,7 @@ public class HomePresenter {
         this.homeView = homeView;
         serviceController = ApiServiceFactory.getInstance().getFacade();
         homeDatabase = HomeDatabase.getInstance(context);
-        https://drive.google.com/open?id=1_i1HVxKMbPOS9dDdwT1XU2Huz--LkHrQ
-        url = "https://drive.google.com/uc?export=download&id=1_i1HVxKMbPOS9dDdwT1XU2Huz--LkHrQ";
+        url = "https://drive.google.com/uc?export=download&id=1pxjQIdxMLFJmg2bg4Y4sVkk6bFHIWihr";
     }
 
     public String getDownloadUrl() {
