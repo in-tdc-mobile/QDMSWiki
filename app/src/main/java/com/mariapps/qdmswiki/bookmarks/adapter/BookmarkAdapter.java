@@ -36,7 +36,7 @@ public class BookmarkAdapter extends CustomRecyclerView.Adapter<BookmarkAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull final BookmarkAdapter.BookmarkVH holder, int i) {
-        holder.bookmarkTV.setText(bookmarkList.get(i).getBookMark());
+        //holder.bookmarkTV.setText(bookmarkList.get(i).getBookMark());
         holder.rowLL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

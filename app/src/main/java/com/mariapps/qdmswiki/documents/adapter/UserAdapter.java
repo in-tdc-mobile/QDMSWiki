@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
-import com.mariapps.qdmswiki.documents.model.TagModel;
 import com.mariapps.qdmswiki.documents.model.UserModel;
 
 import java.util.ArrayList;

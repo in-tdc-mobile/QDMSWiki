@@ -15,14 +15,22 @@ import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
+import com.mariapps.qdmswiki.home.database.HomeDatabase;
 import com.mariapps.qdmswiki.notification.adapter.NotificationAdapter;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
+import io.reactivex.schedulers.Schedulers;
 
 public class NotificationActivity extends BaseActivity {
 
@@ -34,7 +42,8 @@ public class NotificationActivity extends BaseActivity {
     CustomRecyclerView rvNotifications;
 
     private NotificationAdapter notificationAdapter;
-    private ArrayList<NotificationModel> notificationList = new ArrayList<>();
+    private List<NotificationModel> notificationList = new ArrayList<>();
+    private HomeDatabase homeDatabase;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,9 +53,10 @@ public class NotificationActivity extends BaseActivity {
         rvNotifications.setHasFixedSize(true);
         rvNotifications.setLayoutManager(new LinearLayoutManager(this));
         rvNotifications.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        homeDatabase = HomeDatabase.getInstance(NotificationActivity.this);
 
         initView();
-        initRecycler();
+        getNotificationList();
     }
 
     @Override
@@ -73,25 +83,34 @@ public class NotificationActivity extends BaseActivity {
     }
 
     private void initRecycler() {
-
-        notificationList.add(new NotificationModel(1,"General Data Protection Manual","Document Updated",
-                "Frank Lasse (BSM DE)","12 hrs ago"));
-        notificationList.add(new NotificationModel(2,"Passenger Ship Safety Management","Document Updated",
-                "Frank Lasse (BSM DE)","18 hrs ago"));
-        notificationList.add(new NotificationModel(3,"General Data Protection Manual","Document Updated",
-                "Frank Lasse (BSM DE)","7 days ago"));
-        notificationList.add(new NotificationModel(4,"General Data Protection Manual","Document Updated",
-                "Frank Lasse (BSM DE)","5 days ago"));
-        notificationList.add(new NotificationModel(5,"General Data Protection Manual","Document Updated",
-                "Frank Lasse (BSM DE)","12 hrs ago"));
-        notificationList.add(new NotificationModel(6,"General Data Protection Manual","Document Updated",
-                "Frank Lasse (BSM DE)","12 hrs ago"));
-        notificationList.add(new NotificationModel(7,"General Data Protection Manual","Document Updated",
-                "Frank Lasse (BSM DE)","12 hrs ago"));
-
-
         notificationAdapter = new NotificationAdapter(this, notificationList);
         rvNotifications.setAdapter(notificationAdapter);
+    }
+
+    public void getNotificationList() {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                notificationList = homeDatabase.homeDao().getNotifications();
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                initRecycler();
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
     }
 
 }

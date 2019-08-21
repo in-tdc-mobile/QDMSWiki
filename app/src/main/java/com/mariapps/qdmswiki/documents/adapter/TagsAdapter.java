@@ -8,9 +8,9 @@ import android.view.ViewGroup;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
-import com.mariapps.qdmswiki.documents.model.TagModel;
+import com.mariapps.qdmswiki.home.model.TagModel;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -18,9 +18,9 @@ import butterknife.ButterKnife;
 public class TagsAdapter extends CustomRecyclerView.Adapter<TagsAdapter.DepartmentsVH> {
 
     private Context mContext;
-    private ArrayList<TagModel> tagList;
+    private List<TagModel> tagList;
 
-    public TagsAdapter(Context context, ArrayList<TagModel> list) {
+    public TagsAdapter(Context context, List<TagModel> list) {
         mContext = context;
         tagList = list;
     }

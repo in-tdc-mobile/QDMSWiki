@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.custom.CustomTextView;
+import com.mariapps.qdmswiki.home.model.DocumentModel;
 import com.mariapps.qdmswiki.home.model.NavDrawerObj;
 
 import java.util.List;
@@ -24,9 +25,9 @@ public class CustomNavigationAdapter extends RecyclerView.Adapter<CustomNavigati
 
     private Context context;
     private NavAdapterListener navAdapterListener;
-    List<NavDrawerObj.MenuItemsEntity> navigationItems;
+    List<DocumentModel> navigationItems;
 
-    public CustomNavigationAdapter(Context context, List<NavDrawerObj.MenuItemsEntity> items) {
+    public CustomNavigationAdapter(Context context, List<DocumentModel> items) {
         this.context = context;
         this.navigationItems =  items;
     }
@@ -42,11 +43,11 @@ public class CustomNavigationAdapter extends RecyclerView.Adapter<CustomNavigati
     @Override
     public void onBindViewHolder(@NonNull final CustomNavigationVH1 customNavigationVH1, int i) {
         if (customNavigationVH1.getAdapterPosition() < navigationItems.size()) {
-            final NavDrawerObj.MenuItemsEntity menuItemsEntity = navigationItems.get(customNavigationVH1.getAdapterPosition());
-            if (menuItemsEntity != null) {
-                customNavigationVH1.drawerItemName.setText(menuItemsEntity.getDisplayName());
+            final DocumentModel documentModel = navigationItems.get(customNavigationVH1.getAdapterPosition());
+            if (documentModel != null) {
+                customNavigationVH1.drawerItemName.setText(documentModel.getCategoryName());
                 customNavigationVH1.arrowIV.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_inactive));
-                if(menuItemsEntity.getType().equals("Folder"))
+                if(documentModel.getType().equals("FOLDER"))
                     customNavigationVH1.drawerIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_menu_folder));
                 else
                     customNavigationVH1.drawerIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_document_active));
@@ -54,10 +55,7 @@ public class CustomNavigationAdapter extends RecyclerView.Adapter<CustomNavigati
             customNavigationVH1.itemLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (customNavigationVH1.getAdapterPosition() == 0) {
-                        customNavigationVH1.arrowIV.setVisibility(View.GONE);
-                    }
-                    if (navigationItems.get(customNavigationVH1.getAdapterPosition()).getPageName() != null) {
+                    if (navigationItems.get(customNavigationVH1.getAdapterPosition()).getCategoryName() != null) {
                         navAdapterListener.onItemClick(navigationItems.get(customNavigationVH1.getAdapterPosition()));
                     }
 
@@ -95,7 +93,7 @@ public class CustomNavigationAdapter extends RecyclerView.Adapter<CustomNavigati
 
 
     public interface NavAdapterListener {
-        void onItemClick(NavDrawerObj.MenuItemsEntity menuItemsEntity);
+        void onItemClick(DocumentModel documentModel);
     }
 
     public void setNavAdapterListener(NavAdapterListener navAdapterListener) {

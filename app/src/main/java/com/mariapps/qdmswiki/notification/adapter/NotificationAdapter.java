@@ -12,6 +12,7 @@ import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -19,9 +20,9 @@ import butterknife.ButterKnife;
 public class NotificationAdapter extends CustomRecyclerView.Adapter<NotificationAdapter.NotificationsVH> {
 
     private Context mContext;
-    private ArrayList<NotificationModel> notificationList;
+    private List<NotificationModel> notificationList;
 
-    public NotificationAdapter(Context context, ArrayList<NotificationModel> list) {
+    public NotificationAdapter(Context context, List<NotificationModel> list) {
         mContext = context;
         notificationList = list;
     }
@@ -35,10 +36,10 @@ public class NotificationAdapter extends CustomRecyclerView.Adapter<Notification
 
     @Override
     public void onBindViewHolder(@NonNull final NotificationAdapter.NotificationsVH holder, int i) {
-        holder.tvHeadingText.setText(notificationList.get(i).getHeading());
-        holder.statusTV.setText(notificationList.get(i).getStatus() + " : ");
-        holder.updatedByTV.setText(notificationList.get(i).getUpdatedBy());
-        holder.tvTime.setText(notificationList.get(i).getTime());
+//        holder.tvHeadingText.setText(notificationList.get(i).ge());
+//        holder.statusTV.setText(notificationList.get(i).getStatus() + " : ");
+//        holder.updatedByTV.setText(notificationList.get(i).getUpdatedBy());
+//        holder.tvTime.setText(notificationList.get(i).getTime());
     }
 
     @Override

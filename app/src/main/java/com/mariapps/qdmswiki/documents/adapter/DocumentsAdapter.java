@@ -13,9 +13,11 @@ import android.widget.LinearLayout;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
-import com.mariapps.qdmswiki.documents.model.DocumentsModel;
+import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.home.model.TagModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,12 +25,12 @@ import butterknife.ButterKnife;
 public class DocumentsAdapter extends CustomRecyclerView.Adapter<DocumentsAdapter.DocumentsVH> implements Filterable {
 
     private Context mContext;
-    private ArrayList<DocumentsModel> documentsList;
-    private ArrayList<DocumentsModel> filterdDocumentsList;
+    private List<DocumentModel> documentsList;
+    private List<DocumentModel> filterdDocumentsList;
     private RowClickListener rowClickListener;
     private String type;
 
-    public DocumentsAdapter(Context context, ArrayList<DocumentsModel> list,String type) {
+    public DocumentsAdapter(Context context, List<DocumentModel> list,String type) {
         mContext = context;
         this.documentsList = list;
         this.filterdDocumentsList = list;
@@ -45,17 +47,16 @@ public class DocumentsAdapter extends CustomRecyclerView.Adapter<DocumentsAdapte
     @Override
     public void onBindViewHolder(@NonNull final DocumentsVH holder, int i) {
 
-        DocumentsModel documentsModel = filterdDocumentsList.get(i);
+        DocumentModel documentsModel = filterdDocumentsList.get(i);
 
         holder.tvHeadingText.setText(documentsModel.getDocumentName());
-        holder.tvCategory.setText(documentsModel.getCategory());
+        holder.tvCategory.setText(documentsModel.getCategoryName());
         holder.tvDate.setText(documentsModel.getDate());
-        holder.tvTime.setText(documentsModel.getTime());
 
         holder.rvDepartments.setLayoutManager(new LinearLayoutManager(mContext, LinearLayout.HORIZONTAL, false));
         holder.rvDepartments.setHasFixedSize(true);
 
-        TagsAdapter tagsAdapter = new TagsAdapter(mContext,documentsModel.getDepartments());
+        TagsAdapter tagsAdapter = new TagsAdapter(mContext,documentsModel.getTags());
         holder.rvDepartments.setAdapter(tagsAdapter);
 
         holder.rowLL.setOnClickListener(new View.OnClickListener() {
@@ -85,9 +86,9 @@ public class DocumentsAdapter extends CustomRecyclerView.Adapter<DocumentsAdapte
                         filterdDocumentsList = documentsList;
                     } else {
 
-                        ArrayList<DocumentsModel> filteredList = new ArrayList<>();
+                        ArrayList<DocumentModel> filteredList = new ArrayList<>();
 
-                        for (DocumentsModel documentsModel : documentsList) {
+                        for (DocumentModel documentsModel : documentsList) {
                             if (documentsModel.getDocumentName().toLowerCase().contains(charString.toLowerCase())) {
 
                                 filteredList.add(documentsModel);
@@ -104,7 +105,7 @@ public class DocumentsAdapter extends CustomRecyclerView.Adapter<DocumentsAdapte
 
                 @Override
                 protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                    filterdDocumentsList = (ArrayList<DocumentsModel>) filterResults.values;
+                    filterdDocumentsList = (ArrayList<DocumentModel>) filterResults.values;
                     notifyDataSetChanged();
                 }
             };
@@ -119,8 +120,8 @@ public class DocumentsAdapter extends CustomRecyclerView.Adapter<DocumentsAdapte
         CustomTextView tvCategory;
         @BindView(R.id.tvDate)
         CustomTextView tvDate;
-        @BindView(R.id.tvTime)
-        CustomTextView tvTime;
+//        @BindView(R.id.tvTime)
+//        CustomTextView tvTime;
         @BindView(R.id.rvDepartments)
         CustomRecyclerView rvDepartments;
 
@@ -135,7 +136,7 @@ public class DocumentsAdapter extends CustomRecyclerView.Adapter<DocumentsAdapte
     }
 
     public interface RowClickListener {
-        void onItemClicked(DocumentsModel documentsModel) ;
+        void onItemClicked(DocumentModel documentModel) ;
     }
 
 }

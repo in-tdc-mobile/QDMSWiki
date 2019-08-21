@@ -10,21 +10,23 @@ import android.widget.LinearLayout;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
-import com.mariapps.qdmswiki.documents.model.DocumentsModel;
+import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.home.model.TagModel;
 
-import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class RecommendedRecentlyAdapter extends CustomRecyclerView.Adapter<RecommendedRecentlyAdapter.RecommendedRecentlyVH> {
 
     private Context mContext;
-    private ArrayList<DocumentsModel> departmentList;
+    private List<DocumentModel> recommendedRecentlyModelList;
     private RowClickListener rowClickListener;
 
-    public RecommendedRecentlyAdapter(Context context, ArrayList<DocumentsModel> list) {
+    public RecommendedRecentlyAdapter(Context context, List<DocumentModel> list) {
         mContext = context;
-        departmentList = list;
+        recommendedRecentlyModelList = list;
     }
 
     @NonNull
@@ -36,14 +38,14 @@ public class RecommendedRecentlyAdapter extends CustomRecyclerView.Adapter<Recom
 
     @Override
     public void onBindViewHolder(@NonNull final RecommendedRecentlyAdapter.RecommendedRecentlyVH holder, int i) {
-        holder.headingTextTV.setText(departmentList.get(i).getDocumentName());
-        holder.categoryTV.setText(departmentList.get(i).getCategory());
-        holder.versionTV.setText(departmentList.get(i).getVersionNo());
+        holder.headingTextTV.setText(recommendedRecentlyModelList.get(i).getDocumentName());
+        holder.categoryTV.setText(recommendedRecentlyModelList.get(i).getCategoryName());
+        holder.versionTV.setText(recommendedRecentlyModelList.get(i).getVersion());
 
         holder.rowLL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                rowClickListener.onItemClicked(departmentList.get(holder.getAdapterPosition()));
+                rowClickListener.onItemClicked(recommendedRecentlyModelList.get(holder.getAdapterPosition()));
             }
         });
 
@@ -51,7 +53,7 @@ public class RecommendedRecentlyAdapter extends CustomRecyclerView.Adapter<Recom
 
     @Override
     public int getItemCount() {
-        return departmentList != null ? departmentList.size() : 0;
+        return recommendedRecentlyModelList != null ? recommendedRecentlyModelList.size() : 0;
     }
 
     static class RecommendedRecentlyVH extends CustomRecyclerView.ViewHolder {
@@ -76,7 +78,7 @@ public class RecommendedRecentlyAdapter extends CustomRecyclerView.Adapter<Recom
     }
 
     public interface RowClickListener {
-        void onItemClicked(DocumentsModel documentsModel) ;
+        void onItemClicked(DocumentModel documentModel) ;
     }
 
 }

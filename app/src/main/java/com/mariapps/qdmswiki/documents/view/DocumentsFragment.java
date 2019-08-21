@@ -17,15 +17,22 @@ import com.mariapps.qdmswiki.baseclasses.BaseFragment;
 import com.mariapps.qdmswiki.custom.CustomEditText;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.documents.adapter.DocumentsAdapter;
-import com.mariapps.qdmswiki.documents.model.DocumentsModel;
-import com.mariapps.qdmswiki.documents.model.TagModel;
+import com.mariapps.qdmswiki.home.database.HomeDatabase;
+import com.mariapps.qdmswiki.home.model.DocumentModel;
 import com.mariapps.qdmswiki.search.view.FolderStructureActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnTextChanged;
+import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
+import io.reactivex.schedulers.Schedulers;
 
 public class DocumentsFragment extends BaseFragment {
 
@@ -36,9 +43,8 @@ public class DocumentsFragment extends BaseFragment {
 
     private FragmentManager fragmentManager;
     private DocumentsAdapter documentsAdapter;
-    private ArrayList<TagModel> department1List = new ArrayList<>();
-    private ArrayList<TagModel> department2List = new ArrayList<>();
-    private ArrayList<DocumentsModel> documentsList = new ArrayList<>();
+    private List<DocumentModel> documentsList = new ArrayList<>();
+    private HomeDatabase homeDatabase;
 
     @Override
     protected void setUpPresenter() {
@@ -55,45 +61,54 @@ public class DocumentsFragment extends BaseFragment {
         rvDocuments.setHasFixedSize(true);
         rvDocuments.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvDocuments.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+        homeDatabase = HomeDatabase.getInstance(getActivity());
 
-        setData();
+        getDocumentList();
         return view;
     }
 
     private void setData() {
-        department1List.add(new TagModel(0, 1,"Safety", "Y"));
-        department1List.add(new TagModel(1,1,"LPSQ Department", "Y"));
-
-        documentsList.add(new DocumentsModel(0,"General Data Protection Manual","GDPR Manual","25/02/2019","11:08:35 AM",department1List));
-        documentsList.add(new DocumentsModel(1,"Passenger ship safety management","GDPR Manual","25/02/2019","11:08:35 AM",department1List));
-        documentsList.add(new DocumentsModel(2,"SMC DE HR Manual","General Data Protection Manual","25/02/2019","11:08:35 AM",department1List));
-        documentsList.add(new DocumentsModel(3,"Incident investigation Manual","GDPR Manual","25/02/2019","11:08:35 AM",department1List));
-        documentsList.add(new DocumentsModel(4,"Safety management Manual","GDPR Manual","25/02/2019","11:08:35 AM",department1List));
-
-        department2List.add(new TagModel(0,1,"Safety", "Y"));
-        department2List.add(new TagModel(1,1,"LPSQ Department", "Y"));
-        department2List.add(new TagModel(2,1,"Safety", "Y"));
-        department2List.add(new TagModel(3,1,"LPSQ Department", "Y"));
-
-        documentsList.add(new DocumentsModel(5,"Passenger ship safety management","GDPR Manual","25/02/2019","11:08:35 AM",department2List));
-        documentsList.add(new DocumentsModel(6,"Safety management Manual","GDPR Manual","25/02/2019","11:08:35 AM",department2List));
-
         documentsAdapter = new DocumentsAdapter(getActivity(),documentsList,"DOCUMENTS");
         rvDocuments.setAdapter(documentsAdapter);
 
         documentsAdapter.setRowClickListener(new DocumentsAdapter.RowClickListener() {
             @Override
-            public void onItemClicked(DocumentsModel documentsModel) {
+            public void onItemClicked(DocumentModel documentModel) {
                 Intent intent = new Intent(getActivity(), FolderStructureActivity.class);
                 intent.putExtra(AppConfig.BUNDLE_TYPE,"Document");
-                intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,documentsModel.getDocumentName());
-                intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,documentsModel.getId());
+                intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,documentModel.getDocumentName());
+                intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,documentModel.getId());
                 startActivity(intent);
 
             }
         });
     }
 
+    public void getDocumentList() {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                documentsList = homeDatabase.homeDao().getDocuments();
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                setData();
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
 
     @OnTextChanged(R.id.searchET)
     void onTextChanged() {

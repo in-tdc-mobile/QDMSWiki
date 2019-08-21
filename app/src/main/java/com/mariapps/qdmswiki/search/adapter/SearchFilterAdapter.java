@@ -17,6 +17,7 @@ import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.search.model.SearchFilterModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,10 +25,10 @@ import butterknife.ButterKnife;
 public class SearchFilterAdapter extends CustomRecyclerView.Adapter<SearchFilterAdapter.SearchTypeVH> {
 
     private Context mContext;
-    private ArrayList<SearchFilterModel> searchTypeList;
+    private List<SearchFilterModel> searchTypeList;
     private ItemClickListener itemClickListener;
 
-    public SearchFilterAdapter(Context context, ArrayList<SearchFilterModel> list) {
+    public SearchFilterAdapter(Context context, List<SearchFilterModel> list) {
         mContext = context;
         searchTypeList = list;
     }

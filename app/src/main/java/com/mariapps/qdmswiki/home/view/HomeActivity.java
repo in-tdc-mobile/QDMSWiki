@@ -38,19 +38,27 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
+import com.mariapps.qdmswiki.bookmarks.model.BookmarkEntryModel;
+import com.mariapps.qdmswiki.bookmarks.model.BookmarkModel;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.custom.CustomViewPager;
 import com.mariapps.qdmswiki.home.database.HomeDao;
 import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.CategoryModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.home.model.MainModel;
 import com.mariapps.qdmswiki.home.model.NavDrawerObj;
 import com.mariapps.qdmswiki.home.model.TagModel;
 import com.mariapps.qdmswiki.home.presenter.HomePresenter;
+import com.mariapps.qdmswiki.notification.model.NotificationModel;
+import com.mariapps.qdmswiki.notification.model.ReceiverModel;
 import com.mariapps.qdmswiki.notification.view.NotificationActivity;
 import com.mariapps.qdmswiki.search.view.FolderStructureActivity;
 import com.mariapps.qdmswiki.serviceclasses.APIException;
@@ -62,7 +70,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -74,8 +81,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import com.google.gson.reflect.TypeToken;
-import java.lang.reflect.Type;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -108,9 +114,9 @@ public class HomeActivity extends BaseActivity implements HomeView{
     private HomePresenter homePresenter;
     private MainViewPager mainViewPager;
     private NavigationDrawerFragment navigationDrawerFragment;
-    private ArrayList<NavDrawerObj.MenuItemsEntity> menuItemsEntities;
-    private NavDrawerObj.MenuItemsEntity menuItemsEntity;
-    private NavDrawerObj navDrawerObj;
+//    private ArrayList<NavDrawerObj.MenuItemsEntity> menuItemsEntities;
+//    private NavDrawerObj.MenuItemsEntity menuItemsEntity;
+//    private NavDrawerObj navDrawerObj;
     int currentPosition = 0;
     private int newPosition = 0;
     private HomeActivity context;
@@ -119,6 +125,18 @@ public class HomeActivity extends BaseActivity implements HomeView{
     private long downloadID;
     private HomeDao homeDao;
     private Gson gson;
+
+    private DocumentModel documentModel;
+    List<DocumentModel> documentList = new ArrayList<>();
+    List<DocumentModel> childList = new ArrayList<>();
+    List<DocumentModel> parentFolderList = new ArrayList<>();
+    List<TagModel> tagList = new ArrayList<>();
+    List<ArticleModel> articleList = new ArrayList<>();
+    List<CategoryModel> categoryList = new ArrayList<>();
+    List<NotificationModel> notificationList = new ArrayList<>();
+    List<ReceiverModel> receiverList = new ArrayList<>();
+    List<BookmarkModel> bookmarkList = new ArrayList<>();
+    List<BookmarkEntryModel> bookmarkEntryList = new ArrayList<>();
 
     private BroadcastReceiver onDownloadComplete = new BroadcastReceiver() {
         @Override
@@ -146,36 +164,14 @@ public class HomeActivity extends BaseActivity implements HomeView{
         registerReceiver(onDownloadComplete,new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
         context = this;
         setSupportActionBar(toolbar);
-        initNavigationDrawerItems();
+        getParentFolders();
         initViewpager();
         initBottomNavigation();
         setNotificationCount();
     }
 
-    private void initNavigationDrawerItems() {
-        navDrawerObj = new NavDrawerObj();
-        menuItemsEntities = new ArrayList<>();
-        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(1, -1, "ISO AND ISM Manual", "ISO AND ISM Manual", "ISO AND ISM Manual", false, 1, "Folder"));
-        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(2, -1, "Data Protection", "Data Protection", "Data Protection", false, 2, "Folder"));
-        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(3, -1, "Shore Procedures", "Shore Procedures", "Shore Procedures", false, 3, "Folder"));
-        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(4, -1, "Ship Procedures", "Ship Procedures", "Ship Procedures", false, 4, "Folder"));
-        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(5, -1, "BSM Circulars", "BSM Circulars", "BSM Circulars", false, 5, "Folder"));
-
-        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(6, 1, "Ship Manual test", "Ship Manual test", "Ship Manual test", false, 1, "Document"));
-        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(7, 1, "Draft DOC_QA", "Draft DOC_QA", "Draft DOC_QA", false, 2, "Document"));
-        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(8, 1, "Normative References", "Normative References", "Normative References", false, 3, "Folder"));
-        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(9, 1, "Terms and definitions", "Terms and definitions", "Terms and definitions", false, 4, "Folder"));
-        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(10, 2, "Management System", "Management System", "Management System", false, 5, "Folder"));
-
-        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(11, 8, "Draft DOC_QA", "Draft DOC_QA", "Draft DOC_QA", false, 1, "Document"));
-        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(12, 3, "Data Protection", "Data Protection", "Data Protection", false, 2, "Folder"));
-        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(13, 3, "Shore Procedures", "Shore Procedures", "Shore Procedures", false, 3, "Folder"));
-        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(14, 4, "Ship Procedures", "Ship Procedures", "Ship Procedures", false, 4, "Folder"));
-        menuItemsEntities.add(new NavDrawerObj.MenuItemsEntity(15, 13, "BSM Circulars", "BSM Circulars", "BSM Circulars", false, 5, "Folder"));
-
-        navDrawerObj.setMenuItemsEntities(menuItemsEntities);
-
-        initNavDrawer();
+    private void getParentFolders() {
+        homePresenter.getParentFolders();
     }
 
     @OnClick({R.id.userImageIV, R.id.notificationIV})
@@ -361,12 +357,13 @@ public class HomeActivity extends BaseActivity implements HomeView{
             case AppConfig.FRAG_NAV_DRAWER:
                 navigationDrawerFragment = new NavigationDrawerFragment();
                 Bundle bundlenavDrawer = new Bundle();
-                bundlenavDrawer.putSerializable(AppConfig.BUNDLE_NAV_DRAWER, (Serializable) navDrawerObj);
+                bundlenavDrawer.putSerializable(AppConfig.BUNDLE_NAV_DRAWER, (Serializable) parentFolderList);
                 navigationDrawerFragment.setNavigationListener(new NavigationDrawerFragment.NavigationListener() {
                     @Override
-                    public void onItemClicked(NavDrawerObj.MenuItemsEntity menuEntity) {
-                        menuItemsEntity = menuEntity;
-                        setupFragments(findFragmentById(AppConfig.FRAG_NAV_DETAILS_DRAWER), true, true);
+                    public void onItemClicked(DocumentModel docModel) {
+                        documentModel = docModel;
+                        homePresenter.getChildFoldersList(documentModel.getFolderid());
+
                     }
                 });
 
@@ -376,14 +373,14 @@ public class HomeActivity extends BaseActivity implements HomeView{
                 NavigationDetailFragment navigationDetailFragment = new NavigationDetailFragment();
                 navigationDetailFragment.setNavigationDetailListener(new NavigationDetailFragment.NavigationDetailListener() {
                     @Override
-                    public void onItemClicked(NavDrawerObj.MenuItemsEntity menuEntity) {
-                        menuItemsEntity = menuEntity;
-                        if(menuItemsEntity.getType().equals("Folder"))
-                            setupFragments(findFragmentById(AppConfig.FRAG_NAV_DETAILS_DRAWER), true, true);
+                    public void onItemClicked(DocumentModel docModel) {
+                        documentModel = docModel;
+                        if(documentModel.getType().equals("FOLDER"))
+                            homePresenter.getChildFoldersList(documentModel.getFolderid());
                         else
                         {
                             Intent intent = new Intent(HomeActivity.this, FolderStructureActivity.class);
-                            intent.putExtra(AppConfig.BUNDLE_TYPE,menuItemsEntity.getType());
+                            intent.putExtra(AppConfig.BUNDLE_TYPE,documentModel.getType());
                             intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,"");
                             intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,1);
                             startActivity(intent);
@@ -392,8 +389,8 @@ public class HomeActivity extends BaseActivity implements HomeView{
 
                 });
                 Bundle bundleNavDetail = new Bundle();
-                bundleNavDetail.putSerializable(AppConfig.BUNDLE_NAV_DETAILS_OBJECT, (Serializable) menuItemsEntity);
-                bundleNavDetail.putSerializable(AppConfig.BUNDLE_NAV_DETAILS_LIST, (Serializable) navDrawerObj);
+                bundleNavDetail.putString(AppConfig.BUNDLE_FOLDER_NAME, documentModel.getCategoryName());
+                bundleNavDetail.putSerializable(AppConfig.BUNDLE_NAV_DETAILS_LIST, (Serializable) childList);
                 navigationDetailFragment.setArguments(bundleNavDetail);
                 return navigationDetailFragment;
             default:
@@ -478,10 +475,22 @@ public class HomeActivity extends BaseActivity implements HomeView{
 
     }
 
-    public class ReadAndInsertJsonData extends AsyncTask<String, Integer, JSONObject> {
+    @Override
+    public void onGetParentFolderSuccess(List<DocumentModel> folderList) {
+        parentFolderList = folderList;
+        initNavDrawer();
+    }
+
+    @Override
+    public void onGetChildFoldersList(List<DocumentModel> list) {
+        childList = list;
+        setupFragments(findFragmentById(AppConfig.FRAG_NAV_DETAILS_DRAWER), true, true);
+    }
+
+    public class ReadAndInsertJsonData extends AsyncTask<String, Integer, MainModel> {
 
         JSONObject jsonObject;
-        DocumentModel documentModel;
+        MainModel mainModel;
 
         public ReadAndInsertJsonData() {
         }
@@ -495,24 +504,25 @@ public class HomeActivity extends BaseActivity implements HomeView{
         }
 
         @Override
-        protected JSONObject doInBackground(String... params) {
+        protected MainModel doInBackground(String... params) {
             try {
                 gson = new Gson();
                 String result = "";
-                File file = new File(Environment.getExternalStorageDirectory(),"/QDMSWiki/Extract1/MasterList.json");
-                BufferedReader br = new BufferedReader(new FileReader(file));
-                String line;
-                while ((line = br.readLine()) != null) {
-                    result += line;
-                }
-                jsonObject = new JSONObject(result);
-                br.close();
+                mainModel = gson.fromJson(new FileReader(Environment.getExternalStorageDirectory()+"/QDMSWiki/Extract1/MasterList.json"), MainModel.class);
+//                File file = new File(Environment.getExternalStorageDirectory(),"/QDMSWiki/Extract1/MasterList.json");
+//                BufferedReader br = new BufferedReader(new FileReader(file));
+//                String line;
+//                while ((line = br.readLine()) != null) {
+//                    result += line;
+//                }
+//                jsonObject = new JSONObject(result);
+//                br.close();
 
             } catch (Exception e) {
                 progressDialog.dismiss();
             }
 
-            return jsonObject;
+            return mainModel;
         }
 
         @Override
@@ -522,46 +532,76 @@ public class HomeActivity extends BaseActivity implements HomeView{
         }
 
         @Override
-        protected void onPostExecute(JSONObject jsonObject) {
-            super.onPostExecute(jsonObject);
-            try {
+        protected void onPostExecute(MainModel mainModel) {
+            super.onPostExecute(mainModel);
 
-                //inserting documents
-                JSONArray documentArray = jsonObject.getJSONArray("DocumentCollection");
-                ArrayList<DocumentModel> documentModelList;
-                Type documentType = new TypeToken<ArrayList<DocumentModel>>() {}.getType();
-                documentModelList= new Gson().fromJson(documentArray.toString(), documentType);
-                homePresenter.deleteDocuments(documentModelList);
+            List<DocumentModel> documentModelList =  mainModel.getDocumentModels();
+            JsonElement element = gson.toJsonTree(documentModelList, new TypeToken<List<DocumentModel>>() {}.getType());
+            JsonArray documentArray = element.getAsJsonArray();
+            Type documentType = new TypeToken<ArrayList<DocumentModel>>() {}.getType();
+            documentList= new Gson().fromJson(documentArray.toString(), documentType);
 
-                //inserting tags
-                for (int i = 0; i < documentArray.length(); i++)
-                {
-                    JSONObject jOBJ = documentArray.getJSONObject(i);
-                    JSONArray tagArray = jOBJ.getJSONArray("Tags");
-                    ArrayList<TagModel> tagModelArrayList;
-                    Type tagType = new TypeToken<ArrayList<TagModel>>() {}.getType();
-                    tagModelArrayList= new Gson().fromJson(tagArray.toString(), tagType);
-                    homePresenter.deleteTags(tagModelArrayList);
-                }
-
-
-                //inserting articles
-                JSONArray articleArray = jsonObject.getJSONArray("Article");
-                ArrayList<ArticleModel> articleModelArrayList;
-                Type articleType = new TypeToken<ArrayList<ArticleModel>>() {}.getType();
-                articleModelArrayList= new Gson().fromJson(articleArray.toString(), articleType);
-                homePresenter.deleteArticles(articleModelArrayList);
-
-                //inserting categories
-                JSONArray categoryArray = jsonObject.getJSONArray("Category");
-                ArrayList<CategoryModel> categoryModelArrayList;
-                Type categoryType = new TypeToken<ArrayList<ArticleModel>>() {}.getType();
-                categoryModelArrayList= new Gson().fromJson(categoryArray.toString(), categoryType);
-                homePresenter.deleteCategories(categoryModelArrayList);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
+            for (int i = 0; i < documentArray.size(); i++)
+            {
+                JsonObject jOBJ = documentArray.get(i).getAsJsonObject();
+                JsonArray tagArray = jOBJ.getAsJsonArray("Tags");
+                Type tagType = new TypeToken<ArrayList<TagModel>>() {}.getType();
+                tagList= new Gson().fromJson(tagArray.toString(), tagType);
             }
+
+            List<ArticleModel> articleList = mainModel.getArticleModels();
+            JsonElement element1 = gson.toJsonTree(articleList, new TypeToken<List<ArticleModel>>() {}.getType());
+            JsonArray articleArray = element1.getAsJsonArray();
+            Type articleType = new TypeToken<ArrayList<ArticleModel>>() {}.getType();
+            articleList= new Gson().fromJson(articleArray.toString(), articleType);
+
+            List<CategoryModel> categoryList = mainModel.getCategoryModels();
+            JsonElement element2 = gson.toJsonTree(categoryList, new TypeToken<List<CategoryModel>>() {}.getType());
+            JsonArray categoryArray = element2.getAsJsonArray();
+            Type categoryType = new TypeToken<ArrayList<CategoryModel>>() {}.getType();
+            categoryList= new Gson().fromJson(categoryArray.toString(), categoryType);
+
+            List<NotificationModel> notificationList = mainModel.getNotificationModels();
+            JsonElement element3 = gson.toJsonTree(notificationList, new TypeToken<List<NotificationModel>>() {}.getType());
+            JsonArray notificationArray = element3.getAsJsonArray();
+            Type notificationType = new TypeToken<ArrayList<NotificationModel>>() {}.getType();
+            notificationList= new Gson().fromJson(notificationArray.toString(), notificationType);
+
+            for (int i = 0; i < notificationArray.size(); i++)
+            {
+                JsonObject jOBJ = notificationArray.get(i).getAsJsonObject();
+                JsonArray recevierArray = jOBJ.getAsJsonArray("Receviers");
+                Type receiverType = new TypeToken<ArrayList<ReceiverModel>>() {}.getType();
+                receiverList= new Gson().fromJson(recevierArray.toString(), receiverType);
+            }
+
+            List<BookmarkModel> bookmarkList = mainModel.getBookmarkModels();
+            JsonElement element4 = gson.toJsonTree(bookmarkList, new TypeToken<List<BookmarkModel>>() {}.getType());
+            JsonArray bookmarkArray = element4.getAsJsonArray();
+            Type bookmarkType = new TypeToken<ArrayList<BookmarkModel>>() {}.getType();
+            bookmarkList= new Gson().fromJson(bookmarkArray.toString(), bookmarkType);
+
+            for (int i = 0; i < bookmarkArray.size(); i++)
+            {
+                JsonObject jOBJ = bookmarkArray.get(i).getAsJsonObject();
+                JsonArray bookmarkEntryArray = jOBJ.getAsJsonArray("BookmarkEntries");
+
+                Type bookMarkEntryType = new TypeToken<ArrayList<BookmarkEntryModel>>() {}.getType();
+                bookmarkEntryList= new Gson().fromJson(bookmarkEntryArray.toString(), bookMarkEntryType);
+            }
+
+
+            //inserting dara
+            homePresenter.deleteDocuments(documentList);
+            homePresenter.deleteTags(tagList);
+            homePresenter.deleteArticles(articleList);
+            homePresenter.deleteCategories(categoryList);
+            homePresenter.deleteNotifications(notificationList);
+            homePresenter.deleteReceivers(receiverList);
+            homePresenter.deleteBookmarks(bookmarkList);
+            homePresenter.deleteBookmarkEntries(bookmarkEntryList);
+
+            mainViewPager.notifyDataSetChanged();
             progressDialog.dismiss();
         }
 

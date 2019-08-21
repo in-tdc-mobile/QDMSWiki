@@ -16,14 +16,23 @@ import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseFragment;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
-import com.mariapps.qdmswiki.documents.model.DocumentsModel;
 import com.mariapps.qdmswiki.home.adapter.RecommendedRecentlyAdapter;
+import com.mariapps.qdmswiki.home.database.HomeDatabase;
+import com.mariapps.qdmswiki.home.model.CategoryModel;
+import com.mariapps.qdmswiki.home.model.DocumentModel;
 import com.mariapps.qdmswiki.search.view.FolderStructureActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
+import io.reactivex.schedulers.Schedulers;
 
 public class HomeDetailFragment extends BaseFragment {
 
@@ -35,7 +44,9 @@ public class HomeDetailFragment extends BaseFragment {
     RelativeLayout noDataRL;
 
     private RecommendedRecentlyAdapter recommendedRecentlyAdapter;
-    private ArrayList<DocumentsModel> documentsList = new ArrayList<>();
+    private ArrayList<DocumentModel> documentsList = new ArrayList<>();
+    private HomeDatabase homeDatabase;
+    private List<DocumentModel> recommendedRecentlyModels = new ArrayList<>();
     private String documentType;
 
     @Nullable
@@ -48,7 +59,9 @@ public class HomeDetailFragment extends BaseFragment {
         rvDocuments.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvDocuments.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
 
-        setData();
+        homeDatabase = HomeDatabase.getInstance(getActivity());
+        getRecommendedList();
+
         return view;
     }
 
@@ -73,23 +86,10 @@ public class HomeDetailFragment extends BaseFragment {
     }
 
     private void setData(){
-
-        if(documentType.equals("Recently Viewed"))
-            documentsList = new ArrayList<>();
-        else {
-            documentsList.add(new DocumentsModel(1, "General Data Protection Manual", "GDPR Manual", "V1"));
-            documentsList.add(new DocumentsModel(2, "ECDIS Manual", "Information Technology", "V2"));
-            documentsList.add(new DocumentsModel(3, "ISO Ethical Ship Operations Policy", "Ethical Ship Operations Policy", "V1"));
-            documentsList.add(new DocumentsModel(4, "Safety Management Manual Appendix", "Safety Management Manual", "V1"));
-            documentsList.add(new DocumentsModel(5, "LPG Carrier Manual", "LPG Carrier Manual", "V2"));
-            documentsList.add(new DocumentsModel(6, "General Data Protection Manual", "GDPR Manual", "V1"));
-            documentsList.add(new DocumentsModel(7, "ECDIS Manual", "Information Technology", "V2"));
-        }
-
-        recommendedRecentlyAdapter = new RecommendedRecentlyAdapter(getActivity(), documentsList);
+        recommendedRecentlyAdapter = new RecommendedRecentlyAdapter(getActivity(), recommendedRecentlyModels);
         rvDocuments.setAdapter(recommendedRecentlyAdapter);
 
-        if (documentsList.size() > 0) {
+        if (recommendedRecentlyModels.size() > 0) {
             noDataRL.setVisibility(View.GONE);
         } else {
             noDataRL.setVisibility(View.VISIBLE);
@@ -97,16 +97,42 @@ public class HomeDetailFragment extends BaseFragment {
 
         recommendedRecentlyAdapter.setRowClickListener(new RecommendedRecentlyAdapter.RowClickListener() {
             @Override
-            public void onItemClicked(DocumentsModel documentsModel) {
+            public void onItemClicked(DocumentModel documentModel) {
                 Intent intent = new Intent(getActivity(), FolderStructureActivity.class);
                 intent.putExtra(AppConfig.BUNDLE_TYPE,"Document");
-                intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,documentsModel.getDocumentName());
-                intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,documentsModel.getId());
+                intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,documentModel.getDocumentName());
+                intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,documentModel.getId());
                 startActivity(intent);
 
             }
         });
 
+    }
+
+    public void getRecommendedList() {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                recommendedRecentlyModels = homeDatabase.homeDao().getDocuments();
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                setData();
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
     }
 
 

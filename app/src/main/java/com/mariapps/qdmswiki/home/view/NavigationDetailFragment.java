@@ -19,7 +19,10 @@ import com.mariapps.qdmswiki.baseclasses.BaseFragment;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.home.adapter.CustomNavigationDetailAdapter;
+import com.mariapps.qdmswiki.home.model.DocumentModel;
 import com.mariapps.qdmswiki.home.model.NavDrawerObj;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,8 +43,10 @@ public class NavigationDetailFragment extends BaseFragment {
     RelativeLayout navRL;
 
     private CustomNavigationDetailAdapter customNavigationDetailAdapter;
-    private NavDrawerObj navDrawerObj;
-    private NavDrawerObj.MenuItemsEntity menuItemsEntity;
+    private List<DocumentModel> documentList;
+    private String folderName;
+//    private NavDrawerObj navDrawerObj;
+//    private NavDrawerObj.MenuItemsEntity menuItemsEntity;
     private NavigationDetailListener navigationDetailListener;
 
     @Override
@@ -56,30 +61,30 @@ public class NavigationDetailFragment extends BaseFragment {
         ButterKnife.bind(this, view);
 
         if (getArguments() != null) {
-            navDrawerObj = (NavDrawerObj) getArguments().getSerializable(AppConfig.BUNDLE_NAV_DETAILS_LIST);
-            menuItemsEntity = (NavDrawerObj.MenuItemsEntity) getArguments().getSerializable(AppConfig.BUNDLE_NAV_DETAILS_OBJECT);
-            if (navDrawerObj != null) {
-                initRecycler(navDrawerObj);
+            documentList = (List<DocumentModel>) getArguments().getSerializable(AppConfig.BUNDLE_NAV_DETAILS_LIST);
+            folderName =  getArguments().getString(AppConfig.BUNDLE_FOLDER_NAME);
+            if (documentList != null) {
+                initRecycler(documentList);
             }
-            if (menuItemsEntity != null) {
-                headingTV.setText(menuItemsEntity.getPageHeaderName());
+            if (folderName != null) {
+                headingTV.setText(folderName);
             }
         }
 
         return view;
     }
 
-    private void initRecycler(NavDrawerObj navDrawerObj) {
+    private void initRecycler(List<DocumentModel> documentList) {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         navigationRV.setLayoutManager(mLayoutManager);
         navigationRV.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
 
-        customNavigationDetailAdapter = new CustomNavigationDetailAdapter(getActivity(), navDrawerObj.getMenuList(menuItemsEntity.getId()));
+        customNavigationDetailAdapter = new CustomNavigationDetailAdapter(getActivity(), documentList);
 
         customNavigationDetailAdapter.setNavAdapterListener(new CustomNavigationDetailAdapter.NavAdapterListener() {
             @Override
-            public void onItemClick(NavDrawerObj.MenuItemsEntity menuItemsEntity) {
-                navigationDetailListener.onItemClicked(menuItemsEntity);
+            public void onItemClick(DocumentModel documentModel) {
+                navigationDetailListener.onItemClicked(documentModel);
             }
 
         });
@@ -103,7 +108,7 @@ public class NavigationDetailFragment extends BaseFragment {
 
 
     public interface NavigationDetailListener {
-        void onItemClicked(NavDrawerObj.MenuItemsEntity menuItemsEntity);
+        void onItemClicked(DocumentModel documentModel);
     }
 
     public void setNavigationDetailListener(NavigationDetailListener navigationDetailListener) {

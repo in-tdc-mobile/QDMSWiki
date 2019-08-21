@@ -1,6 +1,7 @@
 package com.mariapps.qdmswiki.documents.model;
 
 import com.google.gson.annotations.SerializedName;
+import com.mariapps.qdmswiki.home.model.TagModel;
 
 import java.io.Serializable;
 import java.util.ArrayList;

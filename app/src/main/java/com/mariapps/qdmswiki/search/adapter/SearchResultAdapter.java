@@ -26,12 +26,12 @@ import butterknife.ButterKnife;
 public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResultAdapter.SearchVH>  implements Filterable {
 
     private Context mContext;
-    private ArrayList<SearchModel> filteredItems;
-    private ArrayList<SearchModel> searchList;
+    private List<SearchModel> filteredItems;
+    private List<SearchModel> searchList;
     private SearchResultAdapter.ItemClickListener itemClickListener;
     private String fromPage;
 
-    public SearchResultAdapter(Context context, ArrayList<SearchModel> list, String page) {
+    public SearchResultAdapter(Context context, List<SearchModel> list, String page) {
         mContext = context;
         searchList = list;
         this.filteredItems = list;
@@ -49,7 +49,7 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
     public void onBindViewHolder(@NonNull final SearchResultAdapter.SearchVH holder, int i) {
         SearchModel searchModel = filteredItems.get(holder.getAdapterPosition());
         holder.nameTV.setText(searchModel.getName());
-        holder.descriptionTV.setText(searchModel.getDescription());
+        holder.descriptionTV.setText(searchModel.getCategoryName());
 
         if(fromPage.equals("FOLDER"))
             holder.openIV.setVisibility(View.GONE);
@@ -128,8 +128,8 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
                         ArrayList<SearchModel> filteredList1 = new ArrayList<>();
                         if (filterBooleanItem.getCharString() != null && !filterBooleanItem.getCharString().equals("")) {
                             for (SearchModel searchModel : filteredItems) {
-                                if (searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
-                                        searchModel.getDescription().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
+                                if (searchModel.getName()!= null && searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
+                                        searchModel.getCategoryName()!= null && searchModel.getCategoryName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
                                     filteredList1.add(searchModel);
                                 }
                             }
@@ -157,8 +157,8 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
                         ArrayList<SearchModel> filteredList1 = new ArrayList<>();
                         if (filterBooleanItem.getCharString() != null && !filterBooleanItem.getCharString().equals("")) {
                             for (SearchModel searchModel : filteredItems) {
-                                if (searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
-                                        searchModel.getDescription().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
+                                if (searchModel.getName()!= null &&searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
+                                        searchModel.getCategoryName()!= null && searchModel.getCategoryName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
                                     filteredList1.add(searchModel);
                                 }
                             }
@@ -187,8 +187,8 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
                         ArrayList<SearchModel> filteredList1 = new ArrayList<>();
                         if (filterBooleanItem.getCharString() != null && !filterBooleanItem.getCharString().equals("")) {
                             for (SearchModel searchModel : filteredItems) {
-                                if (searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
-                                        searchModel.getDescription().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
+                                if (searchModel.getName()!= null && searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
+                                        searchModel.getCategoryName()!= null && searchModel.getCategoryName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
                                     filteredList1.add(searchModel);
                                 }
                             }
@@ -217,8 +217,8 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
                         ArrayList<SearchModel> filteredList1 = new ArrayList<>();
                         if (filterBooleanItem.getCharString() != null && !filterBooleanItem.getCharString().equals("")) {
                             for (SearchModel searchModel : filteredItems) {
-                                if (searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
-                                        searchModel.getDescription().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
+                                if (searchModel.getName()!= null && searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
+                                        searchModel.getCategoryName()!= null && searchModel.getCategoryName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
                                     filteredList1.add(searchModel);
                                 }
                             }
@@ -247,8 +247,8 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
                         ArrayList<SearchModel> filteredList1 = new ArrayList<>();
                         if (filterBooleanItem.getCharString() != null && !filterBooleanItem.getCharString().equals("")) {
                             for (SearchModel searchModel : filteredItems) {
-                                if (searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
-                                        searchModel.getDescription().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
+                                if (searchModel.getName()!= null && searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
+                                        searchModel.getCategoryName()!= null && searchModel.getCategoryName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
                                     filteredList1.add(searchModel);
                                 }
                             }
@@ -276,8 +276,8 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
                         ArrayList<SearchModel> filteredList1 = new ArrayList<>();
                         if (filterBooleanItem.getCharString() != null && !filterBooleanItem.getCharString().equals("")) {
                             for (SearchModel searchModel : filteredItems) {
-                                if (searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
-                                        searchModel.getDescription().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
+                                if (searchModel.getName()!= null && searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
+                                        searchModel.getCategoryName()!= null && searchModel.getCategoryName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
                                     filteredList1.add(searchModel);
                                 }
                             }
@@ -307,8 +307,8 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
                         ArrayList<SearchModel> filteredList1 = new ArrayList<>();
                         if (filterBooleanItem.getCharString() != null && !filterBooleanItem.getCharString().equals("")) {
                             for (SearchModel searchModel : filteredItems) {
-                                if (searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
-                                        searchModel.getDescription().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
+                                if (searchModel.getName()!= null && searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
+                                        searchModel.getCategoryName()!= null && searchModel.getCategoryName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
                                     filteredList1.add(searchModel);
                                 }
                             }
@@ -337,8 +337,8 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
                         ArrayList<SearchModel> filteredList1 = new ArrayList<>();
                         if (filterBooleanItem.getCharString() != null && !filterBooleanItem.getCharString().equals("")) {
                             for (SearchModel searchModel : filteredItems) {
-                                if (searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
-                                        searchModel.getDescription().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
+                                if (searchModel.getName()!= null && searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
+                                        searchModel.getCategoryName()!= null && searchModel.getCategoryName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
                                     filteredList1.add(searchModel);
                                 }
                             }
@@ -367,8 +367,8 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
                         ArrayList<SearchModel> filteredList1 = new ArrayList<>();
                         if (filterBooleanItem.getCharString() != null && !filterBooleanItem.getCharString().equals("")) {
                             for (SearchModel searchModel : filteredItems) {
-                                if (searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
-                                        searchModel.getDescription().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
+                                if (searchModel.getName()!= null && searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
+                                        searchModel.getCategoryName()!= null && searchModel.getCategoryName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
                                     filteredList1.add(searchModel);
                                 }
                             }
@@ -397,8 +397,8 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
                         ArrayList<SearchModel> filteredList1 = new ArrayList<>();
                         if (filterBooleanItem.getCharString() != null && !filterBooleanItem.getCharString().equals("")) {
                             for (SearchModel searchModel : filteredItems) {
-                                if (searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
-                                        searchModel.getDescription().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
+                                if (searchModel.getName()!= null && searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
+                                        searchModel.getCategoryName()!= null && searchModel.getCategoryName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
                                     filteredList1.add(searchModel);
                                 }
                             }
@@ -425,8 +425,8 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
                         ArrayList<SearchModel> filteredList1 = new ArrayList<>();
                         if (filterBooleanItem.getCharString() != null && !filterBooleanItem.getCharString().equals("")) {
                             for (SearchModel searchModel : filteredItems) {
-                                if (searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
-                                        searchModel.getDescription().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
+                                if (searchModel.getName()!= null && searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
+                                        searchModel.getCategoryName()!= null && searchModel.getCategoryName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
                                     filteredList1.add(searchModel);
                                 }
                             }
@@ -454,8 +454,8 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
                         ArrayList<SearchModel> filteredList1 = new ArrayList<>();
                         if (filterBooleanItem.getCharString() != null && !filterBooleanItem.getCharString().equals("")) {
                             for (SearchModel searchModel : filteredItems) {
-                                if (searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
-                                        searchModel.getDescription().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
+                                if (searchModel.getName()!= null && searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
+                                        searchModel.getCategoryName()!= null && searchModel.getCategoryName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
                                     filteredList1.add(searchModel);
                                 }
                             }
@@ -483,8 +483,8 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
                         ArrayList<SearchModel> filteredList1 = new ArrayList<>();
                         if (filterBooleanItem.getCharString() != null && !filterBooleanItem.getCharString().equals("")) {
                             for (SearchModel searchModel : filteredItems) {
-                                if (searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
-                                        searchModel.getDescription().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
+                                if (searchModel.getName()!= null && searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
+                                        searchModel.getCategoryName()!= null && searchModel.getCategoryName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
                                     filteredList1.add(searchModel);
                                 }
                             }
@@ -512,8 +512,8 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
                         ArrayList<SearchModel> filteredList1 = new ArrayList<>();
                         if (filterBooleanItem.getCharString() != null && !filterBooleanItem.getCharString().equals("")) {
                             for (SearchModel searchModel : filteredItems) {
-                                if (searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
-                                        searchModel.getDescription().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
+                                if (searchModel.getName()!= null && searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
+                                        searchModel.getCategoryName()!= null && searchModel.getCategoryName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
                                     filteredList1.add(searchModel);
                                 }
                             }
@@ -545,8 +545,8 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
                         ArrayList<SearchModel> filteredList1 = new ArrayList<>();
                         if (filterBooleanItem.getCharString() != null && !filterBooleanItem.getCharString().equals("")) {
                             for (SearchModel searchModel : filteredItems) {
-                                if (searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
-                                        searchModel.getDescription().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
+                                if (searchModel.getName()!= null && searchModel.getName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase()) ||
+                                        searchModel.getCategoryName()!= null && searchModel.getCategoryName().toLowerCase().contains(filterBooleanItem.getCharString().toLowerCase())) {
                                     filteredList1.add(searchModel);
                                 }
                             }

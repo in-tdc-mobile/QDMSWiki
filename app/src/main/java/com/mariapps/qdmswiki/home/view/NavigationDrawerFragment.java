@@ -18,6 +18,7 @@ import com.mariapps.qdmswiki.baseclasses.BaseFragment;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.home.adapter.CustomNavigationAdapter;
+import com.mariapps.qdmswiki.home.model.DocumentModel;
 import com.mariapps.qdmswiki.home.model.NavDrawerObj;
 
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class NavigationDrawerFragment extends BaseFragment {
     private CustomNavigationAdapter customNavigationAdapter;
     private NavDrawerObj navDrawerObj;
     private NavigationListener navigationListener;
-    private List<NavDrawerObj.MenuItemsEntity> menuItemsEntity = new ArrayList<>();
+    private List<DocumentModel> folderList = new ArrayList<>();
 
     @Override
     protected void setUpPresenter() {
@@ -55,33 +56,32 @@ public class NavigationDrawerFragment extends BaseFragment {
         sessionManager = new SessionManager(getActivity());
 
         if (getArguments() != null) {
-            navDrawerObj = (NavDrawerObj) getArguments().getSerializable(AppConfig.BUNDLE_NAV_DRAWER);
-            if (navDrawerObj != null) {
-                initRecycler(navDrawerObj);
+            folderList = (List<DocumentModel>) getArguments().getSerializable(AppConfig.BUNDLE_NAV_DRAWER);
+            if (folderList != null) {
+                initRecycler(folderList);
             }
         }
 
         return view;
     }
 
-    private void initRecycler(NavDrawerObj navDrawerObj) {
+    private void initRecycler(List<DocumentModel> folderList) {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         navigationRV.setLayoutManager(mLayoutManager);
         navigationRV.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
 
-        menuItemsEntity = navDrawerObj.getMenuList(-1);
-        customNavigationAdapter = new CustomNavigationAdapter(getActivity(), menuItemsEntity);
+        customNavigationAdapter = new CustomNavigationAdapter(getActivity(), folderList);
         customNavigationAdapter.setNavAdapterListener(new CustomNavigationAdapter.NavAdapterListener() {
             @Override
-            public void onItemClick(NavDrawerObj.MenuItemsEntity menuItemsEntity) {
-                navigationListener.onItemClicked(menuItemsEntity);
+            public void onItemClick(DocumentModel documentModel) {
+                navigationListener.onItemClicked(documentModel);
             }
         });
         navigationRV.setAdapter(customNavigationAdapter);
     }
 
     public interface NavigationListener {
-        void onItemClicked(NavDrawerObj.MenuItemsEntity menuItemsEntity);
+        void onItemClicked(DocumentModel documentModel);
     }
 
     public void setNavigationListener(NavigationListener navigationListener) {

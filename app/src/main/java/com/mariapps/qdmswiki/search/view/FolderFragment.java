@@ -150,25 +150,25 @@ public class FolderFragment extends BaseFragment {
 
         setSearchTypeData();
         searchList = new ArrayList<>();
-
-        searchList.add(new SearchModel(1, -1,"Folder", "GDPR Manual", "General Data Protection Manual"));
-        searchList.add(new SearchModel(2, 1,"Document", "Information Technology", "ECDIS Manual"));
-        searchList.add(new SearchModel(3, -1,"Folder", "Ethical Ship Operations Policy", "ISO Ethical Ship Operations Policy"));
-        searchList.add(new SearchModel(4, 3,"Forms", "Safety Management Manual", "Safety Management Manual Appendix"));
-        searchList.add(new SearchModel(5, 1,"Document", "LPG Carrier Manual", "LPG Carrier Manual"));
-        searchList.add(new SearchModel(6, -1,"Folder", "GDPR Manual", "General Data Protection Manual"));
-        searchList.add(new SearchModel(7, 1,"Document", "Information Technology", "ECDIS Manual"));
-        searchList.add(new SearchModel(8, 6,"Document", "Safety Management Manual", "Safety Management Manual Appendix"));
-        searchList.add(new SearchModel(9, 3,"Document", "LPG Carrier Manual", "LPG Carrier Manual"));
-        searchList.add(new SearchModel(10, 1,"Folder", "Ethical Ship Operations Policy", "General Data Protection Manual"));
-        searchList.add(new SearchModel(11, 10,"Document", "Information Technology", "ECDIS Manual"));
+//
+//        searchList.add(new SearchModel(1, -1,"Folder", "GDPR Manual", "General Data Protection Manual"));
+//        searchList.add(new SearchModel(2, 1,"Document", "Information Technology", "ECDIS Manual"));
+//        searchList.add(new SearchModel(3, -1,"Folder", "Ethical Ship Operations Policy", "ISO Ethical Ship Operations Policy"));
+//        searchList.add(new SearchModel(4, 3,"Forms", "Safety Management Manual", "Safety Management Manual Appendix"));
+//        searchList.add(new SearchModel(5, 1,"Document", "LPG Carrier Manual", "LPG Carrier Manual"));
+//        searchList.add(new SearchModel(6, -1,"Folder", "GDPR Manual", "General Data Protection Manual"));
+//        searchList.add(new SearchModel(7, 1,"Document", "Information Technology", "ECDIS Manual"));
+//        searchList.add(new SearchModel(8, 6,"Document", "Safety Management Manual", "Safety Management Manual Appendix"));
+//        searchList.add(new SearchModel(9, 3,"Document", "LPG Carrier Manual", "LPG Carrier Manual"));
+//        searchList.add(new SearchModel(10, 1,"Folder", "Ethical Ship Operations Policy", "General Data Protection Manual"));
+//        searchList.add(new SearchModel(11, 10,"Document", "Information Technology", "ECDIS Manual"));
 
         ArrayList<SearchModel> selectedList = new ArrayList<>();
 
         for(int i=0;i<searchList.size();i++){
-            if(searchList.get(i).getFolderId() == id){
-                selectedList.add(searchList.get(i));
-            }
+//            if(searchList.get(i).getFolderId() == id){
+//                selectedList.add(searchList.get(i));
+//            }
         }
 
 
@@ -180,7 +180,7 @@ public class FolderFragment extends BaseFragment {
             @Override
             public void onItemClicked(SearchModel item) {
                 folderName = item.getName();
-                id = item.getId();
+                //id = item.getId();
                 if(item.getType().equals("Folder")) {
                     FolderFragment folderFragment = new FolderFragment();
                     Bundle args = new Bundle();

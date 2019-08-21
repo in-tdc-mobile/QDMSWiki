@@ -71,6 +71,10 @@ public class MainViewPager extends FragmentPagerAdapter {
 
     }
 
+    public int getItemPosition(Object object){
+        return POSITION_NONE;
+    }
+
     /**
      * Get the current fragment
      */

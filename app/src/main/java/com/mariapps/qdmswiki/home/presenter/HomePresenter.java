@@ -2,18 +2,23 @@ package com.mariapps.qdmswiki.home.presenter;
 
 import android.content.Context;
 
+import com.mariapps.qdmswiki.bookmarks.model.BookmarkEntryModel;
+import com.mariapps.qdmswiki.bookmarks.model.BookmarkModel;
 import com.mariapps.qdmswiki.home.database.HomeDatabase;
 import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.CategoryModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
 import com.mariapps.qdmswiki.home.model.TagModel;
 import com.mariapps.qdmswiki.home.view.HomeView;
+import com.mariapps.qdmswiki.notification.model.NotificationModel;
+import com.mariapps.qdmswiki.notification.model.ReceiverModel;
 import com.mariapps.qdmswiki.serviceclasses.APIException;
 import com.mariapps.qdmswiki.serviceclasses.ApiServiceFactory;
 import com.mariapps.qdmswiki.serviceclasses.ServiceController;
 import com.mariapps.qdmswiki.serviceclasses.SimpleObserver;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
@@ -28,12 +33,14 @@ public class HomePresenter {
     private HomeDatabase homeDatabase;
     private ServiceController serviceController;
     String url;
+    List<DocumentModel> folderList = new ArrayList<>();
 
     public HomePresenter(Context context, HomeView homeView) {
         this.homeView = homeView;
         serviceController = ApiServiceFactory.getInstance().getFacade();
         homeDatabase = HomeDatabase.getInstance(context);
-        url = "https://drive.google.com/uc?export=download&id=1su4nzOn6-wHOay-uCkF1ajOgj47ajbiC";
+        https://drive.google.com/open?id=1_i1HVxKMbPOS9dDdwT1XU2Huz--LkHrQ
+        url = "https://drive.google.com/uc?export=download&id=1_i1HVxKMbPOS9dDdwT1XU2Huz--LkHrQ";
     }
 
     public String getDownloadUrl() {
@@ -61,7 +68,8 @@ public class HomePresenter {
 //                });
     }
 
-    public void deleteDocuments(ArrayList<DocumentModel> documentModels) {
+    public void deleteDocuments(List<DocumentModel> documentModels) {
+
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
@@ -87,7 +95,7 @@ public class HomePresenter {
         });
     }
 
-    public void insertDocuments(final ArrayList<DocumentModel> documentModels) {
+    public void insertDocuments(final List<DocumentModel> documentModels) {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
@@ -115,7 +123,7 @@ public class HomePresenter {
         });
     }
 
-    public void deleteTags(ArrayList<TagModel> tagModelArrayList) {
+    public void deleteTags(List<TagModel> tagModelArrayList) {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
@@ -141,7 +149,7 @@ public class HomePresenter {
         });
     }
 
-    public void insertTags(final ArrayList<TagModel> tagModelArrayList) {
+    public void insertTags(final List<TagModel> tagModelArrayList) {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
@@ -158,7 +166,6 @@ public class HomePresenter {
 
             @Override
             public void onComplete() {
-
             }
 
 
@@ -169,7 +176,7 @@ public class HomePresenter {
         });
     }
 
-    public void deleteArticles(ArrayList<ArticleModel> articleModelArrayList) {
+    public void deleteArticles(List<ArticleModel> articleModelArrayList) {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
@@ -195,7 +202,7 @@ public class HomePresenter {
         });
     }
 
-    public void insertArticles(final ArrayList<ArticleModel> articleModelArrayList) {
+    public void insertArticles(final List<ArticleModel> articleModelArrayList) {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
@@ -212,7 +219,6 @@ public class HomePresenter {
 
             @Override
             public void onComplete() {
-
             }
 
 
@@ -223,7 +229,7 @@ public class HomePresenter {
         });
     }
 
-    public void deleteCategories(ArrayList<CategoryModel> categoryModelArrayList) {
+    public void deleteCategories(List<CategoryModel> categoryModelArrayList) {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
@@ -249,7 +255,7 @@ public class HomePresenter {
         });
     }
 
-    public void insertCategories(final ArrayList<CategoryModel> categoryModelArrayList) {
+    public void insertCategories(final List<CategoryModel> categoryModelArrayList) {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
@@ -266,7 +272,276 @@ public class HomePresenter {
 
             @Override
             public void onComplete() {
+            }
 
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void deleteNotifications(List<NotificationModel> notificationModels) {
+
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                homeDatabase.homeDao().deleteNotificationEntity();
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                insertNotifications(notificationModels);
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void insertNotifications(final List<NotificationModel> notificationModels) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                if (notificationModels != null) {
+                    homeDatabase.homeDao().insertNotifications(notificationModels);
+                }
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void deleteReceivers(List<ReceiverModel> receiverModels) {
+
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                homeDatabase.homeDao().deleteReceiverEntity();
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                insertReceivers(receiverModels);
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void insertReceivers(final List<ReceiverModel> receiverModels) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                if (receiverModels != null) {
+                    homeDatabase.homeDao().insertReceivers(receiverModels);
+                }
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void deleteBookmarks(List<BookmarkModel> bookmarkModels) {
+
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                homeDatabase.homeDao().deleteBookmarkEntity();
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                insertBookmarks(bookmarkModels);
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void insertBookmarks(final List<BookmarkModel> bookmarkModels) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                if (bookmarkModels != null) {
+                    homeDatabase.homeDao().insertBookmarks(bookmarkModels);
+                }
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void deleteBookmarkEntries(List<BookmarkEntryModel> bookmarkEntryModels) {
+
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                homeDatabase.homeDao().deleteBookmarkEntryEntity();
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                insertBookmarkEntries(bookmarkEntryModels);
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void insertBookmarkEntries(final List<BookmarkEntryModel> bookmarkEntryModels) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                if (bookmarkEntryModels != null) {
+                    homeDatabase.homeDao().insertBookmarkEntries(bookmarkEntryModels);
+                }
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void getParentFolders() {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                    folderList = homeDatabase.homeDao().getParentFolders();
+
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                homeView.onGetParentFolderSuccess(folderList);
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void getChildFoldersList(String parentId) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                folderList = homeDatabase.homeDao().getChildFoldersList(parentId);
+
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                homeView.onGetChildFoldersList(folderList);
             }
 
 

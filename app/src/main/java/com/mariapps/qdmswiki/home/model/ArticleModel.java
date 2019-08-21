@@ -4,9 +4,13 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
+import android.nfc.Tag;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.mariapps.qdmswiki.bookmarks.model.BookmarkEntryModel;
 import com.mariapps.qdmswiki.home.database.HomeTypeConverter;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,17 +26,21 @@ public class ArticleModel implements Parcelable {
     @SerializedName("_id")
     private String id;
 
-    @ColumnInfo(name = "AppId")
-    @SerializedName("appId")
-    private String appId;
+//    @ColumnInfo(name = "AppId")
+//    @SerializedName("appId")
+//    private String appId;
 
-    @ColumnInfo(name = "DraftId")
-    @SerializedName("DraftId")
-    private String draftId;
+//    @ColumnInfo(name = "DraftId")
+//    @SerializedName("DraftId")
+//    private String draftId;
 
     @ColumnInfo(name = "ArticleName")
     @SerializedName("ArticleName")
     private String articleName;
+
+    @ColumnInfo(name = "ArticleNumber")
+    @SerializedName("ArticleNumber")
+    private Integer articleNumber;
 
     @ColumnInfo(name = "DocumentData")
     @SerializedName("DocumentData")
@@ -42,18 +50,45 @@ public class ArticleModel implements Parcelable {
     @SerializedName("CategoryId")
     public List<String> categoryIds;
 
-    @ColumnInfo(name = "IsActive")
-    @SerializedName("IsActive")
-    private boolean isActive;
+//    @ColumnInfo(name = "IsActive")
+//    @SerializedName("IsActive")
+//    private boolean isActive;
 
-    public ArticleModel(String id, String appId, String draftId, String articleName, String documentData, List<String> categoryIds, boolean isActive) {
+    @SerializedName("Tags")
+    private List<TagModel> tags = null;
+
+    @ColumnInfo(name = "Version")
+    @SerializedName("Version")
+    private Double version;
+
+    @ColumnInfo(name = "ApprovedBy")
+    @SerializedName("ApprovedBy")
+    private String approvedBy;
+
+    @ColumnInfo(name = "ApprovedDate")
+    @SerializedName("ApprovedDate")
+    private String approvedDate;
+
+    @ColumnInfo(name = "Date")
+    @SerializedName("Date")
+    private String date;
+
+    @ColumnInfo(name = "ArticleToOfficeIds")
+    @SerializedName("ArticleToOfficeIds")
+    private List<String> articleToOfficeIds = null;
+
+    @ColumnInfo(name = "ArticleToVesselIds")
+    @SerializedName("ArticleToVesselIds")
+    private List<String> articleToVesselIds = null;
+
+    public ArticleModel(String id, String articleName, String documentData, List<String> categoryIds) {
         this.id = id;
-        this.appId = appId;
-        this.draftId = draftId;
+//        this.appId = appId;
+//        this.draftId = draftId;
         this.articleName = articleName;
         this.documentData = documentData;
         this.categoryIds = categoryIds;
-        this.isActive = isActive;
+//        this.isActive = isActive;
     }
 
     public Long getuId() {
@@ -72,21 +107,21 @@ public class ArticleModel implements Parcelable {
         this.id = id;
     }
 
-    public String getAppId() {
-        return appId;
-    }
-
-    public void setAppId(String appId) {
-        this.appId = appId;
-    }
-
-    public String getDraftId() {
-        return draftId;
-    }
-
-    public void setDraftId(String draftId) {
-        this.draftId = draftId;
-    }
+//    public String getAppId() {
+//        return appId;
+//    }
+//
+//    public void setAppId(String appId) {
+//        this.appId = appId;
+//    }
+//
+//    public String getDraftId() {
+//        return draftId;
+//    }
+//
+//    public void setDraftId(String draftId) {
+//        this.draftId = draftId;
+//    }
 
     public String getArticleName() {
         return articleName;
@@ -112,12 +147,80 @@ public class ArticleModel implements Parcelable {
         this.categoryIds = categoryIds;
     }
 
-    public boolean isActive() {
-        return isActive;
+//    public boolean isActive() {
+//        return isActive;
+//    }
+//
+//    public void setActive(boolean active) {
+//        isActive = active;
+//    }
+
+    public Integer getArticleNumber() {
+        return articleNumber;
     }
 
-    public void setActive(boolean active) {
-        isActive = active;
+    public void setArticleNumber(Integer articleNumber) {
+        this.articleNumber = articleNumber;
+    }
+
+    public void setCategoryIds(List<String> categoryIds) {
+        this.categoryIds = categoryIds;
+    }
+
+    public List<TagModel> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<TagModel> tags) {
+        this.tags = tags;
+    }
+
+    public Double getVersion() {
+        return version;
+    }
+
+    public void setVersion(Double version) {
+        this.version = version;
+    }
+
+    public String getApprovedBy() {
+        return approvedBy;
+    }
+
+    public void setApprovedBy(String approvedBy) {
+        this.approvedBy = approvedBy;
+    }
+
+    public String getApprovedDate() {
+        return approvedDate;
+    }
+
+    public void setApprovedDate(String approvedDate) {
+        this.approvedDate = approvedDate;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public List<String> getArticleToOfficeIds() {
+        return articleToOfficeIds;
+    }
+
+    public void setArticleToOfficeIds(List<String> articleToOfficeIds) {
+        this.articleToOfficeIds = articleToOfficeIds;
+    }
+
+    public List<String> getArticleToVesselIds() {
+        return articleToVesselIds;
+    }
+
+    public void setArticleToVesselIds(List<String> articleToVesselIds) {
+        this.articleToVesselIds = articleToVesselIds;
     }
 
     @Override
@@ -127,23 +230,39 @@ public class ArticleModel implements Parcelable {
 
     protected ArticleModel(Parcel in) {
         id = in.readString();
-        appId = in.readString();
-        draftId = in.readString();
+//        appId = in.readString();
+//        draftId = in.readString();
         articleName = in.readString();
+        articleNumber = in.readInt();
         documentData = in.readString();
         categoryIds = in.readArrayList(ArticleModel.class.getClassLoader());
-        isActive = in.readByte() != 0;
+        tags = in.createTypedArrayList(TagModel.CREATOR);
+        version = in.readDouble();
+        approvedBy = in.readString();
+        approvedDate = in.readString();
+        date = in.readString();
+        articleToOfficeIds = in.readArrayList(ArticleModel.class.getClassLoader());
+        articleToVesselIds = in.readArrayList(ArticleModel.class.getClassLoader());
+        //isActive = in.readByte() != 0;
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);
-        dest.writeString(appId);
-        dest.writeString(draftId);
+//        dest.writeString(appId);
+//        dest.writeString(draftId);
         dest.writeString(articleName);
+        dest.writeInt(articleNumber);
         dest.writeString(documentData);
         dest.writeList(categoryIds);
-        dest.writeByte((byte) (isActive ? 1 : 0));
+        dest.writeTypedList(tags);
+        dest.writeDouble(version);
+        dest.writeString(approvedBy);
+        dest.writeString(approvedDate);
+        dest.writeString(date);
+        dest.writeList(articleToOfficeIds);
+        dest.writeList(articleToVesselIds);
+        //dest.writeByte((byte) (isActive ? 1 : 0));
     }
 
     public static final Creator<ArticleModel> CREATOR = new Creator<ArticleModel>() {

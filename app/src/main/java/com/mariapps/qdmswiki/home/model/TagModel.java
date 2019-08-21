@@ -26,7 +26,7 @@ public class TagModel implements Parcelable {
     private String appId;
 
     @ColumnInfo(name = "TagName")
-    @SerializedName("name")
+    @SerializedName("Name")
     private String name;
 
     @ColumnInfo(name = "IsActive")

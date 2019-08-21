@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.custom.CustomTextView;
+import com.mariapps.qdmswiki.home.model.DocumentModel;
 import com.mariapps.qdmswiki.home.model.NavDrawerObj;
 
 import java.util.List;
@@ -23,9 +24,9 @@ public class CustomNavigationDetailAdapter extends RecyclerView.Adapter<CustomNa
 
     private Context context;
     private NavAdapterListener navAdapterListener;
-    List<NavDrawerObj.MenuItemsEntity> navigationItems;
+    List<DocumentModel> navigationItems;
 
-    public CustomNavigationDetailAdapter(Context context, List<NavDrawerObj.MenuItemsEntity> list) {
+    public CustomNavigationDetailAdapter(Context context, List<DocumentModel> list) {
         this.context = context;
         this.navigationItems = list;
     }
@@ -41,10 +42,10 @@ public class CustomNavigationDetailAdapter extends RecyclerView.Adapter<CustomNa
     @Override
     public void onBindViewHolder(@NonNull final CustomNavigationDetailVH1 customNavigationDetailVH1, int i) {
         if (customNavigationDetailVH1.getAdapterPosition() < navigationItems.size()) {
-            final NavDrawerObj.MenuItemsEntity menuItemsEntity = navigationItems.get(customNavigationDetailVH1.getAdapterPosition());
-            if (menuItemsEntity != null) {
-                customNavigationDetailVH1.drawerItemName.setText(menuItemsEntity.getDisplayName());
-                if(menuItemsEntity.getType().equals("Folder")) {
+            final DocumentModel documentModel = navigationItems.get(customNavigationDetailVH1.getAdapterPosition());
+            if (documentModel != null) {
+                customNavigationDetailVH1.drawerItemName.setText(documentModel.getCategoryName());
+                if(documentModel.getType().equals("FOLDER")) {
                     customNavigationDetailVH1.drawerIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_menu_folder));
                     customNavigationDetailVH1.arrowIV.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_inactive));
                 }
@@ -91,7 +92,7 @@ public class CustomNavigationDetailAdapter extends RecyclerView.Adapter<CustomNa
 
 
     public interface NavAdapterListener {
-        void onItemClick(NavDrawerObj.MenuItemsEntity menuItemsEntity);
+        void onItemClick(DocumentModel documentModel);
     }
 
     public void setNavAdapterListener(NavAdapterListener navAdapterListener) {

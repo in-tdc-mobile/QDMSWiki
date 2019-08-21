@@ -76,12 +76,6 @@ public class BookmarkActivity extends BaseActivity {
     }
 
     private void initRecyclerView() {
-        bookMarkList.add(new BookmarkModel(1,"Procedures"));
-        bookMarkList.add(new BookmarkModel(2,"Data breach risk assessment"));
-        bookMarkList.add(new BookmarkModel(3,"Data protection impact assessment (DPIA)"));
-        bookMarkList.add(new BookmarkModel(4,"Non- routine third party data requests"));
-        bookMarkList.add(new BookmarkModel(5,"Cookie consent"));
-
         bookmarkAdapter = new BookmarkAdapter(this,bookMarkList);
         bookmarksRV.setAdapter(bookmarkAdapter);
 
@@ -90,7 +84,7 @@ public class BookmarkActivity extends BaseActivity {
             public void onItemClicked(BookmarkModel bookmarkModel) {
                 Intent intent = new Intent(BookmarkActivity.this, FolderStructureActivity.class);
                 intent.putExtra(AppConfig.BUNDLE_TYPE,"Document");
-                intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,bookmarkModel.getBookMark());
+                //intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,bookmarkModel.getBookMark());
                 intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,bookmarkModel.getId());
                 startActivity(intent);
             }

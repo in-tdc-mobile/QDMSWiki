@@ -12,15 +12,14 @@ import android.widget.LinearLayout;
 
 import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
-import com.mariapps.qdmswiki.applicationinfo.view.ApplicationInfoActivity;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.documents.adapter.TagsAdapter;
 import com.mariapps.qdmswiki.documents.adapter.UserAdapter;
 import com.mariapps.qdmswiki.documents.model.DocumentInfoModel;
-import com.mariapps.qdmswiki.documents.model.TagModel;
 import com.mariapps.qdmswiki.documents.model.UserModel;
+import com.mariapps.qdmswiki.home.model.TagModel;
 import com.mariapps.qdmswiki.home.view.HomeActivity;
 
 import java.util.ArrayList;
@@ -108,9 +107,6 @@ public class DocumentInfoViewActivity extends BaseActivity {
     }
 
     private void setTagList() {
-        tagList.add(new TagModel(1,2,"GDPR","Y"));
-        tagList.add(new TagModel(2,2,"LPSQ Department","Y"));
-        tagList.add(new TagModel(3,2,"LPSQ Departmentsss","Y"));
     }
 
     private void setUserList() {
