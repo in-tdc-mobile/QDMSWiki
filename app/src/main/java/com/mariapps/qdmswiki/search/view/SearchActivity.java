@@ -185,10 +185,14 @@ public class SearchActivity extends BaseActivity {
             public void run() throws Exception {
                 if(isDocumentSelected && isArticleSelected)
                     searchList = homeDatabase.homeDao().getAllDocumentsAndArticles();
+                else if(isDocumentSelected && isFolderSelected)
+                    searchList = homeDatabase.homeDao().getAllDocumentsAndFolders();
                 else if(isDocumentSelected && !isArticleSelected)
                     searchList = homeDatabase.homeDao().getAllDocuments();
                 else if(!isDocumentSelected && isArticleSelected)
                     searchList = homeDatabase.homeDao().getAllArticles();
+                else if(isFolderSelected && !isDocumentSelected && !isArticleSelected)
+                    searchList = homeDatabase.homeDao().getAllCategories();
 
 
             }

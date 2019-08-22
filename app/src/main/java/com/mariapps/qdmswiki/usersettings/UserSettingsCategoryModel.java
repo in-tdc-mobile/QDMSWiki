@@ -1,4 +1,4 @@
-package com.mariapps.qdmswiki.home.model;
+package com.mariapps.qdmswiki.usersettings;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
@@ -6,14 +6,12 @@ import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.mariapps.qdmswiki.home.database.HomeTypeConverter;
 
-@Entity(tableName = "CategoryEntity")
+@Entity(tableName = "UserSettingsCategoryEntity")
 @TypeConverters(HomeTypeConverter.class)
-public class CategoryModel implements Parcelable {
+public class UserSettingsCategoryModel implements Parcelable {
 
     @PrimaryKey(autoGenerate = true)
     public Long uId;
@@ -66,7 +64,7 @@ public class CategoryModel implements Parcelable {
     @SerializedName("IsDashBoardEnabled")
     private Boolean isDashBoardEnabled;
 
-    public CategoryModel(String id, String appId, String name, String parent, boolean isActive) {
+    public UserSettingsCategoryModel(String id, String appId, String name, String parent, boolean isActive) {
         this.id = id;
         this.appId = appId;
         this.name = name;
@@ -176,7 +174,7 @@ public class CategoryModel implements Parcelable {
     }
 
 
-    protected CategoryModel(Parcel in) {
+    protected UserSettingsCategoryModel(Parcel in) {
         id = in.readString();
         appId = in.readString();
         name = in.readString();
@@ -207,15 +205,15 @@ public class CategoryModel implements Parcelable {
         dest.writeByte((byte) (isDashBoardEnabled ? 1 : 0));
     }
 
-    public static final Creator<CategoryModel> CREATOR = new Creator<CategoryModel>() {
+    public static final Creator<UserSettingsCategoryModel> CREATOR = new Creator<UserSettingsCategoryModel>() {
         @Override
-        public CategoryModel createFromParcel(Parcel in) {
-            return new CategoryModel(in);
+        public UserSettingsCategoryModel createFromParcel(Parcel in) {
+            return new UserSettingsCategoryModel(in);
         }
 
         @Override
-        public CategoryModel[] newArray(int size) {
-            return new CategoryModel[size];
+        public UserSettingsCategoryModel[] newArray(int size) {
+            return new UserSettingsCategoryModel[size];
         }
     };
 }

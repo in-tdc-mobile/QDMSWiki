@@ -37,10 +37,11 @@ public class FolderStructureActivity extends BaseActivity {
     CustomRecyclerView breadCrumbRV;
 
 
+
     private BreadCrumbAdapter breadCrumbAdapter;
     private String type = "Document";
     private String folderName = "";
-    private Integer id;
+    private String id;
     List<BreadCrumbItem> breadCrumbItems = new ArrayList<>();
 
     @Override
@@ -51,7 +52,7 @@ public class FolderStructureActivity extends BaseActivity {
         if (getIntent() != null && getIntent().getExtras() != null) {
             type = getIntent().getExtras().getString(AppConfig.BUNDLE_TYPE);
             folderName = getIntent().getExtras().getString(AppConfig.BUNDLE_FOLDER_NAME);
-            id = getIntent().getExtras().getInt(AppConfig.BUNDLE_FOLDER_ID);
+            id = getIntent().getExtras().getString(AppConfig.BUNDLE_FOLDER_ID);
             headingTV.setText(folderName);
         }
 
@@ -60,7 +61,7 @@ public class FolderStructureActivity extends BaseActivity {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             DocumentViewFragment documentViewFragment = new DocumentViewFragment();
             Bundle args = new Bundle();
-            args.putInt(AppConfig.BUNDLE_FOLDER_ID, id);
+            args.putString(AppConfig.BUNDLE_FOLDER_ID, id);
             args.putString(AppConfig.BUNDLE_FOLDER_NAME, folderName);
             documentViewFragment.setArguments(args);
             ft.replace(R.id.frameLayout, documentViewFragment);
@@ -70,7 +71,7 @@ public class FolderStructureActivity extends BaseActivity {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             FolderFragment folderFragment = new FolderFragment();
             Bundle args = new Bundle();
-            args.putInt(AppConfig.BUNDLE_FOLDER_ID, id);
+            args.putString(AppConfig.BUNDLE_FOLDER_ID, id);
             folderFragment.setArguments(args);
             ft.addToBackStack(null);
             ft.add(R.id.frameLayout, folderFragment);
@@ -81,7 +82,7 @@ public class FolderStructureActivity extends BaseActivity {
         initBreadCrumb(folderName, id);
     }
 
-    public void initBreadCrumb(String folderName, Integer id) {
+    public void initBreadCrumb(String folderName, String id) {
         breadCrumbRV.setHasFixedSize(true);
         breadCrumbRV.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         breadCrumbAdapter = new BreadCrumbAdapter(initBreadCrumbList(folderName, id), this);
@@ -97,7 +98,7 @@ public class FolderStructureActivity extends BaseActivity {
     }
 
 
-    private List<BreadCrumbItem> initBreadCrumbList(String folderName, Integer id) {
+    private List<BreadCrumbItem> initBreadCrumbList(String folderName, String id) {
         breadCrumbItems.add(new BreadCrumbItem(folderName, id));
         return breadCrumbItems;
     }
@@ -145,7 +146,7 @@ public class FolderStructureActivity extends BaseActivity {
         }
     }
 
-    public void replaceFragments(Fragment fragment,int newId, String newName) {
+    public void replaceFragments(Fragment fragment,String newId, String newName) {
         // Insert the fragment by replacing any existing fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
         id = newId;

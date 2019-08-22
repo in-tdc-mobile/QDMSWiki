@@ -14,6 +14,10 @@ import com.mariapps.qdmswiki.home.model.TagModel;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
 import com.mariapps.qdmswiki.notification.model.ReceiverModel;
 import com.mariapps.qdmswiki.search.model.SearchModel;
+import com.mariapps.qdmswiki.usersettings.UserInfoModel;
+import com.mariapps.qdmswiki.usersettings.UserSettingsCategoryModel;
+import com.mariapps.qdmswiki.usersettings.UserSettingsModel;
+import com.mariapps.qdmswiki.usersettings.UserSettingsTagModel;
 
 import java.util.List;
 
@@ -44,6 +48,17 @@ public interface HomeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertBookmarkEntries(List<BookmarkEntryModel> bookmarkEntryModel);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertUserSettings(UserSettingsModel userSettingsModel);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertUserSettingsTag(List<UserSettingsTagModel> userSettingsTagModel);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertUserSettingsCategory(List<UserSettingsCategoryModel> userSettingsCategoryModel);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertUserInfo(List<UserInfoModel> userInfoModel);
 
     @Query("SELECT DocumentData FROM DocumentEntity")
     String getDocumentData();
@@ -68,6 +83,14 @@ public interface HomeDao {
             " ON category.Id = article.CategoryIds")
     List<SearchModel> getAllArticles();
 
+    @Query("SELECT category.Id as id, " +
+            " 'Folder' as type, " +
+            " category.CategoryName as name, " +
+            " '' as categoryId," +
+            " '' as categoryName " +
+            " FROM CategoryEntity as category")
+    List<SearchModel> getAllCategories();
+
     @Query("SELECT document.Id as id, " +
             " 'Document' as type, " +
             " document.DocumentName as name, " +
@@ -88,6 +111,23 @@ public interface HomeDao {
     List<SearchModel> getAllDocumentsAndArticles();
 
     @Query("SELECT document.Id as id, " +
+            " 'Document' as type, " +
+            " document.DocumentName as name, " +
+            " document.CategoryId as categoryId," +
+            " category.CategoryName as categoryName " +
+            " FROM DocumentEntity as document " +
+            " LEFT JOIN CategoryEntity as category" +
+            " ON category.Id = document.CategoryId"+
+            " UNION "+
+            " SELECT category.Id as id, " +
+            " 'Folder' as type, " +
+            " category.CategoryName as name, " +
+            " '' as categoryId," +
+            " '' as categoryName " +
+            " FROM CategoryEntity as category")
+    List<SearchModel> getAllDocumentsAndFolders();
+
+    @Query("SELECT document.Id as id, " +
             " document.DocumentName, " +
             " document.CategoryId," +
             " document.Version," +
@@ -96,7 +136,8 @@ public interface HomeDao {
             " category.CategoryName as categoryName " +
             " FROM DocumentEntity as document " +
             " LEFT JOIN CategoryEntity as category" +
-            " ON category.Id = document.CategoryId")
+            " ON category.Id = document.CategoryId" +
+            " ORDER BY document.ApprovedDate desc")
     List<DocumentModel> getDocuments();
 
     @Query("SELECT article.Id, " +
@@ -108,7 +149,8 @@ public interface HomeDao {
             " category.CategoryName as categoryName " +
             " FROM ArticleEntity as article " +
             " LEFT JOIN CategoryEntity as category "+
-            " ON category.Id IN (article.CategoryIds)")
+            " ON category.Id IN (article.CategoryIds)"+
+            " ORDER BY article.ApprovedDate desc")
     List<ArticleModel> getArticles();
 
     @Query("SELECT category.Id as folderid, " +
@@ -117,7 +159,8 @@ public interface HomeDao {
             " FROM CategoryEntity as category " +
             " WHERE category.Parent = (SELECT category1.Id as id " +
                     " FROM CategoryEntity as category1 " +
-                    " WHERE category1.categoryName = 'Entire QDMS')")
+                    " WHERE category1.categoryName = 'Entire QDMS')"+
+            " ORDER BY category.DisplayOrder")
     List<DocumentModel> getParentFolders();
 
     @Query("SELECT category.Id as folderid, " +
@@ -133,7 +176,20 @@ public interface HomeDao {
             " WHERE document.CategoryId =:parentId")
     List<DocumentModel> getChildFoldersList(String parentId);
 
-    @Query("SELECT CategoryName FROM CategoryEntity WHERE Id = :id")
+    @Query("SELECT category.Id as folderid, " +
+            " category.CategoryName as categoryName, " +
+            " 'FOLDER' as type " +
+            " FROM CategoryEntity as category " +
+            " WHERE category.Parent =:parentId" +
+            " UNION "+
+            " SELECT document.Id as folderid, " +
+            " document.DocumentName as categoryName, " +
+            " 'FILE' as type " +
+            " FROM DocumentEntity as document " +
+            " WHERE document.CategoryId =:parentId")
+    List<SearchModel> getChildList(String parentId);
+
+    @Query("SELECT CategoryName FROM CategoryEntity WHERE Id =:id")
     String getCategoryName(String id);
 
     @Query("SELECT * FROM TagEntity")
@@ -172,5 +228,16 @@ public interface HomeDao {
     @Query("DELETE FROM BookMarkEntryEntity")
     void deleteBookmarkEntryEntity();
 
+    @Query("DELETE FROM UserSettingsEntity")
+    void deleteUserSettingsEntity();
+
+    @Query("DELETE FROM UserSettingsTagEntity")
+    void deleteUserSettingsTagEntity();
+
+    @Query("DELETE FROM UserSettingsCategoryEntity")
+    void deleteUserSettingsCategoryEntity();
+
+    @Query("DELETE FROM UserInfoEntity")
+    void deleteUserInfoEntity();
 }
 

@@ -16,6 +16,10 @@ import com.mariapps.qdmswiki.serviceclasses.APIException;
 import com.mariapps.qdmswiki.serviceclasses.ApiServiceFactory;
 import com.mariapps.qdmswiki.serviceclasses.ServiceController;
 import com.mariapps.qdmswiki.serviceclasses.SimpleObserver;
+import com.mariapps.qdmswiki.usersettings.UserInfoModel;
+import com.mariapps.qdmswiki.usersettings.UserSettingsCategoryModel;
+import com.mariapps.qdmswiki.usersettings.UserSettingsModel;
+import com.mariapps.qdmswiki.usersettings.UserSettingsTagModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +43,8 @@ public class HomePresenter {
         this.homeView = homeView;
         serviceController = ApiServiceFactory.getInstance().getFacade();
         homeDatabase = HomeDatabase.getInstance(context);
-        url = "https://drive.google.com/uc?export=download&id=1pxjQIdxMLFJmg2bg4Y4sVkk6bFHIWihr";
+        url = "http://pal4-demo-app.westeurope.cloudapp.azure.com:8099/file/Extract1.zip";
+        //url = "https://drive.google.com/uc?export=download&id=1pxjQIdxMLFJmg2bg4Y4sVkk6bFHIWihr";
     }
 
     public String getDownloadUrl() {
@@ -497,6 +502,223 @@ public class HomePresenter {
         });
     }
 
+    public void deleteUserSettings(UserSettingsModel userSettingsModels) {
+
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                homeDatabase.homeDao().deleteUserSettingsEntity();
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                insertUserSettings(userSettingsModels);
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void insertUserSettings(final UserSettingsModel userSettingsModels) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                if (userSettingsModels != null) {
+                    homeDatabase.homeDao().insertUserSettings(userSettingsModels);
+                }
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void deleteUserSettingsTag(List<UserSettingsTagModel> userSettingsTagModel) {
+
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                homeDatabase.homeDao().deleteUserSettingsTagEntity();
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                insertUserSettingsTag(userSettingsTagModel);
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void insertUserSettingsTag(final List<UserSettingsTagModel> userSettingsTagModel) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                if (userSettingsTagModel != null) {
+                    homeDatabase.homeDao().insertUserSettingsTag(userSettingsTagModel);
+                }
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void deleteUserSettingsCategory(List<UserSettingsCategoryModel> userSettingsCategoryModel) {
+
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                homeDatabase.homeDao().deleteUserSettingsCategoryEntity();
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                insertUserSettingsCategory(userSettingsCategoryModel);
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void insertUserSettingsCategory(final List<UserSettingsCategoryModel> userSettingsCategoryModel) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                if (userSettingsCategoryModel != null) {
+                    homeDatabase.homeDao().insertUserSettingsCategory(userSettingsCategoryModel);
+                }
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void deleteUserInfo(List<UserInfoModel> userInfoModel) {
+
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                homeDatabase.homeDao().deleteUserInfoEntity();
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                insertUserInfo(userInfoModel);
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void insertUserInfo(final List<UserInfoModel> userInfoModel) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                if (userInfoModel != null) {
+                    homeDatabase.homeDao().insertUserInfo(userInfoModel);
+                }
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+
     public void getParentFolders() {
         Completable.fromAction(new Action() {
             @Override
@@ -550,4 +772,5 @@ public class HomePresenter {
             }
         });
     }
+
 }

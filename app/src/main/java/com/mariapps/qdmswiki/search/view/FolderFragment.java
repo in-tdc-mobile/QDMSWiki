@@ -20,19 +20,24 @@ import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseFragment;
 import com.mariapps.qdmswiki.custom.CustomEditText;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
+import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.home.presenter.HomePresenter;
+import com.mariapps.qdmswiki.home.view.HomeView;
 import com.mariapps.qdmswiki.search.adapter.SearchFilterAdapter;
 import com.mariapps.qdmswiki.search.adapter.SearchResultAdapter;
 import com.mariapps.qdmswiki.search.model.FilterBooleanItem;
 import com.mariapps.qdmswiki.search.model.SearchFilterModel;
 import com.mariapps.qdmswiki.search.model.SearchModel;
+import com.mariapps.qdmswiki.serviceclasses.APIException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnTextChanged;
 
-public class FolderFragment extends BaseFragment {
+public class FolderFragment extends BaseFragment implements HomeView {
 
     @BindView(R.id.linLayout)
     LinearLayout linLayout;
@@ -43,6 +48,7 @@ public class FolderFragment extends BaseFragment {
     @BindView(R.id.searchET)
     CustomEditText searchET;
 
+    private HomePresenter homePresenter;
     private ArrayList<SearchFilterModel> searchType = new ArrayList<>();
     private ArrayList<SearchModel> searchList = new ArrayList<>();
     private SearchFilterAdapter searchFilterAdapter;
@@ -52,12 +58,12 @@ public class FolderFragment extends BaseFragment {
     private boolean isArticleSelected = false;
     private boolean isFormSelected = false;
     private String folderName;
-    private Integer id;
+    private String id;
     Gson gson = new Gson();
 
     @Override
     protected void setUpPresenter() {
-
+        homePresenter = new HomePresenter(getActivity(),this);
     }
 
     @Nullable
@@ -68,7 +74,7 @@ public class FolderFragment extends BaseFragment {
 
         try{
             Bundle args = getArguments();
-            id= args.getInt(AppConfig.BUNDLE_FOLDER_ID, 0);
+            id= args.getString(AppConfig.BUNDLE_FOLDER_ID, "");
         }
         catch (Exception e){}
 
@@ -148,6 +154,8 @@ public class FolderFragment extends BaseFragment {
 
     private void setSearchList() {
 
+       // homePresenter.get(id);
+
         setSearchTypeData();
         searchList = new ArrayList<>();
 //
@@ -184,7 +192,7 @@ public class FolderFragment extends BaseFragment {
                 if(item.getType().equals("Folder")) {
                     FolderFragment folderFragment = new FolderFragment();
                     Bundle args = new Bundle();
-                    args.putInt(AppConfig.BUNDLE_FOLDER_ID, id);
+                    args.putString(AppConfig.BUNDLE_FOLDER_ID, id);
                     args.putString(AppConfig.BUNDLE_FOLDER_NAME, folderName);
                     folderFragment.setArguments(args);
                     ((FolderStructureActivity) getActivity()).replaceFragments(folderFragment,id,folderName);
@@ -209,5 +217,24 @@ public class FolderFragment extends BaseFragment {
         if (searchResultAdapter != null) {
             searchResultAdapter.getFilter().filter(gson.toJson(new FilterBooleanItem(isFolderSelected, isDocumentSelected, isArticleSelected, isFormSelected, searchET.getText().toString())));
         }
+    }
+
+    @Override
+    public void onGetDownloadUrlSuccess(String url) {
+
+    }
+
+    @Override
+    public void onGetDownloadUrlError(APIException e) {
+
+    }
+
+    @Override
+    public void onGetParentFolderSuccess(List<DocumentModel> documentModels) {
+
+    }
+
+    @Override
+    public void onGetChildFoldersList(List<DocumentModel> documentModels) {
     }
 }
