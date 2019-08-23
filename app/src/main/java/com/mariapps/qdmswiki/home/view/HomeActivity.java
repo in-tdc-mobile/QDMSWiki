@@ -181,6 +181,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
         context = this;
         sessionManager = new SessionManager(HomeActivity.this);
         setSupportActionBar(toolbar);
+        getParentFolders();
         initViewpager();
         initBottomNavigation();
         setNotificationCount();
@@ -415,29 +416,25 @@ public class HomeActivity extends BaseActivity implements HomeView{
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void beginDownload(String url){
         File file=new File(Environment.getExternalStorageDirectory(),"/QDMSWiki/Import");
-        if(file.exists()){
-//            ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
-//            readAndInsertJsonData.execute();
-        }
-          else {
+        if(file.exists())
+            return;
+        progressDialog.setMessage("Downloading files...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
 
-            progressDialog.setMessage("Downloading files...");
-            progressDialog.setCancelable(false);
-            progressDialog.show();
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url))
+                .setTitle("Dummy File")// Title of the Download Notification
+                .setDescription("Downloading")// Description of the Download Notification
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)// Visibility of the download Notification
+                .setDestinationUri(Uri.fromFile(file))// Uri of the destination file
+                .setRequiresCharging(false)// Set if charging is required to begin the download
+                .setAllowedOverMetered(true)// Set if download is allowed on Mobile network
+                .setMimeType("application/zip")
+                .setAllowedOverRoaming(true);// Set if download is allowed on roaming network
 
-            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url))
-                    .setTitle("Dummy File")// Title of the Download Notification
-                    .setDescription("Downloading")// Description of the Download Notification
-                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)// Visibility of the download Notification
-                    .setDestinationUri(Uri.fromFile(file))// Uri of the destination file
-                    .setRequiresCharging(false)// Set if charging is required to begin the download
-                    .setAllowedOverMetered(true)// Set if download is allowed on Mobile network
-                    .setMimeType("application/zip")
-                    .setAllowedOverRoaming(true);// Set if download is allowed on roaming network
+        DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+        downloadID = downloadManager.enqueue(request);// enqueue puts the download request in the queue.
 
-            DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-            downloadID = downloadManager.enqueue(request);// enqueue puts the download request in the queue.
-        }
     }
 
     public void unzip(String zipFilePath, String destDirectory) throws IOException {
