@@ -1,0 +1,113 @@
+﻿.pop-overlay{
+    background:rgba(0, 0, 0, 0.5);
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    z-index: 999999;
+}
+
+.popupcon{
+    position:absolute;
+    background:#fff;
+    padding: 0px 15px 0 15px;
+    top:53%;
+    min-width: 640px;
+    left:50%;
+    transform:translate(-50%, -50%);
+    -webkit-transform:translate(-50%, -50%);
+}
+.popupcon.large-popup {
+    width:85%; 
+}
+
+.popupcontainer{
+    overflow-y: auto;
+    overflow-x:hidden;
+    max-height:79vh;
+    min-height: 199px;
+}
+.popupcontainer h5, .popupcontainer2 h5 {
+    margin:0;
+    font-weight:600;
+    font-size:15px;
+}
+.popupcontainer2{
+    width: 927px;
+    /*height: 450px;*/
+    max-height:72vh;
+    padding: 2px;
+    overflow-y: auto;
+    overflow-x:hidden;
+    margin-right: -8px;
+}
+
+.popupheader h4{
+    text-align:left;
+    font-weight:500;
+    color:#000;
+    font-size:20px;
+}
+
+.popupheader {
+    padding-bottom: 10px;
+    padding: 15px 0 10px;
+}
+
+
+span.popup-close{
+    float: right;
+    color: #ccc;
+    z-index: 99991;
+    cursor: pointer;
+    background:url(../Images/popupclose.png) no-repeat;
+    width:17px;
+    height:17px;
+    margin-top: -37px;
+    margin-right: -37px;
+}
+
+span.popup-close i{
+    font-size:20px;
+}
+
+.popupfooter{
+    /*margin-right: -15px;*/
+    padding: 10px 11px;
+    text-align: right;
+}
+
+.popupfooter input[type='button']  {
+    color: #fff !important;
+    background-color: #bf374d !important;
+    border-color: #bf374d !important;
+    border-radius: 4px !important;
+    padding: 8px 15px !important;
+    margin-top: 3px;
+    font-size:14px;
+    font-weight:300;
+}
+
+.popupcontainer2 input[type='button'] {
+    border-radius: 25px;
+    padding: 7px 25px;
+    font-size: 18px;
+    font-weight: 500;
+    background:#ff6666;
+    margin: 10px 0;
+}
+
+.popupcontainer input{
+    padding: 6px;
+}
+
+.popupcontainer select{
+    border: 1px solid #ccc;
+    padding: 4px 3px;
+    width: 100%;
+}
+
+.popup-row {
+    margin-bottom: 7px;
+}

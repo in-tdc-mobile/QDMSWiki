@@ -51,7 +51,7 @@ public class SearchActivity extends BaseActivity {
     private SearchResultAdapter searchResultAdapter;
     private List<SearchModel> searchList = new ArrayList<>();
     private boolean isFolderSelected = false;
-    private boolean isDocumentSelected = false;
+    private boolean isDocumentSelected = true;
     private boolean isArticleSelected = false;
     private boolean isFormSelected = false;
     private HomeDatabase homeDatabase;
@@ -71,7 +71,7 @@ public class SearchActivity extends BaseActivity {
         rvSearchList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         homeDatabase = HomeDatabase.getInstance(SearchActivity.this);
-        //getDocumentList();
+        getSearchList();
         setSearchTypeData();
     }
 

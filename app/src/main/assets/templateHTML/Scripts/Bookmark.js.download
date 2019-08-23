@@ -1,0 +1,119 @@
+﻿var text_nodes = "";
+CommonFunc.Bookmark = {
+    _bookmarkSettings: function () {
+        var IsRole = $("#ISDCRLRole").val();
+
+        if (PublishedDoc) {
+
+            return "<span style=\"right:25px\" class=\"icon-btn add-bookmark\" title=\"bookmark\"><svg viewBox=\"0 0 18 18\" x=\"0px\" y=\"0px\" xml:space=\"preserve\"><path fill=\"#fff\" d=\"m10.201,.758l2.478,5.865 6.344,.545c0.44,0.038 0.619,0.587 0.285,0.876l-4.812,4.169 1.442,6.202c0.1,0.431-0.367,0.77-0.745,0.541l-5.452-3.288-5.452,3.288c-0.379,0.228-0.845-0.111-0.745-0.541l1.442-6.202-4.813-4.17c-0.334-0.289-0.156-0.838 0.285-0.876l6.344-.545 2.478-5.864c0.172-0.408 0.749-0.408 0.921,0z\"/></svg></span><span class=\"icon-btn add-comment\" title=\"comment\"><svg version=\"1.1\" viewBox=\"0 0 58 58\"  xml:space=\"preserve\"><g> <path style=\"fill:#ffffff;\" d=\"M58,16.207c0-8.822-7.178-16-16-16H17c-8.822,0-17,7.178-17,16v16c0,8.485,7.644,15.429,16,15.949	v-3.949c0-0.553,0.448-1,1-1s1,0.447,1,1v4v1v8.586l1.359-1.359c5.306-5.305,12.359-8.227,19.86-8.227H42c8.822,0,16-7.178,16-16	V16.207z\"/><path style=\"fill:#FFFFFF;\" d=\"M30,18.207H16c-0.552,0-1-0.448-1-1s0.448-1,1-1h14c0.552,0,1,0.448,1,1S30.552,18.207,30,18.207z\"/><path style=\"fill:#FFFFFF;\" d=\"M43,26.207H16c-0.552,0-1-0.448-1-1s0.448-1,1-1h27c0.552,0,1,0.448,1,1S43.552,26.207,43,26.207z\"/><path style=\"fill:#FFFFFF;\" d=\"M43,34.207H16c-0.552,0-1-0.448-1-1s0.448-1,1-1h27c0.552,0,1,0.448,1,1S43.552,34.207,43,34.207z\"/></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg></span>";
+            //if (IsRole == "true") {
+               
+            //}
+            //else {
+            //    return "<span style=\"right:25px\" class=\"icon-btn add-bookmark\" title=\"bookmark\"><svg viewBox=\"0 0 18 18\" x=\"0px\" y=\"0px\" xml:space=\"preserve\"><path fill=\"#fff\" d=\"m10.201,.758l2.478,5.865 6.344,.545c0.44,0.038 0.619,0.587 0.285,0.876l-4.812,4.169 1.442,6.202c0.1,0.431-0.367,0.77-0.745,0.541l-5.452-3.288-5.452,3.288c-0.379,0.228-0.845-0.111-0.745-0.541l1.442-6.202-4.813-4.17c-0.334-0.289-0.156-0.838 0.285-0.876l6.344-.545 2.478-5.864c0.172-0.408 0.749-0.408 0.921,0z\"/></svg></span>";
+            //}
+           // return "<span style=\"right:25px\" class=\"icon-btn add-bookmark\" title=\"bookmark\"><svg viewBox=\"0 0 18 18\" x=\"0px\" y=\"0px\" xml:space=\"preserve\"><path fill=\"#fff\" d=\"m10.201,.758l2.478,5.865 6.344,.545c0.44,0.038 0.619,0.587 0.285,0.876l-4.812,4.169 1.442,6.202c0.1,0.431-0.367,0.77-0.745,0.541l-5.452-3.288-5.452,3.288c-0.379,0.228-0.845-0.111-0.745-0.541l1.442-6.202-4.813-4.17c-0.334-0.289-0.156-0.838 0.285-0.876l6.344-.545 2.478-5.864c0.172-0.408 0.749-0.408 0.921,0z\"/></svg></span>";
+        }
+        else {
+            return "";
+        }
+    },
+    _addBookmark: function (bookmarkId, bookmarkTitle) {
+        if (bookmarks.filter(x => x.BookmarkId == bookmarkId).length == 0) {
+            bookmarks.push({ 'BookmarkId': bookmarkId, 'BookmarkTitle': bookmarkTitle });
+        }
+        criticalNotify('Bookmarked', '', "Success");
+        ShowBookmarkList(bookmarks);
+    },
+    _removeBookmark: function (controlId) {
+        ConfirmAlert("Do you sure want to remove bookmark?").then(function (answer) {
+            if (answer) {
+                var bookmarkId = $(controlId).attr("data-bookmarkId");
+                if (bookmarkId != undefined) {
+                    bookmarks.splice(bookmarks.findIndex(x => x.BookmarkId == bookmarkId), 1);
+                    ShowBookmarkList(bookmarks);
+                }
+            }
+        });
+    },
+    _GetTextNodeOnly: function (rootElement) {
+        $.each(rootElement, function (i, node) {
+            if (node) {
+                node = node.firstChild;
+                while (node != null) {
+                    if (node.nodeType == 3 && node.parentNode.getAttribute("id") != "commentHeading" && node.parentNode.getAttribute("id") != "popupHeading") {
+                        text_nodes = text_nodes + node.nodeValue;
+                    } else if (node.nodeType == 1) {
+                        if (node.getAttribute('class') != "comment-box" && node.nodeName != "SCRIPT" && node.getAttribute('class') != "templateSettings") {
+                            CommonFunc.Bookmark._recursiveWalk(node);
+                        }
+                    }
+                    node = node.nextSibling;
+                }
+            }
+        });
+    },
+    _recursiveWalk: function (node) {
+        if (node) {
+            node = node.firstChild;
+            while (node != null) {
+                if (node.nodeType == 3 && node.parentNode.getAttribute("id") != "commentHeading" && node.parentNode.getAttribute("id") != "popupHeading") {
+                    text_nodes = text_nodes + node.nodeValue;
+                } else if (node.nodeType == 1) {
+                    if (node.getAttribute('class') != "comment-box" && node.nodeName != "SCRIPT" && node.getAttribute('class') != "templateSettings") {
+                        CommonFunc.Bookmark._recursiveWalk(node);
+                    }
+                }
+                node = node.nextSibling;
+            }
+        }
+    }
+}
+//$("#bookmarkTemplate").click(function () {
+//    var documentId = $("#Id").val();
+//    $.ajax({
+//        type: 'POST',
+//        url: $("#hfdUrlPath").val() + '/Document/AddBookmarks',
+//        data: {
+//            'bookmarks': bookmarks, 'documentId': documentId
+//        },
+//        processData: true,
+//        beforeSend: function () {
+//        },
+//        success: function (result) {
+//            criticalNotify('Bookmarks updated successfully', '', "Success");
+//        },
+//        error: loadJsonError,
+//        complete: function () {
+//        }
+//    });
+//});
+$("#tableWrapper").on("click", '.add-bookmark', function (event) {
+    var bookmarkTitle = "";
+    var bookmarkId = "";
+    text_nodes = "";
+    bookmarkId = $(this).closest(".bookmark-settings").closest("table").closest("tr").attr("id");
+    if (bookmarkId == "" || bookmarkId == undefined) {
+        bookmarkId = $(this).closest("tr").attr("id");
+    }
+    var header = $(this).closest(".bookmark-settings").closest(".draggable-item").find(":header");
+    var image = $(this).closest(".bookmark-settings").closest(".draggable-item").find("img");
+    var plainText = $(this).closest(".bookmark-settings").closest("table.draggable-item").find(">tbody>tr>td").find(">:last-child");
+    if (header.length) {
+        CommonFunc.Bookmark._GetTextNodeOnly(header);
+        bookmarkTitle = text_nodes;
+        if (bookmarkTitle == "") {
+            var th = $(this).closest(".bookmark-settings").closest(".draggable-item").find("th");
+            CommonFunc.Bookmark._GetTextNodeOnly(th);
+            bookmarkTitle = text_nodes;
+        }
+    }
+    if (plainText.length && bookmarkTitle == "") {
+        //CommonFunc.Bookmark._GetTextNodeOnly(plainText);
+        bookmarkTitle = plainText.text().length > 40 ? plainText.text().substr(0, 40) + "..." : plainText.text();
+    }
+    if (image.length && header.length == 0) {
+        bookmarkTitle = $(image).attr("src");
+    }
+    CommonFunc.Bookmark._addBookmark(bookmarkId, bookmarkTitle);
+});

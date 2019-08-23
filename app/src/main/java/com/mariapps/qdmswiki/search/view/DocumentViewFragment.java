@@ -1,5 +1,6 @@
 package com.mariapps.qdmswiki.search.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,10 +12,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.Toast;
 
 import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
@@ -49,6 +55,7 @@ public class DocumentViewFragment extends BaseFragment {
     private String folderName;
     private DocumentModel documentModel;
     private String id;
+    private String documentData;
     private HomeDatabase homeDatabase;
 
     @Override
@@ -62,16 +69,16 @@ public class DocumentViewFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_document_view, container, false);
         ButterKnife.bind(this, view);
 
-        try{
+        try {
             Bundle args = getArguments();
             id= args.getString(AppConfig.BUNDLE_FOLDER_ID, "");
             folderName= args.getString(AppConfig.BUNDLE_FOLDER_NAME, "");
+        } catch (Exception e) {
         }
-        catch (Exception e){}
 
         homeDatabase = HomeDatabase.getInstance(getActivity());
         loadDocument();
-
+//        setHTMLContent();
         return view;
     }
 
@@ -80,6 +87,7 @@ public class DocumentViewFragment extends BaseFragment {
             @Override
             public void run() throws Exception {
                 documentModel = homeDatabase.homeDao().getDocumentData(id);
+                documentData = documentModel.getDocumentData();
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
@@ -90,7 +98,8 @@ public class DocumentViewFragment extends BaseFragment {
 
             @Override
             public void onComplete() {
-                webView.loadData(documentModel.getDocumentData(), "text/html; charset=utf-8", "UTF-8");
+                webView.loadData(documentData, "text/html; charset=utf-8", "UTF-8");
+                setHTMLContent();
             }
 
 
@@ -121,7 +130,7 @@ public class DocumentViewFragment extends BaseFragment {
 
                 // Set TextView layout margin 25 pixels to all side
                 // Left Top Right Bottom Margin
-                lp.setMargins(50,25,50,0);
+                lp.setMargins(50, 25, 50, 0);
 
                 // Apply the updated layout parameters to TextView
                 popupView.setLayoutParams(lp);
@@ -134,8 +143,8 @@ public class DocumentViewFragment extends BaseFragment {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getActivity(), DocumentInfoViewActivity.class);
-                        intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,folderName);
-                        intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,id);
+                        intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME, folderName);
+                        intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, id);
                         startActivity(intent);
                     }
                 });
@@ -144,13 +153,86 @@ public class DocumentViewFragment extends BaseFragment {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getActivity(), BookmarkActivity.class);
-                        intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,folderName);
-                        intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,id);
+                        intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME, folderName);
+                        intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, id);
                         startActivity(intent);
                     }
                 });
 
                 break;
+        }
+    }
+
+    private void setHTMLContent() {
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.addJavascriptInterface(new AppJavaScriptProxy(getActivity()), "androidAppProxy");
+
+        webView.setWebViewClient(new WebViewClient() {
+
+//            public void onLoadResource(WebView view, String url) {
+//                // Check to see if there is a progress dialog
+//                if (progressDialog == null) {
+//                    // If no progress dialog, make one and set message
+//                    progressDialog = new ProgressDialog(activity);
+//                    progressDialog.setMessage("Loading please wait...");
+//                    progressDialog.show();
+//
+//                    // Hide the webview while loading
+//                    webView.setEnabled(false);
+//                }
+//            }
+
+            public void onPageFinished(WebView view, String url) {
+                // Page is done loading;
+                // hide the progress dialog and show the webview
+
+                webView.setEnabled(true);
+            }
+
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                Toast.makeText(getActivity(), "Your Internet Connection May not be active Or " + error.getDescription(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+        webView.loadUrl("file:///android_asset/templateHTML/TemplateHTML.html");
+//        webView.loadDataWithBaseURL("", data, "text/html", "UTF-8", "");
+    }
+
+    public class AppJavaScriptProxy {
+
+        private Activity activity = null;
+
+        public AppJavaScriptProxy(Activity activity) {
+            this.activity = activity;
+        }
+
+        @JavascriptInterface
+        public String getDocumentData() {
+            return documentData;
+
+        }
+
+        @JavascriptInterface
+        public String getArtcileData(String id) {
+            return  " verry goood";
+        }
+
+        @JavascriptInterface
+        public void showToast(String message) {
+            Toast.makeText(getActivity(), "ALERT " + message, Toast.LENGTH_LONG).show();
+        }
+
+
+    }
+
+    class Article{
+        private String data = null;
+        private String name = null;
+
+        public Article(String data, String name ) {
+            this.data = data;
+            this.name = name;
         }
     }
 }
