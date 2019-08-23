@@ -181,7 +181,6 @@ public class HomeActivity extends BaseActivity implements HomeView{
         context = this;
         sessionManager = new SessionManager(HomeActivity.this);
         setSupportActionBar(toolbar);
-        getParentFolders();
         initViewpager();
         initBottomNavigation();
         setNotificationCount();
@@ -261,8 +260,6 @@ public class HomeActivity extends BaseActivity implements HomeView{
         mDrawerToggle.setHomeAsUpIndicator(R.drawable.ic_menu);
         mDrawerToggle.syncState();
         setupFragments(findFragmentById(AppConfig.FRAG_NAV_DRAWER), false, false);
-
-
     }
 
     private void initBottomNavigation() {
@@ -332,7 +329,6 @@ public class HomeActivity extends BaseActivity implements HomeView{
     private void initViewpager() {
         mainViewPager = new MainViewPager(getSupportFragmentManager());
         mainViewPager.setCount(3);
-
 
         mainVP.setOffscreenPageLimit(3);
         mainVP.setAdapter(mainViewPager);
@@ -420,6 +416,8 @@ public class HomeActivity extends BaseActivity implements HomeView{
     private void beginDownload(String url){
         File file=new File(Environment.getExternalStorageDirectory(),"/QDMSWiki/Import");
         if(file.exists()){
+//            ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
+//            readAndInsertJsonData.execute();
         }
           else {
 
@@ -504,11 +502,6 @@ public class HomeActivity extends BaseActivity implements HomeView{
     public void onGetChildFoldersList(List<DocumentModel> list) {
         childList = list;
         setupFragments(findFragmentById(AppConfig.FRAG_NAV_DETAILS_DRAWER), true, true);
-    }
-
-    @Override
-    public void onGetChildList(List<SearchModel> searchModels) {
-
     }
 
     public class ReadAndInsertJsonData extends AsyncTask<String, Integer, MainModel> {
@@ -667,8 +660,12 @@ public class HomeActivity extends BaseActivity implements HomeView{
 
 
             //homePresenter.deleteUserInfo(userInfoList);
+            getParentFolders();
+            mainViewPager.updateDocumentList(documentList);
+            mainViewPager.updateArticleList(articleList);
+            mainViewPager.updateRecommendedList(documentList);
+            mainViewPager.updateRecentlyList(documentList);
 
-            initViewpager();
             progressDialog.dismiss();
         }
 

@@ -88,7 +88,7 @@ public class SearchActivity extends BaseActivity {
 
     private void setSearchTypeData() {
         searchType.add(new SearchFilterModel(1, "Folder", false));
-        searchType.add(new SearchFilterModel(2, "Document", false));
+        searchType.add(new SearchFilterModel(2, "Document", true));
         searchType.add(new SearchFilterModel(3, "Article", false));
         searchType.add(new SearchFilterModel(4, "Forms", false));
 

@@ -21,9 +21,11 @@ import com.mariapps.qdmswiki.custom.CustomEditText;
 import com.mariapps.qdmswiki.custom.CustomProgressBar;
 import com.mariapps.qdmswiki.custom.CustomViewPager;
 import com.mariapps.qdmswiki.home.adapter.HomeFragmentAdapter;
+import com.mariapps.qdmswiki.home.model.DocumentModel;
 import com.mariapps.qdmswiki.search.view.SearchActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,8 +52,10 @@ public class HomeFragment extends BaseFragment {
     @BindView(R.id.viewPager)
     CustomViewPager viewPager;
 
-    private FragmentManager fragmentManager;
     private HomeFragmentAdapter homeFragmentAdapter;
+    private FragmentManager fragmentManager;
+    private RecommendedFragment recommendedFragment;
+    private RecentlyFragment recentlyFragment;
 
     @Override
     protected void setUpPresenter() {
@@ -71,7 +75,8 @@ public class HomeFragment extends BaseFragment {
         searchET.setFocusable(false);
         searchET.clearFocus();
 
-        setData();
+        setupViewPager();
+        slidingTabs.setupWithViewPager(viewPager);
         return view;
     }
 
@@ -87,16 +92,53 @@ public class HomeFragment extends BaseFragment {
         }
     }
 
-    private void setData() {
-        ArrayList<String> headingList = new ArrayList<>();
-        headingList.add("Recommended");
-        headingList.add("Recently Viewed");
-        homeFragmentAdapter = new HomeFragmentAdapter(fragmentManager, getActivity(), headingList);
+    private void setupViewPager() {
+
+        if (getActivity() != null) {
+            homeFragmentAdapter = new HomeFragmentAdapter(getChildFragmentManager());
+        }
+        recommendedFragment = new RecommendedFragment();
+//        recommendedFragment.setCommentsListener(new CommentsFragment.CommentsListener() {
+//            @Override
+//            public void onItemClicked(CommentsAndPublishedRespObj.AlertInfoEntity alertInfoEntity) {
+//                notificationListener.onCommentClicked(alertInfoEntity);
+//            }
+//        });
+        recentlyFragment = new RecentlyFragment();
+//        publishedFragment.setPublishedListener(new PublishedFragment.PublishedListener() {
+//            @Override
+//            public void onItemClicked(CommentsAndPublishedRespObj.AlertInfoEntity alertInfoEntity) {
+//                notificationListener.onPublishedClicked(alertInfoEntity);
+//            }
+//        });
+
+        homeFragmentAdapter.addFrag(recommendedFragment, "Recommended");
+        homeFragmentAdapter.addFrag(recentlyFragment, "Recently Added");
+        viewPager.setOffscreenPageLimit(1);
         viewPager.setAdapter(homeFragmentAdapter);
-        slidingTabs.setupWithViewPager(viewPager);
-        viewPager.setCurrentItem(0);
-        viewPager.getAdapter().notifyDataSetChanged();
-        viewPager.invalidate();
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+
+            }
+
+            @Override
+            public void onPageSelected(int newPos) {
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
     }
 
+    public void updateRecommendedList(List<DocumentModel> documentList) {
+        recommendedFragment.updateDocumentList(documentList);
+    }
+
+    public void updateRecentlyList(List<DocumentModel> documentList) {
+        recentlyFragment.updateRecentlyList(documentList);
+    }
 }

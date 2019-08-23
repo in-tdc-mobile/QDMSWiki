@@ -5,51 +5,43 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.mariapps.qdmswiki.home.view.HomeDetailFragment;
-
 import java.util.ArrayList;
+import java.util.List;
 
 public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
 
-    Context mContext;
-    FragmentManager mFragman;
-    ArrayList<String> documentTypes;
+    private final List<Fragment> mFragmentList = new ArrayList<>();
+    private final List<String> mFragmentTitleList = new ArrayList<>();
 
-    public HomeFragmentAdapter(FragmentManager fm) {
-        super(fm);
-    }
-
-    public HomeFragmentAdapter(FragmentManager fragman, Context context, ArrayList<String> types) {
-        super(fragman);
-        mContext =  context;
-        documentTypes = types;
-        mFragman = fragman;
+    public HomeFragmentAdapter(FragmentManager manager) {
+        super(manager);
     }
 
     @Override
     public Fragment getItem(int position) {
-        return  HomeDetailFragment.newInstance(documentTypes.get(position));
+        return mFragmentList.get(position);
     }
 
     @Override
     public int getCount() {
-        return documentTypes.size();
+        return mFragmentList.size();
     }
 
-    @Override
-    public int getItemPosition(Object object) {
-        return POSITION_NONE;
+    public void addFrag(Fragment fragment, String title) {
+        mFragmentList.add(fragment);
+        mFragmentTitleList.add(title);
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return documentTypes.get(position);
-
+        return mFragmentTitleList.get(position);
     }
+
 
     @Override
-    public void notifyDataSetChanged() {
-        super.notifyDataSetChanged();
+    public int getItemPosition(Object object){
+        return super.getItemPosition(object);
     }
+
 }
 

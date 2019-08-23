@@ -774,33 +774,4 @@ public class HomePresenter {
             }
         });
     }
-
-    public void getChildList(String parentId) {
-        Completable.fromAction(new Action() {
-            @Override
-            public void run() throws Exception {
-                childList = homeDatabase.homeDao().getChildList(parentId);
-
-            }
-        }).observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
-            @Override
-            public void onSubscribe(Disposable d) {
-
-            }
-
-            @Override
-            public void onComplete() {
-                homeView.onGetChildList(childList);
-            }
-
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-        });
-    }
-
-
 }

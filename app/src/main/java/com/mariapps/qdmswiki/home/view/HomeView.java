@@ -13,5 +13,4 @@ public interface HomeView {
 
     void onGetParentFolderSuccess(List<DocumentModel> documentModels);
     void onGetChildFoldersList(List<DocumentModel> documentModels);
-    void onGetChildList(List<SearchModel> searchModels);
 }
