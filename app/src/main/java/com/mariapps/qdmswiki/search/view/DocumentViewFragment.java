@@ -31,6 +31,7 @@ import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.documents.view.DocumentInfoViewActivity;
 import com.mariapps.qdmswiki.home.database.HomeDao;
 import com.mariapps.qdmswiki.home.database.HomeDatabase;
+import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
 
 import butterknife.BindView;
@@ -54,6 +55,7 @@ public class DocumentViewFragment extends BaseFragment {
 
     private String folderName;
     private String documentData;
+    private ArticleModel articleModel;
     private Integer id;
     private HomeDatabase homeDatabase;
 
@@ -81,34 +83,6 @@ public class DocumentViewFragment extends BaseFragment {
         return view;
     }
 
-    public void loadDocument() {
-        Completable.fromAction(new Action() {
-            @Override
-            public void run() throws Exception {
-                documentData = homeDatabase.homeDao().getDocumentData();
-                documentData=documentData.replace("<script src=\"/WikiPALApp/Scripts/TemplateSettings/toc-template-settings.js\"></script>",  "<script src=\"./Scripts/toc-template-settings.js.download\"></script>");
-                documentData=documentData.replace( "\n",  "");
-            }
-        }).observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
-            @Override
-            public void onSubscribe(Disposable d) {
-
-            }
-
-            @Override
-            public void onComplete() {
-//                webView.loadData(documentData, "text/html; charset=utf-8", "UTF-8");
-                setHTMLContent();
-            }
-
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-        });
-    }
 
     @OnClick({R.id.showMenuFab})
     public void onClick(View view) {
@@ -163,6 +137,34 @@ public class DocumentViewFragment extends BaseFragment {
         }
     }
 
+    public void loadDocument() {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                documentData = homeDatabase.homeDao().getDocumentData();
+                documentData = documentData.replace("<script src=\"/WikiPALApp/Scripts/TemplateSettings/toc-template-settings.js\"></script>", "<script src=\"./Scripts/toc-template-settings.js.download\"></script>");
+                documentData = documentData.replace("\n", "");
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                setHTMLContent();
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
     private void setHTMLContent() {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new AppJavaScriptProxy(getActivity()), "androidAppProxy");
@@ -199,6 +201,41 @@ public class DocumentViewFragment extends BaseFragment {
 //        webView.loadDataWithBaseURL("", data, "text/html", "UTF-8", "");
     }
 
+    public void loadArticle(String id) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                articleModel = ((ArticleModel) homeDatabase.homeDao().getArticleData(id));
+                String articleData = articleModel.getDocumentData();
+                articleData = articleData.replace("<script src=\"/WikiPALApp/Scripts/TemplateSettings/toc-template-settings.js\"></script>", "<script src=\"./Scripts/toc-template-settings.js.download\"></script>");
+                articleData = articleData.replace("\n", "");
+                articleModel.setDocumentData(articleData);
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                webView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        webView.loadUrl("javascript:setArticleDataFromViewController('" + articleModel.getDocumentData() + "','" + articleModel.getId() + "')");
+                    }
+                });
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
     public class AppJavaScriptProxy {
 
         private Activity activity = null;
@@ -214,8 +251,8 @@ public class DocumentViewFragment extends BaseFragment {
         }
 
         @JavascriptInterface
-        public String getArtcileData(String id) {
-            return  " verry goood";
+        public void getArtcileData(String id) {
+            loadArticle(id);
         }
 
         @JavascriptInterface
@@ -226,11 +263,11 @@ public class DocumentViewFragment extends BaseFragment {
 
     }
 
-    class Article{
+    class Article {
         private String data = null;
         private String name = null;
 
-        public Article(String data, String name ) {
+        public Article(String data, String name) {
             this.data = data;
             this.name = name;
         }

@@ -156,7 +156,7 @@ function ArticleData(control) {
             "data":"",
             "name":""
         }
-        setArticleDataFromViewController(androidAppProxy.getArtcileData(Id),Id);
+        androidAppProxy.getArtcileData(Id);
     }
     catch (e) {
          alert("ArticleData retrivel error " );
@@ -167,7 +167,7 @@ function ArticleData(control) {
 
 function setArticleDataFromViewController(data,id){
 try{
-    androidAppProxy.showToast("ArticleData retrivel " + data);
+    androidAppProxy.showToast("ArticleData retrivel " + data + " ID "+ id);
     var curArticleObj = $("#" + id);
     if (data != null) {
         curArticleObj.find(">tbody>tr").remove(); // remove old article data
