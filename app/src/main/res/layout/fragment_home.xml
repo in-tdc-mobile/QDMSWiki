@@ -106,7 +106,7 @@
                             app:tabIndicatorColor="@color/searchType"
                             app:tabSelectedTextColor="@color/searchType"
                             app:tabTextColor="@color/black"
-                            app:tabIndicatorHeight="@dimen/dimen_5dp"
+                            app:tabIndicatorHeight="@dimen/dimen_3dp"
                             android:id="@+id/slidingTabs"
                             app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"
                             android:layout_width="match_parent"

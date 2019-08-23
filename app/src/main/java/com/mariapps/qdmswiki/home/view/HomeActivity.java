@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -181,7 +182,9 @@ public class HomeActivity extends BaseActivity implements HomeView{
         context = this;
         sessionManager = new SessionManager(HomeActivity.this);
         setSupportActionBar(toolbar);
+
         getParentFolders();
+        initNavDrawer();
         initViewpager();
         initBottomNavigation();
         setNotificationCount();
@@ -222,6 +225,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
     }
 
     private void initNavDrawer() {
+
         ViewGroup.LayoutParams layoutParams = navFL.getLayoutParams();
         layoutParams.width = (ScreenUtils.getScreenWidth(this) * 3) / 4;
         navFL.setLayoutParams(layoutParams);
@@ -238,6 +242,8 @@ public class HomeActivity extends BaseActivity implements HomeView{
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 if (slideOffset == 0) {
                     // drawer closed
+                }
+                else{
                     setupFragments(findFragmentById(AppConfig.FRAG_NAV_DRAWER), false, false);
                 }
                 super.onDrawerSlide(drawerView, slideOffset);
@@ -416,24 +422,29 @@ public class HomeActivity extends BaseActivity implements HomeView{
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void beginDownload(String url){
         File file=new File(Environment.getExternalStorageDirectory(),"/QDMSWiki/Import");
-        if(file.exists())
-            return;
-        progressDialog.setMessage("Downloading files...");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+        if(file.exists()){
+//            ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
+//            readAndInsertJsonData.execute();
+        }
+       else {
+            progressDialog.setMessage("Downloading files...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
 
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url))
-                .setTitle("Dummy File")// Title of the Download Notification
-                .setDescription("Downloading")// Description of the Download Notification
-                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)// Visibility of the download Notification
-                .setDestinationUri(Uri.fromFile(file))// Uri of the destination file
-                .setRequiresCharging(false)// Set if charging is required to begin the download
-                .setAllowedOverMetered(true)// Set if download is allowed on Mobile network
-                .setMimeType("application/zip")
-                .setAllowedOverRoaming(true);// Set if download is allowed on roaming network
+            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url))
+                    .setTitle("QDMSWiki")// Title of the Download Notification
+                    .setDescription("Downloading")// Description of the Download Notification
+                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)// Visibility of the download Notification
+                    .setDestinationUri(Uri.fromFile(file))// Uri of the destination file
+                    .setRequiresCharging(false)// Set if charging is required to begin the download
+                    .setAllowedOverMetered(true)// Set if download is allowed on Mobile network
+                    .setMimeType("application/zip")
+                    .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE)
+                    .setAllowedOverRoaming(true);// Set if download is allowed on roaming network
 
-        DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-        downloadID = downloadManager.enqueue(request);// enqueue puts the download request in the queue.
+            DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+            downloadID = downloadManager.enqueue(request);// enqueue puts the download request in the queue.
+        }
 
     }
 
@@ -492,7 +503,6 @@ public class HomeActivity extends BaseActivity implements HomeView{
     @Override
     public void onGetParentFolderSuccess(List<DocumentModel> folderList) {
         parentFolderList = folderList;
-        initNavDrawer();
     }
 
     @Override
@@ -657,12 +667,23 @@ public class HomeActivity extends BaseActivity implements HomeView{
 
 
             //homePresenter.deleteUserInfo(userInfoList);
-            getParentFolders();
+            new CountDownTimer(5000, 5000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    getParentFolders();
+                }
+
+                @Override
+                public void onFinish() {
+                    setupFragments(findFragmentById(AppConfig.FRAG_NAV_DRAWER), true, true);
+
+                }
+            }.start();
+
             mainViewPager.updateDocumentList(documentList);
             mainViewPager.updateArticleList(articleList);
             mainViewPager.updateRecommendedList(documentList);
             mainViewPager.updateRecentlyList(documentList);
-
             progressDialog.dismiss();
         }
 

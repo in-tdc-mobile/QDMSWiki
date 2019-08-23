@@ -322,6 +322,58 @@ public interface HomeDao {
             " WHERE category.Parent=:folderId")
     List<SearchModel> getAllDocumentsArticlesAndFoldersInsideFolder(String folderId);
 
+    @Query("SELECT article.Id as id, " +
+            " 'Article' as type, " +
+            " article.ArticleName as name, " +
+            " article.CategoryIds as categoryId," +
+            " category.CategoryName as categoryName " +
+            " FROM ArticleEntity as article " +
+            " LEFT JOIN CategoryEntity as category" +
+            " ON category.Id = article.CategoryIds"+
+            " UNION "+
+            " SELECT category.Id as id, " +
+            " 'Folder' as type, " +
+            " category.CategoryName as name, " +
+            " '' as categoryId," +
+            " '' as categoryName " +
+            " FROM CategoryEntity as category")
+    List<SearchModel> getAllArticlesAndFolders();
+
+    @Query("SELECT document.Id as id, " +
+            " 'Document' as type, " +
+            " document.DocumentName as name, " +
+            " document.CategoryId as categoryId," +
+            " category.CategoryName as categoryName " +
+            " FROM DocumentEntity as document " +
+            " LEFT JOIN CategoryEntity as category" +
+            " ON category.Id = document.CategoryId"+
+            " UNION "+
+            " SELECT article.Id as id, " +
+            " 'Article' as type, " +
+            " article.ArticleName as name, " +
+            " article.CategoryIds as categoryId," +
+            " category.CategoryName as categoryName " +
+            " FROM ArticleEntity as article " +
+            " LEFT JOIN CategoryEntity as category" +
+            " ON category.Id = article.CategoryIds"+
+            " UNION "+
+            " SELECT category.Id as id, " +
+            " 'Folder' as type, " +
+            " '' as name, " +
+            " '' as categoryId," +
+            " '' as categoryName " +
+            " FROM CategoryEntity as category"+
+            " WHERE category.IsLeafNode = 1 "+
+            " UNION "+
+            " SELECT category.Id as id, " +
+            " 'Folder' as type, " +
+            " category.CategoryName as name, " +
+            " '' as categoryId," +
+            " '' as categoryName " +
+            " FROM CategoryEntity as category"+
+            " WHERE category.IsLeafNode != 1 ")
+    List<SearchModel> getAllDocumentsArticlesAndFolders();
+
     @Query("SELECT CategoryName FROM CategoryEntity WHERE Id =:id")
     String getCategoryName(String id);
 

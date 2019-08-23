@@ -183,17 +183,21 @@ public class SearchActivity extends BaseActivity {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-                if(isDocumentSelected && isArticleSelected)
+
+                if(isDocumentSelected && isArticleSelected && isFolderSelected)
+                    searchList = homeDatabase.homeDao().getAllDocumentsArticlesAndFolders();
+                else if(isDocumentSelected && isArticleSelected)
                     searchList = homeDatabase.homeDao().getAllDocumentsAndArticles();
                 else if(isDocumentSelected && isFolderSelected)
                     searchList = homeDatabase.homeDao().getAllDocumentsAndFolders();
-                else if(isDocumentSelected && !isArticleSelected)
+                else if(isArticleSelected && isFolderSelected)
+                    searchList = homeDatabase.homeDao().getAllArticlesAndFolders();
+                else if(isDocumentSelected && !isArticleSelected && !isFolderSelected)
                     searchList = homeDatabase.homeDao().getAllDocuments();
-                else if(!isDocumentSelected && isArticleSelected)
+                else if(!isDocumentSelected && isArticleSelected && !isFolderSelected)
                     searchList = homeDatabase.homeDao().getAllArticles();
                 else if(isFolderSelected && !isDocumentSelected && !isArticleSelected)
                     searchList = homeDatabase.homeDao().getAllCategories();
-
 
             }
         }).observeOn(AndroidSchedulers.mainThread())
