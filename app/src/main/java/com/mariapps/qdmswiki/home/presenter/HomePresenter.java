@@ -12,6 +12,7 @@ import com.mariapps.qdmswiki.home.model.TagModel;
 import com.mariapps.qdmswiki.home.view.HomeView;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
 import com.mariapps.qdmswiki.notification.model.ReceiverModel;
+import com.mariapps.qdmswiki.search.model.SearchModel;
 import com.mariapps.qdmswiki.serviceclasses.APIException;
 import com.mariapps.qdmswiki.serviceclasses.ApiServiceFactory;
 import com.mariapps.qdmswiki.serviceclasses.ServiceController;
@@ -38,6 +39,7 @@ public class HomePresenter {
     private ServiceController serviceController;
     String url;
     List<DocumentModel> folderList = new ArrayList<>();
+    List<SearchModel> childList = new ArrayList<>();
 
     public HomePresenter(Context context, HomeView homeView) {
         this.homeView = homeView;
@@ -772,5 +774,4 @@ public class HomePresenter {
             }
         });
     }
-
 }

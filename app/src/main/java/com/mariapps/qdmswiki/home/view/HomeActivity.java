@@ -63,6 +63,7 @@ import com.mariapps.qdmswiki.home.presenter.HomePresenter;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
 import com.mariapps.qdmswiki.notification.model.ReceiverModel;
 import com.mariapps.qdmswiki.notification.view.NotificationActivity;
+import com.mariapps.qdmswiki.search.model.SearchModel;
 import com.mariapps.qdmswiki.search.view.FolderStructureActivity;
 import com.mariapps.qdmswiki.serviceclasses.APIException;
 import com.mariapps.qdmswiki.settings.view.SettingsActivity;
@@ -174,7 +175,6 @@ public class HomeActivity extends BaseActivity implements HomeView{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-
         registerReceiver(onDownloadComplete,new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
         registerReceiver(onDownloadProgress,new IntentFilter(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
 
@@ -261,8 +261,6 @@ public class HomeActivity extends BaseActivity implements HomeView{
         mDrawerToggle.setHomeAsUpIndicator(R.drawable.ic_menu);
         mDrawerToggle.syncState();
         setupFragments(findFragmentById(AppConfig.FRAG_NAV_DRAWER), false, false);
-
-
     }
 
     private void initBottomNavigation() {
@@ -332,7 +330,6 @@ public class HomeActivity extends BaseActivity implements HomeView{
     private void initViewpager() {
         mainViewPager = new MainViewPager(getSupportFragmentManager());
         mainViewPager.setCount(3);
-
 
         mainVP.setOffscreenPageLimit(3);
         mainVP.setAdapter(mainViewPager);
@@ -419,27 +416,25 @@ public class HomeActivity extends BaseActivity implements HomeView{
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void beginDownload(String url){
         File file=new File(Environment.getExternalStorageDirectory(),"/QDMSWiki/Import");
-        if(file.exists()){
-        }
-          else {
+        if(file.exists())
+            return;
+        progressDialog.setMessage("Downloading files...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
 
-            progressDialog.setMessage("Downloading files...");
-            progressDialog.setCancelable(false);
-            progressDialog.show();
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url))
+                .setTitle("Dummy File")// Title of the Download Notification
+                .setDescription("Downloading")// Description of the Download Notification
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)// Visibility of the download Notification
+                .setDestinationUri(Uri.fromFile(file))// Uri of the destination file
+                .setRequiresCharging(false)// Set if charging is required to begin the download
+                .setAllowedOverMetered(true)// Set if download is allowed on Mobile network
+                .setMimeType("application/zip")
+                .setAllowedOverRoaming(true);// Set if download is allowed on roaming network
 
-            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url))
-                    .setTitle("Dummy File")// Title of the Download Notification
-                    .setDescription("Downloading")// Description of the Download Notification
-                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)// Visibility of the download Notification
-                    .setDestinationUri(Uri.fromFile(file))// Uri of the destination file
-                    .setRequiresCharging(false)// Set if charging is required to begin the download
-                    .setAllowedOverMetered(true)// Set if download is allowed on Mobile network
-                    .setMimeType("application/zip")
-                    .setAllowedOverRoaming(true);// Set if download is allowed on roaming network
+        DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+        downloadID = downloadManager.enqueue(request);// enqueue puts the download request in the queue.
 
-            DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-            downloadID = downloadManager.enqueue(request);// enqueue puts the download request in the queue.
-        }
     }
 
     public void unzip(String zipFilePath, String destDirectory) throws IOException {
@@ -549,6 +544,8 @@ public class HomeActivity extends BaseActivity implements HomeView{
             List<CategoryModel> categoryList = mainModel.getCategoryModels();
             List<NotificationModel> notificationList = mainModel.getNotificationModels();
             List<BookmarkModel> bookmarkList = mainModel.getBookmarkModels();
+            //List<UserSettingsModel> userSettingsList = mainModel.getUserSettingsModels();
+           // List<UserInfoModel> userInfoList = mainModel.getUserInfoModels();
 
             //inserting
             homePresenter.deleteDocuments(documentList);
@@ -566,11 +563,26 @@ public class HomeActivity extends BaseActivity implements HomeView{
 //                List<ReceiverModel> receiverList = notificationList.get(i).getReceviers();
 //                homePresenter.deleteReceivers(receiverList);
 //            }
-//
+////
 //            for(int i=0;i<bookmarkList.size();i++){
 //                List<BookmarkEntryModel> bookmarkEntryList = bookmarkList.get(i).getBookmarkEntries();
 //                homePresenter.deleteBookmarkEntries(bookmarkEntryList);
 //            }
+
+//            for(int i=0;i<userSettingsList.size();i++){
+//                if(userSettingsList.get(i).getUserID().equals(sessionManager.getUserId())){
+//                    homePresenter.deleteUserSettings(userSettingsList.get(i));
+//                }
+//                else
+//                    continue;
+//            }
+//
+//            for(int i=0;i<userInfoList.size();i++){
+//                if(!userInfoList.get(i).getUserId().equals(sessionManager.getUserId())){
+//                    userInfoList.get(i).setImageName("");
+//                }
+//            }
+//            homePresenter.deleteUserInfo(userInfoList);
 
             //List<UserSettingsModel> userSettingsList = mainModel.getUserSettingsModels();
 
@@ -645,8 +657,12 @@ public class HomeActivity extends BaseActivity implements HomeView{
 
 
             //homePresenter.deleteUserInfo(userInfoList);
+            getParentFolders();
+            mainViewPager.updateDocumentList(documentList);
+            mainViewPager.updateArticleList(articleList);
+            mainViewPager.updateRecommendedList(documentList);
+            mainViewPager.updateRecentlyList(documentList);
 
-            mainViewPager.notifyDataSetChanged();
             progressDialog.dismiss();
         }
 

@@ -1,5 +1,6 @@
 package com.mariapps.qdmswiki.articles.view;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,13 +11,21 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
+
+import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.articles.adapter.ArticlesAdapter;
 import com.mariapps.qdmswiki.baseclasses.BaseFragment;
 import com.mariapps.qdmswiki.custom.CustomEditText;
+import com.mariapps.qdmswiki.custom.CustomProgressBar;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
+import com.mariapps.qdmswiki.documents.adapter.DocumentsAdapter;
 import com.mariapps.qdmswiki.home.database.HomeDatabase;
 import com.mariapps.qdmswiki.home.model.ArticleModel;
+import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.search.view.FolderStructureActivity;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +45,10 @@ public class ArticlesFragment extends BaseFragment {
     CustomRecyclerView rvDocuments;
     @BindView(R.id.searchET)
     CustomEditText searchET;
+    @BindView(R.id.customProgressBar)
+    CustomProgressBar customProgressBar;
+    @BindView(R.id.noDataRL)
+    RelativeLayout noDataRL;
 
     private FragmentManager fragmentManager;
     private ArticlesAdapter articlesAdapter;
@@ -65,8 +78,17 @@ public class ArticlesFragment extends BaseFragment {
     }
 
     private void setData() {
-        GetCategoryName getCategoryName = new GetCategoryName();
-        getCategoryName.execute();
+        customProgressBar.setVisibility(View.GONE);
+        if (articleList != null && articleList.size() > 0) {
+            noDataRL.setVisibility(View.GONE);
+            GetCategoryName getCategoryName = new GetCategoryName();
+            getCategoryName.execute();
+        }
+        else{
+            rvDocuments.setAdapter(null);
+            noDataRL.setVisibility(View.VISIBLE);
+        }
+
     }
 
     public void getArticlesList() {
@@ -151,10 +173,12 @@ public class ArticlesFragment extends BaseFragment {
                     articleModel = articleList.get(i);
                     categoryIds = new ArrayList<>();
                     categoryIds = articleModel.getCategoryIds();
-                    for(int j=0; j<categoryIds.size(); j++){
-                        getCategoryName(categoryIds,categoryIds.get(j),j);
+                    if(categoryIds != null) {
+                        for (int j = 0; j < categoryIds.size(); j++) {
+                            getCategoryName(categoryIds, categoryIds.get(j), j);
+                        }
+                        articleModel.setCategoryIds(categoryIds);
                     }
-                    articleModel.setCategoryIds(categoryIds);
                 }
             } catch (Exception e) {
             }
@@ -170,9 +194,29 @@ public class ArticlesFragment extends BaseFragment {
 
         @Override
         protected void onPostExecute(String string) {
-            articlesAdapter = new ArticlesAdapter(getActivity(), articleList);
-            rvDocuments.setAdapter(articlesAdapter);
+            setRecyclerView();
 
         }
+    }
+
+    private void setRecyclerView() {
+        articlesAdapter = new ArticlesAdapter(getActivity(), articleList);
+        rvDocuments.setAdapter(articlesAdapter);
+        articlesAdapter.setRowClickListener(new ArticlesAdapter.RowClickListener() {
+            @Override
+            public void onItemClicked(ArticleModel articleModel) {
+                Intent intent = new Intent(getActivity(), FolderStructureActivity.class);
+                intent.putExtra(AppConfig.BUNDLE_TYPE, "Document");
+                intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME, articleModel.getArticleName());
+                intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, articleModel.getId());
+                startActivity(intent);
+
+            }
+        });
+    }
+
+    public void updateArticleList(List<ArticleModel> articleList) {
+        this.articleList = articleList;
+        setData();
     }
 }

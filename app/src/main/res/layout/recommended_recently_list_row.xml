@@ -7,7 +7,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:layout_margin="@dimen/dimen_15sp">
+    android:layout_marginTop="@dimen/dimen_10dp"
+    android:layout_marginBottom="@dimen/dimen_10dp"
+    android:layout_marginLeft="@dimen/dimen_16dp"
+    android:layout_marginRight="@dimen/dimen_16dp">
 
     <LinearLayout
         android:layout_weight="0.20"

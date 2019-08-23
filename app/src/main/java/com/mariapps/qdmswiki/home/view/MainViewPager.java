@@ -8,8 +8,11 @@ import android.view.WindowManager;
 
 import com.mariapps.qdmswiki.articles.view.ArticlesFragment;
 import com.mariapps.qdmswiki.documents.view.DocumentsFragment;
+import com.mariapps.qdmswiki.home.model.ArticleModel;
+import com.mariapps.qdmswiki.home.model.DocumentModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainViewPager extends FragmentPagerAdapter {
 
@@ -88,6 +91,23 @@ public class MainViewPager extends FragmentPagerAdapter {
 
     public interface MainVPListener {
 
+    }
+
+    public void updateDocumentList(List<DocumentModel> documentList){
+        documentsFragment.updateDocumentList(documentList);
+
+    }
+
+    public void updateArticleList(List<ArticleModel> articleList){
+        articlesFragment.updateArticleList(articleList);
+    }
+
+    public void updateRecommendedList(List<DocumentModel> documentList){
+        homeFragment.updateRecommendedList(documentList);
+    }
+
+    public void updateRecentlyList(List<DocumentModel> documentList){
+        homeFragment.updateRecentlyList(documentList);
     }
 
 }

@@ -54,9 +54,10 @@ public class DocumentViewFragment extends BaseFragment {
     WebView webView;
 
     private String folderName;
+    private DocumentModel documentModel;
+    private String id;
     private String documentData;
     private ArticleModel articleModel;
-    private Integer id;
     private HomeDatabase homeDatabase;
 
     @Override
@@ -72,7 +73,7 @@ public class DocumentViewFragment extends BaseFragment {
 
         try {
             Bundle args = getArguments();
-            id = args.getInt(AppConfig.BUNDLE_FOLDER_ID, 0);
+            id = args.getString(AppConfig.BUNDLE_FOLDER_ID, "");
             folderName = args.getString(AppConfig.BUNDLE_FOLDER_NAME, "");
         } catch (Exception e) {
         }
@@ -85,6 +86,7 @@ public class DocumentViewFragment extends BaseFragment {
 
 
     @OnClick({R.id.showMenuFab})
+
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.showMenuFab:
@@ -141,9 +143,11 @@ public class DocumentViewFragment extends BaseFragment {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-                documentData = homeDatabase.homeDao().getDocumentData();
+                documentModel = homeDatabase.homeDao().getDocumentData(id);
+                documentData = documentModel.getDocumentData();
                 documentData = documentData.replace("<script src=\"/WikiPALApp/Scripts/TemplateSettings/toc-template-settings.js\"></script>", "<script src=\"./Scripts/toc-template-settings.js.download\"></script>");
                 documentData = documentData.replace("\n", "");
+                documentModel.setDocumentData(documentData);
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {

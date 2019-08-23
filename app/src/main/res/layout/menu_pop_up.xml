@@ -50,7 +50,6 @@
     </LinearLayout>
 
     <LinearLayout
-        android:visibility="gone"
         android:id="@+id/linDownload"
         android:gravity="center"
         android:layout_weight="0.30"

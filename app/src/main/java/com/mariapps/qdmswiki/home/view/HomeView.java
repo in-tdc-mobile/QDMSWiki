@@ -1,6 +1,7 @@
 package com.mariapps.qdmswiki.home.view;
 
 import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.search.model.SearchModel;
 import com.mariapps.qdmswiki.serviceclasses.APIException;
 
 import java.util.List;

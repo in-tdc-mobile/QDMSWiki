@@ -60,9 +60,6 @@ public interface HomeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertUserInfo(List<UserInfoModel> userInfoModel);
 
-    @Query("SELECT DocumentData FROM DocumentEntity")
-    String getDocumentData();
-
     @Query("SELECT document.Id as id, " +
             " 'Document' as type, " +
             " document.DocumentName as name, " +
@@ -196,16 +193,134 @@ public interface HomeDao {
             " ON :parentId IN (article.CategoryIds)")
     List<SearchModel> getChildList(String parentId);
 
+
+    @Query("SELECT document.Id, " +
+            " document.DocumentName, " +
+            " document.DocumentData, " +
+            " document.Date" +
+            " FROM DocumentEntity as document " +
+            " WHERE document.Id=:documentId")
+    DocumentModel getDocumentData(String documentId);
+
+
     @Query("SELECT article.Id, " +
             " article.ArticleName, " +
             " article.DocumentData, " +
-            " article.CategoryIds," +
-            " article.Version," +
-            " article.tags," +
             " article.Date" +
             " FROM ArticleEntity as article " +
             " WHERE article.Id=:articleId")
     ArticleModel getArticleData(String articleId);
+
+    @Query("SELECT document.Id as id, " +
+            " 'Document' as type, " +
+            " document.DocumentName as name, " +
+            " document.CategoryId as categoryId," +
+            " category.CategoryName as categoryName " +
+            " FROM DocumentEntity as document " +
+            " INNER JOIN CategoryEntity as category" +
+            " ON category.Id = document.CategoryId"+
+            " UNION "+
+            " SELECT article.Id as id, " +
+            " 'Article' as type, " +
+            " article.ArticleName as name, " +
+            " article.CategoryIds as categoryId," +
+            " category.CategoryName as categoryName " +
+            " FROM ArticleEntity as article " +
+            " INNER JOIN CategoryEntity as category" +
+            " ON category.Id = article.CategoryIds")
+    List<SearchModel> getAllDocumentsAndArticlesInsideFolder();
+
+    @Query("SELECT document.Id as id, " +
+            " 'Document' as type, " +
+            " document.DocumentName as name, " +
+            " document.CategoryId as categoryId," +
+            " category.CategoryName as categoryName " +
+            " FROM DocumentEntity as document " +
+            " INNER JOIN CategoryEntity as category" +
+            " ON category.Id = document.CategoryId"+
+            " UNION "+
+            " SELECT category.Id as id, " +
+            " 'Folder' as type, " +
+            " category.CategoryName as name, " +
+            " '' as categoryId," +
+            " '' as categoryName " +
+            " FROM CategoryEntity as category" +
+            " WHERE category.Parent=:folderId")
+    List<SearchModel> getAllDocumentsAndFoldersInsideFolder(String folderId);
+
+    @Query("SELECT document.Id as id, " +
+            " 'Document' as type, " +
+            " document.DocumentName as name, " +
+            " document.CategoryId as categoryId," +
+            " category.CategoryName as categoryName " +
+            " FROM DocumentEntity as document " +
+            " INNER JOIN CategoryEntity as category" +
+            " ON category.Id = document.CategoryId")
+    List<SearchModel> getAllDocumentsInsideFolder();
+
+    @Query("SELECT article.Id as id, " +
+            " 'Article' as type, " +
+            " article.ArticleName as name, " +
+            " article.CategoryIds as categoryId," +
+            " category.CategoryName as categoryName " +
+            " FROM ArticleEntity as article " +
+            " INNER JOIN CategoryEntity as category" +
+            " ON category.Id = article.CategoryIds")
+    List<SearchModel> getAllArticlesInsideFolder();
+
+    @Query("SELECT category.Id as id, " +
+            " 'Folder' as type, " +
+            " category.CategoryName as name, " +
+            " '' as categoryId," +
+            " '' as categoryName " +
+            " FROM CategoryEntity as category"+
+            " WHERE category.Parent=:folderId")
+    List<SearchModel> getAllCategoriesInsideFolder(String folderId);
+
+    @Query("SELECT article.Id as id, " +
+            " 'Article' as type, " +
+            " article.ArticleName as name, " +
+            " article.CategoryIds as categoryId," +
+            " category.CategoryName as categoryName " +
+            " FROM ArticleEntity as article " +
+            " INNER JOIN CategoryEntity as category" +
+            " ON category.Id = article.CategoryIds"+
+            " UNION "+
+            " SELECT category.Id as id, " +
+            " 'Folder' as type, " +
+            " category.CategoryName as name, " +
+            " '' as categoryId," +
+            " '' as categoryName " +
+            " FROM CategoryEntity as category" +
+            " WHERE category.Parent=:folderId")
+    List<SearchModel> getAllArticlesAndFoldersInsideFolder(String folderId);
+
+    @Query("SELECT document.Id as id, " +
+            " 'Document' as type, " +
+            " document.DocumentName as name, " +
+            " document.CategoryId as categoryId," +
+            " category.CategoryName as categoryName " +
+            " FROM DocumentEntity as document " +
+            " INNER JOIN CategoryEntity as category" +
+            " ON category.Id = document.CategoryId"+
+            " UNION "+
+            " SELECT article.Id as id, " +
+            " 'Article' as type, " +
+            " article.ArticleName as name, " +
+            " article.CategoryIds as categoryId," +
+            " category.CategoryName as categoryName " +
+            " FROM ArticleEntity as article " +
+            " INNER JOIN CategoryEntity as category" +
+            " ON category.Id = article.CategoryIds"+
+            " UNION "+
+            " SELECT category.Id as id, " +
+            " 'Folder' as type, " +
+            " category.CategoryName as name, " +
+            " '' as categoryId," +
+            " '' as categoryName " +
+            " FROM CategoryEntity as category" +
+            " WHERE category.Parent=:folderId")
+    List<SearchModel> getAllDocumentsArticlesAndFoldersInsideFolder(String folderId);
 
     @Query("SELECT CategoryName FROM CategoryEntity WHERE Id =:id")
     String getCategoryName(String id);
