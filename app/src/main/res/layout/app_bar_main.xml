@@ -8,13 +8,15 @@
     android:fitsSystemWindows="true">
 
 
-    <!--<ProgressBar-->
-    <!--android:id="@+id/loading_spinner"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_gravity="center"-->
-    <!--android:indeterminateTint="@color/searchType"-->
-    <!--android:indeterminateTintMode="src_atop" />-->
+    <com.github.lzyzsd.circleprogress.ArcProgress
+        android:id="@+id/arc_progress"
+        android:background="#214193"
+        android:layout_gravity="center"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:arc_progress="55"
+        android:visibility="gone"
+        app:arc_bottom_text="QDMS"/>
 
     <LinearLayout
         android:layout_width="match_parent"

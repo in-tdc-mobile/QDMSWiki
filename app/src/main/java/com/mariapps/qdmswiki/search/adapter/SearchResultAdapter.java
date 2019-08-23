@@ -55,13 +55,13 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
             holder.openIV.setVisibility(View.GONE);
 
         if(searchModel.getType().equals("Folder"))
-            holder.typeIV.setBackground(ResourcesCompat.getDrawable(mContext.getResources(),R.drawable.ic_folder_inactive,null));
+            holder.typeIV.setImageDrawable(ResourcesCompat.getDrawable(mContext.getResources(),R.drawable.ic_folder_inactive,null));
         else if(searchModel.getType().equals("Document"))
-            holder.typeIV.setBackground(ResourcesCompat.getDrawable(mContext.getResources(),R.drawable.ic_document_inactive,null));
+            holder.typeIV.setImageDrawable(ResourcesCompat.getDrawable(mContext.getResources(),R.drawable.ic_document_inactive,null));
         else if(searchModel.getType().equals("Article"))
-            holder.typeIV.setBackground(ResourcesCompat.getDrawable(mContext.getResources(),R.drawable.ic_article_inactive,null));
+            holder.typeIV.setImageDrawable(ResourcesCompat.getDrawable(mContext.getResources(),R.drawable.ic_article_inactive,null));
         else if(searchModel.getType().equals("Forms"))
-            holder.typeIV.setBackground(ResourcesCompat.getDrawable(mContext.getResources(),R.drawable.ic_document_inactive,null));
+            holder.typeIV.setImageDrawable(ResourcesCompat.getDrawable(mContext.getResources(),R.drawable.ic_document_inactive,null));
 
 
         holder.mainLL.setOnClickListener(new View.OnClickListener() {

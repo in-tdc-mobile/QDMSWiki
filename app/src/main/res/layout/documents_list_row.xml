@@ -7,13 +7,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:layout_margin="@dimen/dimen_15sp">
+    android:layout_marginTop="@dimen/dimen_10sp"
+    android:layout_marginBottom="@dimen/dimen_10sp"
+    android:layout_marginLeft="@dimen/dimen_16sp"
+    android:layout_marginRight="@dimen/dimen_16sp">
 
 
     <android.support.v7.widget.AppCompatImageView
         android:layout_width="@dimen/dimen_10dp"
         android:layout_height="@dimen/dimen_10dp"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="9dp"
         android:src="@drawable/drawable_round" />
 
 
@@ -31,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.10"
             android:textColor="@color/black"
-            android:textSize="@dimen/ter_text_size"
+            android:textSize="@dimen/primary_text_size"
             app:fontface="@string/string_lato_semi_bold" />
 
         <LinearLayout
@@ -45,7 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:fontface="@string/string_lato_regular"
-                android:textSize="@dimen/medium_text_size"/>
+                android:textSize="@dimen/sec_text_size"/>
 
             <com.mariapps.qdmswiki.custom.CustomTextView
                 android:id="@+id/tvCategory"
@@ -53,7 +56,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:fontface="@string/string_lato_regular"
-                android:textSize="@dimen/medium_text_size"/>
+                android:textSize="@dimen/sec_text_size"/>
 
         </LinearLayout>
 
@@ -67,7 +70,7 @@
                 android:id="@+id/tvDate"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:textSize="@dimen/medium_text_size" />
+                android:textSize="@dimen/sec_text_size" />
 
             <!--<com.mariapps.qdmswiki.custom.CustomTextView-->
                 <!--android:id="@+id/tvTime"-->
@@ -105,10 +108,10 @@
         <com.mariapps.qdmswiki.custom.CustomTextView
             android:background="@drawable/drawable_version_type"
             android:id="@+id/tvVersion"
-            android:layout_width="40dp"
+            android:minWidth="@dimen/dimen_40dp"
+            android:layout_width="wrap_content"
             android:gravity="center"
             android:layout_height="wrap_content"
-            android:text="V1"
             android:textColor="@color/searchType"
             android:textSize="@dimen/ter_text_size" />
 

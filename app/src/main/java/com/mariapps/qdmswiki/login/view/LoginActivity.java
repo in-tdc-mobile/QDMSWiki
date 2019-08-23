@@ -21,14 +21,19 @@ import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.custom.CustomButton;
 import com.mariapps.qdmswiki.custom.CustomProgressBar;
 import com.mariapps.qdmswiki.home.view.HomeActivity;
+import com.mariapps.qdmswiki.login.model.LoginRequestObj;
+import com.mariapps.qdmswiki.login.model.LoginResponse;
+import com.mariapps.qdmswiki.login.presenter.LoginPresenter;
+import com.mariapps.qdmswiki.utils.CommonUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.PrimitiveIterator;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class LoginActivity extends BaseActivity {
+public class LoginActivity extends BaseActivity implements LoginView{
 
     @BindView(R.id.splashIV)
     AppCompatImageView splashIV;
@@ -41,6 +46,7 @@ public class LoginActivity extends BaseActivity {
     @BindView(R.id.passwordET)
     TextInputEditText passwordET;
 
+    private LoginPresenter loginPresenter;
     private SessionManager sessionManager;
     private static final int MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE = 123;
 
@@ -72,13 +78,14 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void setUpPresenter() {
-
+        loginPresenter = new LoginPresenter(this,this);
     }
 
     @Override
     protected void isNetworkAvailable(boolean isConnected) {
 
     }
+
 
     @OnClick({R.id.loginBtn})
     public void onClick(View view) {
@@ -99,8 +106,14 @@ public class LoginActivity extends BaseActivity {
                             loadinLoadingPB.showProgressBar();
                             loadinLoadingPB.setVisibility(View.VISIBLE);
                             sessionManager.setLoggedin(true);
+                            sessionManager.setDeviceId(CommonUtils.getDeviceId(LoginActivity.this));
+                            sessionManager.setUserId("162348");
+                            sessionManager.setMainId("59a7e978cd3d99498c041f03");
                             Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                             startActivity(intent);
+//                            loginPresenter.getLoggedIn(new LoginRequestObj(usernameET.getText().toString(), passwordET.getText().toString(), sessionManager.getKeyFcmTokenId(), "ANDROID",
+//                                    sessionManager.getDeviceId(), "1", "Closed"));
+
                         }
 
                         @Override
@@ -141,5 +154,28 @@ public class LoginActivity extends BaseActivity {
             }
         }
 
+    }
+
+    @Override
+    public void onLoginSuccess(LoginResponse loginResponse) {
+        if (loginResponse != null) {
+            if (loginResponse.getCommonEntity() != null) {
+                if (loginResponse.getCommonEntity().getTransactionstatus() != null && loginResponse.getCommonEntity().getTransactionstatus().equals("Y")) {
+                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                    startActivity(intent);
+                } else if (loginResponse.getCommonEntity().getMessage() != null) {
+                    Toast.makeText(LoginActivity.this, loginResponse.getCommonEntity().getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+        loginBtn.setVisibility(View.VISIBLE);
+        loadinLoadingPB.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onLoginError(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+        loginBtn.setVisibility(View.VISIBLE);
+        loadinLoadingPB.setVisibility(View.GONE);
     }
 }

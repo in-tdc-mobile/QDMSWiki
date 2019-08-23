@@ -37,13 +37,16 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.lzyzsd.circleprogress.ArcProgress;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
+import com.mariapps.qdmswiki.SessionManager;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkEntryModel;
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkModel;
@@ -63,6 +66,10 @@ import com.mariapps.qdmswiki.notification.view.NotificationActivity;
 import com.mariapps.qdmswiki.search.view.FolderStructureActivity;
 import com.mariapps.qdmswiki.serviceclasses.APIException;
 import com.mariapps.qdmswiki.settings.view.SettingsActivity;
+import com.mariapps.qdmswiki.usersettings.UserInfoModel;
+import com.mariapps.qdmswiki.usersettings.UserSettingsCategoryModel;
+import com.mariapps.qdmswiki.usersettings.UserSettingsModel;
+import com.mariapps.qdmswiki.usersettings.UserSettingsTagModel;
 import com.mariapps.qdmswiki.utils.ScreenUtils;
 
 import org.json.JSONArray;
@@ -109,14 +116,14 @@ public class HomeActivity extends BaseActivity implements HomeView{
     AppBarLayout appBarMain;
     @BindView(R.id.notificationsBadgeTextView)
     CustomTextView notificationsBadgeTextView;
+    @BindView(R.id.arc_progress)
+    ArcProgress arc_progress;
 
     private ActionBarDrawerToggle mDrawerToggle;
     private HomePresenter homePresenter;
     private MainViewPager mainViewPager;
     private NavigationDrawerFragment navigationDrawerFragment;
-//    private ArrayList<NavDrawerObj.MenuItemsEntity> menuItemsEntities;
-//    private NavDrawerObj.MenuItemsEntity menuItemsEntity;
-//    private NavDrawerObj navDrawerObj;
+    private SessionManager sessionManager;
     int currentPosition = 0;
     private int newPosition = 0;
     private HomeActivity context;
@@ -127,16 +134,12 @@ public class HomeActivity extends BaseActivity implements HomeView{
     private Gson gson;
 
     private DocumentModel documentModel;
-    List<DocumentModel> documentList = new ArrayList<>();
     List<DocumentModel> childList = new ArrayList<>();
     List<DocumentModel> parentFolderList = new ArrayList<>();
     List<TagModel> tagList = new ArrayList<>();
-    List<ArticleModel> articleList = new ArrayList<>();
-    List<CategoryModel> categoryList = new ArrayList<>();
-    List<NotificationModel> notificationList = new ArrayList<>();
     List<ReceiverModel> receiverList = new ArrayList<>();
-    List<BookmarkModel> bookmarkList = new ArrayList<>();
     List<BookmarkEntryModel> bookmarkEntryList = new ArrayList<>();
+    private long totalBytes = 250000;
 
     private BroadcastReceiver onDownloadComplete = new BroadcastReceiver() {
         @Override
@@ -155,14 +158,28 @@ public class HomeActivity extends BaseActivity implements HomeView{
         }
     };
 
+    private BroadcastReceiver onDownloadProgress = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            long bytes = intent.getLongExtra(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR, -1);
+            long fileSizeInKB = bytes / 1024;
+            int downloadPercent = (int) (fileSizeInKB/totalBytes * 100);
+            arc_progress.setProgress(downloadPercent);
+        }
+    };
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+
         registerReceiver(onDownloadComplete,new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+        registerReceiver(onDownloadProgress,new IntentFilter(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
+
         context = this;
+        sessionManager = new SessionManager(HomeActivity.this);
         setSupportActionBar(toolbar);
         getParentFolders();
         initViewpager();
@@ -402,25 +419,27 @@ public class HomeActivity extends BaseActivity implements HomeView{
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void beginDownload(String url){
         File file=new File(Environment.getExternalStorageDirectory(),"/QDMSWiki/Import");
-        if(file.exists())
-            return;
+        if(file.exists()){
+        }
+          else {
 
-        progressDialog.setMessage("Downloading files...");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+            progressDialog.setMessage("Downloading files...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
 
-        DownloadManager.Request request=new DownloadManager.Request(Uri.parse(url))
-                .setTitle("Dummy File")// Title of the Download Notification
-                .setDescription("Downloading")// Description of the Download Notification
-                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)// Visibility of the download Notification
-                .setDestinationUri(Uri.fromFile(file))// Uri of the destination file
-                .setRequiresCharging(false)// Set if charging is required to begin the download
-                .setAllowedOverMetered(true)// Set if download is allowed on Mobile network
-                .setMimeType("application/zip")
-                .setAllowedOverRoaming(true);// Set if download is allowed on roaming network
+            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url))
+                    .setTitle("Dummy File")// Title of the Download Notification
+                    .setDescription("Downloading")// Description of the Download Notification
+                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)// Visibility of the download Notification
+                    .setDestinationUri(Uri.fromFile(file))// Uri of the destination file
+                    .setRequiresCharging(false)// Set if charging is required to begin the download
+                    .setAllowedOverMetered(true)// Set if download is allowed on Mobile network
+                    .setMimeType("application/zip")
+                    .setAllowedOverRoaming(true);// Set if download is allowed on roaming network
 
-        DownloadManager downloadManager= (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-        downloadID = downloadManager.enqueue(request);// enqueue puts the download request in the queue.
+            DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+            downloadID = downloadManager.enqueue(request);// enqueue puts the download request in the queue.
+        }
     }
 
     public void unzip(String zipFilePath, String destDirectory) throws IOException {
@@ -507,17 +526,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
         protected MainModel doInBackground(String... params) {
             try {
                 gson = new Gson();
-                String result = "";
                 mainModel = gson.fromJson(new FileReader(Environment.getExternalStorageDirectory()+"/QDMSWiki/Extract1/MasterList.json"), MainModel.class);
-//                File file = new File(Environment.getExternalStorageDirectory(),"/QDMSWiki/Extract1/MasterList.json");
-//                BufferedReader br = new BufferedReader(new FileReader(file));
-//                String line;
-//                while ((line = br.readLine()) != null) {
-//                    result += line;
-//                }
-//                jsonObject = new JSONObject(result);
-//                br.close();
-
             } catch (Exception e) {
                 progressDialog.dismiss();
             }
@@ -535,71 +544,107 @@ public class HomeActivity extends BaseActivity implements HomeView{
         protected void onPostExecute(MainModel mainModel) {
             super.onPostExecute(mainModel);
 
-            List<DocumentModel> documentModelList =  mainModel.getDocumentModels();
-            JsonElement element = gson.toJsonTree(documentModelList, new TypeToken<List<DocumentModel>>() {}.getType());
-            JsonArray documentArray = element.getAsJsonArray();
-            Type documentType = new TypeToken<ArrayList<DocumentModel>>() {}.getType();
-            documentList= new Gson().fromJson(documentArray.toString(), documentType);
-
-            for (int i = 0; i < documentArray.size(); i++)
-            {
-                JsonObject jOBJ = documentArray.get(i).getAsJsonObject();
-                JsonArray tagArray = jOBJ.getAsJsonArray("Tags");
-                Type tagType = new TypeToken<ArrayList<TagModel>>() {}.getType();
-                tagList= new Gson().fromJson(tagArray.toString(), tagType);
-            }
-
+            List<DocumentModel> documentList =  mainModel.getDocumentModels();
             List<ArticleModel> articleList = mainModel.getArticleModels();
-            JsonElement element1 = gson.toJsonTree(articleList, new TypeToken<List<ArticleModel>>() {}.getType());
-            JsonArray articleArray = element1.getAsJsonArray();
-            Type articleType = new TypeToken<ArrayList<ArticleModel>>() {}.getType();
-            articleList= new Gson().fromJson(articleArray.toString(), articleType);
-
             List<CategoryModel> categoryList = mainModel.getCategoryModels();
-            JsonElement element2 = gson.toJsonTree(categoryList, new TypeToken<List<CategoryModel>>() {}.getType());
-            JsonArray categoryArray = element2.getAsJsonArray();
-            Type categoryType = new TypeToken<ArrayList<CategoryModel>>() {}.getType();
-            categoryList= new Gson().fromJson(categoryArray.toString(), categoryType);
-
             List<NotificationModel> notificationList = mainModel.getNotificationModels();
-            JsonElement element3 = gson.toJsonTree(notificationList, new TypeToken<List<NotificationModel>>() {}.getType());
-            JsonArray notificationArray = element3.getAsJsonArray();
-            Type notificationType = new TypeToken<ArrayList<NotificationModel>>() {}.getType();
-            notificationList= new Gson().fromJson(notificationArray.toString(), notificationType);
-
-            for (int i = 0; i < notificationArray.size(); i++)
-            {
-                JsonObject jOBJ = notificationArray.get(i).getAsJsonObject();
-                JsonArray recevierArray = jOBJ.getAsJsonArray("Receviers");
-                Type receiverType = new TypeToken<ArrayList<ReceiverModel>>() {}.getType();
-                receiverList= new Gson().fromJson(recevierArray.toString(), receiverType);
-            }
-
             List<BookmarkModel> bookmarkList = mainModel.getBookmarkModels();
-            JsonElement element4 = gson.toJsonTree(bookmarkList, new TypeToken<List<BookmarkModel>>() {}.getType());
-            JsonArray bookmarkArray = element4.getAsJsonArray();
-            Type bookmarkType = new TypeToken<ArrayList<BookmarkModel>>() {}.getType();
-            bookmarkList= new Gson().fromJson(bookmarkArray.toString(), bookmarkType);
 
-            for (int i = 0; i < bookmarkArray.size(); i++)
-            {
-                JsonObject jOBJ = bookmarkArray.get(i).getAsJsonObject();
-                JsonArray bookmarkEntryArray = jOBJ.getAsJsonArray("BookmarkEntries");
-
-                Type bookMarkEntryType = new TypeToken<ArrayList<BookmarkEntryModel>>() {}.getType();
-                bookmarkEntryList= new Gson().fromJson(bookmarkEntryArray.toString(), bookMarkEntryType);
-            }
-
-
-            //inserting dara
+            //inserting
             homePresenter.deleteDocuments(documentList);
-            homePresenter.deleteTags(tagList);
             homePresenter.deleteArticles(articleList);
             homePresenter.deleteCategories(categoryList);
             homePresenter.deleteNotifications(notificationList);
-            homePresenter.deleteReceivers(receiverList);
             homePresenter.deleteBookmarks(bookmarkList);
-            homePresenter.deleteBookmarkEntries(bookmarkEntryList);
+
+            for(int i=0;i<documentList.size();i++){
+                List<TagModel> tagList = documentList.get(i).getTags();
+                homePresenter.deleteTags(tagList);
+            }
+
+//            for(int i=0;i<notificationList.size();i++){
+//                List<ReceiverModel> receiverList = notificationList.get(i).getReceviers();
+//                homePresenter.deleteReceivers(receiverList);
+//            }
+//
+//            for(int i=0;i<bookmarkList.size();i++){
+//                List<BookmarkEntryModel> bookmarkEntryList = bookmarkList.get(i).getBookmarkEntries();
+//                homePresenter.deleteBookmarkEntries(bookmarkEntryList);
+//            }
+
+            //List<UserSettingsModel> userSettingsList = mainModel.getUserSettingsModels();
+
+//            JsonElement element = gson.toJsonTree(documentList, new TypeToken<List<DocumentModel>>() {}.getType());
+//            JsonArray documentArray = element.getAsJsonArray();
+//            Type documentType = new TypeToken<ArrayList<DocumentModel>>() {}.getType();
+//            documentList= new Gson().fromJson(documentArray.toString(), documentType);
+//
+//
+//            //Receivers
+//            for (int i = 0; i < notificationArray.size(); i++)
+//            {
+//                JsonObject jOBJ = notificationArray.get(i).getAsJsonObject();
+//                JsonArray recevierArray = jOBJ.getAsJsonArray("Receviers");
+//                Type receiverType = new TypeToken<ArrayList<ReceiverModel>>() {}.getType();
+//                receiverList= new Gson().fromJson(recevierArray.toString(), receiverType);
+//            }
+//
+
+//            //Bookmark Entries
+//            for (int i = 0; i < bookmarkArray.size(); i++)
+//            {
+//                JsonObject jOBJ = bookmarkArray.get(i).getAsJsonObject();
+//                JsonArray bookmarkEntryArray = jOBJ.getAsJsonArray("BookmarkEntries");
+//                Type bookMarkEntryType = new TypeToken<ArrayList<BookmarkEntryModel>>() {}.getType();
+//                bookmarkEntryList= new Gson().fromJson(bookmarkEntryArray.toString(), bookMarkEntryType);
+//            }
+//
+//            //User Settings
+//            List<UserSettingsModel> userSettingsList = mainModel.getUserSettingsModels();
+//            JsonElement elementUserSettings = gson.toJsonTree(userSettingsList, new TypeToken<List<UserSettingsModel>>() {}.getType());
+//            JsonArray userSettingsArray = elementUserSettings.getAsJsonArray();
+//
+//            //User Settings Tag and Category with logged in UserId
+//            for(int i=0; i<userSettingsArray.size();i++){
+//                JsonObject jOBJ = userSettingsArray.get(i).getAsJsonObject();
+//                JsonElement userId = jOBJ.get("UID");
+//                if(userId.getAsString().equals(sessionManager.getUserId())){
+//                    JsonElement userSettingsModel = userSettingsArray.get(i);
+//                    JsonObject jsonObject1 = userSettingsModel.getAsJsonObject();
+//
+//                    String userSettingsObj = userSettingsModel.getAsString();
+//                    UserSettingsModel userSettingsMode1 = gson.fromJson(userSettingsObj, UserSettingsModel.class);
+//                    homePresenter.deleteUserSettings(userSettingsMode1);
+//
+//                    JsonArray settingsTagsArray = jsonObject1.getAsJsonArray("Tags");
+//                    Type settingsTagsType = new TypeToken<ArrayList<UserSettingsTagModel>>() {}.getType();
+//                    List<UserSettingsTagModel> settingsTagList = new Gson().fromJson(settingsTagsArray.toString(), settingsTagsType);
+//                    homePresenter.deleteUserSettingsTag(settingsTagList);
+//
+//                    JsonArray settingsCategoryArray = jsonObject1.getAsJsonArray("Category");
+//                    Type settingsCategoryType = new TypeToken<ArrayList<UserSettingsCategoryModel>>() {}.getType();
+//                    List<UserSettingsCategoryModel> settingsCategoryList = new Gson().fromJson(settingsCategoryArray.toString(), settingsCategoryType);
+//                    homePresenter.deleteUserSettingsCategory(settingsCategoryList);
+//                }
+//                else
+//                    continue;
+//            }
+
+            //User Info
+//            List<UserInfoModel> userInfoList = mainModel.getUserInfoModels();
+//            JsonElement elementUserInfo = gson.toJsonTree(userInfoList, new TypeToken<List<UserInfoModel>>() {}.getType());
+//            JsonArray userInfoArray = elementUserInfo.getAsJsonArray();
+//
+//            for(int i=0;i<userInfoArray.size();i++){
+//                JsonObject jOBJ = userInfoArray.get(i).getAsJsonObject();
+//                JsonElement userId = jOBJ.get("UID");
+//                if(!userId.getAsString().equals(sessionManager.getUserId())) {
+//                    jOBJ.addProperty("ImageName", "");
+//                }
+//            }
+
+
+            //homePresenter.deleteUserInfo(userInfoList);
 
             mainViewPager.notifyDataSetChanged();
             progressDialog.dismiss();

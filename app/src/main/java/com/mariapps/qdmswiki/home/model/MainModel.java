@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkModel;
 import com.mariapps.qdmswiki.home.database.HomeTypeConverter;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
+import com.mariapps.qdmswiki.usersettings.UserInfoModel;
+import com.mariapps.qdmswiki.usersettings.UserSettingsModel;
 
 import java.util.List;
 
@@ -21,6 +23,10 @@ public class MainModel {
     private List<NotificationModel> notificationModels;
     @SerializedName("Bookmarks")
     private List<BookmarkModel> bookmarkModels;
+    @SerializedName("UserSettings")
+    private List<UserSettingsModel> userSettingsModels;
+    @SerializedName("UserInfo")
+    private List<UserInfoModel> userInfoModels;
 
     public List<DocumentModel> getDocumentCollection() {
         return documentModels;
@@ -84,5 +90,21 @@ public class MainModel {
 
     public void setBookmarkModels(List<BookmarkModel> bookmarkModels) {
         this.bookmarkModels = bookmarkModels;
+    }
+
+    public List<UserSettingsModel> getUserSettingsModels() {
+        return userSettingsModels;
+    }
+
+    public void setUserSettingsModels(List<UserSettingsModel> userSettingsModels) {
+        this.userSettingsModels = userSettingsModels;
+    }
+
+    public List<UserInfoModel> getUserInfoModels() {
+        return userInfoModels;
+    }
+
+    public void setUserInfoModels(List<UserInfoModel> userInfoModels) {
+        this.userInfoModels = userInfoModels;
     }
 }

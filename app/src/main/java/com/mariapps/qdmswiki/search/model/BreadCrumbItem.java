@@ -6,13 +6,13 @@ package com.mariapps.qdmswiki.search.model;
 public class BreadCrumbItem {
 
     private String heading;
-    private Integer id;
+    private String id;
 
 
     public BreadCrumbItem(String heading) {
         this.heading = heading;
     }
-    public BreadCrumbItem(String heading, Integer id) {
+    public BreadCrumbItem(String heading, String id) {
         this.heading = heading;
         this.id=id;
     }
@@ -21,7 +21,7 @@ public class BreadCrumbItem {
         return heading;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 }

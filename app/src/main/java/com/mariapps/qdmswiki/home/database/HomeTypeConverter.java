@@ -13,6 +13,8 @@ import com.mariapps.qdmswiki.home.model.MainModel;
 import com.mariapps.qdmswiki.home.model.TagModel;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
 import com.mariapps.qdmswiki.notification.model.ReceiverModel;
+import com.mariapps.qdmswiki.usersettings.UserSettingsCategoryModel;
+import com.mariapps.qdmswiki.usersettings.UserSettingsTagModel;
 
 import java.lang.reflect.Type;
 import java.util.Collections;
@@ -181,4 +183,37 @@ public class HomeTypeConverter {
     public static String categoryIdsToString(List<String> categoryIds) {
         return gson.toJson(categoryIds);
     }
+
+    @TypeConverter
+    public static List<UserSettingsTagModel> userSettinsgTagEntityToList(String data) {
+        if (data == null) {
+            return Collections.emptyList();
+        }
+
+        Type listType = new TypeToken<List<UserSettingsTagModel>>() {}.getType();
+
+        return gson.fromJson(data, listType);
+    }
+
+    @TypeConverter
+    public static String userSettinsgTagEntityToString(List<UserSettingsTagModel> userSettingsTagModel) {
+        return gson.toJson(userSettingsTagModel);
+    }
+
+    @TypeConverter
+    public static List<UserSettingsCategoryModel> userSettinsgCategoryEntityToList(String data) {
+        if (data == null) {
+            return Collections.emptyList();
+        }
+
+        Type listType = new TypeToken<List<UserSettingsCategoryModel>>() {}.getType();
+
+        return gson.fromJson(data, listType);
+    }
+
+    @TypeConverter
+    public static String userSettinsgCategoryEntityToString(List<UserSettingsCategoryModel> userSettingsCategoryModel) {
+        return gson.toJson(userSettingsCategoryModel);
+    }
+
 }
