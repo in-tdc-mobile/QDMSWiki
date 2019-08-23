@@ -60,9 +60,6 @@ public interface HomeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertUserInfo(List<UserInfoModel> userInfoModel);
 
-    @Query("SELECT DocumentData FROM DocumentEntity")
-    String getDocumentData();
-
     @Query("SELECT document.Id as id, " +
             " 'Document' as type, " +
             " document.DocumentName as name, " +
@@ -196,12 +193,19 @@ public interface HomeDao {
             " ON :parentId IN (article.CategoryIds)")
     List<SearchModel> getChildList(String parentId);
 
+
+    @Query("SELECT document.Id, " +
+            " document.DocumentName, " +
+            " document.DocumentData, " +
+            " document.Date" +
+            " FROM DocumentEntity as document " +
+            " WHERE document.Id=:documentId")
+    DocumentModel getDocumentData(String documentId);
+
+
     @Query("SELECT article.Id, " +
             " article.ArticleName, " +
             " article.DocumentData, " +
-            " article.CategoryIds," +
-            " article.Version," +
-            " article.tags," +
             " article.Date" +
             " FROM ArticleEntity as article " +
             " WHERE article.Id=:articleId")

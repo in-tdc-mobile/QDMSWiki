@@ -20,6 +20,7 @@ import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseFragment;
 import com.mariapps.qdmswiki.custom.CustomEditText;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
+import com.mariapps.qdmswiki.home.database.HomeDatabase;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
 import com.mariapps.qdmswiki.home.presenter.HomePresenter;
 import com.mariapps.qdmswiki.home.view.HomeView;
@@ -36,6 +37,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnTextChanged;
+import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
+import io.reactivex.schedulers.Schedulers;
 
 public class FolderFragment extends BaseFragment implements HomeView {
 
@@ -49,8 +56,9 @@ public class FolderFragment extends BaseFragment implements HomeView {
     CustomEditText searchET;
 
     private HomePresenter homePresenter;
+    private HomeDatabase homeDatabase;
     private ArrayList<SearchFilterModel> searchType = new ArrayList<>();
-    private ArrayList<SearchModel> searchList = new ArrayList<>();
+    private List<SearchModel> searchList = new ArrayList<>();
     private SearchFilterAdapter searchFilterAdapter;
     private SearchResultAdapter searchResultAdapter;
     private boolean isFolderSelected = false;
@@ -78,6 +86,7 @@ public class FolderFragment extends BaseFragment implements HomeView {
         }
         catch (Exception e){}
 
+        homeDatabase = HomeDatabase.getInstance(getActivity());
         searchFilterRV.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayout.HORIZONTAL, false));
         searchFilterRV.setHasFixedSize(true);
 
@@ -85,8 +94,9 @@ public class FolderFragment extends BaseFragment implements HomeView {
         searchResultRV.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
         searchResultRV.setHasFixedSize(true);
 
-        setSearchList();
 
+        getSearchList();
+        //homePresenter.getChildList(id);
         return view;
     }
 
@@ -154,29 +164,13 @@ public class FolderFragment extends BaseFragment implements HomeView {
 
     private void setSearchList() {
 
-       // homePresenter.get(id);
-
         setSearchTypeData();
-        searchList = new ArrayList<>();
-//
-//        searchList.add(new SearchModel(1, -1,"Folder", "GDPR Manual", "General Data Protection Manual"));
-//        searchList.add(new SearchModel(2, 1,"Document", "Information Technology", "ECDIS Manual"));
-//        searchList.add(new SearchModel(3, -1,"Folder", "Ethical Ship Operations Policy", "ISO Ethical Ship Operations Policy"));
-//        searchList.add(new SearchModel(4, 3,"Forms", "Safety Management Manual", "Safety Management Manual Appendix"));
-//        searchList.add(new SearchModel(5, 1,"Document", "LPG Carrier Manual", "LPG Carrier Manual"));
-//        searchList.add(new SearchModel(6, -1,"Folder", "GDPR Manual", "General Data Protection Manual"));
-//        searchList.add(new SearchModel(7, 1,"Document", "Information Technology", "ECDIS Manual"));
-//        searchList.add(new SearchModel(8, 6,"Document", "Safety Management Manual", "Safety Management Manual Appendix"));
-//        searchList.add(new SearchModel(9, 3,"Document", "LPG Carrier Manual", "LPG Carrier Manual"));
-//        searchList.add(new SearchModel(10, 1,"Folder", "Ethical Ship Operations Policy", "General Data Protection Manual"));
-//        searchList.add(new SearchModel(11, 10,"Document", "Information Technology", "ECDIS Manual"));
-
         ArrayList<SearchModel> selectedList = new ArrayList<>();
 
         for(int i=0;i<searchList.size();i++){
-//            if(searchList.get(i).getFolderId() == id){
-//                selectedList.add(searchList.get(i));
-//            }
+            if(searchList.get(i).getId() == id){
+                selectedList.add(searchList.get(i));
+            }
         }
 
 
@@ -236,5 +230,48 @@ public class FolderFragment extends BaseFragment implements HomeView {
 
     @Override
     public void onGetChildFoldersList(List<DocumentModel> documentModels) {
+    }
+
+    @Override
+    public void onGetChildList(List<SearchModel> searchModels) {
+        searchList = searchModels;
+        setSearchList();
+    }
+
+    public void getSearchList() {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                if(isDocumentSelected && isArticleSelected)
+                    searchList = homeDatabase.homeDao().getAllDocumentsAndArticles();
+                else if(isDocumentSelected && isFolderSelected)
+                    searchList = homeDatabase.homeDao().getAllDocumentsAndFolders();
+                else if(isDocumentSelected && !isArticleSelected)
+                    searchList = homeDatabase.homeDao().getAllDocuments();
+                else if(!isDocumentSelected && isArticleSelected)
+                    searchList = homeDatabase.homeDao().getAllArticles();
+                else if(isFolderSelected && !isDocumentSelected && !isArticleSelected)
+                    searchList = homeDatabase.homeDao().getAllCategories();
+
+
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                setSearchList();
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
     }
 }

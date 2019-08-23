@@ -47,8 +47,8 @@ public class DocumentViewFragment extends BaseFragment {
     WebView webView;
 
     private String folderName;
-    private String documentData;
-    private Integer id;
+    private DocumentModel documentModel;
+    private String id;
     private HomeDatabase homeDatabase;
 
     @Override
@@ -64,7 +64,7 @@ public class DocumentViewFragment extends BaseFragment {
 
         try{
             Bundle args = getArguments();
-            id= args.getInt(AppConfig.BUNDLE_FOLDER_ID, 0);
+            id= args.getString(AppConfig.BUNDLE_FOLDER_ID, "");
             folderName= args.getString(AppConfig.BUNDLE_FOLDER_NAME, "");
         }
         catch (Exception e){}
@@ -79,7 +79,7 @@ public class DocumentViewFragment extends BaseFragment {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-                documentData = homeDatabase.homeDao().getDocumentData();
+                documentModel = homeDatabase.homeDao().getDocumentData(id);
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
@@ -90,7 +90,7 @@ public class DocumentViewFragment extends BaseFragment {
 
             @Override
             public void onComplete() {
-                webView.loadData(documentData, "text/html; charset=utf-8", "UTF-8");
+                webView.loadData(documentModel.getDocumentData(), "text/html; charset=utf-8", "UTF-8");
             }
 
 
