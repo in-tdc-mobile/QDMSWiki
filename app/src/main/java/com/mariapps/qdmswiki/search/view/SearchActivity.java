@@ -150,7 +150,7 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void setData() {
-        searchResultAdapter = new SearchResultAdapter(this, searchList,"SEARCH");
+        searchResultAdapter = new SearchResultAdapter(this, searchList,"Search");
         rvSearchList.setAdapter(searchResultAdapter);
 
         searchResultAdapter.setItemClickListener(new SearchResultAdapter.ItemClickListener() {

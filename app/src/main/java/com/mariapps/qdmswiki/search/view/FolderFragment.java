@@ -158,7 +158,7 @@ public class FolderFragment extends BaseFragment{
 
     private void setSearchList() {
 
-        searchResultAdapter = new SearchResultAdapter(getActivity(), searchList,"FOLDER");
+        searchResultAdapter = new SearchResultAdapter(getActivity(), searchList,"Folder");
         searchResultRV.setAdapter(searchResultAdapter);
         searchResultAdapter.notifyDataSetChanged();
 
