@@ -8,8 +8,8 @@ import com.google.gson.annotations.SerializedName;
 
 public  class LoginRequestObj {
 
-    @SerializedName("LoginName")
-    private String loginName;
+    @SerializedName("Username")
+    private String username;
     @SerializedName("Password")
     private String password;
     @SerializedName("Token_Id")
@@ -23,8 +23,8 @@ public  class LoginRequestObj {
     @SerializedName("AuthType")
     private String authType;
 
-    public LoginRequestObj(String loginName, String password, String tokenId, String deviceType, String deviceId, String version, String authType) {
-        this.loginName = loginName;
+    public LoginRequestObj(String username, String password, String tokenId, String deviceType, String deviceId, String version, String authType) {
+        this.username = username;
         this.password = password;
         this.tokenId = tokenId;
         this.deviceType = deviceType;
@@ -33,8 +33,8 @@ public  class LoginRequestObj {
         this.authType = authType;
     }
 
-    public String getLoginName() {
-        return loginName;
+    public String getUsername() {
+        return username;
     }
 
     public String getPassword() {

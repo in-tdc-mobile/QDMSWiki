@@ -107,12 +107,8 @@ public class LoginActivity extends BaseActivity implements LoginView{
                             loadinLoadingPB.setVisibility(View.VISIBLE);
                             sessionManager.setLoggedin(true);
                             sessionManager.setDeviceId(CommonUtils.getDeviceId(LoginActivity.this));
-                            sessionManager.setUserId("162348");
-                            sessionManager.setMainId("59a7e978cd3d99498c041f03");
-                            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                            startActivity(intent);
-//                            loginPresenter.getLoggedIn(new LoginRequestObj(usernameET.getText().toString(), passwordET.getText().toString(), sessionManager.getKeyFcmTokenId(), "ANDROID",
-//                                    sessionManager.getDeviceId(), "1", "Closed"));
+                            loginPresenter.getLoggedIn(new LoginRequestObj(usernameET.getText().toString(), passwordET.getText().toString(), sessionManager.getKeyFcmTokenId(), "ANDROID",
+                                    sessionManager.getDeviceId(), "1", "Closed"));
 
                         }
 
