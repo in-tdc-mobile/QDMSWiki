@@ -1,5 +1,6 @@
 package com.mariapps.qdmswiki.notification.model;
 
+import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
@@ -12,15 +13,16 @@ import com.mariapps.qdmswiki.home.database.HomeTypeConverter;
 
 @Entity(tableName = "ReceiverEntity")
 @TypeConverters(HomeTypeConverter.class)
-
 public class ReceiverModel implements Parcelable {
 
     @PrimaryKey(autoGenerate = true)
     public Long uId;
 
+    @ColumnInfo(name = "ReceiverId")
     @SerializedName("RecevierId")
     private String recevierId;
 
+    @ColumnInfo(name = "IsUnread")
     @SerializedName("IsUnread")
     private Boolean isUnread;
 

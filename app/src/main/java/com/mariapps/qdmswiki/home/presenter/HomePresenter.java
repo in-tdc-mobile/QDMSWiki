@@ -342,7 +342,7 @@ public class HomePresenter {
         });
     }
 
-    public void deleteReceivers(List<ReceiverModel> receiverModels) {
+    public void deleteReceivers() {
 
         Completable.fromAction(new Action() {
             @Override
@@ -358,7 +358,6 @@ public class HomePresenter {
 
             @Override
             public void onComplete() {
-                insertReceivers(receiverModels);
             }
 
 
@@ -450,7 +449,7 @@ public class HomePresenter {
         });
     }
 
-    public void deleteBookmarkEntries(List<BookmarkEntryModel> bookmarkEntryModels) {
+    public void deleteBookmarkEntries() {
 
         Completable.fromAction(new Action() {
             @Override
@@ -465,8 +464,7 @@ public class HomePresenter {
             }
 
             @Override
-            public void onComplete() {
-                insertBookmarkEntries(bookmarkEntryModels);
+            public void onComplete(){
             }
 
 

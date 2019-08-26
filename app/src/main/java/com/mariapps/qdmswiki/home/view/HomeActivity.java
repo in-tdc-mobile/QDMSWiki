@@ -445,7 +445,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
 
             DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
             downloadID = downloadManager.enqueue(request);// enqueue puts the download request in the queue.
-       // }
+     //   }
 
     }
 
@@ -555,8 +555,8 @@ public class HomeActivity extends BaseActivity implements HomeView{
             List<CategoryModel> categoryList = mainModel.getCategoryModels();
             List<NotificationModel> notificationList = mainModel.getNotificationModels();
             List<BookmarkModel> bookmarkList = mainModel.getBookmarkModels();
-//            List<UserSettingsModel> userSettingsList = mainModel.getUserSettingsModels();
-//            List<UserInfoModel> userInfoList = mainModel.getUserInfoModels();
+            List<UserSettingsModel> userSettingsList = mainModel.getUserSettingsModels();
+            List<UserInfoModel> userInfoList = mainModel.getUserInfoModels();
 
             //inserting
             homePresenter.deleteDocuments(documentList);
@@ -564,6 +564,8 @@ public class HomeActivity extends BaseActivity implements HomeView{
             homePresenter.deleteCategories(categoryList);
             homePresenter.deleteNotifications(notificationList);
             homePresenter.deleteBookmarks(bookmarkList);
+            homePresenter.deleteReceivers();
+            homePresenter.deleteBookmarkEntries();
 
             for(int i=0;i<documentList.size();i++){
                 List<TagModel> tagList = documentList.get(i).getTags();
@@ -572,27 +574,27 @@ public class HomeActivity extends BaseActivity implements HomeView{
 
 //            for(int i=0;i<notificationList.size();i++){
 //                List<ReceiverModel> receiverList = notificationList.get(i).getReceviers();
-//                homePresenter.deleteReceivers(receiverList);
+//                homePresenter.insertReceivers(receiverList);
 //            }
-//            for(int i=0;i<bookmarkList.size();i++){
-//                List<BookmarkEntryModel> bookmarkEntryList = bookmarkList.get(i).getBookmarkEntries();
-//                homePresenter.deleteBookmarkEntries(bookmarkEntryList);
-//            }
+            for(int i=0;i<bookmarkList.size();i++){
+                List<BookmarkEntryModel> bookmarkEntryList = bookmarkList.get(i).getBookmarkEntries();
+                homePresenter.insertBookmarkEntries(bookmarkEntryList);
+            }
 
-//            for(int i=0;i<userSettingsList.size();i++){
-//                if(userSettingsList.get(i).getUserID().equals(sessionManager.getUserId())){
-//                    homePresenter.deleteUserSettings(userSettingsList.get(i));
-//                }
-//                else
-//                    continue;
-//            }
-//
-//            for(int i=0;i<userInfoList.size();i++){
-//                if(!userInfoList.get(i).getUserId().equals(sessionManager.getUserId())){
-//                    userInfoList.get(i).setImageName(null);
-//                }
-//            }
-//            homePresenter.deleteUserInfo(userInfoList);
+            for(int i=0;i<userSettingsList.size();i++){
+                if(userSettingsList.get(i).getUserID().equals(sessionManager.getUserId())){
+                    homePresenter.deleteUserSettings(userSettingsList.get(i));
+                }
+                else
+                    continue;
+            }
+
+            for(int i=0;i<userInfoList.size();i++){
+                if(!userInfoList.get(i).getUserId().equals(sessionManager.getUserId())){
+                    userInfoList.get(i).setImageName(null);
+                }
+            }
+            homePresenter.deleteUserInfo(userInfoList);
 
             //List<UserSettingsModel> userSettingsList = mainModel.getUserSettingsModels();
 
