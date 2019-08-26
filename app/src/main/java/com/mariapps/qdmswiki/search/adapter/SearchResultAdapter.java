@@ -51,7 +51,7 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
         holder.nameTV.setText(searchModel.getName());
         holder.descriptionTV.setText(searchModel.getCategoryName());
 
-        if(fromPage.equals("FOLDER"))
+        if(fromPage.equals("Folder"))
             holder.openIV.setVisibility(View.GONE);
 
         if(searchModel.getType().equals("Folder"))

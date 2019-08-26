@@ -14,7 +14,7 @@ import rx.Observable;
 
 public interface QDMSWikiApi {
 
-    @POST("Home/AuthenticateUser")
+    @POST("Home/LoginQdms")
     Observable<Response<LoginResponse>> getLoggedIn(@Body LoginRequestObj loginRequestObj);
 
     @POST("Home/GetDownloadUrl")

@@ -177,7 +177,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
         setContentView(R.layout.activity_home);
 
         registerReceiver(onDownloadComplete,new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
-        registerReceiver(onDownloadProgress,new IntentFilter(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
+        //registerReceiver(onDownloadProgress,new IntentFilter(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
 
         context = this;
         sessionManager = new SessionManager(HomeActivity.this);
@@ -395,7 +395,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
                     @Override
                     public void onItemClicked(DocumentModel docModel) {
                         documentModel = docModel;
-                        if(documentModel.getType().equals("FOLDER"))
+                        if(documentModel.getType().equals("Folder"))
                             homePresenter.getChildFoldersList(documentModel.getFolderid());
                         else
                         {
@@ -423,10 +423,11 @@ public class HomeActivity extends BaseActivity implements HomeView{
     private void beginDownload(String url){
         File file=new File(Environment.getExternalStorageDirectory(),"/QDMSWiki/Import");
         if(file.exists()){
+            return;
 //            ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
 //            readAndInsertJsonData.execute();
         }
-       else {
+      // else {
             progressDialog.setMessage("Downloading files...");
             progressDialog.setCancelable(false);
             progressDialog.show();
@@ -444,7 +445,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
 
             DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
             downloadID = downloadManager.enqueue(request);// enqueue puts the download request in the queue.
-        }
+       // }
 
     }
 
@@ -554,8 +555,8 @@ public class HomeActivity extends BaseActivity implements HomeView{
             List<CategoryModel> categoryList = mainModel.getCategoryModels();
             List<NotificationModel> notificationList = mainModel.getNotificationModels();
             List<BookmarkModel> bookmarkList = mainModel.getBookmarkModels();
-            //List<UserSettingsModel> userSettingsList = mainModel.getUserSettingsModels();
-           // List<UserInfoModel> userInfoList = mainModel.getUserInfoModels();
+//            List<UserSettingsModel> userSettingsList = mainModel.getUserSettingsModels();
+//            List<UserInfoModel> userInfoList = mainModel.getUserInfoModels();
 
             //inserting
             homePresenter.deleteDocuments(documentList);
@@ -573,7 +574,6 @@ public class HomeActivity extends BaseActivity implements HomeView{
 //                List<ReceiverModel> receiverList = notificationList.get(i).getReceviers();
 //                homePresenter.deleteReceivers(receiverList);
 //            }
-////
 //            for(int i=0;i<bookmarkList.size();i++){
 //                List<BookmarkEntryModel> bookmarkEntryList = bookmarkList.get(i).getBookmarkEntries();
 //                homePresenter.deleteBookmarkEntries(bookmarkEntryList);
@@ -589,7 +589,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
 //
 //            for(int i=0;i<userInfoList.size();i++){
 //                if(!userInfoList.get(i).getUserId().equals(sessionManager.getUserId())){
-//                    userInfoList.get(i).setImageName("");
+//                    userInfoList.get(i).setImageName(null);
 //                }
 //            }
 //            homePresenter.deleteUserInfo(userInfoList);
@@ -667,18 +667,18 @@ public class HomeActivity extends BaseActivity implements HomeView{
 
 
             //homePresenter.deleteUserInfo(userInfoList);
-            new CountDownTimer(5000, 5000) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    getParentFolders();
-                }
-
-                @Override
-                public void onFinish() {
-                    setupFragments(findFragmentById(AppConfig.FRAG_NAV_DRAWER), true, true);
-
-                }
-            }.start();
+//            new CountDownTimer(5000, 5000) {
+//                @Override
+//                public void onTick(long millisUntilFinished) {
+//                    getParentFolders();
+//                }
+//
+//                @Override
+//                public void onFinish() {
+//                    setupFragments(findFragmentById(AppConfig.FRAG_NAV_DRAWER), true, true);
+//
+//                }
+//            }.start();
 
             mainViewPager.updateDocumentList(documentList);
             mainViewPager.updateArticleList(articleList);

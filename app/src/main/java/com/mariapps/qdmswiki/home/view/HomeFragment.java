@@ -43,8 +43,8 @@ public class HomeFragment extends BaseFragment {
     RelativeLayout relLL;
     @BindView(R.id.noDataLL)
     LinearLayout noDataLL;
-    @BindView(R.id.customProgressBar)
-    CustomProgressBar customProgressBar;
+//    @BindView(R.id.customProgressBar)
+//    CustomProgressBar customProgressBar;
     @BindView(R.id.overViewLL)
     LinearLayout overViewLL;
 //    @BindView(R.id.pullToRefresh)
@@ -70,7 +70,6 @@ public class HomeFragment extends BaseFragment {
 
         ButterKnife.bind(this, view);
         fragmentManager = getFragmentManager();
-        customProgressBar.setVisibility(View.GONE);
 
         searchET.setFocusable(false);
         searchET.clearFocus();

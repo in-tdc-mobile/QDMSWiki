@@ -93,9 +93,9 @@ public class LoginPresenter {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-                if (loginResponse != null && loginResponse.getUserentity() != null) {
-                    sessionManager.setLoginParams(true, loginResponse.getUserentity().getId(), sessionManager.getKeyFcmTokenId(),
-                            loginResponse.getUserentity().getApitoken(),loginResponse.getUserentity().getName(), loginResponse.getUserentity().getLoginname());
+                if (loginResponse != null && loginResponse.getLoginQdms() != null) {
+                    sessionManager.setLoginParams(true, loginResponse.getLoginQdms().getUserId(), sessionManager.getKeyFcmTokenId(),
+                            loginResponse.getLoginQdms().getApitoken(),loginResponse.getLoginQdms().getName(), loginResponse.getLoginQdms().getLoginName());
                     loginDatabase.loginDao().deleteLoginResponse();
                     loginDatabase.loginDao().insetLoginResponse(loginResponse);
                 }

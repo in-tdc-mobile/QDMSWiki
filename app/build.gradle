@@ -77,4 +77,10 @@ dependencies {
 
     //Circle progress
     implementation 'com.github.lzyzsd:circleprogress:1.2.1'
+
+    //Firebase
+    implementation 'com.google.firebase:firebase-core:11.4.0'
+    implementation 'com.google.firebase:firebase-messaging:11.4.0'
 }
+
+apply plugin: 'com.google.gms.google-services'

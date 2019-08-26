@@ -152,7 +152,7 @@ public interface HomeDao {
 
     @Query("SELECT category.Id as folderid, " +
             " category.CategoryName as categoryName, " +
-            " 'FOLDER' as type " +
+            " 'Folder' as type " +
             " FROM CategoryEntity as category " +
             " WHERE category.Parent = (SELECT category1.Id as id " +
                     " FROM CategoryEntity as category1 " +
@@ -162,13 +162,13 @@ public interface HomeDao {
 
     @Query("SELECT category.Id as folderid, " +
             " category.CategoryName as categoryName, " +
-            " 'FOLDER' as type " +
+            " 'Folder' as type " +
             " FROM CategoryEntity as category " +
             " WHERE category.Parent =:parentId" +
             " UNION "+
             " SELECT document.Id as folderid, " +
             " document.DocumentName as categoryName, " +
-            " 'FILE' as type " +
+            " 'Document' as type " +
             " FROM DocumentEntity as document " +
             " WHERE document.CategoryId =:parentId")
     List<DocumentModel> getChildFoldersList(String parentId);

@@ -9,6 +9,7 @@ import com.mariapps.qdmswiki.SessionManager;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.home.view.HomeActivity;
 import com.mariapps.qdmswiki.login.view.LoginActivity;
+import com.mariapps.qdmswiki.serviceclasses.MyFirebaseInstanceIDService;
 
 /**
  * Created by elby.samson on 02,January,2019
@@ -53,6 +54,8 @@ public class SplashScreenActivity extends BaseActivity {
                     SplashScreenActivity.super.startActivityWithFlag(HomeActivity.class, Intent.FLAG_ACTIVITY_NEW_TASK, Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     finish();
                 } else {
+                    Intent intent = new Intent(SplashScreenActivity.this, MyFirebaseInstanceIDService.class);
+                    startService(intent);
                     SplashScreenActivity.super.startActivityWithFlag(LoginActivity.class, Intent.FLAG_ACTIVITY_NEW_TASK, Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     finish();
 

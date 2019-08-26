@@ -57,31 +57,31 @@
 
                 </LinearLayout>
 
-                <com.mariapps.qdmswiki.custom.CustomProgressBar
-                    android:id="@+id/customProgressBar"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/dimen_15dp"
-                    android:layout_centerInParent="true"
-                    android:visibility="gone"
-                    app:amount="10"
-                    app:animationDirection="left"
-                    app:duration="20"
-                    app:endColor="@color/blue_A200"
-                    app:startColor="@color/grey_500"
-                    android:layout_below="@+id/overViewLL"
-                    android:layout_marginTop="@dimen/dimen_40dp"/>
+                <!--<com.mariapps.qdmswiki.custom.CustomProgressBar-->
+                    <!--android:id="@+id/customProgressBar"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="@dimen/dimen_15dp"-->
+                    <!--android:layout_centerInParent="true"-->
+                    <!--android:visibility="gone"-->
+                    <!--app:amount="10"-->
+                    <!--app:animationDirection="left"-->
+                    <!--app:duration="20"-->
+                    <!--app:endColor="@color/blue_A200"-->
+                    <!--app:startColor="@color/grey_500"-->
+                    <!--android:layout_below="@+id/overViewLL"-->
+                    <!--android:layout_marginTop="@dimen/dimen_40dp"/>-->
 
-                <com.mariapps.qdmswiki.custom.CustomTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/loadingDasgTV"
-                    android:text="@string/string_loading_data"
-                    android:textColor="@color/black"
-                    app:fontface="@string/string_lato_regular"
-                    android:layout_below="@+id/customProgressBar"
-                    android:gravity="center"
-                    android:visibility="gone"
-                    />
+                <!--<com.mariapps.qdmswiki.custom.CustomTextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:id="@+id/loadingDasgTV"-->
+                    <!--android:text="@string/string_loading_data"-->
+                    <!--android:textColor="@color/black"-->
+                    <!--app:fontface="@string/string_lato_regular"-->
+                    <!--android:layout_below="@+id/customProgressBar"-->
+                    <!--android:gravity="center"-->
+                    <!--android:visibility="gone"-->
+                    <!--/>-->
 
 
                 <RelativeLayout

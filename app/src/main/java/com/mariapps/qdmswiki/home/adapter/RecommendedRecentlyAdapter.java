@@ -40,7 +40,7 @@ public class RecommendedRecentlyAdapter extends CustomRecyclerView.Adapter<Recom
     public void onBindViewHolder(@NonNull final RecommendedRecentlyAdapter.RecommendedRecentlyVH holder, int i) {
         holder.headingTextTV.setText(recommendedRecentlyModelList.get(i).getDocumentName());
         holder.categoryTV.setText(recommendedRecentlyModelList.get(i).getCategoryName());
-        holder.versionTV.setText("v "+recommendedRecentlyModelList.get(i).getVersion());
+        holder.versionTV.setText("V "+recommendedRecentlyModelList.get(i).getVersion());
 
         holder.rowLL.setOnClickListener(new View.OnClickListener() {
             @Override

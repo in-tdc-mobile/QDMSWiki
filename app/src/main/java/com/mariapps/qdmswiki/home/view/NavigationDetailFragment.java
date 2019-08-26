@@ -45,8 +45,6 @@ public class NavigationDetailFragment extends BaseFragment {
     private CustomNavigationDetailAdapter customNavigationDetailAdapter;
     private List<DocumentModel> documentList;
     private String folderName;
-//    private NavDrawerObj navDrawerObj;
-//    private NavDrawerObj.MenuItemsEntity menuItemsEntity;
     private NavigationDetailListener navigationDetailListener;
 
     @Override

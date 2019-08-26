@@ -31,6 +31,21 @@
             </intent-filter>
         </activity>
 
+        <!-- Firebase service-->
+        <service android:name=".serviceclasses.FcmMessageService">
+            <intent-filter>
+                <action
+                    android:name="com.google.firebase.MESSAGING_EVENT"
+                    android:enabled="true"
+                    android:exported="true" />
+            </intent-filter>
+        </service>
+        <service android:name=".serviceclasses.MyFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+
         <activity
             android:name=".login.view.LoginActivity"
             android:screenOrientation="portrait"

@@ -2,7 +2,7 @@ package com.mariapps.qdmswiki;
 
 
 public class AppConfig {
-    public static final String BASE_URL = "https://bsm-iisprod.bs-shipmanagement.com/LFMobileService/api/";
+    public static final String BASE_URL = "http://10.201.1.19:8899/QDMSMobileService/api/";
     public static final String TIMESTAMP_FORMAT = "yyyyMMdd_HHmmss";
 
     //Bundles

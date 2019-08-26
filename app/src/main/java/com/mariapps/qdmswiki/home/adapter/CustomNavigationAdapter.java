@@ -47,7 +47,7 @@ public class CustomNavigationAdapter extends RecyclerView.Adapter<CustomNavigati
             if (documentModel != null) {
                 customNavigationVH1.drawerItemName.setText(documentModel.getCategoryName());
                 customNavigationVH1.arrowIV.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_inactive));
-                if(documentModel.getType().equals("FOLDER"))
+                if(documentModel.getType().equals("Folder"))
                     customNavigationVH1.drawerIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_menu_folder));
                 else
                     customNavigationVH1.drawerIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_document_active));
