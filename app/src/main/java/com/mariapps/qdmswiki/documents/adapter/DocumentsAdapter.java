@@ -90,8 +90,8 @@ public class DocumentsAdapter extends CustomRecyclerView.Adapter<DocumentsAdapte
                         ArrayList<DocumentModel> filteredList = new ArrayList<>();
 
                         for (DocumentModel documentsModel : documentsList) {
-                            if (documentsModel.getDocumentName().toLowerCase().contains(charString.toLowerCase())) {
-
+                            if (documentsModel.getDocumentName().toLowerCase().contains(charString.toLowerCase()) ||
+                                documentsModel.getCategoryName().toLowerCase().contains(charString.toLowerCase())) {
                                 filteredList.add(documentsModel);
                             }
                         }

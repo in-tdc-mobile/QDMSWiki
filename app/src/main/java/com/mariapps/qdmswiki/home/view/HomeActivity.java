@@ -6,6 +6,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -27,6 +29,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -86,6 +89,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Type;
+import java.security.spec.ECField;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -138,7 +142,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
     private DocumentModel documentModel;
     List<DocumentModel> childList = new ArrayList<>();
     List<DocumentModel> parentFolderList = new ArrayList<>();
-    List<TagModel> tagList = new ArrayList<>();
+    List<DocumentModel> recommendedList = new ArrayList<>();
     List<ReceiverModel> receiverList = new ArrayList<>();
     List<BookmarkEntryModel> bookmarkEntryList = new ArrayList<>();
     private long totalBytes = 250000;
@@ -184,7 +188,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
         setSupportActionBar(toolbar);
 
         getParentFolders();
-        initNavDrawer();
+        //initNavDrawer();
         initViewpager();
         initBottomNavigation();
         setNotificationCount();
@@ -402,7 +406,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
                             Intent intent = new Intent(HomeActivity.this, FolderStructureActivity.class);
                             intent.putExtra(AppConfig.BUNDLE_TYPE,documentModel.getType());
                             intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,"");
-                            intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,1);
+                            intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,documentModel.getFolderid());
                             startActivity(intent);
                         }
                     }
@@ -422,12 +426,13 @@ public class HomeActivity extends BaseActivity implements HomeView{
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void beginDownload(String url){
         File file=new File(Environment.getExternalStorageDirectory(),"/QDMSWiki/Import");
-        if(file.exists()){
-            return;
-//            ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
-//            readAndInsertJsonData.execute();
+        if(file.exists())
+        {
+           return;
+          // ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
+          //  readAndInsertJsonData.execute();
         }
-      // else {
+         else {
             progressDialog.setMessage("Downloading files...");
             progressDialog.setCancelable(false);
             progressDialog.show();
@@ -445,7 +450,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
 
             DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
             downloadID = downloadManager.enqueue(request);// enqueue puts the download request in the queue.
-     //   }
+     }
 
     }
 
@@ -476,6 +481,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
     }
     /**
      * Extracts a zip entry (file entry)
+     * Extracts a zip entry (file entry)
      * @param zipIn
      * @param filePath
      * @throws IOException
@@ -504,6 +510,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
     @Override
     public void onGetParentFolderSuccess(List<DocumentModel> folderList) {
         parentFolderList = folderList;
+        initNavDrawer();
     }
 
     @Override
@@ -511,6 +518,42 @@ public class HomeActivity extends BaseActivity implements HomeView{
         childList = list;
         setupFragments(findFragmentById(AppConfig.FRAG_NAV_DETAILS_DRAWER), true, true);
     }
+
+    @Override
+    public void onGetUserImageSuccess(UserInfoModel userInfoModel) {
+        try {
+            byte[] decodedString = Base64.decode(userInfoModel.getImageName().replace("data:image/jpg;base64,", ""), Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            userImageIV.setImageBitmap(bitmap);
+        }
+        catch (Exception e){}
+    }
+
+    @Override
+    public void onGetUserImageError() {
+
+    }
+
+    @Override
+    public void onGetCategoryDetailsSuccess(CategoryModel categoryModel) {
+
+    }
+
+    @Override
+    public void onGetCategoryDetailsError() {
+
+    }
+
+    @Override
+    public void onInsertCategoryDetailsSuccess() {
+        getParentFolders();
+    }
+
+    @Override
+    public void onInsertCategoryDetailsError() {
+
+    }
+
 
     public class ReadAndInsertJsonData extends AsyncTask<String, Integer, MainModel> {
 
@@ -559,6 +602,9 @@ public class HomeActivity extends BaseActivity implements HomeView{
             List<UserInfoModel> userInfoList = mainModel.getUserInfoModels();
 
             //inserting
+            for(int i=0;i<documentList.size();i++){
+                documentList.get(i).setIsRecommended("NO");
+            }
             homePresenter.deleteDocuments(documentList);
             homePresenter.deleteArticles(articleList);
             homePresenter.deleteCategories(categoryList);
@@ -590,105 +636,67 @@ public class HomeActivity extends BaseActivity implements HomeView{
             }
 
             for(int i=0;i<userInfoList.size();i++){
-                if(!userInfoList.get(i).getUserId().equals(sessionManager.getUserId())){
-                    userInfoList.get(i).setImageName(null);
+                if(!String.valueOf(userInfoList.get(i).getUserId()).equals(sessionManager.getUserId())){
+                    userInfoList.get(i).setImageName("");
+                }
+                else {
+                    sessionManager.setUserInfoId(userInfoList.get(i).getId());
+                    userInfoList.get(i).setImageName(userInfoList.get(i).getImageName());
                 }
             }
             homePresenter.deleteUserInfo(userInfoList);
 
-            //List<UserSettingsModel> userSettingsList = mainModel.getUserSettingsModels();
+            //Recommended logic
+            for(int i=0;i<documentList.size();i++) {
+                boolean isRecommended = false;
+                List<TagModel> tagList = documentList.get(i).getTags();
+                for (int j = 0; j < userSettingsList.size(); j++) {
+                    if (userSettingsList.get(j).getUserID().equals(sessionManager.getUserInfoId())) {
+                        //loop tags
+                        List<UserSettingsTagModel> userSettingsTagList = userSettingsList.get(j).getTags();
+                        for (int k = 0; k < tagList.size(); k++) {
+                            for (int l = 0; l < userSettingsTagList.size(); l++) {
+                                if (tagList.get(k).getId().equals(userSettingsTagList.get(l).getId())) {
+                                    documentList.get(i).setIsRecommended("YES");
+                                    homePresenter.updateIsRecommended(documentList.get(i).getId());
+                                    isRecommended = true;
+                                    break;
+                                }
+                            }
+                        }
+                        //loop categories
+                        if (!isRecommended) {
+                            List<UserSettingsCategoryModel> userSettingsCategoryList = userSettingsList.get(j).getCategory();
+                            for (int k = 0; k < tagList.size(); k++) {
+                                for (int l = 0; l < userSettingsCategoryList.size(); l++) {
+                                    if (documentList.get(i).getCategoryId().equals(userSettingsCategoryList.get(l).getId())) {
+                                        documentList.get(i).setIsRecommended("YES");
+                                        homePresenter.updateIsRecommended(documentList.get(i).getId());
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
-//            JsonElement element = gson.toJsonTree(documentList, new TypeToken<List<DocumentModel>>() {}.getType());
-//            JsonArray documentArray = element.getAsJsonArray();
-//            Type documentType = new TypeToken<ArrayList<DocumentModel>>() {}.getType();
-//            documentList= new Gson().fromJson(documentArray.toString(), documentType);
-//
-//
-//            //Receivers
-//            for (int i = 0; i < notificationArray.size(); i++)
-//            {
-//                JsonObject jOBJ = notificationArray.get(i).getAsJsonObject();
-//                JsonArray recevierArray = jOBJ.getAsJsonArray("Receviers");
-//                Type receiverType = new TypeToken<ArrayList<ReceiverModel>>() {}.getType();
-//                receiverList= new Gson().fromJson(recevierArray.toString(), receiverType);
-//            }
-//
-
-//            //Bookmark Entries
-//            for (int i = 0; i < bookmarkArray.size(); i++)
-//            {
-//                JsonObject jOBJ = bookmarkArray.get(i).getAsJsonObject();
-//                JsonArray bookmarkEntryArray = jOBJ.getAsJsonArray("BookmarkEntries");
-//                Type bookMarkEntryType = new TypeToken<ArrayList<BookmarkEntryModel>>() {}.getType();
-//                bookmarkEntryList= new Gson().fromJson(bookmarkEntryArray.toString(), bookMarkEntryType);
-//            }
-//
-//            //User Settings
-//            List<UserSettingsModel> userSettingsList = mainModel.getUserSettingsModels();
-//            JsonElement elementUserSettings = gson.toJsonTree(userSettingsList, new TypeToken<List<UserSettingsModel>>() {}.getType());
-//            JsonArray userSettingsArray = elementUserSettings.getAsJsonArray();
-//
-//            //User Settings Tag and Category with logged in UserId
-//            for(int i=0; i<userSettingsArray.size();i++){
-//                JsonObject jOBJ = userSettingsArray.get(i).getAsJsonObject();
-//                JsonElement userId = jOBJ.get("UID");
-//                if(userId.getAsString().equals(sessionManager.getUserId())){
-//                    JsonElement userSettingsModel = userSettingsArray.get(i);
-//                    JsonObject jsonObject1 = userSettingsModel.getAsJsonObject();
-//
-//                    String userSettingsObj = userSettingsModel.getAsString();
-//                    UserSettingsModel userSettingsMode1 = gson.fromJson(userSettingsObj, UserSettingsModel.class);
-//                    homePresenter.deleteUserSettings(userSettingsMode1);
-//
-//                    JsonArray settingsTagsArray = jsonObject1.getAsJsonArray("Tags");
-//                    Type settingsTagsType = new TypeToken<ArrayList<UserSettingsTagModel>>() {}.getType();
-//                    List<UserSettingsTagModel> settingsTagList = new Gson().fromJson(settingsTagsArray.toString(), settingsTagsType);
-//                    homePresenter.deleteUserSettingsTag(settingsTagList);
-//
-//                    JsonArray settingsCategoryArray = jsonObject1.getAsJsonArray("Category");
-//                    Type settingsCategoryType = new TypeToken<ArrayList<UserSettingsCategoryModel>>() {}.getType();
-//                    List<UserSettingsCategoryModel> settingsCategoryList = new Gson().fromJson(settingsCategoryArray.toString(), settingsCategoryType);
-//                    homePresenter.deleteUserSettingsCategory(settingsCategoryList);
-//                }
-//                else
-//                    continue;
-//            }
-
-            //User Info
-//            List<UserInfoModel> userInfoList = mainModel.getUserInfoModels();
-//            JsonElement elementUserInfo = gson.toJsonTree(userInfoList, new TypeToken<List<UserInfoModel>>() {}.getType());
-//            JsonArray userInfoArray = elementUserInfo.getAsJsonArray();
-//
-//            for(int i=0;i<userInfoArray.size();i++){
-//                JsonObject jOBJ = userInfoArray.get(i).getAsJsonObject();
-//                JsonElement userId = jOBJ.get("UID");
-//                if(!userId.getAsString().equals(sessionManager.getUserId())) {
-//                    jOBJ.addProperty("ImageName", "");
-//                }
-//            }
-
-
-            //homePresenter.deleteUserInfo(userInfoList);
-//            new CountDownTimer(5000, 5000) {
-//                @Override
-//                public void onTick(long millisUntilFinished) {
-//                    getParentFolders();
-//                }
-//
-//                @Override
-//                public void onFinish() {
-//                    setupFragments(findFragmentById(AppConfig.FRAG_NAV_DRAWER), true, true);
-//
-//                }
-//            }.start();
+            for(int i=0;i<documentList.size();i++){
+                if(documentList.get(i).getIsRecommended().equals("YES"))
+                    recommendedList.add(documentList.get(i));
+            }
 
             mainViewPager.updateDocumentList(documentList);
             mainViewPager.updateArticleList(articleList);
-            mainViewPager.updateRecommendedList(documentList);
+            mainViewPager.updateRecommendedList(recommendedList);
             mainViewPager.updateRecentlyList(documentList);
             progressDialog.dismiss();
         }
 
+    }
+
+    private void updateUserImage() {
+        homePresenter.getUserImage(sessionManager.getUserId());
     }
 
     @Override

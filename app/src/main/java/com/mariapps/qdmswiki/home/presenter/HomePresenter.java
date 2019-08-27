@@ -24,6 +24,7 @@ import com.mariapps.qdmswiki.usersettings.UserSettingsTagModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CancellationException;
 
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
@@ -39,7 +40,9 @@ public class HomePresenter {
     private ServiceController serviceController;
     String url;
     List<DocumentModel> folderList = new ArrayList<>();
-    List<SearchModel> childList = new ArrayList<>();
+    UserInfoModel userInfoModel;
+    CategoryModel categoryModel;
+    ArticleModel articleModel;
 
     public HomePresenter(Context context, HomeView homeView) {
         this.homeView = homeView;
@@ -278,6 +281,7 @@ public class HomePresenter {
 
             @Override
             public void onComplete() {
+                homeView.onInsertCategoryDetailsSuccess();
             }
 
 
@@ -763,6 +767,87 @@ public class HomePresenter {
             @Override
             public void onComplete() {
                 homeView.onGetChildFoldersList(folderList);
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void getUserImage(String userId) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                userInfoModel = homeDatabase.homeDao().getUserImage(userId);
+
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                homeView.onGetUserImageSuccess(userInfoModel);
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void getCategoryDetails(String categoryId) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                categoryModel = homeDatabase.homeDao().getCategoryDetails(categoryId);
+
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                homeView.onGetCategoryDetailsSuccess(categoryModel);
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void updateIsRecommended(String documentId) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                homeDatabase.homeDao().updateIsRecommended(documentId);
+
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
             }
 
 

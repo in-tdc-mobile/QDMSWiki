@@ -46,7 +46,6 @@ public class ArticleModel implements Parcelable {
     @SerializedName("DocumentData")
     public String documentData;
 
-    @ColumnInfo(name = "CategoryIds")
     @SerializedName("CategoryId")
     public List<String> categoryIds;
 

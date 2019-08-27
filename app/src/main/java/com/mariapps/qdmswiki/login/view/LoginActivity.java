@@ -105,7 +105,7 @@ public class LoginActivity extends BaseActivity implements LoginView{
                             loginBtn.setVisibility(View.GONE);
                             loadinLoadingPB.showProgressBar();
                             loadinLoadingPB.setVisibility(View.VISIBLE);
-                            sessionManager.setLoggedin(true);
+
                             sessionManager.setDeviceId(CommonUtils.getDeviceId(LoginActivity.this));
                             loginPresenter.getLoggedIn(new LoginRequestObj(usernameET.getText().toString(), passwordET.getText().toString(), sessionManager.getKeyFcmTokenId(), "ANDROID",
                                     sessionManager.getDeviceId(), "1", "Closed"));
@@ -157,6 +157,8 @@ public class LoginActivity extends BaseActivity implements LoginView{
         if (loginResponse != null) {
             if (loginResponse.getCommonEntity() != null) {
                 if (loginResponse.getCommonEntity().getTransactionstatus() != null && loginResponse.getCommonEntity().getTransactionstatus().equals("Y")) {
+                    sessionManager.setLoggedin(true);
+                    sessionManager.setUserId(loginResponse.getLoginQdms().getUserId());
                     Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                     startActivity(intent);
                 } else if (loginResponse.getCommonEntity().getMessage() != null) {

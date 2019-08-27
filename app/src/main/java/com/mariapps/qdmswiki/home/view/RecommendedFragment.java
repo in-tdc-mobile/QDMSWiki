@@ -19,8 +19,14 @@ import com.mariapps.qdmswiki.baseclasses.BaseFragment;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.home.adapter.RecommendedRecentlyAdapter;
 import com.mariapps.qdmswiki.home.database.HomeDatabase;
+import com.mariapps.qdmswiki.home.model.CategoryModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.home.model.TagModel;
 import com.mariapps.qdmswiki.search.view.FolderStructureActivity;
+import com.mariapps.qdmswiki.usersettings.UserInfoModel;
+import com.mariapps.qdmswiki.usersettings.UserSettingsCategoryModel;
+import com.mariapps.qdmswiki.usersettings.UserSettingsModel;
+import com.mariapps.qdmswiki.usersettings.UserSettingsTagModel;
 import com.mariapps.qdmswiki.utils.ViewUtils;
 
 import java.util.ArrayList;
@@ -46,10 +52,8 @@ public class RecommendedFragment extends BaseFragment {
     RelativeLayout noDataRL;
 
     private RecommendedRecentlyAdapter recommendedRecentlyAdapter;
-    private ArrayList<DocumentModel> documentsList = new ArrayList<>();
     private HomeDatabase homeDatabase;
     private List<DocumentModel> recommendedRecentlyModels = new ArrayList<>();
-    private String documentType;
 
     @Override
     protected void setUpPresenter() {
@@ -73,6 +77,7 @@ public class RecommendedFragment extends BaseFragment {
     }
 
     private void setData(){
+
         if (recommendedRecentlyModels.size() > 0) {
             noDataRL.setVisibility(View.GONE);
             recommendedRecentlyAdapter = new RecommendedRecentlyAdapter(getActivity(), recommendedRecentlyModels);
@@ -102,7 +107,7 @@ public class RecommendedFragment extends BaseFragment {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-                recommendedRecentlyModels = homeDatabase.homeDao().getDocuments();
+                recommendedRecentlyModels = homeDatabase.homeDao().getRecommendedDocuments();
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {

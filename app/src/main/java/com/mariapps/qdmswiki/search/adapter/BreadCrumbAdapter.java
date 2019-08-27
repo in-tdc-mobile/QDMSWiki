@@ -59,7 +59,7 @@ public class BreadCrumbAdapter extends RecyclerView.Adapter<BreadCrumbAdapter.Br
             @Override
             public void onClick(View v) {
 
-                breadCrumbListener.onClick((breadCrumbList.size()-1)-holder.getAdapterPosition());
+                breadCrumbListener.onClick((breadCrumbList.size()-1)-holder.getAdapterPosition(),breadCrumbItem);
 
 
             }
@@ -88,7 +88,7 @@ public class BreadCrumbAdapter extends RecyclerView.Adapter<BreadCrumbAdapter.Br
     }
 
     public interface BreadCrumbListener{
-        void onClick(int count);
+        void onClick(int count, BreadCrumbItem breadCrumbItem);
     }
     public void setBreadCrumbListener(BreadCrumbListener breadCrumbListener){
         this.breadCrumbListener=breadCrumbListener;

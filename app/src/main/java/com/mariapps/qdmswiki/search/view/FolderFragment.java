@@ -16,15 +16,11 @@ import com.mariapps.qdmswiki.baseclasses.BaseFragment;
 import com.mariapps.qdmswiki.custom.CustomEditText;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.home.database.HomeDatabase;
-import com.mariapps.qdmswiki.home.model.DocumentModel;
-import com.mariapps.qdmswiki.home.presenter.HomePresenter;
-import com.mariapps.qdmswiki.home.view.HomeView;
 import com.mariapps.qdmswiki.search.adapter.SearchFilterAdapter;
 import com.mariapps.qdmswiki.search.adapter.SearchResultAdapter;
 import com.mariapps.qdmswiki.search.model.FilterBooleanItem;
 import com.mariapps.qdmswiki.search.model.SearchFilterModel;
 import com.mariapps.qdmswiki.search.model.SearchModel;
-import com.mariapps.qdmswiki.serviceclasses.APIException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -173,7 +169,7 @@ public class FolderFragment extends BaseFragment{
                     args.putString(AppConfig.BUNDLE_FOLDER_ID, id);
                     args.putString(AppConfig.BUNDLE_FOLDER_NAME, folderName);
                     folderFragment.setArguments(args);
-                    ((FolderStructureActivity) getActivity()).replaceFragments(folderFragment,id,folderName);
+                    ((FolderStructureActivity) getActivity()).addFragments(folderFragment,id,folderName);
                     ((FolderStructureActivity)getActivity()).initBreadCrumb(folderName,id);
                 }
                 else{
@@ -181,7 +177,8 @@ public class FolderFragment extends BaseFragment{
                     Bundle args = new Bundle();
                     args.putString(AppConfig.BUNDLE_FOLDER_NAME, folderName);
                     documentViewFragment.setArguments(args);
-                    ((FolderStructureActivity) getActivity()).replaceFragments(documentViewFragment,id,folderName);
+                    ((FolderStructureActivity) getActivity()).addFragments(documentViewFragment,id,folderName);
+                    ((FolderStructureActivity)getActivity()).getBreadCrumbDetails(item.getCategoryId());
                 }
 
             }
@@ -237,4 +234,5 @@ public class FolderFragment extends BaseFragment{
             }
         });
     }
+
 }

@@ -4,6 +4,7 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
+import android.nfc.Tag;
 
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkEntryModel;
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkModel;
@@ -83,7 +84,7 @@ public interface HomeDao {
     @Query("SELECT category.Id as id, " +
             " 'Folder' as type, " +
             " category.CategoryName as name, " +
-            " '' as categoryId," +
+            " category.Id as categoryId," +
             " '' as categoryName " +
             " FROM CategoryEntity as category")
     List<SearchModel> getAllCategories();
@@ -119,7 +120,7 @@ public interface HomeDao {
             " SELECT category.Id as id, " +
             " 'Folder' as type, " +
             " category.CategoryName as name, " +
-            " '' as categoryId," +
+            " category.Id as categoryId," +
             " '' as categoryName " +
             " FROM CategoryEntity as category")
     List<SearchModel> getAllDocumentsAndFolders();
@@ -137,16 +138,27 @@ public interface HomeDao {
             " ORDER BY document.ApprovedDate desc")
     List<DocumentModel> getDocuments();
 
+
+    @Query("SELECT document.Id as id, " +
+            " document.DocumentName, " +
+            " document.CategoryId," +
+            " document.Version," +
+            " document.tags," +
+            " document.Date, " +
+            " category.CategoryName as categoryName " +
+            " FROM DocumentEntity as document " +
+            " LEFT JOIN CategoryEntity as category" +
+            " ON category.Id = document.CategoryId" +
+            " WHERE document.isRecommended = 'YES'")
+    List<DocumentModel> getRecommendedDocuments();
+
     @Query("SELECT article.Id, " +
             " article.ArticleName, " +
             " article.CategoryIds," +
             " article.Version," +
             " article.tags," +
-            " article.Date," +
-            " category.CategoryName as categoryName " +
-            " FROM ArticleEntity as article " +
-            " LEFT JOIN CategoryEntity as category "+
-            " ON category.Id IN (article.CategoryIds)"+
+            " article.Date " +
+            " FROM ArticleEntity as article "+
             " ORDER BY article.ApprovedDate desc")
     List<ArticleModel> getArticles();
 
@@ -242,7 +254,7 @@ public interface HomeDao {
             " SELECT category.Id as id, " +
             " 'Folder' as type, " +
             " category.CategoryName as name, " +
-            " '' as categoryId," +
+            " category.Id as categoryId," +
             " '' as categoryName " +
             " FROM CategoryEntity as category" +
             " WHERE category.Parent=:folderId")
@@ -271,7 +283,7 @@ public interface HomeDao {
     @Query("SELECT category.Id as id, " +
             " 'Folder' as type, " +
             " category.CategoryName as name, " +
-            " '' as categoryId," +
+            " category.Id as categoryId," +
             " '' as categoryName " +
             " FROM CategoryEntity as category"+
             " WHERE category.Parent=:folderId")
@@ -289,7 +301,7 @@ public interface HomeDao {
             " SELECT category.Id as id, " +
             " 'Folder' as type, " +
             " category.CategoryName as name, " +
-            " '' as categoryId," +
+            " category.Id as categoryId," +
             " '' as categoryName " +
             " FROM CategoryEntity as category" +
             " WHERE category.Parent=:folderId")
@@ -316,7 +328,7 @@ public interface HomeDao {
             " SELECT category.Id as id, " +
             " 'Folder' as type, " +
             " category.CategoryName as name, " +
-            " '' as categoryId," +
+            " category.Id as categoryId," +
             " '' as categoryName " +
             " FROM CategoryEntity as category" +
             " WHERE category.Parent=:folderId")
@@ -334,7 +346,7 @@ public interface HomeDao {
             " SELECT category.Id as id, " +
             " 'Folder' as type, " +
             " category.CategoryName as name, " +
-            " '' as categoryId," +
+            " category.Id as categoryId," +
             " '' as categoryName " +
             " FROM CategoryEntity as category")
     List<SearchModel> getAllArticlesAndFolders();
@@ -360,22 +372,29 @@ public interface HomeDao {
             " SELECT category.Id as id, " +
             " 'Folder' as type, " +
             " '' as name, " +
-            " '' as categoryId," +
+            " category.Id as categoryId," +
             " '' as categoryName " +
-            " FROM CategoryEntity as category"+
-            " WHERE category.IsLeafNode = 1 "+
-            " UNION "+
-            " SELECT category.Id as id, " +
-            " 'Folder' as type, " +
-            " category.CategoryName as name, " +
-            " '' as categoryId," +
-            " '' as categoryName " +
-            " FROM CategoryEntity as category"+
-            " WHERE category.IsLeafNode != 1 ")
+            " FROM CategoryEntity as category")
     List<SearchModel> getAllDocumentsArticlesAndFolders();
+
+    @Query("SELECT user.Id, " +
+            " user.Name, " +
+            " user.Designation, " +
+            " user.Email," +
+            " user.ImageName," +
+            " user.LoginName" +
+            " FROM UserInfoEntity as user " +
+            " WHERE user.UserId=:userId")
+    UserInfoModel getUserImage(String userId);
+
+    @Query( " UPDATE DocumentEntity SET isRecommended = 'YES' WHERE Id =:documentId")
+    void updateIsRecommended(String documentId);
 
     @Query("SELECT CategoryName FROM CategoryEntity WHERE Id =:id")
     String getCategoryName(String id);
+
+    @Query( " SELECT * FROM CategoryEntity WHERE Parent=:parentId OR Id=:parentId")
+    CategoryModel getCategoryDetails(String parentId);
 
     @Query("SELECT * FROM TagEntity")
     List<TagModel> getTags();

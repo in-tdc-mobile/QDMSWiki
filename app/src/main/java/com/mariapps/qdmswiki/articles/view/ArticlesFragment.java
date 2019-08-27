@@ -54,6 +54,7 @@ public class ArticlesFragment extends BaseFragment {
     private ArticlesAdapter articlesAdapter;
     private List<ArticleModel> articleList = new ArrayList<>();
     List<String> categoryIds = new ArrayList<>();
+    List<String> categoryNames = new ArrayList<>();
     private HomeDatabase homeDatabase;
     private String categoryName;
 
@@ -142,7 +143,7 @@ public class ArticlesFragment extends BaseFragment {
 
             @Override
             public void onComplete() {
-                categoryIds.set(position,categoryName);
+                categoryNames.add(position,categoryName);
             }
 
 
@@ -177,7 +178,8 @@ public class ArticlesFragment extends BaseFragment {
                         for (int j = 0; j < categoryIds.size(); j++) {
                             getCategoryName(categoryIds, categoryIds.get(j), j);
                         }
-                        articleModel.setCategoryIds(categoryIds);
+                        articleModel.setCategoryIds(categoryNames);
+
                     }
                 }
             } catch (Exception e) {
@@ -206,7 +208,7 @@ public class ArticlesFragment extends BaseFragment {
             @Override
             public void onItemClicked(ArticleModel articleModel) {
                 Intent intent = new Intent(getActivity(), FolderStructureActivity.class);
-                intent.putExtra(AppConfig.BUNDLE_TYPE, "Document");
+                intent.putExtra(AppConfig.BUNDLE_TYPE, "Article");
                 intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME, articleModel.getArticleName());
                 intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, articleModel.getId());
                 startActivity(intent);

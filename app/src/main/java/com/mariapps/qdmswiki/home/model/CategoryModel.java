@@ -36,7 +36,7 @@ public class CategoryModel implements Parcelable {
 
     @ColumnInfo(name = "IsActive")
     @SerializedName("IsActive")
-    private boolean isActive;
+    private Boolean isActive;
 
     @ColumnInfo(name = "Slug")
     @SerializedName("slug")
@@ -66,12 +66,19 @@ public class CategoryModel implements Parcelable {
     @SerializedName("IsDashBoardEnabled")
     private Boolean isDashBoardEnabled;
 
-    public CategoryModel(String id, String appId, String name, String parent, boolean isActive) {
+    public CategoryModel(String id, String appId, String name, String parent, Boolean isActive, String slug, String ancestors, Boolean isFullVisibilityOn, Boolean isLeafNode, String type, String displayOrder, Boolean isDashBoardEnabled) {
         this.id = id;
         this.appId = appId;
         this.name = name;
         this.parent = parent;
         this.isActive = isActive;
+        this.slug = slug;
+        this.ancestors = ancestors;
+        this.isFullVisibilityOn = isFullVisibilityOn;
+        this.isLeafNode = isLeafNode;
+        this.type = type;
+        this.displayOrder = displayOrder;
+        this.isDashBoardEnabled = isDashBoardEnabled;
     }
 
     public String getId() {
@@ -106,11 +113,11 @@ public class CategoryModel implements Parcelable {
         this.parent = parent;
     }
 
-    public boolean isActive() {
+    public Boolean isActive() {
         return isActive;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         isActive = active;
     }
 

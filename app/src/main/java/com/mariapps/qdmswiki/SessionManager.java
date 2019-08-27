@@ -18,6 +18,7 @@ public class SessionManager {
     private static final String KEY_FCM_TOKEN_ID = "keyfcmtokenid";
     private static final String KEY_USERNAME = "keyusername";
     private static final String KEY_USER_ID = "keyuserid";
+    private static final String KEY_USER_INFO_ID = "keyuserinfoid";
     private static final String KEY_MAIN_ID = "keymainid";
     private static final String KEY_LOGIN_NAME = "keyloginname";
 
@@ -45,6 +46,15 @@ public class SessionManager {
 
     public String getUserId() {
         return pref.getString(KEY_USER_ID, "");
+    }
+
+    public void setUserInfoId(String id) {
+        editor.putString(KEY_USER_INFO_ID, id);
+        editor.commit();
+    }
+
+    public String getUserInfoId() {
+        return pref.getString(KEY_USER_INFO_ID, "");
     }
 
     public void setUserId(String id) {

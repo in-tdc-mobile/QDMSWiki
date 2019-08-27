@@ -9,6 +9,7 @@ public class AppConfig {
     public static final String BUNDLE_NAV_DRAWER = "bundlenavdrawer";
     public static final String BUNDLE_TYPE = "type";
     public static final String BUNDLE_FOLDER_NAME= "foldername";
+    public static final String BUNDLE_ID= "id";
     public static final String BUNDLE_FOLDER_ID= "folderid";
     public static final String BUNDLE_NAV_DETAILS_OBJECT = "bundlenavdetailsobject";
     public static final String BUNDLE_NAV_DETAILS_LIST = "bundlenavdetailslist";
