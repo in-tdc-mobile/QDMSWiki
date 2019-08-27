@@ -89,7 +89,8 @@ public class RecommendedFragment extends BaseFragment {
                     Intent intent = new Intent(getActivity(), FolderStructureActivity.class);
                     intent.putExtra(AppConfig.BUNDLE_TYPE,"Document");
                     intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,documentModel.getDocumentName());
-                    intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,documentModel.getId());
+                    intent.putExtra(AppConfig.BUNDLE_ID,documentModel.getId());
+                    intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,documentModel.getCategoryId());
                     startActivity(intent);
 
                 }
