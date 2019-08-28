@@ -3,6 +3,7 @@ package com.mariapps.qdmswiki.utils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class DateUtils {
 
@@ -13,7 +14,7 @@ public class DateUtils {
     public static String getFormattedDate(String inputDate){
         String formattedDate = null;
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss aa");
+        SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss aa", Locale.US);
         Date date = null;
         try {
             date = inputFormat.parse(inputDate);

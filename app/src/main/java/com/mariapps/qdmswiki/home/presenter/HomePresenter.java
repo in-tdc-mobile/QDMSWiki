@@ -292,7 +292,7 @@ public class HomePresenter {
         });
     }
 
-    public void deleteNotifications(List<NotificationModel> notificationModels) {
+    public void deleteNotifications(NotificationModel notificationModels) {
 
         Completable.fromAction(new Action() {
             @Override
@@ -319,7 +319,7 @@ public class HomePresenter {
         });
     }
 
-    public void insertNotifications(final List<NotificationModel> notificationModels) {
+    public void insertNotifications(final NotificationModel notificationModels) {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
@@ -346,7 +346,7 @@ public class HomePresenter {
         });
     }
 
-    public void deleteReceivers() {
+    public void deleteReceivers(final ReceiverModel receiverModels) {
 
         Completable.fromAction(new Action() {
             @Override
@@ -362,6 +362,7 @@ public class HomePresenter {
 
             @Override
             public void onComplete() {
+                insertReceivers(receiverModels);
             }
 
 
@@ -372,7 +373,7 @@ public class HomePresenter {
         });
     }
 
-    public void insertReceivers(final List<ReceiverModel> receiverModels) {
+    public void insertReceivers(final ReceiverModel receiverModels) {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {

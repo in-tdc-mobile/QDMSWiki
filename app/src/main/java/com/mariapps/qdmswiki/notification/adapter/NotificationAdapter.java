@@ -1,8 +1,11 @@
 package com.mariapps.qdmswiki.notification.adapter;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +13,8 @@ import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
+import com.mariapps.qdmswiki.utils.CommonUtils;
+import com.mariapps.qdmswiki.utils.DateUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,11 +40,21 @@ public class NotificationAdapter extends CustomRecyclerView.Adapter<Notification
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final NotificationAdapter.NotificationsVH holder, int i) {
-//        holder.tvHeadingText.setText(notificationList.get(i).ge());
-//        holder.statusTV.setText(notificationList.get(i).getStatus() + " : ");
-//        holder.updatedByTV.setText(notificationList.get(i).getUpdatedBy());
-//        holder.tvTime.setText(notificationList.get(i).getTime());
+    public void onBindViewHolder(@NonNull final NotificationAdapter.NotificationsVH holder, int position) {
+        NotificationModel notificationModel = notificationList.get(position);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            holder.tvHeadingText.setText(Html.fromHtml(notificationModel.getMessage(), Html.FROM_HTML_MODE_COMPACT));
+        } else {
+            holder.tvHeadingText.setText(Html.fromHtml(notificationModel.getMessage()));
+        }
+        holder.statusTV.setText("Last updated by " + " : ");
+        for(int i=0;i<notificationModel.getReceviers().size();i++){
+            if(notificationModel.getReceviers().get(i).getUnread())
+                holder.imgStatus.setVisibility(View.GONE);
+
+        }
+        holder.updatedByTV.setText(notificationModel.getSenderName());
+        holder.tvTime.setText(DateUtils.getFormattedDate(notificationModel.getSendTime()));
     }
 
     @Override
@@ -56,6 +71,8 @@ public class NotificationAdapter extends CustomRecyclerView.Adapter<Notification
         CustomTextView updatedByTV;
         @BindView(R.id.tvTime)
         CustomTextView tvTime;
+        @BindView(R.id.imgStatus)
+        AppCompatImageView imgStatus;
 
         public NotificationsVH(@NonNull View itemView) {
             super(itemView);

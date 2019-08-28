@@ -38,10 +38,10 @@ public interface HomeDao {
     void insertCategory(List<CategoryModel> categoryModel);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertNotifications(List<NotificationModel> notificationModel);
+    void insertNotifications(NotificationModel notificationModel);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertReceivers(List<ReceiverModel> receiverModel);
+    void insertReceivers(ReceiverModel receiverModel);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertBookmarks(List<BookmarkModel> bookmarkModel);
@@ -417,7 +417,13 @@ public interface HomeDao {
     @Query("SELECT * FROM CategoryEntity")
     List<CategoryModel> getCategory();
 
-    @Query("SELECT * FROM NotificationEntity")
+    @Query("SELECT notification.Message, " +
+            " notification.SendTime, " +
+            " notification.Receviers, " +
+            " userInfo.Name as senderName "+
+            " FROM NotificationEntity as notification " +
+            " LEFT JOIN userinfoentity as userinfo "+
+            " ON notification.SenderId = userinfo.Id")
     List<NotificationModel> getNotifications();
 
     @Query("SELECT * FROM BookMarkEntity")

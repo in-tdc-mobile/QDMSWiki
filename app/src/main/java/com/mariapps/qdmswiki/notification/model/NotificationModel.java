@@ -38,7 +38,7 @@ public class NotificationModel implements Parcelable {
 
     @ColumnInfo(name = "Receviers")
     @SerializedName("Receviers")
-    private List<ReceiverModel> receviers = null;
+    private List<ReceiverModel> receviers;
 
     @ColumnInfo(name = "Message")
     @SerializedName("Message")
@@ -87,6 +87,9 @@ public class NotificationModel implements Parcelable {
     @ColumnInfo(name = "EventDescription")
     @SerializedName("EventDescription")
     private Double eventDescription;
+
+    @SerializedName("SenderName")
+    private String senderName;
 
     public NotificationModel(Long uId, String id, String appId, String senderId, List<ReceiverModel> receviers, String message, String sendTime, Integer contentDataType, Integer deliveryType, Integer messageType, Boolean isCritical, Boolean isServiceMessage, String requestURL, String eventId, Boolean isvisible, Boolean isReplicated, Double eventDescription) {
         this.uId = uId;
@@ -244,6 +247,14 @@ public class NotificationModel implements Parcelable {
         this.eventDescription = eventDescription;
     }
 
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
     protected NotificationModel(Parcel in) {
         if (in.readByte() == 0) {
             uId = null;
@@ -265,6 +276,7 @@ public class NotificationModel implements Parcelable {
         isvisible = in.readByte() != 0;
         isReplicated = in.readByte() != 0;
         eventDescription = in.readDouble();
+        senderName = in.readString();
     }
 
     @Override
@@ -297,6 +309,7 @@ public class NotificationModel implements Parcelable {
         dest.writeInt(isvisible ? 1 : 0);
         dest.writeInt(isReplicated ? 1 : 0);
         dest.writeDouble(eventDescription);
+        dest.writeString(senderName);
     }
 
     public static final Creator<NotificationModel> CREATOR = new Creator<NotificationModel>() {

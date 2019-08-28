@@ -429,9 +429,9 @@ public class HomeActivity extends BaseActivity implements HomeView{
         File file=new File(Environment.getExternalStorageDirectory(),"/QDMSWiki/Import");
         if(file.exists())
         {
-           return;
-         //  ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
-          //  readAndInsertJsonData.execute();
+          return;
+          //ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
+          //readAndInsertJsonData.execute();
         }
          else {
             progressDialog.setMessage("Downloading files...");
@@ -609,9 +609,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
             homePresenter.deleteDocuments(documentList);
             homePresenter.deleteArticles(articleList);
             homePresenter.deleteCategories(categoryList);
-            homePresenter.deleteNotifications(notificationList);
             homePresenter.deleteBookmarks(bookmarkList);
-            homePresenter.deleteReceivers();
             homePresenter.deleteBookmarkEntries();
 
             for(int i=0;i<documentList.size();i++){
@@ -619,21 +617,9 @@ public class HomeActivity extends BaseActivity implements HomeView{
                 homePresenter.deleteTags(tagList);
             }
 
-//            for(int i=0;i<notificationList.size();i++){
-//                List<ReceiverModel> receiverList = notificationList.get(i).getReceviers();
-//                homePresenter.insertReceivers(receiverList);
-//            }
             for(int i=0;i<bookmarkList.size();i++){
                 List<BookmarkEntryModel> bookmarkEntryList = bookmarkList.get(i).getBookmarkEntries();
                 homePresenter.insertBookmarkEntries(bookmarkEntryList);
-            }
-
-            for(int i=0;i<userSettingsList.size();i++){
-                if(userSettingsList.get(i).getUserID().equals(sessionManager.getUserId())){
-                    homePresenter.deleteUserSettings(userSettingsList.get(i));
-                }
-                else
-                    continue;
             }
 
             for(int i=0;i<userInfoList.size();i++){
@@ -646,6 +632,25 @@ public class HomeActivity extends BaseActivity implements HomeView{
                 }
             }
             homePresenter.deleteUserInfo(userInfoList);
+
+            for(int i=0;i<userSettingsList.size();i++){
+                if(userSettingsList.get(i).getUserID().equals(sessionManager.getUserInfoId())){
+                    homePresenter.deleteUserSettings(userSettingsList.get(i));
+                }
+                else
+                    continue;
+            }
+
+            for(int i=0;i<notificationList.size();i++){
+                List<ReceiverModel> receiverList = notificationList.get(i).getReceviers();
+                for(int j=0;j<receiverList.size();j++){
+                    if(receiverList.get(j).getRecevierId().equals(sessionManager.getUserInfoId())){
+                        homePresenter.deleteNotifications(notificationList.get(i));
+                        homePresenter.deleteReceivers(receiverList.get(j));
+                        break;
+                    }
+                }
+            }
 
             //Recommended logic
             for(int i=0;i<documentList.size();i++) {
