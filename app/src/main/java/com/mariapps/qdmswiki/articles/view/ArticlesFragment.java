@@ -225,6 +225,7 @@ public class ArticlesFragment extends BaseFragment {
                 Intent intent = new Intent(getActivity(), FolderStructureActivity.class);
                 intent.putExtra(AppConfig.BUNDLE_TYPE, "Article");
                 intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME, articleModel.getArticleName());
+                intent.putExtra(AppConfig.BUNDLE_ID, articleModel.getId());
                 intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, articleModel.getId());
                 startActivity(intent);
 

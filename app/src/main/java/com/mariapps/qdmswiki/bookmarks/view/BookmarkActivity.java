@@ -12,18 +12,28 @@ import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.bookmarks.adapter.BookmarkAdapter;
+import com.mariapps.qdmswiki.bookmarks.model.BookmarkEntryModel;
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkModel;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.documents.view.DocumentInfoViewActivity;
+import com.mariapps.qdmswiki.home.database.HomeDatabase;
 import com.mariapps.qdmswiki.home.view.HomeActivity;
+import com.mariapps.qdmswiki.notification.view.NotificationActivity;
 import com.mariapps.qdmswiki.search.view.FolderStructureActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
+import io.reactivex.schedulers.Schedulers;
 
 public class BookmarkActivity extends BaseActivity {
     @BindView(R.id.headingTV)
@@ -38,10 +48,10 @@ public class BookmarkActivity extends BaseActivity {
     CustomRecyclerView bookmarksRV;
 
     private BookmarkAdapter bookmarkAdapter;
-    private ArrayList<BookmarkModel> bookMarkList = new ArrayList<>();
+    private BookmarkModel bookmarkModel;
     private String folderName;
-    private Integer id;
-
+    private String documentId;
+    private HomeDatabase homeDatabase;
 
     @Override
     protected void setUpPresenter() {
@@ -61,7 +71,7 @@ public class BookmarkActivity extends BaseActivity {
 
         try{
             Bundle bundle = getIntent().getExtras();
-            id = bundle.getInt(AppConfig.BUNDLE_FOLDER_ID);
+            documentId = bundle.getString(AppConfig.BUNDLE_ID);
             folderName = bundle.getString(AppConfig.BUNDLE_FOLDER_NAME);
         }
         catch (Exception e){}
@@ -71,21 +81,23 @@ public class BookmarkActivity extends BaseActivity {
         bookmarksRV.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         nameTV.setText(folderName);
 
+        homeDatabase = HomeDatabase.getInstance(BookmarkActivity.this);
         initView();
-        initRecyclerView();
+        getBookMarkEntryList();
+
     }
 
     private void initRecyclerView() {
-        bookmarkAdapter = new BookmarkAdapter(this,bookMarkList);
+        bookmarkAdapter = new BookmarkAdapter(this,bookmarkModel.getBookmarkEntries());
         bookmarksRV.setAdapter(bookmarkAdapter);
 
         bookmarkAdapter.setRowClickListener(new BookmarkAdapter.RowClickListener() {
             @Override
-            public void onItemClicked(BookmarkModel bookmarkModel) {
+            public void onItemClicked(BookmarkEntryModel bookmarkEntryModel) {
                 Intent intent = new Intent(BookmarkActivity.this, FolderStructureActivity.class);
                 intent.putExtra(AppConfig.BUNDLE_TYPE,"Document");
                 //intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,bookmarkModel.getBookMark());
-                intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,bookmarkModel.getId());
+                intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,bookmarkEntryModel.getBookmarkId());
                 startActivity(intent);
             }
         });
@@ -110,6 +122,32 @@ public class BookmarkActivity extends BaseActivity {
                 startActivity(homeIntent);
                 break;
         }
+    }
+
+    public void getBookMarkEntryList() {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                bookmarkModel = homeDatabase.homeDao().getBookmarkEntries(documentId);
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                initRecyclerView();
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
     }
 
 }

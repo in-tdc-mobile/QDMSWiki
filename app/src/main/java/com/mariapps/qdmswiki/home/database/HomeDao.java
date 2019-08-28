@@ -125,7 +125,7 @@ public interface HomeDao {
             " FROM CategoryEntity as category")
     List<SearchModel> getAllDocumentsAndFolders();
 
-    @Query("SELECT document.Id as id, " +
+    @Query("SELECT document.Id, " +
             " document.DocumentName, " +
             " document.CategoryId," +
             " document.Version," +
@@ -139,7 +139,7 @@ public interface HomeDao {
     List<DocumentModel> getDocuments();
 
 
-    @Query("SELECT document.Id as id, " +
+    @Query("SELECT document.Id, " +
             " document.DocumentName, " +
             " document.CategoryId," +
             " document.Version," +
@@ -401,6 +401,11 @@ public interface HomeDao {
             " FROM UserInfoEntity as user " +
             " WHERE user.UserId=:userId")
     UserInfoModel getUserImage(String userId);
+
+    @Query(" SELECT bookmark.BookmarkEntries " +
+            " FROM BookMarkEntity as bookmark " +
+            " WHERE bookmark.DocumentId=:documentId")
+    BookmarkModel getBookmarkEntries(String documentId);
 
     @Query( " UPDATE DocumentEntity SET isRecommended = 'YES' WHERE Id =:documentId")
     void updateIsRecommended(String documentId);

@@ -66,7 +66,7 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             DocumentViewFragment documentViewFragment = new DocumentViewFragment();
             Bundle args = new Bundle();
-            args.putString(AppConfig.BUNDLE_FOLDER_ID, id);
+            args.putString(AppConfig.BUNDLE_ID, id);
             args.putString(AppConfig.BUNDLE_FOLDER_NAME, folderName);
             documentViewFragment.setArguments(args);
             ft.replace(R.id.frameLayout, documentViewFragment);

@@ -73,7 +73,7 @@ public class DocumentViewFragment extends BaseFragment {
 
         try {
             Bundle args = getArguments();
-            id = args.getString(AppConfig.BUNDLE_FOLDER_ID, "");
+            id = args.getString(AppConfig.BUNDLE_ID, "");
             folderName = args.getString(AppConfig.BUNDLE_FOLDER_NAME, "");
         } catch (Exception e) {
         }
@@ -120,7 +120,7 @@ public class DocumentViewFragment extends BaseFragment {
                     public void onClick(View v) {
                         Intent intent = new Intent(getActivity(), DocumentInfoViewActivity.class);
                         intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME, folderName);
-                        intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, id);
+                        intent.putExtra(AppConfig.BUNDLE_ID, id);
                         startActivity(intent);
                     }
                 });
@@ -130,7 +130,7 @@ public class DocumentViewFragment extends BaseFragment {
                     public void onClick(View v) {
                         Intent intent = new Intent(getActivity(), BookmarkActivity.class);
                         intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME, folderName);
-                        intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, id);
+                        intent.putExtra(AppConfig.BUNDLE_ID, id);
                         startActivity(intent);
                     }
                 });

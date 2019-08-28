@@ -87,7 +87,7 @@ public class DocumentInfoViewActivity extends BaseActivity {
 
         try{
             Bundle bundle = getIntent().getExtras();
-            id = bundle.getInt(AppConfig.BUNDLE_FOLDER_ID);
+            id = bundle.getInt(AppConfig.BUNDLE_ID);
             folderName = bundle.getString(AppConfig.BUNDLE_FOLDER_NAME);
         }
         catch (Exception e){}

@@ -9,10 +9,13 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.mariapps.qdmswiki.R;
+import com.mariapps.qdmswiki.bookmarks.model.BookmarkEntryModel;
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkModel;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -20,11 +23,11 @@ public class BookmarkAdapter extends CustomRecyclerView.Adapter<BookmarkAdapter.
 
     private Context mContext;
     private BookmarkAdapter.RowClickListener rowClickListener;
-    private ArrayList<BookmarkModel> bookmarkList;
+    private List<BookmarkEntryModel> bookmarkEntryList;
 
-    public BookmarkAdapter(Context context, ArrayList<BookmarkModel> list) {
+    public BookmarkAdapter(Context context, List<BookmarkEntryModel> bookmarkEntries) {
         mContext = context;
-        bookmarkList = list;
+        bookmarkEntryList = bookmarkEntries;
     }
 
     @NonNull
@@ -36,11 +39,14 @@ public class BookmarkAdapter extends CustomRecyclerView.Adapter<BookmarkAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull final BookmarkAdapter.BookmarkVH holder, int i) {
-        //holder.bookmarkTV.setText(bookmarkList.get(i).getBookMark());
+
+        BookmarkEntryModel bookmarkEntryModel = bookmarkEntryList.get(i);
+        holder.bookmarkTV.setText(bookmarkEntryModel.getBookmarkTitle());
+
         holder.rowLL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                rowClickListener.onItemClicked(bookmarkList.get(holder.getAdapterPosition()));
+                rowClickListener.onItemClicked(bookmarkEntryList.get(holder.getAdapterPosition()));
             }
         });
 
@@ -48,7 +54,7 @@ public class BookmarkAdapter extends CustomRecyclerView.Adapter<BookmarkAdapter.
 
     @Override
     public int getItemCount() {
-        return bookmarkList != null ? bookmarkList.size() : 0;
+        return bookmarkEntryList != null ? bookmarkEntryList.size() : 0;
     }
 
     static class BookmarkVH extends CustomRecyclerView.ViewHolder {
@@ -69,7 +75,7 @@ public class BookmarkAdapter extends CustomRecyclerView.Adapter<BookmarkAdapter.
     }
 
     public interface RowClickListener {
-        void onItemClicked(BookmarkModel bookmarkModel) ;
+        void onItemClicked(BookmarkEntryModel bookmarkEntryModel) ;
     }
 }
 

@@ -175,6 +175,7 @@ public class FolderFragment extends BaseFragment{
                 else{
                     DocumentViewFragment documentViewFragment = new DocumentViewFragment();
                     Bundle args = new Bundle();
+                    args.putString(AppConfig.BUNDLE_ID, id);
                     args.putString(AppConfig.BUNDLE_FOLDER_NAME, folderName);
                     documentViewFragment.setArguments(args);
                     ((FolderStructureActivity) getActivity()).addFragments(documentViewFragment,id,folderName);

@@ -47,7 +47,7 @@ public class DocumentsAdapter extends CustomRecyclerView.Adapter<DocumentsAdapte
     @Override
     public void onBindViewHolder(@NonNull final DocumentsVH holder, int i) {
 
-        DocumentModel documentsModel = filterdDocumentsList.get(i);
+        DocumentModel documentsModel = filterdDocumentsList.get(holder.getAdapterPosition());
 
         holder.tvHeadingText.setText(documentsModel.getDocumentName());
         holder.tvCategory.setText(documentsModel.getCategoryName());
@@ -64,7 +64,7 @@ public class DocumentsAdapter extends CustomRecyclerView.Adapter<DocumentsAdapte
             @Override
             public void onClick(View v) {
                 if(type.equals("DOCUMENTS"))
-                    rowClickListener.onItemClicked(documentsList.get(holder.getAdapterPosition()));
+                    rowClickListener.onItemClicked(filterdDocumentsList.get(holder.getAdapterPosition()));
             }
         });
     }
@@ -90,8 +90,7 @@ public class DocumentsAdapter extends CustomRecyclerView.Adapter<DocumentsAdapte
                         ArrayList<DocumentModel> filteredList = new ArrayList<>();
 
                         for (DocumentModel documentsModel : documentsList) {
-                            if (documentsModel.getDocumentName().toLowerCase().contains(charString.toLowerCase()) ||
-                                documentsModel.getCategoryName().toLowerCase().contains(charString.toLowerCase())) {
+                            if (documentsModel.getDocumentName().toLowerCase().contains(charString.toLowerCase())) {
                                 filteredList.add(documentsModel);
                             }
                         }
