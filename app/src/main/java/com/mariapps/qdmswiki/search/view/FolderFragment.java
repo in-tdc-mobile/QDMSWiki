@@ -201,15 +201,15 @@ public class FolderFragment extends BaseFragment{
                 if(isDocumentSelected && isArticleSelected && isFolderSelected)
                     searchList = homeDatabase.homeDao().getAllDocumentsArticlesAndFoldersInsideFolder(id);
                 else if(isDocumentSelected && isArticleSelected)
-                    searchList = homeDatabase.homeDao().getAllDocumentsAndArticlesInsideFolder();
+                    searchList = homeDatabase.homeDao().getAllDocumentsAndArticlesInsideFolder(id);
                 else if(isDocumentSelected && isFolderSelected)
                     searchList = homeDatabase.homeDao().getAllDocumentsAndFoldersInsideFolder(id);
                 else if(isArticleSelected && isFolderSelected)
                     searchList = homeDatabase.homeDao().getAllArticlesAndFoldersInsideFolder(id);
                 else if(isDocumentSelected && !isArticleSelected && !isFolderSelected)
-                    searchList = homeDatabase.homeDao().getAllDocumentsInsideFolder();
+                    searchList = homeDatabase.homeDao().getAllDocumentsInsideFolder(id);
                 else if(!isDocumentSelected && isArticleSelected && !isFolderSelected)
-                    searchList = homeDatabase.homeDao().getAllArticlesInsideFolder();
+                    searchList = homeDatabase.homeDao().getAllArticlesInsideFolder(id);
                 else if(isFolderSelected && !isDocumentSelected && !isArticleSelected)
                     searchList = homeDatabase.homeDao().getAllCategoriesInsideFolder(id);
 

@@ -49,16 +49,18 @@ public class ArticlesAdapter extends CustomRecyclerView.Adapter<ArticlesAdapter.
     public void onBindViewHolder(@NonNull final ArticlesAdapter.ArticlesVH holder, int i) {
 
         ArticleModel articleModel = filterdDocumentsList.get(i);
-
+        String categoriesString = "";
         holder.tvHeadingText.setText(articleModel.getArticleName());
         List<String> categories = articleModel.getCategoryIds();
         for(int j=0; j<categories.size(); j++){
             if(j == categories.size() - 1)
-                holder.tvCategory.setText(categories.get(j));
+                categoriesString = categoriesString + categories.get(j);
             else
-                holder.tvCategory.setText(categories.get(j) + ",");
+                categoriesString = categoriesString + categories.get(j) + ",";
+
         }
 
+        holder.tvCategory.setText(categoriesString);
         holder.tvDate.setText(DateUtils.getFormattedDate(articleModel.getDate()));
         holder.tvVersion.setText("v "+String.valueOf(articleModel.getVersion()));
 

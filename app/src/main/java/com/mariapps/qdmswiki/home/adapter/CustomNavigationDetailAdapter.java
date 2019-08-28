@@ -44,7 +44,7 @@ public class CustomNavigationDetailAdapter extends RecyclerView.Adapter<CustomNa
         if (customNavigationDetailVH1.getAdapterPosition() < navigationItems.size()) {
             final DocumentModel documentModel = navigationItems.get(customNavigationDetailVH1.getAdapterPosition());
             if (documentModel != null) {
-                customNavigationDetailVH1.drawerItemName.setText(documentModel.getCategoryName());
+                customNavigationDetailVH1.drawerItemName.setText(documentModel.getDocumentName());
                 if(documentModel.getType().equals("Folder")) {
                     customNavigationDetailVH1.drawerIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_menu_folder));
                     customNavigationDetailVH1.arrowIV.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_inactive));

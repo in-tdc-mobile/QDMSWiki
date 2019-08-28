@@ -405,8 +405,9 @@ public class HomeActivity extends BaseActivity implements HomeView{
                         {
                             Intent intent = new Intent(HomeActivity.this, FolderStructureActivity.class);
                             intent.putExtra(AppConfig.BUNDLE_TYPE,documentModel.getType());
-                            intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,"");
-                            intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,documentModel.getFolderid());
+                            intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,documentModel.getCategoryName());
+                            intent.putExtra(AppConfig.BUNDLE_ID,documentModel.getId());
+                            intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,documentModel.getCategoryId());
                             startActivity(intent);
                         }
                     }
@@ -429,7 +430,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
         if(file.exists())
         {
            return;
-          // ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
+         //  ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
           //  readAndInsertJsonData.execute();
         }
          else {
@@ -705,4 +706,5 @@ public class HomeActivity extends BaseActivity implements HomeView{
         unregisterReceiver(onDownloadComplete);
     }
 }
+
 

@@ -37,6 +37,7 @@ import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
+import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 
 public class ArticlesFragment extends BaseFragment {
@@ -67,6 +68,8 @@ public class ArticlesFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_articles, container, false);
         ButterKnife.bind(this, view);
+        RxJavaPlugins.setErrorHandler(throwable -> {}); // nothing or some logging
+
         fragmentManager = getFragmentManager();
 
         rvDocuments.setHasFixedSize(true);
@@ -81,6 +84,7 @@ public class ArticlesFragment extends BaseFragment {
     private void setData() {
         customProgressBar.setVisibility(View.GONE);
         if (articleList != null && articleList.size() > 0) {
+           // setRecyclerView();
             noDataRL.setVisibility(View.GONE);
             GetCategoryName getCategoryName = new GetCategoryName();
             getCategoryName.execute();
@@ -128,7 +132,7 @@ public class ArticlesFragment extends BaseFragment {
 
     }
 
-    public void getCategoryName(List<String> categoryIds,String categoryId,int position) {
+    public void getCategoryName(String categoryId, int position) {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
@@ -143,12 +147,23 @@ public class ArticlesFragment extends BaseFragment {
 
             @Override
             public void onComplete() {
-                categoryNames.add(position,categoryName);
+                boolean isAdded = false;
+                for (int i = 0; i < categoryNames.size(); i++) {
+                    if(categoryNames.get(i) == null)
+                        continue;
+                    else if(categoryNames.get(i).equals(categoryName)) {
+                        isAdded = true;
+                        break;
+                    }
+                }
+                if (!isAdded && categoryName!= null)
+                    categoryNames.add(position, categoryName);
             }
 
 
             @Override
             public void onError(Throwable e) {
+
             }
         });
     }
@@ -173,13 +188,13 @@ public class ArticlesFragment extends BaseFragment {
                 for(int  i=0;i <articleList.size();i++){
                     articleModel = articleList.get(i);
                     categoryIds = new ArrayList<>();
+                    categoryNames = new ArrayList<>();
                     categoryIds = articleModel.getCategoryIds();
                     if(categoryIds != null) {
                         for (int j = 0; j < categoryIds.size(); j++) {
-                            getCategoryName(categoryIds, categoryIds.get(j), j);
+                            getCategoryName(categoryIds.get(j), j);
                         }
                         articleModel.setCategoryIds(categoryNames);
-
                     }
                 }
             } catch (Exception e) {
