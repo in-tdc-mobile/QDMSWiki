@@ -161,24 +161,24 @@ public class FolderFragment extends BaseFragment{
         searchResultAdapter.setItemClickListener(new SearchResultAdapter.ItemClickListener() {
             @Override
             public void onItemClicked(SearchModel item) {
-                folderName = item.getName();
-                id = item.getId();
                 if(item.getType().equals("Folder")) {
                     FolderFragment folderFragment = new FolderFragment();
                     Bundle args = new Bundle();
-                    args.putString(AppConfig.BUNDLE_FOLDER_ID, id);
-                    args.putString(AppConfig.BUNDLE_FOLDER_NAME, folderName);
+                    args.putString(AppConfig.BUNDLE_FOLDER_ID, item.getId());
                     folderFragment.setArguments(args);
-                    ((FolderStructureActivity) getActivity()).addFragments(folderFragment,id,folderName);
-                    ((FolderStructureActivity)getActivity()).initBreadCrumb(folderName,id);
+                    ((FolderStructureActivity) getActivity()).addFragments(folderFragment,item.getId(),item.getName());
+                    ((FolderStructureActivity)getActivity()).initBreadCrumb(item.getName(),item.getId());
                 }
                 else{
                     DocumentViewFragment documentViewFragment = new DocumentViewFragment();
                     Bundle args = new Bundle();
-                    args.putString(AppConfig.BUNDLE_ID, id);
-                    args.putString(AppConfig.BUNDLE_FOLDER_NAME, folderName);
+                    args.putString(AppConfig.BUNDLE_ID, item.getId());
+                    args.putString(AppConfig.BUNDLE_NAME, item.getName());
+                    args.putString(AppConfig.BUNDLE_FOLDER_ID, item.getCategoryId());
+                    args.putString(AppConfig.BUNDLE_FOLDER_NAME, item.getCategoryName());
+                    args.putString(AppConfig.BUNDLE_VERSION, item.getVersion());
                     documentViewFragment.setArguments(args);
-                    ((FolderStructureActivity) getActivity()).addFragments(documentViewFragment,id,folderName);
+                    ((FolderStructureActivity) getActivity()).addFragments(documentViewFragment,item.getId(),item.getName());
                     ((FolderStructureActivity)getActivity()).getBreadCrumbDetails(item.getCategoryId());
                 }
 

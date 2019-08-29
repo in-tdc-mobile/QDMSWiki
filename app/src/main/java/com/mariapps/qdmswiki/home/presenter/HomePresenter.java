@@ -8,6 +8,7 @@ import com.mariapps.qdmswiki.home.database.HomeDatabase;
 import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.CategoryModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.home.model.RecentlyViewedModel;
 import com.mariapps.qdmswiki.home.model.TagModel;
 import com.mariapps.qdmswiki.home.view.HomeView;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
@@ -858,4 +859,5 @@ public class HomePresenter {
             }
         });
     }
+
 }

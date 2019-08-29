@@ -2,6 +2,7 @@ package com.mariapps.qdmswiki.home.view;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.DividerItemDecoration;
@@ -15,10 +16,13 @@ import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseFragment;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
-import com.mariapps.qdmswiki.home.adapter.RecommendedRecentlyAdapter;
+import com.mariapps.qdmswiki.home.adapter.RecentlyViewedAdapter;
+import com.mariapps.qdmswiki.home.adapter.RecommendedAdapter;
 import com.mariapps.qdmswiki.home.database.HomeDatabase;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.home.model.RecentlyViewedModel;
 import com.mariapps.qdmswiki.search.view.FolderStructureActivity;
+import com.mariapps.qdmswiki.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,10 +45,9 @@ public class RecentlyFragment extends BaseFragment {
     @BindView(R.id.noDataRL)
     RelativeLayout noDataRL;
 
-    private RecommendedRecentlyAdapter recommendedRecentlyAdapter;
-    private ArrayList<DocumentModel> documentsList = new ArrayList<>();
+    private RecentlyViewedAdapter recentlyViewedAdapter;
     private HomeDatabase homeDatabase;
-    private List<DocumentModel> recommendedRecentlyModels = new ArrayList<>();
+    private List<RecentlyViewedModel> recentlyViewedList = new ArrayList<>();
     private String documentType;
 
     @Override
@@ -63,24 +66,25 @@ public class RecentlyFragment extends BaseFragment {
         rvDocuments.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
 
         homeDatabase = HomeDatabase.getInstance(getActivity());
-        getRecommendedList();
+        getRecentlyViewedList();
 
         return view;
     }
 
     private void setData(){
-        if (recommendedRecentlyModels.size() > 0) {
+        if (recentlyViewedList.size() > 0) {
             noDataRL.setVisibility(View.GONE);
-            recommendedRecentlyAdapter = new RecommendedRecentlyAdapter(getActivity(), recommendedRecentlyModels);
-            rvDocuments.setAdapter(recommendedRecentlyAdapter);
+            recentlyViewedAdapter = new RecentlyViewedAdapter(getActivity(), recentlyViewedList);
+            rvDocuments.setAdapter(recentlyViewedAdapter);
 
-            recommendedRecentlyAdapter.setRowClickListener(new RecommendedRecentlyAdapter.RowClickListener() {
+            recentlyViewedAdapter.setRowClickListener(new RecentlyViewedAdapter.RowClickListener() {
                 @Override
-                public void onItemClicked(DocumentModel documentModel) {
+                public void onItemClicked(RecentlyViewedModel recentlyViewedModel) {
                     Intent intent = new Intent(getActivity(), FolderStructureActivity.class);
                     intent.putExtra(AppConfig.BUNDLE_TYPE,"Document");
-                    intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,documentModel.getDocumentName());
-                    intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,documentModel.getId());
+                    intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,recentlyViewedModel.getCategoryName());
+                    intent.putExtra(AppConfig.BUNDLE_NAME,recentlyViewedModel.getDocumentName());
+                    intent.putExtra(AppConfig.BUNDLE_ID,recentlyViewedModel.getDocumentId());
                     startActivity(intent);
 
                 }
@@ -89,16 +93,13 @@ public class RecentlyFragment extends BaseFragment {
         } else {
             noDataRL.setVisibility(View.VISIBLE);
         }
-
-
-
     }
 
-    public void getRecommendedList() {
+    public void getRecentlyViewedList() {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-                recommendedRecentlyModels = homeDatabase.homeDao().getDocuments();
+                recentlyViewedList = homeDatabase.homeDao().getRecentlyViewedDocuments();
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
@@ -120,8 +121,16 @@ public class RecentlyFragment extends BaseFragment {
         });
     }
 
-    public void updateRecentlyList(List<DocumentModel> documentsList) {
-        this.recommendedRecentlyModels = documentsList;
+    public void updateRecentlyList(List<RecentlyViewedModel> documentsList) {
+        this.recentlyViewedList = documentsList;
         setData();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            getRecentlyViewedList();
+        }
     }
 }

@@ -158,9 +158,11 @@ public class SearchActivity extends BaseActivity {
             public void onItemClicked(SearchModel item) {
                 Intent intent = new Intent(SearchActivity.this, FolderStructureActivity.class);
                 intent.putExtra(AppConfig.BUNDLE_TYPE,item.getType());
-                intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,item.getName());
+                intent.putExtra(AppConfig.BUNDLE_NAME,item.getName());
+                intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,item.getCategoryName());
                 intent.putExtra(AppConfig.BUNDLE_ID,item.getId());
                 intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,item.getCategoryId());
+                intent.putExtra(AppConfig.BUNDLE_VERSION,item.getVersion());
                 startActivity(intent);
 
             }

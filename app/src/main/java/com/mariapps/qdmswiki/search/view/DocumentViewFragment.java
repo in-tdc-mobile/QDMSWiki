@@ -33,6 +33,11 @@ import com.mariapps.qdmswiki.home.database.HomeDao;
 import com.mariapps.qdmswiki.home.database.HomeDatabase;
 import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.home.model.RecentlyViewedModel;
+import com.mariapps.qdmswiki.home.presenter.HomePresenter;
+import com.mariapps.qdmswiki.utils.DateUtils;
+
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,15 +59,18 @@ public class DocumentViewFragment extends BaseFragment {
     WebView webView;
 
     private String folderName;
+    private String folderId;
+    private String name;
     private DocumentModel documentModel;
     private String id;
     private String documentData;
+    private String version;
     private ArticleModel articleModel;
     private HomeDatabase homeDatabase;
+    private RecentlyViewedModel recentlyViewedModel;
 
     @Override
     protected void setUpPresenter() {
-
     }
 
     @Nullable
@@ -74,7 +82,14 @@ public class DocumentViewFragment extends BaseFragment {
         try {
             Bundle args = getArguments();
             id = args.getString(AppConfig.BUNDLE_ID, "");
+            name = args.getString(AppConfig.BUNDLE_NAME, "");
+            folderId = args.getString(AppConfig.BUNDLE_FOLDER_ID, "");
             folderName = args.getString(AppConfig.BUNDLE_FOLDER_NAME, "");
+            version = args.getString(AppConfig.BUNDLE_VERSION, "");
+
+            recentlyViewedModel = new RecentlyViewedModel(id,name,folderId,folderName,version, DateUtils.getCurrentDate());
+            insertRecentlyViewedDocument(recentlyViewedModel);
+
         } catch (Exception e) {
         }
 
@@ -231,6 +246,33 @@ public class DocumentViewFragment extends BaseFragment {
                         webView.loadUrl("javascript:setArticleDataFromViewController('" + articleModel.getDocumentData() + "','" + articleModel.getId() + "')");
                     }
                 });
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void insertRecentlyViewedDocument(RecentlyViewedModel recentlyViewedModel) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                homeDatabase.homeDao().insertRecentlyViewedDocument(recentlyViewedModel);
+
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
             }
 
 

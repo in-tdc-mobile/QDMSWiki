@@ -2,7 +2,6 @@ package com.mariapps.qdmswiki.home.view;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.DividerItemDecoration;
@@ -14,27 +13,18 @@ import android.widget.RelativeLayout;
 
 import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
-import com.mariapps.qdmswiki.SessionManager;
 import com.mariapps.qdmswiki.baseclasses.BaseFragment;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
-import com.mariapps.qdmswiki.home.adapter.RecommendedRecentlyAdapter;
+import com.mariapps.qdmswiki.home.adapter.RecommendedAdapter;
 import com.mariapps.qdmswiki.home.database.HomeDatabase;
-import com.mariapps.qdmswiki.home.model.CategoryModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
-import com.mariapps.qdmswiki.home.model.TagModel;
 import com.mariapps.qdmswiki.search.view.FolderStructureActivity;
-import com.mariapps.qdmswiki.usersettings.UserInfoModel;
-import com.mariapps.qdmswiki.usersettings.UserSettingsCategoryModel;
-import com.mariapps.qdmswiki.usersettings.UserSettingsModel;
-import com.mariapps.qdmswiki.usersettings.UserSettingsTagModel;
-import com.mariapps.qdmswiki.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnTextChanged;
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -51,7 +41,7 @@ public class RecommendedFragment extends BaseFragment {
     @BindView(R.id.noDataRL)
     RelativeLayout noDataRL;
 
-    private RecommendedRecentlyAdapter recommendedRecentlyAdapter;
+    private RecommendedAdapter recommendedAdapter;
     private HomeDatabase homeDatabase;
     private List<DocumentModel> recommendedRecentlyModels = new ArrayList<>();
 
@@ -80,17 +70,19 @@ public class RecommendedFragment extends BaseFragment {
 
         if (recommendedRecentlyModels.size() > 0) {
             noDataRL.setVisibility(View.GONE);
-            recommendedRecentlyAdapter = new RecommendedRecentlyAdapter(getActivity(), recommendedRecentlyModels);
-            rvDocuments.setAdapter(recommendedRecentlyAdapter);
+            recommendedAdapter = new RecommendedAdapter(getActivity(), recommendedRecentlyModels);
+            rvDocuments.setAdapter(recommendedAdapter);
 
-            recommendedRecentlyAdapter.setRowClickListener(new RecommendedRecentlyAdapter.RowClickListener() {
+            recommendedAdapter.setRowClickListener(new RecommendedAdapter.RowClickListener() {
                 @Override
                 public void onItemClicked(DocumentModel documentModel) {
                     Intent intent = new Intent(getActivity(), FolderStructureActivity.class);
                     intent.putExtra(AppConfig.BUNDLE_TYPE,"Document");
-                    intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,documentModel.getDocumentName());
+                    intent.putExtra(AppConfig.BUNDLE_NAME,documentModel.getDocumentName());
+                    intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,documentModel.getCategoryName());
                     intent.putExtra(AppConfig.BUNDLE_ID,documentModel.getId());
                     intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,documentModel.getCategoryId());
+                    intent.putExtra(AppConfig.BUNDLE_VERSION,documentModel.getVersion());
                     startActivity(intent);
 
                 }
@@ -99,8 +91,6 @@ public class RecommendedFragment extends BaseFragment {
         } else {
             noDataRL.setVisibility(View.VISIBLE);
         }
-
-
 
     }
 
@@ -133,6 +123,14 @@ public class RecommendedFragment extends BaseFragment {
     public void updateDocumentList(List<DocumentModel> documentsList) {
         this.recommendedRecentlyModels = documentsList;
         setData();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            getRecommendedList();
+        }
     }
 }
 

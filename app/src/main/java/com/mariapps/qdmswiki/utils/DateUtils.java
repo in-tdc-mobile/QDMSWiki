@@ -2,6 +2,7 @@ package com.mariapps.qdmswiki.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -24,5 +25,13 @@ public class DateUtils {
         }
 
         return  formattedDate;
+    }
+
+    public static String getCurrentDate(){
+        Date c = Calendar.getInstance().getTime();
+        SimpleDateFormat df = new SimpleDateFormat("YYYY-MM-DD HH:MM:SS");
+        String formattedDate = df.format(c);
+
+        return formattedDate;
     }
 }

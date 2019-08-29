@@ -21,7 +21,9 @@ import com.mariapps.qdmswiki.custom.CustomEditText;
 import com.mariapps.qdmswiki.custom.CustomProgressBar;
 import com.mariapps.qdmswiki.custom.CustomViewPager;
 import com.mariapps.qdmswiki.home.adapter.HomeFragmentAdapter;
+import com.mariapps.qdmswiki.home.database.HomeDatabase;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.home.model.RecentlyViewedModel;
 import com.mariapps.qdmswiki.search.view.SearchActivity;
 
 import java.util.ArrayList;
@@ -30,6 +32,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
+import io.reactivex.schedulers.Schedulers;
 
 public class HomeFragment extends BaseFragment {
 
@@ -56,6 +64,9 @@ public class HomeFragment extends BaseFragment {
     private FragmentManager fragmentManager;
     private RecommendedFragment recommendedFragment;
     private RecentlyFragment recentlyFragment;
+    private List<RecentlyViewedModel> recentlyViewedList;
+    private List<DocumentModel> recommendedList = new ArrayList<>();
+    private HomeDatabase homeDatabase;
 
     @Override
     protected void setUpPresenter() {
@@ -70,6 +81,7 @@ public class HomeFragment extends BaseFragment {
 
         ButterKnife.bind(this, view);
         fragmentManager = getFragmentManager();
+        homeDatabase = HomeDatabase.getInstance(getActivity());
 
         searchET.setFocusable(false);
         searchET.clearFocus();
@@ -97,7 +109,7 @@ public class HomeFragment extends BaseFragment {
             homeFragmentAdapter = new HomeFragmentAdapter(getChildFragmentManager());
         }
         recommendedFragment = new RecommendedFragment();
-//        recommendedFragment.setCommentsListener(new CommentsFragment.CommentsListener() {
+//        recommendedFragment.setR(new CommentsFragment.CommentsListener() {
 //            @Override
 //            public void onItemClicked(CommentsAndPublishedRespObj.AlertInfoEntity alertInfoEntity) {
 //                notificationListener.onCommentClicked(alertInfoEntity);
@@ -112,7 +124,7 @@ public class HomeFragment extends BaseFragment {
 //        });
 
         homeFragmentAdapter.addFrag(recommendedFragment, "Recommended");
-        homeFragmentAdapter.addFrag(recentlyFragment, "Recently Added");
+        homeFragmentAdapter.addFrag(recentlyFragment, "Recently Viewed");
         viewPager.setOffscreenPageLimit(1);
         viewPager.setAdapter(homeFragmentAdapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -137,7 +149,8 @@ public class HomeFragment extends BaseFragment {
         recommendedFragment.updateDocumentList(documentList);
     }
 
-    public void updateRecentlyList(List<DocumentModel> documentList) {
-        recentlyFragment.updateRecentlyList(documentList);
+    public void updateRecentlyList(List<RecentlyViewedModel> recentlyViewedList) {
+        recentlyFragment.updateRecentlyList(recentlyViewedList);
     }
+
 }

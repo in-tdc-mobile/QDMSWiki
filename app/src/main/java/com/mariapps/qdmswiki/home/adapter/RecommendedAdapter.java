@@ -11,33 +11,32 @@ import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
-import com.mariapps.qdmswiki.home.model.TagModel;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class RecommendedRecentlyAdapter extends CustomRecyclerView.Adapter<RecommendedRecentlyAdapter.RecommendedRecentlyVH> {
+public class RecommendedAdapter extends CustomRecyclerView.Adapter<RecommendedAdapter.RecommendedRecentlyVH> {
 
     private Context mContext;
     private List<DocumentModel> recommendedRecentlyModelList;
     private RowClickListener rowClickListener;
 
-    public RecommendedRecentlyAdapter(Context context, List<DocumentModel> list) {
+    public RecommendedAdapter(Context context, List<DocumentModel> list) {
         mContext = context;
         recommendedRecentlyModelList = list;
     }
 
     @NonNull
     @Override
-    public RecommendedRecentlyAdapter.RecommendedRecentlyVH onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public RecommendedAdapter.RecommendedRecentlyVH onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.recommended_recently_list_row, viewGroup, false);
-        return new RecommendedRecentlyAdapter.RecommendedRecentlyVH(view);
+        return new RecommendedAdapter.RecommendedRecentlyVH(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final RecommendedRecentlyAdapter.RecommendedRecentlyVH holder, int i) {
+    public void onBindViewHolder(@NonNull final RecommendedAdapter.RecommendedRecentlyVH holder, int i) {
         holder.headingTextTV.setText(recommendedRecentlyModelList.get(i).getDocumentName());
         holder.categoryTV.setText(recommendedRecentlyModelList.get(i).getCategoryName());
         holder.versionTV.setText("V "+recommendedRecentlyModelList.get(i).getVersion());

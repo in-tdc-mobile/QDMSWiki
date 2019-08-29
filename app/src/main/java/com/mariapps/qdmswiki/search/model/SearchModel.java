@@ -12,6 +12,7 @@ public class SearchModel implements Serializable {
     private String type;
     private String categoryId;
     private String categoryName;
+    private String version;
 
     public String getId() {
         return id;
@@ -51,5 +52,13 @@ public class SearchModel implements Serializable {
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 }

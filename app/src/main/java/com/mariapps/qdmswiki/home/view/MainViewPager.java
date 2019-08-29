@@ -10,6 +10,7 @@ import com.mariapps.qdmswiki.articles.view.ArticlesFragment;
 import com.mariapps.qdmswiki.documents.view.DocumentsFragment;
 import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.home.model.RecentlyViewedModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,8 +107,8 @@ public class MainViewPager extends FragmentPagerAdapter {
         homeFragment.updateRecommendedList(documentList);
     }
 
-    public void updateRecentlyList(List<DocumentModel> documentList){
-        homeFragment.updateRecentlyList(documentList);
+    public void updateRecentlyList(List<RecentlyViewedModel> recentlyViewedList){
+        homeFragment.updateRecentlyList(recentlyViewedList);
     }
 
 }

@@ -11,6 +11,7 @@ import com.mariapps.qdmswiki.bookmarks.model.BookmarkModel;
 import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.CategoryModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.home.model.RecentlyViewedModel;
 import com.mariapps.qdmswiki.home.model.TagModel;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
 import com.mariapps.qdmswiki.notification.model.ReceiverModel;
@@ -61,10 +62,14 @@ public interface HomeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertUserInfo(List<UserInfoModel> userInfoModel);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertRecentlyViewedDocument(RecentlyViewedModel recentlyViewedModel);
+
     @Query("SELECT document.Id as id, " +
             " 'Document' as type, " +
             " document.DocumentName as name, " +
             " document.CategoryId as categoryId," +
+            " document.Version as version," +
             " category.CategoryName as categoryName " +
             " FROM DocumentEntity as document " +
             " LEFT JOIN CategoryEntity as category" +
@@ -75,6 +80,7 @@ public interface HomeDao {
             " 'Article' as type, " +
             " article.ArticleName as name, " +
             " article.CategoryIds as categoryId," +
+            " article.Version as version," +
             " 'Article' as categoryName " +
             " FROM ArticleEntity as article " +
             " LEFT JOIN CategoryEntity as category" +
@@ -94,6 +100,7 @@ public interface HomeDao {
             " 'Document' as type, " +
             " document.DocumentName as name, " +
             " document.CategoryId as categoryId," +
+            " document.Version as version," +
             " category.CategoryName as categoryName " +
             " FROM DocumentEntity as document " +
             " LEFT JOIN CategoryEntity as category" +
@@ -103,6 +110,7 @@ public interface HomeDao {
             " 'Article' as type, " +
             " article.ArticleName as name, " +
             " article.CategoryIds as categoryId," +
+            " article.Version as version," +
             " 'Article' as categoryName " +
             " FROM ArticleEntity as article " +
             " LEFT JOIN CategoryEntity as category" +
@@ -113,6 +121,7 @@ public interface HomeDao {
             " 'Document' as type, " +
             " document.DocumentName as name, " +
             " document.CategoryId as categoryId," +
+            " document.Version as version," +
             " category.CategoryName as categoryName " +
             " FROM DocumentEntity as document " +
             " LEFT JOIN CategoryEntity as category" +
@@ -121,6 +130,7 @@ public interface HomeDao {
             " SELECT category.Id as id, " +
             " 'Folder' as type, " +
             " category.CategoryName as name, " +
+            " '' as version, " +
             " category.Id as categoryId," +
             " '' as categoryName " +
             " FROM CategoryEntity as category " +
@@ -154,6 +164,20 @@ public interface HomeDao {
             " WHERE document.isRecommended = 'YES'")
     List<DocumentModel> getRecommendedDocuments();
 
+    @Query("SELECT DISTINCT recentlyViewed.DocumentId, " +
+            " recentlyViewed.DocumentName, " +
+            " recentlyViewed.CategoryId, " +
+            " recentlyViewed.Version, " +
+            " recentlyViewed.CategoryName " +
+            " FROM RecentlyViewedEntity as recentlyViewed "+
+            " GROUP BY recentlyViewed.DocumentId," +
+            "  recentlyViewed.DocumentName, " +
+            "  recentlyViewed.CategoryId," +
+            "  recentlyViewed.Version," +
+            "  recentlyViewed.CategoryName" +
+            " ORDER BY recentlyViewed.ViewedDate DESC")
+    List<RecentlyViewedModel> getRecentlyViewedDocuments();
+
     @Query("SELECT article.Id, " +
             " article.ArticleName, " +
             " article.CategoryIds," +
@@ -178,6 +202,7 @@ public interface HomeDao {
     @Query("SELECT document.Id as id, " +
             " 'Document' as type, " +
             " document.DocumentName as categoryName, " +
+            " document.Version as version, " +
             " document.CategoryId as catId " +
             " FROM DocumentEntity as document " +
             " WHERE document.CategoryId=:parentId" +
@@ -185,6 +210,7 @@ public interface HomeDao {
             " SELECT category.Id as id, " +
             " 'Folder' as type, " +
             " category.CategoryName as categoryName, " +
+            " '' as version, " +
             " category.Id as catId" +
             " FROM CategoryEntity as category" +
             " WHERE category.Parent=:parentId")
@@ -210,6 +236,7 @@ public interface HomeDao {
     @Query("SELECT document.Id as id, " +
             " 'Document' as type, " +
             " document.DocumentName as name, " +
+            " document.Version as version, " +
             " document.CategoryId as categoryId, " +
             " category.CategoryName as categoryName " +
             " FROM DocumentEntity as document " +
@@ -220,6 +247,7 @@ public interface HomeDao {
             " SELECT article.Id as id, " +
             " 'Article' as type, " +
             " article.ArticleName as name, " +
+            " article.Version as version, " +
             " article.CategoryIds as categoryId, " +
             " 'Article' as categoryName "+
             " FROM ArticleEntity as article " +
@@ -229,6 +257,7 @@ public interface HomeDao {
     @Query("SELECT document.Id as id, " +
             " 'Document' as type, " +
             " document.DocumentName as name, " +
+            " document.Version as version, " +
             " document.CategoryId as categoryId, " +
             " category.CategoryName as categoryName "+
             " FROM DocumentEntity as document " +
@@ -239,6 +268,7 @@ public interface HomeDao {
             " SELECT category.Id as id, " +
             " 'Folder' as type, " +
             " category.CategoryName as name, " +
+            " '' as version, " +
             " category.Id as categoryId, " +
             " '' as categoryName "+
             " FROM CategoryEntity as category" +
@@ -248,6 +278,7 @@ public interface HomeDao {
     @Query("SELECT document.Id as id, " +
             " 'Document' as type, " +
             " document.DocumentName as name, " +
+            " document.Version as version, " +
             " document.CategoryId as categoryId, " +
             " category.CategoryName as categoryName "+
             " FROM DocumentEntity as document " +
@@ -259,6 +290,7 @@ public interface HomeDao {
     @Query("SELECT article.Id as id, " +
             " 'Article' as type, " +
             " article.ArticleName as name, " +
+            " article.Version as version, " +
             " article.CategoryIds as categoryId, " +
             " 'Article' as categoryName "+
             " FROM ArticleEntity as article " +
@@ -277,6 +309,7 @@ public interface HomeDao {
     @Query("SELECT article.Id as id, " +
             " 'Article' as type, " +
             " article.ArticleName as name, " +
+            " article.Version as version, " +
             " article.CategoryIds as categoryId, " +
             " 'Article' as categoryName "+
             " FROM ArticleEntity as article " +
@@ -285,6 +318,7 @@ public interface HomeDao {
             " SELECT category.Id as id, " +
             " 'Folder' as type, " +
             " category.CategoryName as name, " +
+            " '' as version, " +
             " category.Id as categoryId, " +
             " '' as categoryName "+
             " FROM CategoryEntity as category" +
@@ -294,6 +328,7 @@ public interface HomeDao {
     @Query("SELECT document.Id as id, " +
             " 'Document' as type, " +
             " document.DocumentName as name, " +
+            " document.Version as version, " +
             " document.CategoryId as categoryId, " +
             " category.CategoryName as categoryName "+
             " FROM DocumentEntity as document " +
@@ -304,6 +339,7 @@ public interface HomeDao {
             " SELECT article.Id as id, " +
             " 'Article' as type, " +
             " article.ArticleName as name, " +
+            " article.Version as version, " +
             " article.CategoryIds as categoryId, " +
             " 'Article'as categoryName "+
             " FROM ArticleEntity as article " +
@@ -312,6 +348,7 @@ public interface HomeDao {
             " SELECT category.Id as id, " +
             " 'Folder' as type, " +
             " category.CategoryName as name, " +
+            " '' as version, " +
             " category.Id as categoryId, " +
             " ''as categoryName "+
             " FROM CategoryEntity as category" +
@@ -321,6 +358,7 @@ public interface HomeDao {
     @Query("SELECT article.Id as id, " +
             " 'Article' as type, " +
             " article.ArticleName as name, " +
+            " article.Version as version, " +
             " article.CategoryIds as categoryId," +
             " 'Article' as categoryName " +
             " FROM ArticleEntity as article " +
@@ -330,6 +368,7 @@ public interface HomeDao {
             " SELECT category.Id as id, " +
             " 'Folder' as type, " +
             " category.CategoryName as name, " +
+            " '' as version, " +
             " category.Id as categoryId," +
             " '' as categoryName " +
             " FROM CategoryEntity as category "+
@@ -339,6 +378,7 @@ public interface HomeDao {
     @Query("SELECT document.Id as id, " +
             " 'Document' as type, " +
             " document.DocumentName as name, " +
+            " document.Version as version, " +
             " document.CategoryId as categoryId," +
             " category.CategoryName as categoryName " +
             " FROM DocumentEntity as document " +
@@ -348,6 +388,7 @@ public interface HomeDao {
             " SELECT article.Id as id, " +
             " 'Article' as type, " +
             " article.ArticleName as name, " +
+            " article.Version as version, " +
             " article.CategoryIds as categoryId," +
             " 'Article' as categoryName " +
             " FROM ArticleEntity as article " +
@@ -357,6 +398,7 @@ public interface HomeDao {
             " SELECT category.Id as id, " +
             " 'Folder' as type, " +
             " '' as name, " +
+            " '' as version, " +
             " category.Id as categoryId," +
             " '' as categoryName " +
             " FROM CategoryEntity as category "+

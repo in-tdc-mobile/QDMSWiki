@@ -43,9 +43,11 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
     private HomePresenter homePresenter;
     private BreadCrumbAdapter breadCrumbAdapter;
     private String type = "Document";
+    private String name = "";
     private String folderName = "";
     private String id;
     private String categoryId;
+    private String version;
     List<BreadCrumbItem> breadCrumbItems = new ArrayList<>();
     List<BreadCrumbItem> allParents = new ArrayList<>();
 
@@ -56,10 +58,12 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
 
         if (getIntent() != null && getIntent().getExtras() != null) {
             type = getIntent().getExtras().getString(AppConfig.BUNDLE_TYPE);
+            name = getIntent().getExtras().getString(AppConfig.BUNDLE_NAME);
             folderName = getIntent().getExtras().getString(AppConfig.BUNDLE_FOLDER_NAME);
             id = getIntent().getExtras().getString(AppConfig.BUNDLE_ID);
             categoryId = getIntent().getExtras().getString(AppConfig.BUNDLE_FOLDER_ID);
-            headingTV.setText(folderName);
+            version = getIntent().getExtras().getString(AppConfig.BUNDLE_VERSION);
+            headingTV.setText(name);
         }
 
         if (type.equals("Document") || type.equals("Article")) {
@@ -67,7 +71,10 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
             DocumentViewFragment documentViewFragment = new DocumentViewFragment();
             Bundle args = new Bundle();
             args.putString(AppConfig.BUNDLE_ID, id);
+            args.putString(AppConfig.BUNDLE_NAME, name);
+            args.putString(AppConfig.BUNDLE_FOLDER_ID, categoryId);
             args.putString(AppConfig.BUNDLE_FOLDER_NAME, folderName);
+            args.putString(AppConfig.BUNDLE_VERSION, version);
             documentViewFragment.setArguments(args);
             ft.replace(R.id.frameLayout, documentViewFragment);
             ft.commit();
@@ -82,7 +89,7 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
             ft.addToBackStack(null);
             ft.add(R.id.frameLayout, folderFragment);
             ft.commit();
-            initBreadCrumb(folderName, id);
+            initBreadCrumb(name, id);
         }
 
     }
@@ -276,3 +283,4 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
     }
 
 }
+

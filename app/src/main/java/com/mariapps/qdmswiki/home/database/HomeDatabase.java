@@ -10,6 +10,7 @@ import com.mariapps.qdmswiki.bookmarks.model.BookmarkModel;
 import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.CategoryModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.home.model.RecentlyViewedModel;
 import com.mariapps.qdmswiki.home.model.TagModel;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
 import com.mariapps.qdmswiki.notification.model.ReceiverModel;
@@ -20,7 +21,7 @@ import com.mariapps.qdmswiki.usersettings.UserSettingsTagModel;
 
 @Database(entities = {DocumentModel.class, ArticleModel.class, CategoryModel.class, TagModel.class, NotificationModel.class,
         ReceiverModel.class, BookmarkModel.class, BookmarkEntryModel.class, UserSettingsModel.class,
-        UserSettingsTagModel.class, UserSettingsCategoryModel.class, UserInfoModel.class}, version = 1,exportSchema = false)
+        UserSettingsTagModel.class, UserSettingsCategoryModel.class, UserInfoModel.class, RecentlyViewedModel.class}, version = 1,exportSchema = false)
 public abstract class HomeDatabase extends RoomDatabase {
 
     private static volatile HomeDatabase INSTANCE;

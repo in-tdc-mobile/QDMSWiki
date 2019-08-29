@@ -8,9 +8,11 @@ public class AppConfig {
     //Bundles
     public static final String BUNDLE_NAV_DRAWER = "bundlenavdrawer";
     public static final String BUNDLE_TYPE = "type";
-    public static final String BUNDLE_FOLDER_NAME= "foldername";
     public static final String BUNDLE_ID= "id";
+    public static final String BUNDLE_NAME= "name";
+    public static final String BUNDLE_FOLDER_NAME= "foldername";
     public static final String BUNDLE_FOLDER_ID= "folderid";
+    public static final String BUNDLE_VERSION = "version";
     public static final String BUNDLE_NAV_DETAILS_OBJECT = "bundlenavdetailsobject";
     public static final String BUNDLE_NAV_DETAILS_LIST = "bundlenavdetailslist";
 
@@ -20,3 +22,4 @@ public class AppConfig {
     public static final String FRAG_NAV_DETAILS_DRAWER = "fragmentnavdetailsdrawer";
 
 }
+

@@ -407,6 +407,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
                         {
                             Intent intent = new Intent(HomeActivity.this, FolderStructureActivity.class);
                             intent.putExtra(AppConfig.BUNDLE_TYPE,documentModel.getType());
+                            intent.putExtra(AppConfig.BUNDLE_NAME,documentModel.getCategoryName());
                             intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,documentModel.getCategoryName());
                             intent.putExtra(AppConfig.BUNDLE_ID,documentModel.getId());
                             intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,documentModel.getCatId());
@@ -431,8 +432,8 @@ public class HomeActivity extends BaseActivity implements HomeView{
         File file=new File(Environment.getExternalStorageDirectory(),"/QDMSWiki/Import");
         if(file.exists())
         {
-         return;
-         //ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
+        return;
+        // ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
          //readAndInsertJsonData.execute();
         }
          else {
@@ -731,7 +732,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
             mainViewPager.updateDocumentList(documentList);
             mainViewPager.updateArticleList(articleList);
             mainViewPager.updateRecommendedList(recommendedList);
-            mainViewPager.updateRecentlyList(documentList);
+            mainViewPager.updateRecentlyList(new ArrayList<>());
             progressDialog.dismiss();
         }
 
