@@ -78,6 +78,8 @@ public class DocumentModel implements Parcelable {
     @SerializedName("isRecommended")
     private String isRecommended;
 
+    @SerializedName("catId")
+    private String catId;
 
     public DocumentModel(String id, String categoryId, String documentCode, String documentName, String documentData, String version,List<TagModel> tags) {
         this.id = id;
@@ -235,6 +237,14 @@ public class DocumentModel implements Parcelable {
         this.isRecommended = isRecommended;
     }
 
+    public String getCatId() {
+        return catId;
+    }
+
+    public void setCatId(String catId) {
+        this.catId = catId;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -261,6 +271,7 @@ public class DocumentModel implements Parcelable {
         type = in.readString();
         folderid = in.readString();
         isRecommended = in.readString();
+        catId = in.readString();
     }
 
     @Override
@@ -286,6 +297,7 @@ public class DocumentModel implements Parcelable {
         dest.writeString(type);
         dest.writeString(folderid);
         dest.writeString(isRecommended);
+        dest.writeString(catId);
     }
 
     public static final Creator<DocumentModel> CREATOR = new Creator<DocumentModel>() {

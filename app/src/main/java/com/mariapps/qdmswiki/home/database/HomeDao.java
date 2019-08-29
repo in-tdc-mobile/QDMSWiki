@@ -75,7 +75,7 @@ public interface HomeDao {
             " 'Article' as type, " +
             " article.ArticleName as name, " +
             " article.CategoryIds as categoryId," +
-            " category.CategoryName as categoryName " +
+            " 'Article' as categoryName " +
             " FROM ArticleEntity as article " +
             " LEFT JOIN CategoryEntity as category" +
             " ON category.Id = article.CategoryIds")
@@ -86,7 +86,8 @@ public interface HomeDao {
             " category.CategoryName as name, " +
             " category.Id as categoryId," +
             " '' as categoryName " +
-            " FROM CategoryEntity as category")
+            " FROM CategoryEntity as category "+
+            " WHERE category.CategoryName != 'Entire QDMS'")
     List<SearchModel> getAllCategories();
 
     @Query("SELECT document.Id as id, " +
@@ -102,7 +103,7 @@ public interface HomeDao {
             " 'Article' as type, " +
             " article.ArticleName as name, " +
             " article.CategoryIds as categoryId," +
-            " category.CategoryName as categoryName " +
+            " 'Article' as categoryName " +
             " FROM ArticleEntity as article " +
             " LEFT JOIN CategoryEntity as category" +
             " ON category.Id = article.CategoryIds")
@@ -122,7 +123,8 @@ public interface HomeDao {
             " category.CategoryName as name, " +
             " category.Id as categoryId," +
             " '' as categoryName " +
-            " FROM CategoryEntity as category")
+            " FROM CategoryEntity as category " +
+            " WHERE category.CategoryName != 'Entire QDMS'")
     List<SearchModel> getAllDocumentsAndFolders();
 
     @Query("SELECT document.Id, " +
@@ -175,43 +177,18 @@ public interface HomeDao {
 
     @Query("SELECT document.Id as id, " +
             " 'Document' as type, " +
-            " document.DocumentName, " +
-            " document.CategoryId," +
-            " category.CategoryName as categoryName " +
+            " document.DocumentName as categoryName, " +
+            " document.CategoryId as catId " +
             " FROM DocumentEntity as document " +
-            " INNER JOIN CategoryEntity as category" +
-            " ON category.Id = document.CategoryId"+
-            " WHERE category.Parent=:parentId" +
+            " WHERE document.CategoryId=:parentId" +
             " UNION "+
             " SELECT category.Id as id, " +
             " 'Folder' as type, " +
-            " category.CategoryName as DocumentName, " +
-            " category.Id as CategoryId," +
-            " category.CategoryName as categoryName " +
+            " category.CategoryName as categoryName, " +
+            " category.Id as catId" +
             " FROM CategoryEntity as category" +
             " WHERE category.Parent=:parentId")
     List<DocumentModel> getChildFoldersList(String parentId);
-
-    @Query("SELECT category.Id as id, " +
-            " category.CategoryName as name, " +
-            " 'Folder' as type " +
-            " FROM CategoryEntity as category " +
-            " WHERE category.Parent =:parentId" +
-            " UNION "+
-            " SELECT document.Id as id, " +
-            " document.DocumentName as name, " +
-            " 'Document' as type " +
-            " FROM DocumentEntity as document " +
-            " WHERE document.CategoryId =:parentId"+
-            " UNION "+
-            " SELECT article.Id as id, " +
-            " article.ArticleName as name, " +
-            " 'Article' as type " +
-            " FROM ArticleEntity as article "+
-            " LEFT JOIN CategoryEntity as category "+
-            " ON :parentId IN (article.CategoryIds)")
-    List<SearchModel> getChildList(String parentId);
-
 
     @Query("SELECT document.Id, " +
             " document.DocumentName, " +
@@ -233,39 +210,37 @@ public interface HomeDao {
     @Query("SELECT document.Id as id, " +
             " 'Document' as type, " +
             " document.DocumentName as name, " +
-            " document.CategoryId as categoryId," +
+            " document.CategoryId as categoryId, " +
             " category.CategoryName as categoryName " +
             " FROM DocumentEntity as document " +
-            " INNER JOIN CategoryEntity as category" +
-            " ON category.Id = document.CategoryId"+
-            " WHERE category.Parent=:folderId " +
+            " INNER JOIN CategoryEntity as category "+
+            " ON document.CategoryId = category.Id "+
+            " AND document.CategoryId=:folderId " +
             " UNION "+
             " SELECT article.Id as id, " +
             " 'Article' as type, " +
             " article.ArticleName as name, " +
-            " article.CategoryIds as categoryId," +
-            " category.CategoryName as categoryName " +
+            " article.CategoryIds as categoryId, " +
+            " 'Article' as categoryName "+
             " FROM ArticleEntity as article " +
-            " INNER JOIN CategoryEntity as category" +
-            " ON category.Id = article.CategoryIds"+
-            " WHERE category.Parent=:folderId")
+            " WHERE article.categoryIds =:folderId")
     List<SearchModel> getAllDocumentsAndArticlesInsideFolder(String folderId);
 
     @Query("SELECT document.Id as id, " +
             " 'Document' as type, " +
             " document.DocumentName as name, " +
-            " document.CategoryId as categoryId," +
-            " category.CategoryName as categoryName " +
+            " document.CategoryId as categoryId, " +
+            " category.CategoryName as categoryName "+
             " FROM DocumentEntity as document " +
-            " INNER JOIN CategoryEntity as category" +
-            " ON category.Id = document.CategoryId"+
-            " WHERE category.Parent=:folderId" +
+            " INNER JOIN CategoryEntity as category "+
+            " ON document.CategoryId = category.Id "+
+            " AND document.CategoryId=:folderId " +
             " UNION "+
             " SELECT category.Id as id, " +
             " 'Folder' as type, " +
             " category.CategoryName as name, " +
-            " category.Id as categoryId," +
-            " '' as categoryName " +
+            " category.Id as categoryId, " +
+            " '' as categoryName "+
             " FROM CategoryEntity as category" +
             " WHERE category.Parent=:folderId")
     List<SearchModel> getAllDocumentsAndFoldersInsideFolder(String folderId);
@@ -273,23 +248,21 @@ public interface HomeDao {
     @Query("SELECT document.Id as id, " +
             " 'Document' as type, " +
             " document.DocumentName as name, " +
-            " document.CategoryId as categoryId," +
-            " category.CategoryName as categoryName " +
+            " document.CategoryId as categoryId, " +
+            " category.CategoryName as categoryName "+
             " FROM DocumentEntity as document " +
-            " INNER JOIN CategoryEntity as category" +
-            " ON category.Id = document.CategoryId"+
-            " WHERE category.Parent=:folderId")
+            " INNER JOIN CategoryEntity as category "+
+            " ON document.CategoryId = category.Id "+
+            " AND document.CategoryId=:folderId ")
     List<SearchModel> getAllDocumentsInsideFolder(String folderId);
 
     @Query("SELECT article.Id as id, " +
             " 'Article' as type, " +
             " article.ArticleName as name, " +
-            " article.CategoryIds as categoryId," +
-            " category.CategoryName as categoryName " +
+            " article.CategoryIds as categoryId, " +
+            " 'Article' as categoryName "+
             " FROM ArticleEntity as article " +
-            " INNER JOIN CategoryEntity as category" +
-            " ON category.Id = article.CategoryIds"+
-            " WHERE category.Parent=:folderId")
+            " WHERE article.categoryIds=:folderId")
     List<SearchModel> getAllArticlesInsideFolder(String folderId);
 
     @Query("SELECT category.Id as id, " +
@@ -304,18 +277,16 @@ public interface HomeDao {
     @Query("SELECT article.Id as id, " +
             " 'Article' as type, " +
             " article.ArticleName as name, " +
-            " article.CategoryIds as categoryId," +
-            " category.CategoryName as categoryName " +
+            " article.CategoryIds as categoryId, " +
+            " 'Article' as categoryName "+
             " FROM ArticleEntity as article " +
-            " INNER JOIN CategoryEntity as category" +
-            " ON category.Id = article.CategoryIds"+
-            " WHERE category.Parent=:folderId " +
+            " WHERE article.categoryIds=:folderId " +
             " UNION "+
             " SELECT category.Id as id, " +
             " 'Folder' as type, " +
             " category.CategoryName as name, " +
-            " category.Id as categoryId," +
-            " '' as categoryName " +
+            " category.Id as categoryId, " +
+            " '' as categoryName "+
             " FROM CategoryEntity as category" +
             " WHERE category.Parent=:folderId")
     List<SearchModel> getAllArticlesAndFoldersInsideFolder(String folderId);
@@ -323,28 +294,26 @@ public interface HomeDao {
     @Query("SELECT document.Id as id, " +
             " 'Document' as type, " +
             " document.DocumentName as name, " +
-            " document.CategoryId as categoryId," +
-            " category.CategoryName as categoryName " +
+            " document.CategoryId as categoryId, " +
+            " category.CategoryName as categoryName "+
             " FROM DocumentEntity as document " +
-            " INNER JOIN CategoryEntity as category" +
-            " ON category.Id = document.CategoryId"+
-            " WHERE category.Parent=:folderId " +
+            " INNER JOIN CategoryEntity as category "+
+            " ON document.CategoryId = category.Id "+
+            " AND document.CategoryId=:folderId " +
             " UNION "+
             " SELECT article.Id as id, " +
             " 'Article' as type, " +
             " article.ArticleName as name, " +
-            " article.CategoryIds as categoryId," +
-            " category.CategoryName as categoryName " +
+            " article.CategoryIds as categoryId, " +
+            " 'Article'as categoryName "+
             " FROM ArticleEntity as article " +
-            " INNER JOIN CategoryEntity as category" +
-            " ON category.Id = article.CategoryIds"+
-            " WHERE category.Parent=:folderId " +
+            " WHERE article.categoryIds=:folderId " +
             " UNION "+
             " SELECT category.Id as id, " +
             " 'Folder' as type, " +
             " category.CategoryName as name, " +
-            " category.Id as categoryId," +
-            " '' as categoryName " +
+            " category.Id as categoryId, " +
+            " ''as categoryName "+
             " FROM CategoryEntity as category" +
             " WHERE category.Parent=:folderId")
     List<SearchModel> getAllDocumentsArticlesAndFoldersInsideFolder(String folderId);
@@ -353,9 +322,9 @@ public interface HomeDao {
             " 'Article' as type, " +
             " article.ArticleName as name, " +
             " article.CategoryIds as categoryId," +
-            " category.CategoryName as categoryName " +
+            " 'Article' as categoryName " +
             " FROM ArticleEntity as article " +
-            " LEFT JOIN CategoryEntity as category" +
+            " LEFT JOIN CategoryEntity as category"+
             " ON category.Id = article.CategoryIds"+
             " UNION "+
             " SELECT category.Id as id, " +
@@ -363,7 +332,8 @@ public interface HomeDao {
             " category.CategoryName as name, " +
             " category.Id as categoryId," +
             " '' as categoryName " +
-            " FROM CategoryEntity as category")
+            " FROM CategoryEntity as category "+
+            " WHERE category.CategoryName != 'Entire QDMS'")
     List<SearchModel> getAllArticlesAndFolders();
 
     @Query("SELECT document.Id as id, " +
@@ -379,7 +349,7 @@ public interface HomeDao {
             " 'Article' as type, " +
             " article.ArticleName as name, " +
             " article.CategoryIds as categoryId," +
-            " category.CategoryName as categoryName " +
+            " 'Article' as categoryName " +
             " FROM ArticleEntity as article " +
             " LEFT JOIN CategoryEntity as category" +
             " ON category.Id = article.CategoryIds"+
@@ -389,7 +359,8 @@ public interface HomeDao {
             " '' as name, " +
             " category.Id as categoryId," +
             " '' as categoryName " +
-            " FROM CategoryEntity as category")
+            " FROM CategoryEntity as category "+
+            " WHERE category.CategoryName != 'Entire QDMS'")
     List<SearchModel> getAllDocumentsArticlesAndFolders();
 
     @Query("SELECT user.Id, " +
@@ -413,8 +384,8 @@ public interface HomeDao {
     @Query("SELECT CategoryName FROM CategoryEntity WHERE Id =:id")
     String getCategoryName(String id);
 
-    @Query( " SELECT * FROM CategoryEntity WHERE Parent=:parentId OR Id=:parentId")
-    CategoryModel getCategoryDetails(String parentId);
+    @Query( " SELECT * FROM CategoryEntity WHERE Id=:parentId AND CategoryName != 'Entire QDMS'")
+    CategoryModel getCategoryDetailsOfSelectedDocument(String parentId);
 
     @Query("SELECT * FROM TagEntity")
     List<TagModel> getTags();

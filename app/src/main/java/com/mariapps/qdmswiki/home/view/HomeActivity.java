@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -38,6 +39,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -400,14 +402,14 @@ public class HomeActivity extends BaseActivity implements HomeView{
                     public void onItemClicked(DocumentModel docModel) {
                         documentModel = docModel;
                         if(documentModel.getType().equals("Folder"))
-                            homePresenter.getChildFoldersList(documentModel.getFolderid());
+                            homePresenter.getChildFoldersList(documentModel.getCatId());
                         else
                         {
                             Intent intent = new Intent(HomeActivity.this, FolderStructureActivity.class);
                             intent.putExtra(AppConfig.BUNDLE_TYPE,documentModel.getType());
                             intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,documentModel.getCategoryName());
                             intent.putExtra(AppConfig.BUNDLE_ID,documentModel.getId());
-                            intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,documentModel.getCategoryId());
+                            intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,documentModel.getCatId());
                             startActivity(intent);
                         }
                     }
@@ -429,9 +431,9 @@ public class HomeActivity extends BaseActivity implements HomeView{
         File file=new File(Environment.getExternalStorageDirectory(),"/QDMSWiki/Import");
         if(file.exists())
         {
-          return;
-          //ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
-          //readAndInsertJsonData.execute();
+         return;
+         //ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
+         //readAndInsertJsonData.execute();
         }
          else {
             progressDialog.setMessage("Downloading files...");
@@ -446,11 +448,45 @@ public class HomeActivity extends BaseActivity implements HomeView{
                     .setRequiresCharging(false)// Set if charging is required to begin the download
                     .setAllowedOverMetered(true)// Set if download is allowed on Mobile network
                     .setMimeType("application/zip")
-                    .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE)
                     .setAllowedOverRoaming(true);// Set if download is allowed on roaming network
 
             DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
             downloadID = downloadManager.enqueue(request);// enqueue puts the download request in the queue.
+
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    boolean downloading = true;
+
+                    while (downloading) {
+
+                        DownloadManager.Query q = new DownloadManager.Query();
+                        q.setFilterById(downloadID);
+
+                        Cursor cursor = downloadManager.query(q);
+                        cursor.moveToFirst();
+                        int bytes_downloaded = cursor.getInt(cursor
+                                .getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
+                        int bytes_total = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
+
+                        if (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL) {
+                            downloading = false;
+                        }
+
+                        final double dl_progress = (bytes_downloaded / bytes_total) * 100;
+
+                        runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                arc_progress.setProgress((int) dl_progress);
+                            }
+                        });
+                        cursor.close();
+                    }
+                }
+            }).start();
      }
 
     }

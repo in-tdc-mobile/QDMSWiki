@@ -54,8 +54,10 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
         if(fromPage.equals("Folder"))
             holder.openIV.setVisibility(View.GONE);
 
-        if(searchModel.getType().equals("Folder"))
-            holder.typeIV.setImageDrawable(ResourcesCompat.getDrawable(mContext.getResources(),R.drawable.ic_folder_inactive,null));
+        if(searchModel.getType().equals("Folder")) {
+            holder.typeIV.setImageDrawable(ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.ic_folder_inactive, null));
+            holder.descriptionTV.setVisibility(View.GONE);
+        }
         else if(searchModel.getType().equals("Document"))
             holder.typeIV.setImageDrawable(ResourcesCompat.getDrawable(mContext.getResources(),R.drawable.ic_document_inactive,null));
         else if(searchModel.getType().equals("Article"))

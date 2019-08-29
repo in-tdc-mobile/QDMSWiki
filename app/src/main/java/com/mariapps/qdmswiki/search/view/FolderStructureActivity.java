@@ -87,8 +87,8 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
 
     }
 
-    public void getBreadCrumbDetails(String id) {
-        homePresenter.getCategoryDetails(id);
+    public void getBreadCrumbDetails(String categoryId) {
+        homePresenter.getCategoryDetailsOfSelectedDocument(categoryId);
     }
 
 
@@ -105,10 +105,9 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
                 FolderFragment folderFragment = new FolderFragment();
                 Bundle args = new Bundle();
                 args.putString(AppConfig.BUNDLE_FOLDER_ID, breadCrumbItem.getId());
+                args.putString(AppConfig.BUNDLE_FOLDER_NAME, breadCrumbItem.getHeading());
                 folderFragment.setArguments(args);
-                ft.addToBackStack(null);
-                ft.replace(R.id.frameLayout, folderFragment);
-                ft.commit();
+                replaceFragments(folderFragment,breadCrumbItem.getId(),breadCrumbItem.getHeading());
             }
         });
 
@@ -124,6 +123,13 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
             @Override
             public void onClick(int count, BreadCrumbItem breadCrumbItem) {
                 popUptoPosition(count);
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                FolderFragment folderFragment = new FolderFragment();
+                Bundle args = new Bundle();
+                args.putString(AppConfig.BUNDLE_FOLDER_ID, breadCrumbItem.getId());
+                args.putString(AppConfig.BUNDLE_FOLDER_NAME, breadCrumbItem.getHeading());
+                folderFragment.setArguments(args);
+                replaceFragments(folderFragment,breadCrumbItem.getId(),breadCrumbItem.getHeading());
             }
         });
 
@@ -248,7 +254,7 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
         }
         else {
             allParents.add(new BreadCrumbItem(categoryModel.getName(), categoryModel.getId()));
-            homePresenter.getCategoryDetails(categoryModel.getParent());
+            homePresenter.getCategoryDetailsOfSelectedDocument(categoryModel.getParent());
         }
 
 

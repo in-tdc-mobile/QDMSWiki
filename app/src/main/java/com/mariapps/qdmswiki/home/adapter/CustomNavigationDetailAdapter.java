@@ -44,13 +44,16 @@ public class CustomNavigationDetailAdapter extends RecyclerView.Adapter<CustomNa
         if (customNavigationDetailVH1.getAdapterPosition() < navigationItems.size()) {
             final DocumentModel documentModel = navigationItems.get(customNavigationDetailVH1.getAdapterPosition());
             if (documentModel != null) {
-                customNavigationDetailVH1.drawerItemName.setText(documentModel.getDocumentName());
+                customNavigationDetailVH1.drawerItemName.setText(documentModel.getCategoryName());
                 if(documentModel.getType().equals("Folder")) {
                     customNavigationDetailVH1.drawerIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_menu_folder));
+                    customNavigationDetailVH1.arrowIV.setVisibility(View.VISIBLE);
                     customNavigationDetailVH1.arrowIV.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_inactive));
                 }
-                else
+                else {
                     customNavigationDetailVH1.drawerIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_document_active));
+                    customNavigationDetailVH1.arrowIV.setVisibility(View.GONE);
+                }
             }
             customNavigationDetailVH1.itemLayout.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -805,11 +805,11 @@ public class HomePresenter {
         });
     }
 
-    public void getCategoryDetails(String categoryId) {
+    public void getCategoryDetailsOfSelectedDocument(String categoryId) {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-                categoryModel = homeDatabase.homeDao().getCategoryDetails(categoryId);
+                categoryModel = homeDatabase.homeDao().getCategoryDetailsOfSelectedDocument(categoryId);
 
             }
         }).observeOn(AndroidSchedulers.mainThread())
