@@ -433,8 +433,8 @@ public class HomeActivity extends BaseActivity implements HomeView{
         if(file.exists())
         {
         return;
-        // ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
-         //readAndInsertJsonData.execute();
+        //ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
+        //readAndInsertJsonData.execute();
         }
          else {
             progressDialog.setMessage("Downloading files...");
@@ -589,6 +589,16 @@ public class HomeActivity extends BaseActivity implements HomeView{
 
     @Override
     public void onInsertCategoryDetailsError() {
+
+    }
+
+    @Override
+    public void onGetDocumentInfoSuccess(DocumentModel documentModel) {
+
+    }
+
+    @Override
+    public void onGetDocumentInfoError() {
 
     }
 

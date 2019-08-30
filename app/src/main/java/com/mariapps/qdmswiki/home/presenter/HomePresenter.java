@@ -43,7 +43,7 @@ public class HomePresenter {
     List<DocumentModel> folderList = new ArrayList<>();
     UserInfoModel userInfoModel;
     CategoryModel categoryModel;
-    ArticleModel articleModel;
+    DocumentModel documentModel;
 
     public HomePresenter(Context context, HomeView homeView) {
         this.homeView = homeView;
@@ -806,11 +806,11 @@ public class HomePresenter {
         });
     }
 
-    public void getCategoryDetailsOfSelectedDocument(String categoryId) {
+    public void getCategoryDetailsOfSelectedDocument(String folderId) {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-                categoryModel = homeDatabase.homeDao().getCategoryDetailsOfSelectedDocument(categoryId);
+                categoryModel = homeDatabase.homeDao().getCategoryDetailsOfSelectedDocument(folderId);
 
             }
         }).observeOn(AndroidSchedulers.mainThread())
@@ -850,6 +850,33 @@ public class HomePresenter {
             @Override
             public void onComplete() {
 
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void getDocumentInfo(String documentId) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                documentModel = homeDatabase.homeDao().getDocumentInfo(documentId);
+
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                homeView.onGetDocumentInfoSuccess(documentModel);
             }
 
 

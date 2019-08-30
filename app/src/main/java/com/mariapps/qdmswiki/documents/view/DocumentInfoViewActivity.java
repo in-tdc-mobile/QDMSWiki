@@ -19,16 +19,26 @@ import com.mariapps.qdmswiki.documents.adapter.TagsAdapter;
 import com.mariapps.qdmswiki.documents.adapter.UserAdapter;
 import com.mariapps.qdmswiki.documents.model.DocumentInfoModel;
 import com.mariapps.qdmswiki.documents.model.UserModel;
+import com.mariapps.qdmswiki.home.model.CategoryModel;
+import com.mariapps.qdmswiki.home.model.DocumentModel;
 import com.mariapps.qdmswiki.home.model.TagModel;
+import com.mariapps.qdmswiki.home.presenter.HomePresenter;
 import com.mariapps.qdmswiki.home.view.HomeActivity;
+import com.mariapps.qdmswiki.home.view.HomeView;
+import com.mariapps.qdmswiki.search.model.BreadCrumbItem;
+import com.mariapps.qdmswiki.serviceclasses.APIException;
+import com.mariapps.qdmswiki.usersettings.UserInfoModel;
+import com.mariapps.qdmswiki.utils.DateUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class DocumentInfoViewActivity extends BaseActivity {
+public class DocumentInfoViewActivity extends BaseActivity implements HomeView {
 
     @BindView(R.id.headingTV)
     CustomTextView headingTV;
@@ -63,15 +73,18 @@ public class DocumentInfoViewActivity extends BaseActivity {
     @BindView(R.id.arrowIV)
     AppCompatImageView arrowIV;
 
-    private DocumentInfoModel documentInfoModel;
-    private ArrayList<TagModel> tagList = new ArrayList<>();
+    private HomePresenter homePresenter;
+    private List<TagModel> tagList = new ArrayList<>();
     private ArrayList<UserModel> usersList = new ArrayList<>();
     private String folderName;
-    private Integer id;
+    private String id;
+    private String folderId;
+    private String location;
+    List<String> allParents = new ArrayList<>();
 
     @Override
     protected void setUpPresenter() {
-
+        homePresenter = new HomePresenter(this, this);
     }
 
     @Override
@@ -87,7 +100,8 @@ public class DocumentInfoViewActivity extends BaseActivity {
 
         try{
             Bundle bundle = getIntent().getExtras();
-            id = bundle.getInt(AppConfig.BUNDLE_ID);
+            id = bundle.getString(AppConfig.BUNDLE_ID);
+            folderId = bundle.getString(AppConfig.BUNDLE_FOLDER_ID);
             folderName = bundle.getString(AppConfig.BUNDLE_FOLDER_NAME);
         }
         catch (Exception e){}
@@ -101,9 +115,9 @@ public class DocumentInfoViewActivity extends BaseActivity {
         headingTV.setText(getResources().getString(R.string.string_document_details));
         nameTV.setText(folderName);
 
-        setTagList();
-        setUserList();
-        setDocumentDetails();
+        getLocationDetails(folderId);
+        //setUserList();
+
     }
 
     private void setTagList() {
@@ -128,27 +142,10 @@ public class DocumentInfoViewActivity extends BaseActivity {
     }
 
     private void setDocumentDetails() {
-        titleTV.setText("Document Details");
-        documentInfoModel = new DocumentInfoModel(1, "40","20",
-                "/DataProtection/GDPR Manual","25/02/2019 11:08:35 AM",
-                "Director LPSQ", "All vessels",tagList,"25",usersList,false);
-
-        documentNumberTV.setText(documentInfoModel.getDocumentNumber());
-        documentVersionTV.setText(documentInfoModel.getDocumentVersion());
-        locationTV.setText(documentInfoModel.getLocation());
-        publishedOnTV.setText(documentInfoModel.getPublishedOn());
-        approvedByTV.setText(documentInfoModel.getApprovedBy());
-        sitesTV.setText(documentInfoModel.getSites());
-        documentNumberTV.setText(documentInfoModel.getDocumentNumber());
-        documentNumberTV.setText(documentInfoModel.getDocumentNumber());
-        documentNumberTV.setText(documentInfoModel.getDocumentNumber());
-
-        TagsAdapter tagsAdapter = new TagsAdapter(this,tagList);
-        tagsRV.setAdapter(tagsAdapter);
+        homePresenter.getDocumentInfo(id);
 
         UserAdapter userAdapter = new UserAdapter(this,usersList);
         usersRV.setAdapter(userAdapter);
-
     }
 
     @OnClick({R.id.backBtn, R.id.homeTV,R.id.nameTV, R.id.linNum})
@@ -165,18 +162,100 @@ public class DocumentInfoViewActivity extends BaseActivity {
                 startActivity(homeIntent);
                 break;
             case R.id.linNum:
-                if(documentInfoModel.isUserShown){
-                    linUsers.setVisibility(View.GONE);
-                    documentInfoModel.setUserShown(false);
-                    arrowIV.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.ic_expand_arrow,null));
-                }
-                else{
-                    linUsers.setVisibility(View.VISIBLE);
-                    documentInfoModel.setUserShown(true);
-                    arrowIV.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.ic_collapse_arrow,null));
-                }
+//                if(documentInfoModel.isUserShown){
+//                    linUsers.setVisibility(View.GONE);
+//                    documentInfoModel.setUserShown(false);
+//                    arrowIV.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.ic_expand_arrow,null));
+//                }
+//                else{
+//                    linUsers.setVisibility(View.VISIBLE);
+//                    documentInfoModel.setUserShown(true);
+//                    arrowIV.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.ic_collapse_arrow,null));
+//                }
 
                 break;
         }
+    }
+
+    public void getLocationDetails(String folderId) {
+        homePresenter.getCategoryDetailsOfSelectedDocument(folderId);
+    }
+
+    @Override
+    public void onGetDownloadUrlSuccess(String url) {
+
+    }
+
+    @Override
+    public void onGetDownloadUrlError(APIException e) {
+
+    }
+
+    @Override
+    public void onGetParentFolderSuccess(List<DocumentModel> documentModels) {
+
+    }
+
+    @Override
+    public void onGetChildFoldersList(List<DocumentModel> documentModels) {
+
+    }
+
+    @Override
+    public void onGetUserImageSuccess(UserInfoModel userInfoModel) {
+
+    }
+
+    @Override
+    public void onGetUserImageError() {
+
+    }
+
+    @Override
+    public void onGetCategoryDetailsSuccess(CategoryModel categoryModel) {
+        if(categoryModel==null){
+            for(int i=allParents.size()-1;i>=0;i--){
+                location = allParents.get(i) + "/";
+            }
+            setDocumentDetails();
+        }
+        else {
+            allParents.add(categoryModel.getName());
+            homePresenter.getCategoryDetailsOfSelectedDocument(categoryModel.getParent());
+        }
+    }
+
+    @Override
+    public void onGetCategoryDetailsError() {
+
+    }
+
+    @Override
+    public void onInsertCategoryDetailsSuccess() {
+
+    }
+
+    @Override
+    public void onInsertCategoryDetailsError() {
+
+    }
+
+    @Override
+    public void onGetDocumentInfoSuccess(DocumentModel documentModel) {
+        titleTV.setText("Document Details");
+        locationTV.setText(location);
+        documentNumberTV.setText(documentModel.getDocumentNumber());
+        documentVersionTV.setText("v "+documentModel.getVersion());
+        publishedOnTV.setText(DateUtils.getFormattedDate(documentModel.getDate()));
+        approvedByTV.setText(documentModel.getApprovedName());
+        tagList = documentModel.getTags();
+
+        TagsAdapter tagsAdapter = new TagsAdapter(this,tagList);
+        tagsRV.setAdapter(tagsAdapter);
+    }
+
+    @Override
+    public void onGetDocumentInfoError() {
+
     }
 }

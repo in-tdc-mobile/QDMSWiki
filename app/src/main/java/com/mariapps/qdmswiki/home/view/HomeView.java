@@ -25,4 +25,7 @@ public interface HomeView {
 
     void onInsertCategoryDetailsSuccess();
     void onInsertCategoryDetailsError();
+
+    void onGetDocumentInfoSuccess(DocumentModel documentModel);
+    void onGetDocumentInfoError();
 }

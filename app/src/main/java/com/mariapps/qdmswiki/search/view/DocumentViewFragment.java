@@ -136,6 +136,7 @@ public class DocumentViewFragment extends BaseFragment {
                         Intent intent = new Intent(getActivity(), DocumentInfoViewActivity.class);
                         intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME, folderName);
                         intent.putExtra(AppConfig.BUNDLE_ID, id);
+                        intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,folderId);
                         startActivity(intent);
                     }
                 });

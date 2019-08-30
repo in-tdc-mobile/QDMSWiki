@@ -420,6 +420,17 @@ public interface HomeDao {
             " WHERE bookmark.DocumentId=:documentId")
     BookmarkModel getBookmarkEntries(String documentId);
 
+    @Query(" SELECT document.DocumentNumber, " +
+            " document.Version, "+
+            " document.Date," +
+            " document.tags," +
+            " userInfo.Name as approvedName " +
+            " FROM DocumentEntity as document " +
+            " LEFT JOIN UserInfoEntity as userinfo "+
+            " ON document.ApprovedBy = userinfo.Id "+
+            " WHERE document.Id=:documentId")
+    DocumentModel getDocumentInfo(String documentId);
+
     @Query( " UPDATE DocumentEntity SET isRecommended = 'YES' WHERE Id =:documentId")
     void updateIsRecommended(String documentId);
 

@@ -282,5 +282,15 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
 
     }
 
+    @Override
+    public void onGetDocumentInfoSuccess(DocumentModel documentModel) {
+
+    }
+
+    @Override
+    public void onGetDocumentInfoError() {
+
+    }
+
 }
 

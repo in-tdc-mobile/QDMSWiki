@@ -211,6 +211,7 @@
                 android:background="@color/grey_200" />
 
             <LinearLayout
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dimen_50dp"
                 android:layout_marginLeft="@dimen/dimen_16dp"
@@ -291,6 +292,7 @@
                 android:background="@color/grey_200" />
 
             <LinearLayout
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dimen_50dp"
                 android:layout_marginLeft="@dimen/dimen_16dp"
