@@ -11,6 +11,8 @@ import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.home.view.HomeActivity;
 import com.mariapps.qdmswiki.settings.view.SettingsActivity;
+import com.mariapps.qdmswiki.utils.DateUtils;
+
 import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,7 +59,7 @@ public class ApplicationInfoActivity extends BaseActivity {
         titleTV.setText("Application Info");
         applicationNameTV.setText(getResources().getString(R.string.app_name));
         applicationVersionTV.setText(BuildConfig.VERSION_NAME);
-        dateTV.setText("06-MAY-2019");
+        dateTV.setText(DateUtils.getCurrentDate());
         environmentTV.setText(getResources().getString(R.string.string_environment_name));
         clientTV.setText(getResources().getString(R.string.string_client_name));
     }

@@ -29,7 +29,7 @@ public class DateUtils {
 
     public static String getCurrentDate(){
         Date c = Calendar.getInstance().getTime();
-        SimpleDateFormat df = new SimpleDateFormat("YYYY-MM-DD HH:MM:SS");
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
         String formattedDate = df.format(c);
 
         return formattedDate;

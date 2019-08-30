@@ -52,7 +52,7 @@ public class DocumentsAdapter extends CustomRecyclerView.Adapter<DocumentsAdapte
         holder.tvHeadingText.setText(documentsModel.getDocumentName());
         holder.tvCategory.setText(documentsModel.getCategoryName());
         holder.tvDate.setText(DateUtils.getFormattedDate(documentsModel.getDate()));
-        holder.tvVersion.setText("V " +documentsModel.getVersion());
+        holder.tvVersion.setText("v " +documentsModel.getVersion());
 
         holder.rvDepartments.setLayoutManager(new LinearLayoutManager(mContext, LinearLayout.HORIZONTAL, false));
         holder.rvDepartments.setHasFixedSize(true);
