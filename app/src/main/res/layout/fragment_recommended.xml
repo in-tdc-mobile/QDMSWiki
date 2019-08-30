@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/noFilesIV"
             android:layout_centerHorizontal="true"
-            android:text="@string/string_no_recently_found"/>
+            android:text="@string/string_no_recommended_found"/>
 
     </RelativeLayout>
 

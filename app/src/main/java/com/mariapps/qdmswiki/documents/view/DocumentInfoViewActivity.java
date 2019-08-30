@@ -116,29 +116,11 @@ public class DocumentInfoViewActivity extends BaseActivity implements HomeView {
         nameTV.setText(folderName);
 
         getLocationDetails(folderId);
-        //setUserList();
+        setUserList();
 
-    }
-
-    private void setTagList() {
     }
 
     private void setUserList() {
-        usersList.add(new UserModel(1,"Administrator"));
-        usersList.add(new UserModel(2,"Aruna Ramakrishnan"));
-        usersList.add(new UserModel(3,"Subin Kuriakose"));
-        usersList.add(new UserModel(4,"Rio Issac"));
-        usersList.add(new UserModel(5,"Arun Aravindan"));
-        usersList.add(new UserModel(6,"Thomas Paul"));
-        usersList.add(new UserModel(7,"Elby Samson"));
-
-        usersList.add(new UserModel(8,"Administrator"));
-        usersList.add(new UserModel(9,"Aruna Ramakrishnan"));
-        usersList.add(new UserModel(10,"Subin Kuriakose"));
-        usersList.add(new UserModel(11,"Rio Issac"));
-        usersList.add(new UserModel(12,"Arun Aravindan"));
-        usersList.add(new UserModel(13,"Thomas Paul"));
-        usersList.add(new UserModel(14,"Elby Samson"));
     }
 
     private void setDocumentDetails() {
@@ -215,7 +197,10 @@ public class DocumentInfoViewActivity extends BaseActivity implements HomeView {
     public void onGetCategoryDetailsSuccess(CategoryModel categoryModel) {
         if(categoryModel==null){
             for(int i=allParents.size()-1;i>=0;i--){
-                location = allParents.get(i) + "/";
+                if(location != null)
+                    location = location +"/"+ allParents.get(i);
+                else
+                    location = "/"+allParents.get(i);
             }
             setDocumentDetails();
         }
@@ -248,8 +233,8 @@ public class DocumentInfoViewActivity extends BaseActivity implements HomeView {
         documentVersionTV.setText("v "+documentModel.getVersion());
         publishedOnTV.setText(DateUtils.getFormattedDate(documentModel.getDate()));
         approvedByTV.setText(documentModel.getApprovedName());
-        tagList = documentModel.getTags();
 
+        tagList = documentModel.getTags();
         TagsAdapter tagsAdapter = new TagsAdapter(this,tagList);
         tagsRV.setAdapter(tagsAdapter);
     }
