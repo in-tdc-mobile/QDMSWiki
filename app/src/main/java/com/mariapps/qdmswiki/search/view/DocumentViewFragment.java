@@ -198,6 +198,7 @@ public class DocumentViewFragment extends BaseFragment {
 
     private void setHTMLContent() {
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setDisplayZoomControls(false);
         webView.getSettings().setBuiltInZoomControls(true);
         webView.addJavascriptInterface(new AppJavaScriptProxy(getActivity()), "androidAppProxy");
 
