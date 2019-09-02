@@ -74,7 +74,7 @@ public class ArticlesAdapter extends CustomRecyclerView.Adapter<ArticlesAdapter.
             @Override
             public void onClick(View v) {
                 //if(type.equals("DOCUMENTS"))
-                    rowClickListener.onItemClicked(documentsList.get(holder.getAdapterPosition()));
+                    rowClickListener.onItemClicked(filterdDocumentsList.get(holder.getAdapterPosition()));
             }
         });
     }
