@@ -61,6 +61,7 @@ public class DocumentViewFragment extends BaseFragment {
     private String folderName;
     private String folderId;
     private String name;
+    private String type;
     private DocumentModel documentModel;
     private String id;
     private String documentData;
@@ -68,6 +69,7 @@ public class DocumentViewFragment extends BaseFragment {
     private ArticleModel articleModel;
     private HomeDatabase homeDatabase;
     private RecentlyViewedModel recentlyViewedModel;
+    private String articleData;
 
     @Override
     protected void setUpPresenter() {
@@ -83,6 +85,7 @@ public class DocumentViewFragment extends BaseFragment {
             Bundle args = getArguments();
             id = args.getString(AppConfig.BUNDLE_ID, "");
             name = args.getString(AppConfig.BUNDLE_NAME, "");
+            type = args.getString(AppConfig.BUNDLE_TYPE, "");
             folderId = args.getString(AppConfig.BUNDLE_FOLDER_ID, "");
             folderName = args.getString(AppConfig.BUNDLE_FOLDER_NAME, "");
             version = args.getString(AppConfig.BUNDLE_VERSION, "");
@@ -95,7 +98,7 @@ public class DocumentViewFragment extends BaseFragment {
 
         homeDatabase = HomeDatabase.getInstance(getActivity());
         loadDocument();
-//        setHTMLContent();
+
         return view;
     }
 
@@ -159,8 +162,16 @@ public class DocumentViewFragment extends BaseFragment {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
+
+                if(type.equals("Document")){
                 documentModel = homeDatabase.homeDao().getDocumentData(id);
                 documentData = documentModel.getDocumentData();
+                }
+                else{
+                    documentModel = new DocumentModel();
+                    articleModel = homeDatabase.homeDao().getArticleData(id);
+                    documentData = articleModel.getDocumentData();
+                }
                 documentData = documentData.replace("<script src=\"/WikiPALApp/Scripts/TemplateSettings/toc-template-settings.js\"></script>", "<script src=\"./Scripts/toc-template-settings.js.download\"></script>");
                 documentData = documentData.replace("\n", "");
                 documentModel.setDocumentData(documentData);
@@ -180,7 +191,7 @@ public class DocumentViewFragment extends BaseFragment {
 
             @Override
             public void onError(Throwable e) {
-
+                Toast.makeText(getContext(),e.getMessage(),Toast.LENGTH_LONG).show();
             }
         });
     }

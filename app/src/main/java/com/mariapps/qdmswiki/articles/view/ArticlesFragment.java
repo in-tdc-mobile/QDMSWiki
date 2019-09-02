@@ -84,10 +84,8 @@ public class ArticlesFragment extends BaseFragment {
     private void setData() {
         customProgressBar.setVisibility(View.GONE);
         if (articleList != null && articleList.size() > 0) {
-           // setRecyclerView();
+            setRecyclerView();
             noDataRL.setVisibility(View.GONE);
-            GetCategoryName getCategoryName = new GetCategoryName();
-            getCategoryName.execute();
         }
         else{
             rvDocuments.setAdapter(null);
@@ -132,90 +130,6 @@ public class ArticlesFragment extends BaseFragment {
 
     }
 
-    public void getCategoryName(String categoryId, int position) {
-        Completable.fromAction(new Action() {
-            @Override
-            public void run() throws Exception {
-                categoryName = homeDatabase.homeDao().getCategoryName(categoryId);
-            }
-        }).observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
-            @Override
-            public void onSubscribe(Disposable d) {
-
-            }
-
-            @Override
-            public void onComplete() {
-                boolean isAdded = false;
-                for (int i = 0; i < categoryNames.size(); i++) {
-                    if(categoryNames.get(i) == null)
-                        continue;
-                    else if(categoryNames.get(i).equals(categoryName)) {
-                        isAdded = true;
-                        break;
-                    }
-                }
-                if (!isAdded && categoryName!= null)
-                    categoryNames.add(position, categoryName);
-            }
-
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-        });
-    }
-
-
-    public class GetCategoryName extends AsyncTask<String, Integer, String> {
-
-        ArticleModel articleModel;
-
-        public GetCategoryName() {
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            try {
-                for(int  i=0;i <articleList.size();i++){
-                    articleModel = articleList.get(i);
-                    categoryIds = new ArrayList<>();
-                    categoryNames = new ArrayList<>();
-                    categoryIds = articleModel.getCategoryIds();
-                    if(categoryIds != null) {
-                        for (int j = 0; j < categoryIds.size(); j++) {
-                            getCategoryName(categoryIds.get(j), j);
-                        }
-                        articleModel.setCategoryIds(categoryNames);
-                    }
-                }
-            } catch (Exception e) {
-            }
-
-            return "";
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-
-        }
-
-        @Override
-        protected void onPostExecute(String string) {
-            setRecyclerView();
-
-        }
-    }
-
     private void setRecyclerView() {
         articlesAdapter = new ArticlesAdapter(getActivity(), articleList);
         rvDocuments.setAdapter(articlesAdapter);
@@ -224,9 +138,10 @@ public class ArticlesFragment extends BaseFragment {
             public void onItemClicked(ArticleModel articleModel) {
                 Intent intent = new Intent(getActivity(), FolderStructureActivity.class);
                 intent.putExtra(AppConfig.BUNDLE_TYPE, "Article");
-                intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME, articleModel.getArticleName());
+                intent.putExtra(AppConfig.BUNDLE_NAME, articleModel.getArticleName());
                 intent.putExtra(AppConfig.BUNDLE_ID, articleModel.getId());
-                intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, articleModel.getId());
+                if(articleModel.getCategoryIds().size() > 0)
+                    intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, articleModel.getCategoryIds().get(0));
                 startActivity(intent);
 
             }

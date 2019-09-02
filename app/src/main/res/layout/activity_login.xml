@@ -166,8 +166,7 @@
             android:layout_below="@+id/loginLL"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/dimen_60dp"
-            android:layout_marginBottom="@dimen/dimen_10dp"
+            android:layout_marginTop="@dimen/dimen_50dp"
             app:srcCompat="@drawable/ic_mariapps_logo" />
 
 

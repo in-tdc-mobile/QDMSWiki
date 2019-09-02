@@ -59,6 +59,7 @@ import com.mariapps.qdmswiki.bookmarks.model.BookmarkModel;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.custom.CustomViewPager;
 import com.mariapps.qdmswiki.home.database.HomeDao;
+import com.mariapps.qdmswiki.home.database.HomeDatabase;
 import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.CategoryModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
@@ -99,8 +100,14 @@ import java.util.zip.ZipInputStream;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
+import io.reactivex.schedulers.Schedulers;
 
-public class HomeActivity extends BaseActivity implements HomeView{
+public class HomeActivity extends BaseActivity implements HomeView {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -129,6 +136,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
 
     private ActionBarDrawerToggle mDrawerToggle;
     private HomePresenter homePresenter;
+    private HomeDatabase homeDatabase;
     private MainViewPager mainViewPager;
     private NavigationDrawerFragment navigationDrawerFragment;
     private SessionManager sessionManager;
@@ -158,7 +166,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
             if (downloadID == id) {
                 Toast.makeText(HomeActivity.this, "Download Completed", Toast.LENGTH_SHORT).show();
                 try {
-                    unzip(Environment.getExternalStorageDirectory()+"/QDMSWiki/Import",Environment.getExternalStorageDirectory()+"/QDMSWiki");
+                    unzip(Environment.getExternalStorageDirectory() + "/QDMSWiki/Import", Environment.getExternalStorageDirectory() + "/QDMSWiki");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -171,7 +179,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
         public void onReceive(Context context, Intent intent) {
             long bytes = intent.getLongExtra(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR, -1);
             long fileSizeInKB = bytes / 1024;
-            int downloadPercent = (int) (fileSizeInKB/totalBytes * 100);
+            int downloadPercent = (int) (fileSizeInKB / totalBytes * 100);
             arc_progress.setProgress(downloadPercent);
         }
     };
@@ -182,11 +190,12 @@ public class HomeActivity extends BaseActivity implements HomeView{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        registerReceiver(onDownloadComplete,new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+        registerReceiver(onDownloadComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
         //registerReceiver(onDownloadProgress,new IntentFilter(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
 
         context = this;
         sessionManager = new SessionManager(HomeActivity.this);
+        homeDatabase = HomeDatabase.getInstance(HomeActivity.this);
         setSupportActionBar(toolbar);
 
         getParentFolders();
@@ -248,8 +257,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 if (slideOffset == 0) {
                     // drawer closed
-                }
-                else{
+                } else {
                     setupFragments(findFragmentById(AppConfig.FRAG_NAV_DRAWER), false, false);
                 }
                 super.onDrawerSlide(drawerView, slideOffset);
@@ -297,7 +305,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
         bottom_navigation.setItemIconTintList(null);
         bottom_navigation.getMenu().clear();
         Menu menu = bottom_navigation.getMenu();
-        menu.add(Menu.NONE,0, Menu.NONE, "HOME")
+        menu.add(Menu.NONE, 0, Menu.NONE, "HOME")
                 .setIcon(R.drawable.drawable_home_selecter);
 
         menu.add(Menu.NONE, 1, Menu.NONE, "DOCUMENTS")
@@ -306,11 +314,10 @@ public class HomeActivity extends BaseActivity implements HomeView{
         menu.add(Menu.NONE, 2, Menu.NONE, "ARTICLES")
                 .setIcon(R.drawable.drawable_article_selector);
 
-       setBadgeCount();
+        setBadgeCount();
     }
 
-    private void setBadgeCount()
-    {
+    private void setBadgeCount() {
         BottomNavigationMenuView menuView = (BottomNavigationMenuView) bottom_navigation.getChildAt(0);
         BottomNavigationItemView itemView = (BottomNavigationItemView) menuView.getChildAt(1);
 
@@ -320,8 +327,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
         itemView.addView(notificationBadge);
     }
 
-    private void setNotificationCount()
-    {
+    private void setNotificationCount() {
         notificationsBadgeTextView.setText("10");
     }
 
@@ -401,16 +407,15 @@ public class HomeActivity extends BaseActivity implements HomeView{
                     @Override
                     public void onItemClicked(DocumentModel docModel) {
                         documentModel = docModel;
-                        if(documentModel.getType().equals("Folder"))
+                        if (documentModel.getType().equals("Folder"))
                             homePresenter.getChildFoldersList(documentModel.getCatId());
-                        else
-                        {
+                        else {
                             Intent intent = new Intent(HomeActivity.this, FolderStructureActivity.class);
-                            intent.putExtra(AppConfig.BUNDLE_TYPE,documentModel.getType());
-                            intent.putExtra(AppConfig.BUNDLE_NAME,documentModel.getCategoryName());
-                            intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,documentModel.getCategoryName());
-                            intent.putExtra(AppConfig.BUNDLE_ID,documentModel.getId());
-                            intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,documentModel.getCatId());
+                            intent.putExtra(AppConfig.BUNDLE_TYPE, documentModel.getType());
+                            intent.putExtra(AppConfig.BUNDLE_NAME, documentModel.getCategoryName());
+                            intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME, documentModel.getCategoryName());
+                            intent.putExtra(AppConfig.BUNDLE_ID, documentModel.getId());
+                            intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, documentModel.getCatId());
                             startActivity(intent);
                         }
                     }
@@ -428,15 +433,13 @@ public class HomeActivity extends BaseActivity implements HomeView{
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void beginDownload(String url){
-        File file=new File(Environment.getExternalStorageDirectory(),"/QDMSWiki/Import");
-        if(file.exists())
-        {
-        return;
-        //ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
-        //readAndInsertJsonData.execute();
-        }
-         else {
+    private void beginDownload(String url) {
+        File file = new File(Environment.getExternalStorageDirectory(), "/QDMSWiki/Import");
+        if (file.exists()) {
+            return;
+            //ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
+            //readAndInsertJsonData.execute();
+        } else {
             progressDialog.setMessage("Downloading files...");
             progressDialog.setCancelable(false);
             progressDialog.show();
@@ -453,42 +456,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
 
             DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
             downloadID = downloadManager.enqueue(request);// enqueue puts the download request in the queue.
-
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    boolean downloading = true;
-
-                    while (downloading) {
-
-                        DownloadManager.Query q = new DownloadManager.Query();
-                        q.setFilterById(downloadID);
-
-                        Cursor cursor = downloadManager.query(q);
-                        cursor.moveToFirst();
-                        int bytes_downloaded = cursor.getInt(cursor
-                                .getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
-                        int bytes_total = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
-
-                        if (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL) {
-                            downloading = false;
-                        }
-
-                        final double dl_progress = (bytes_downloaded / bytes_total) * 100;
-
-                        runOnUiThread(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                arc_progress.setProgress((int) dl_progress);
-                            }
-                        });
-                        cursor.close();
-                    }
-                }
-            }).start();
-     }
+        }
 
     }
 
@@ -517,9 +485,11 @@ public class HomeActivity extends BaseActivity implements HomeView{
         readAndInsertJsonData.execute();
         zipIn.close();
     }
+
     /**
      * Extracts a zip entry (file entry)
      * Extracts a zip entry (file entry)
+     *
      * @param zipIn
      * @param filePath
      * @throws IOException
@@ -563,8 +533,8 @@ public class HomeActivity extends BaseActivity implements HomeView{
             byte[] decodedString = Base64.decode(userInfoModel.getImageName().replace("data:image/jpg;base64,", ""), Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
             userImageIV.setImageBitmap(bitmap);
+        } catch (Exception e) {
         }
-        catch (Exception e){}
     }
 
     @Override
@@ -623,7 +593,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
         protected MainModel doInBackground(String... params) {
             try {
                 gson = new Gson();
-                mainModel = gson.fromJson(new FileReader(Environment.getExternalStorageDirectory()+"/QDMSWiki/Extract1/MasterList.json"), MainModel.class);
+                mainModel = gson.fromJson(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/Extract1/MasterList.json"), MainModel.class);
             } catch (Exception e) {
                 progressDialog.dismiss();
             }
@@ -641,7 +611,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
         protected void onPostExecute(MainModel mainModel) {
             super.onPostExecute(mainModel);
 
-            List<DocumentModel> documentList =  mainModel.getDocumentModels();
+            List<DocumentModel> documentList = mainModel.getDocumentModels();
             List<ArticleModel> articleList = mainModel.getArticleModels();
             List<CategoryModel> categoryList = mainModel.getCategoryModels();
             List<NotificationModel> notificationList = mainModel.getNotificationModels();
@@ -650,48 +620,69 @@ public class HomeActivity extends BaseActivity implements HomeView{
             List<UserInfoModel> userInfoList = mainModel.getUserInfoModels();
 
             //inserting
-            for(int i=0;i<documentList.size();i++){
+            for (int i = 0; i < documentList.size(); i++) {
                 documentList.get(i).setIsRecommended("NO");
             }
-            homePresenter.deleteDocuments(documentList);
-            homePresenter.deleteArticles(articleList);
+
             homePresenter.deleteCategories(categoryList);
             homePresenter.deleteBookmarks(bookmarkList);
             homePresenter.deleteBookmarkEntries();
 
-            for(int i=0;i<documentList.size();i++){
+
+            for (int i = 0; i < documentList.size(); i++) {
                 List<TagModel> tagList = documentList.get(i).getTags();
                 homePresenter.deleteTags(tagList);
             }
 
-            for(int i=0;i<bookmarkList.size();i++){
+            for (int i = 0; i < documentList.size(); i++) {
+                for (int k = 0; k < categoryList.size(); k++) {
+                    if (documentList.get(i).getCategoryId().equals(categoryList.get(k).getId())) {
+                        documentList.get(i).setCategoryName(categoryList.get(k).getName());
+                    }
+                }
+            }
+            homePresenter.deleteDocuments(documentList);
+
+            for (int i = 0; i < articleList.size(); i++) {
+                List<String> categoryNames = new ArrayList<>();
+                List<String> categoryIds = articleList.get(i).getCategoryIds();
+                for (int j = 0; j < categoryIds.size(); j++) {
+                    for (int k = 0; k < categoryList.size(); k++) {
+                        if (categoryIds.get(j).equals(categoryList.get(k).getId())) {
+                            categoryNames.add(j, categoryList.get(k).getName());
+                        }
+                    }
+                }
+                articleList.get(i).setCategoryNames(categoryNames);
+            }
+            homePresenter.deleteArticles(articleList);
+
+            for (int i = 0; i < bookmarkList.size(); i++) {
                 List<BookmarkEntryModel> bookmarkEntryList = bookmarkList.get(i).getBookmarkEntries();
                 homePresenter.insertBookmarkEntries(bookmarkEntryList);
             }
 
-            for(int i=0;i<userInfoList.size();i++){
-                if(!String.valueOf(userInfoList.get(i).getUserId()).equals(sessionManager.getUserId())){
+            for (int i = 0; i < userInfoList.size(); i++) {
+                if (!String.valueOf(userInfoList.get(i).getUserId()).equals(sessionManager.getUserId())) {
                     userInfoList.get(i).setImageName("");
-                }
-                else {
+                } else {
                     sessionManager.setUserInfoId(userInfoList.get(i).getId());
                     userInfoList.get(i).setImageName(userInfoList.get(i).getImageName());
                 }
             }
             homePresenter.deleteUserInfo(userInfoList);
 
-            for(int i=0;i<userSettingsList.size();i++){
-                if(userSettingsList.get(i).getUserID().equals(sessionManager.getUserInfoId())){
+            for (int i = 0; i < userSettingsList.size(); i++) {
+                if (userSettingsList.get(i).getUserID().equals(sessionManager.getUserInfoId())) {
                     homePresenter.deleteUserSettings(userSettingsList.get(i));
-                }
-                else
+                } else
                     continue;
             }
 
-            for(int i=0;i<notificationList.size();i++){
+            for (int i = 0; i < notificationList.size(); i++) {
                 List<ReceiverModel> receiverList = notificationList.get(i).getReceviers();
-                for(int j=0;j<receiverList.size();j++){
-                    if(receiverList.get(j).getRecevierId().equals(sessionManager.getUserInfoId())){
+                for (int j = 0; j < receiverList.size(); j++) {
+                    if (receiverList.get(j).getRecevierId().equals(sessionManager.getUserInfoId())) {
                         homePresenter.deleteNotifications(notificationList.get(i));
                         homePresenter.deleteReceivers(receiverList.get(j));
                         break;
@@ -700,7 +691,7 @@ public class HomeActivity extends BaseActivity implements HomeView{
             }
 
             //Recommended logic
-            for(int i=0;i<documentList.size();i++) {
+            for (int i = 0; i < documentList.size(); i++) {
                 boolean isRecommended = false;
                 List<TagModel> tagList = documentList.get(i).getTags();
                 for (int j = 0; j < userSettingsList.size(); j++) {
@@ -734,18 +725,44 @@ public class HomeActivity extends BaseActivity implements HomeView{
                 }
             }
 
-            for(int i=0;i<documentList.size();i++){
-                if(documentList.get(i).getIsRecommended().equals("YES"))
+            for (int i = 0; i < documentList.size(); i++) {
+                if (documentList.get(i).getIsRecommended().equals("YES"))
                     recommendedList.add(documentList.get(i));
             }
 
             mainViewPager.updateDocumentList(documentList);
             mainViewPager.updateArticleList(articleList);
-            mainViewPager.updateRecommendedList(recommendedList);
+            getRecommendedList();
             mainViewPager.updateRecentlyList(new ArrayList<>());
             progressDialog.dismiss();
         }
 
+    }
+
+    public void getRecommendedList() {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                recommendedList = homeDatabase.homeDao().getRecommendedDocuments();
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                mainViewPager.updateRecommendedList(recommendedList);
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
     }
 
     private void updateUserImage() {

@@ -51,7 +51,7 @@ public class ArticlesAdapter extends CustomRecyclerView.Adapter<ArticlesAdapter.
         ArticleModel articleModel = filterdDocumentsList.get(i);
         String categoriesString = "";
         holder.tvHeadingText.setText(articleModel.getArticleName());
-        List<String> categories = articleModel.getCategoryIds();
+        List<String> categories = articleModel.getCategoryNames();
         for(int j=0; j<categories.size(); j++){
             if(j == categories.size() - 1)
                 categoriesString = categoriesString + categories.get(j);
@@ -62,7 +62,7 @@ public class ArticlesAdapter extends CustomRecyclerView.Adapter<ArticlesAdapter.
 
         holder.tvCategory.setText(categoriesString);
         holder.tvDate.setText(DateUtils.getFormattedDate(articleModel.getDate()));
-        holder.tvVersion.setText("v "+String.valueOf(articleModel.getVersion()));
+        holder.tvVersion.setText("V "+String.valueOf(articleModel.getVersion()));
 
         holder.rvDepartments.setLayoutManager(new LinearLayoutManager(mContext, LinearLayout.HORIZONTAL, false));
         holder.rvDepartments.setHasFixedSize(true);

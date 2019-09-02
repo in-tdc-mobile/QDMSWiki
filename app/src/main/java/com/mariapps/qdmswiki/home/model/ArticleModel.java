@@ -49,6 +49,9 @@ public class ArticleModel implements Parcelable {
     @SerializedName("CategoryId")
     public List<String> categoryIds;
 
+    @SerializedName("CategoryNames")
+    public List<String> categoryNames;
+
 //    @ColumnInfo(name = "IsActive")
 //    @SerializedName("IsActive")
 //    private boolean isActive;
@@ -222,6 +225,14 @@ public class ArticleModel implements Parcelable {
         this.articleToVesselIds = articleToVesselIds;
     }
 
+    public List<String> getCategoryNames() {
+        return categoryNames;
+    }
+
+    public void setCategoryNames(List<String> categoryNames) {
+        this.categoryNames = categoryNames;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -242,6 +253,7 @@ public class ArticleModel implements Parcelable {
         date = in.readString();
         articleToOfficeIds = in.readArrayList(ArticleModel.class.getClassLoader());
         articleToVesselIds = in.readArrayList(ArticleModel.class.getClassLoader());
+        categoryNames = in.readArrayList(ArticleModel.class.getClassLoader());
         //isActive = in.readByte() != 0;
     }
 
@@ -261,6 +273,7 @@ public class ArticleModel implements Parcelable {
         dest.writeString(date);
         dest.writeList(articleToOfficeIds);
         dest.writeList(articleToVesselIds);
+        dest.writeList(categoryNames);
         //dest.writeByte((byte) (isActive ? 1 : 0));
     }
 

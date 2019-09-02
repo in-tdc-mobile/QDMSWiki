@@ -181,6 +181,7 @@ public interface HomeDao {
     @Query("SELECT article.Id, " +
             " article.ArticleName, " +
             " article.CategoryIds," +
+            " article.categoryNames," +
             " article.Version," +
             " article.tags," +
             " article.Date " +

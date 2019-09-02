@@ -40,7 +40,7 @@ public class RecentlyViewedAdapter extends CustomRecyclerView.Adapter<RecentlyVi
     public void onBindViewHolder(@NonNull final RecentlyViewedAdapter.RecentlyViewedVH holder, int i) {
         holder.headingTextTV.setText(recentlyViewedList.get(i).getDocumentName());
         holder.categoryTV.setText(recentlyViewedList.get(i).getCategoryName());
-        holder.versionTV.setText("v "+recentlyViewedList.get(i).getVersion());
+        holder.versionTV.setText("V "+recentlyViewedList.get(i).getVersion());
 
         holder.rowLL.setOnClickListener(new View.OnClickListener() {
             @Override
