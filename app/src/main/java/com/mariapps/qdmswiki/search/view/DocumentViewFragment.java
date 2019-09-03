@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.AppCompatImageView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -54,7 +55,7 @@ public class DocumentViewFragment extends BaseFragment {
     @BindView(R.id.searchET)
     CustomEditText searchET;
     @BindView(R.id.showMenuFab)
-    AppCompatImageView showMenuFab;
+    FloatingActionButton showMenuFab;
     @BindView(R.id.webView)
     WebView webView;
 

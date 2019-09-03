@@ -89,6 +89,7 @@ public class DocumentsFragment extends BaseFragment {
                     intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME, documentModel.getCategoryName());
                     intent.putExtra(AppConfig.BUNDLE_ID,documentModel.getId());
                     intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,documentModel.getCategoryId());
+                    intent.putExtra(AppConfig.BUNDLE_VERSION,documentModel.getVersion());
                     startActivity(intent);
 
                 }

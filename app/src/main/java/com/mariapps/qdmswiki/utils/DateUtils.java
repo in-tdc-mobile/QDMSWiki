@@ -15,7 +15,7 @@ public class DateUtils {
     public static String getFormattedDate(String inputDate){
         String formattedDate = null;
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss aa", Locale.US);
+        SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss aa", Locale.US);
         Date date = null;
         try {
             date = inputFormat.parse(inputDate);
