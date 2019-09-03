@@ -72,8 +72,9 @@ public interface HomeDao {
             " document.Version as version," +
             " category.CategoryName as categoryName " +
             " FROM DocumentEntity as document " +
-            " LEFT JOIN CategoryEntity as category" +
-            " ON category.Id = document.CategoryId")
+            " LEFT JOIN CategoryEntity as category " +
+            " ON category.Id = document.CategoryId "+
+            " ORDER BY document.Date DESC ")
     List<SearchModel> getAllDocuments();
 
     @Query("SELECT article.Id as id, " +
@@ -83,8 +84,9 @@ public interface HomeDao {
             " article.Version as version," +
             " 'Article' as categoryName " +
             " FROM ArticleEntity as article " +
-            " LEFT JOIN CategoryEntity as category" +
-            " ON category.Id = article.CategoryIds")
+            " LEFT JOIN CategoryEntity as category " +
+            " ON category.Id = article.CategoryIds "+
+            " ORDER BY article.Date DESC ")
     List<SearchModel> getAllArticles();
 
     @Query("SELECT category.Id as id, " +
@@ -147,7 +149,7 @@ public interface HomeDao {
             " FROM DocumentEntity as document " +
             " LEFT JOIN CategoryEntity as category" +
             " ON category.Id = document.CategoryId" +
-            " ORDER BY document.ApprovedDate desc")
+            " ORDER BY document.Date desc")
     List<DocumentModel> getDocuments();
 
 
@@ -161,7 +163,8 @@ public interface HomeDao {
             " FROM DocumentEntity as document " +
             " LEFT JOIN CategoryEntity as category" +
             " ON category.Id = document.CategoryId" +
-            " WHERE document.isRecommended = 'YES'")
+            " WHERE document.isRecommended = 'YES' "+
+            " ORDER BY document.Date desc")
     List<DocumentModel> getRecommendedDocuments();
 
     @Query("SELECT DISTINCT recentlyViewed.DocumentId, " +
@@ -186,7 +189,7 @@ public interface HomeDao {
             " article.tags," +
             " article.Date " +
             " FROM ArticleEntity as article "+
-            " ORDER BY article.ApprovedDate desc")
+            " ORDER BY article.Date desc")
     List<ArticleModel> getArticles();
 
     @Query("SELECT category.Id as folderid, " +
@@ -447,13 +450,17 @@ public interface HomeDao {
     @Query("SELECT * FROM CategoryEntity")
     List<CategoryModel> getCategory();
 
+    @Query("SELECT COUNT(Id) FROM NotificationEntity")
+    int getNotificationCount();
+
     @Query("SELECT notification.Message, " +
             " notification.SendTime, " +
             " notification.Receviers, " +
             " userInfo.Name as senderName "+
             " FROM NotificationEntity as notification " +
             " LEFT JOIN userinfoentity as userinfo "+
-            " ON notification.SenderId = userinfo.Id")
+            " ON notification.SenderId = userinfo.Id "+
+            " ORDER BY notification.SendTime desc")
     List<NotificationModel> getNotifications();
 
     @Query("SELECT * FROM BookMarkEntity")

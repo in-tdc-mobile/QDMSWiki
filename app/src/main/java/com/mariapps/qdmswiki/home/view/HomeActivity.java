@@ -203,7 +203,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
             int downloadedIndex = c.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR);
             long size = c.getInt(sizeIndex);
             long downloaded = c.getInt(downloadedIndex);
-            if (size != -1) progress = (int) (downloaded*100.0/size);
+            if (size != -1) progress = (int) (downloaded*100/size);
         }
             return progress;
 }
@@ -331,7 +331,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
     }
 
     private void setNotificationCount() {
-        notificationsBadgeTextView.setText("10");
+       homePresenter.getNotificationCount();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -607,6 +607,16 @@ public class HomeActivity extends BaseActivity implements HomeView {
 
     }
 
+    @Override
+    public void onGetNotificationCountSuccess(int notificaitonCount) {
+        notificationsBadgeTextView.setText(String.valueOf(notificaitonCount));
+    }
+
+    @Override
+    public void onGetNotificationCountError() {
+
+    }
+
 
     public class ReadAndInsertJsonData extends AsyncTask<String, Integer, MainModel> {
 
@@ -773,7 +783,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
             mainViewPager.updateArticleList(articleList);
             getRecommendedList();
             mainViewPager.updateRecentlyList(new ArrayList<>());
-            progressDialog.dismiss();
+            setNotificationCount();
+
 
 
         }
@@ -796,6 +807,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
             @Override
             public void onComplete() {
                 mainViewPager.updateRecommendedList(recommendedList);
+                progressDialog.dismiss();
             }
 
 

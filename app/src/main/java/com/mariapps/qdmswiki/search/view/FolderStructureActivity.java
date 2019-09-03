@@ -293,5 +293,15 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
 
     }
 
+    @Override
+    public void onGetNotificationCountSuccess(int notificaitonCount) {
+
+    }
+
+    @Override
+    public void onGetNotificationCountError() {
+
+    }
+
 }
 

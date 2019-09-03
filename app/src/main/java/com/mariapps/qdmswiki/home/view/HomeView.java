@@ -28,4 +28,7 @@ public interface HomeView {
 
     void onGetDocumentInfoSuccess(DocumentModel documentModel);
     void onGetDocumentInfoError();
+
+    void onGetNotificationCountSuccess(int notificaitonCount);
+    void onGetNotificationCountError();
 }

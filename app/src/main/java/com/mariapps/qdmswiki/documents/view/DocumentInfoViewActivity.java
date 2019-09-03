@@ -243,4 +243,14 @@ public class DocumentInfoViewActivity extends BaseActivity implements HomeView {
     public void onGetDocumentInfoError() {
 
     }
+
+    @Override
+    public void onGetNotificationCountSuccess(int notificaitonCount) {
+
+    }
+
+    @Override
+    public void onGetNotificationCountError() {
+
+    }
 }

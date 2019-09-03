@@ -90,8 +90,10 @@ public class DocumentViewFragment extends BaseFragment {
             folderName = args.getString(AppConfig.BUNDLE_FOLDER_NAME, "");
             version = args.getString(AppConfig.BUNDLE_VERSION, "");
 
-            recentlyViewedModel = new RecentlyViewedModel(id,name,folderId,folderName,version, DateUtils.getCurrentDate());
-            insertRecentlyViewedDocument(recentlyViewedModel);
+            if(type.equals("Document")) {
+                recentlyViewedModel = new RecentlyViewedModel(id, name, folderId, folderName, version, DateUtils.getCurrentDate());
+                insertRecentlyViewedDocument(recentlyViewedModel);
+            }
 
         } catch (Exception e) {
         }

@@ -40,6 +40,7 @@ public class HomePresenter {
     private HomeDatabase homeDatabase;
     private ServiceController serviceController;
     String url;
+    int notificationCount;
     List<DocumentModel> folderList = new ArrayList<>();
     UserInfoModel userInfoModel;
     CategoryModel categoryModel;
@@ -877,6 +878,33 @@ public class HomePresenter {
             @Override
             public void onComplete() {
                 homeView.onGetDocumentInfoSuccess(documentModel);
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void getNotificationCount() {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                notificationCount = homeDatabase.homeDao().getNotificationCount();
+
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                homeView.onGetNotificationCountSuccess(notificationCount);
             }
 
 

@@ -78,8 +78,8 @@
 
                             <com.mariapps.qdmswiki.custom.CustomTextView
                                 android:id="@+id/notificationsBadgeTextView"
-                                android:layout_width="@dimen/dimen_18dp"
-                                android:layout_height="@dimen/dimen_18dp"
+                                android:layout_width="@dimen/dimen_20dp"
+                                android:layout_height="@dimen/dimen_20dp"
                                 android:layout_alignParentEnd="true"
                                 android:layout_gravity="top|center_horizontal"
                                 android:layout_marginRight="@dimen/dimen_5dp"
