@@ -3,12 +3,15 @@ package com.mariapps.qdmswiki.notification.adapter;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
@@ -49,9 +52,14 @@ public class NotificationAdapter extends CustomRecyclerView.Adapter<Notification
         }
         holder.statusTV.setText("Last updated by " + " : ");
         for(int i=0;i<notificationModel.getReceviers().size();i++){
-            if(notificationModel.getReceviers().get(i).getUnread())
+            if(notificationModel.getReceviers().get(i).getUnread()) {
+                holder.linNotification.setBackgroundColor(mContext.getResources().getColor(R.color.grey_200));
+                holder.imgStatus.setVisibility(View.VISIBLE);
+            }
+            else {
+                holder.linNotification.setBackgroundColor(mContext.getResources().getColor(R.color.white));
                 holder.imgStatus.setVisibility(View.GONE);
-
+            }
         }
         holder.updatedByTV.setText(notificationModel.getSenderName());
         holder.tvTime.setText(DateUtils.getFormattedDate(notificationModel.getSendTime()));
@@ -63,6 +71,8 @@ public class NotificationAdapter extends CustomRecyclerView.Adapter<Notification
     }
 
     static class NotificationsVH extends CustomRecyclerView.ViewHolder {
+        @BindView(R.id.linNotification)
+        LinearLayout linNotification;
         @BindView(R.id.tvHeadingText)
         CustomTextView tvHeadingText;
         @BindView(R.id.statusTV)
