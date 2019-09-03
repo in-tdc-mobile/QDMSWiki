@@ -170,13 +170,6 @@ public class HomeActivity extends BaseActivity implements HomeView {
         }
     };
 
-    private BroadcastReceiver onDownloadProgress = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-        }
-    };
-
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -184,15 +177,17 @@ public class HomeActivity extends BaseActivity implements HomeView {
         setContentView(R.layout.activity_home);
 
         registerReceiver(onDownloadComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
-        //registerReceiver(onDownloadProgress,new IntentFilter(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
 
         context = this;
         sessionManager = new SessionManager(HomeActivity.this);
         homeDatabase = HomeDatabase.getInstance(HomeActivity.this);
+        progressDialog = new ProgressDialog(HomeActivity.this);
+        homePresenter = new HomePresenter(this, this);
+        String url = homePresenter.getDownloadUrl();
+        beginDownload(url);
         setSupportActionBar(toolbar);
 
         getParentFolders();
-        //initNavDrawer();
         initViewpager();
         initBottomNavigation();
         setNotificationCount();
@@ -322,7 +317,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         menu.add(Menu.NONE, 2, Menu.NONE, "ARTICLES")
                 .setIcon(R.drawable.drawable_article_selector);
 
-        setBadgeCount();
+        //setBadgeCount();
     }
 
     private void setBadgeCount() {
@@ -342,10 +337,9 @@ public class HomeActivity extends BaseActivity implements HomeView {
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void setUpPresenter() {
-        progressDialog = new ProgressDialog(HomeActivity.this);
-        homePresenter = new HomePresenter(this, this);
-        String url = homePresenter.getDownloadUrl();
-        beginDownload(url);
+//        homePresenter = new HomePresenter(this, this);
+//        String url = homePresenter.getDownloadUrl();
+//        beginDownload(url);
     }
 
     @Override
@@ -444,6 +438,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
     private void beginDownload(String url) {
         File file = new File(Environment.getExternalStorageDirectory(), "/QDMSWiki/Import");
         if (file.exists()) {
+            progressLayout.setVisibility(View.GONE);
             return;
 //            ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
 //            readAndInsertJsonData.execute();
