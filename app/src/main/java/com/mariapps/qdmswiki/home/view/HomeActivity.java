@@ -13,8 +13,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -38,18 +38,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.ProgressBar;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.github.lzyzsd.circleprogress.ArcProgress;
+import com.github.lzyzsd.circleprogress.DonutProgress;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
 import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.SessionManager;
@@ -64,13 +60,11 @@ import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.CategoryModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
 import com.mariapps.qdmswiki.home.model.MainModel;
-import com.mariapps.qdmswiki.home.model.NavDrawerObj;
 import com.mariapps.qdmswiki.home.model.TagModel;
 import com.mariapps.qdmswiki.home.presenter.HomePresenter;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
 import com.mariapps.qdmswiki.notification.model.ReceiverModel;
 import com.mariapps.qdmswiki.notification.view.NotificationActivity;
-import com.mariapps.qdmswiki.search.model.SearchModel;
 import com.mariapps.qdmswiki.search.view.FolderStructureActivity;
 import com.mariapps.qdmswiki.serviceclasses.APIException;
 import com.mariapps.qdmswiki.settings.view.SettingsActivity;
@@ -79,11 +73,7 @@ import com.mariapps.qdmswiki.usersettings.UserSettingsCategoryModel;
 import com.mariapps.qdmswiki.usersettings.UserSettingsModel;
 import com.mariapps.qdmswiki.usersettings.UserSettingsTagModel;
 import com.mariapps.qdmswiki.utils.ScreenUtils;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -91,13 +81,10 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
-import java.lang.reflect.Type;
-import java.security.spec.ECField;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import io.reactivex.Completable;
@@ -115,6 +102,12 @@ public class HomeActivity extends BaseActivity implements HomeView {
     FrameLayout frameLayoutOne;
     @BindView(R.id.frameLayoutTwo)
     FrameLayout frameLayoutTwo;
+    @BindView(R.id.linLayout)
+    LinearLayout linLayout;
+    @BindView(R.id.progressLayout)
+    LinearLayout progressLayout;
+    @BindView(R.id.relLayout)
+    RelativeLayout relLayout;
     @BindView(R.id.navFL)
     FrameLayout navFL;
     @BindView(R.id.drawer_layout)
@@ -131,8 +124,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
     AppBarLayout appBarMain;
     @BindView(R.id.notificationsBadgeTextView)
     CustomTextView notificationsBadgeTextView;
-    @BindView(R.id.arc_progress)
-    ArcProgress arc_progress;
+    @BindView(R.id.donut_progress)
+    DonutProgress donut_progress;
 
     private ActionBarDrawerToggle mDrawerToggle;
     private HomePresenter homePresenter;
@@ -148,6 +141,9 @@ public class HomeActivity extends BaseActivity implements HomeView {
     private long downloadID;
     private HomeDao homeDao;
     private Gson gson;
+    private int progressBarStatus;
+    private Handler progressBarHandler = new Handler();
+    private DownloadManager downloadManager;
 
     private DocumentModel documentModel;
     List<DocumentModel> childList = new ArrayList<>();
@@ -177,10 +173,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
     private BroadcastReceiver onDownloadProgress = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            long bytes = intent.getLongExtra(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR, -1);
-            long fileSizeInKB = bytes / 1024;
-            int downloadPercent = (int) (fileSizeInKB / totalBytes * 100);
-            arc_progress.setProgress(downloadPercent);
+
         }
     };
 
@@ -204,6 +197,21 @@ public class HomeActivity extends BaseActivity implements HomeView {
         initBottomNavigation();
         setNotificationCount();
     }
+
+    public int doOperation() {
+        DownloadManager.Query query = new DownloadManager.Query();
+        query.setFilterById(downloadID);
+        int progress = 0;
+        Cursor c = downloadManager.query(query);
+        if (c.moveToFirst()) {
+            int sizeIndex = c.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES);
+            int downloadedIndex = c.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR);
+            long size = c.getInt(sizeIndex);
+            long downloaded = c.getInt(downloadedIndex);
+            if (size != -1) progress = (int) (downloaded*100.0/size);
+        }
+            return progress;
+}
 
     private void getParentFolders() {
         homePresenter.getParentFolders();
@@ -437,13 +445,11 @@ public class HomeActivity extends BaseActivity implements HomeView {
         File file = new File(Environment.getExternalStorageDirectory(), "/QDMSWiki/Import");
         if (file.exists()) {
             return;
-            //ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
-            //readAndInsertJsonData.execute();
+//            ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
+//            readAndInsertJsonData.execute();
         } else {
-            progressDialog.setMessage("Downloading files...");
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url))
                     .setTitle("QDMSWiki")// Title of the Download Notification
                     .setDescription("Downloading")// Description of the Download Notification
@@ -454,8 +460,42 @@ public class HomeActivity extends BaseActivity implements HomeView {
                     .setMimeType("application/zip")
                     .setAllowedOverRoaming(true);// Set if download is allowed on roaming network
 
-            DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+            downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
             downloadID = downloadManager.enqueue(request);// enqueue puts the download request in the queue.
+
+            progressBarStatus = 0;
+            new Thread(new Runnable() {
+                public void run() {
+                    while (progressBarStatus < 100) {
+
+                        // performing operation
+                        progressBarStatus = doOperation();
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        // Updating the progress bar
+
+                        linLayout.setAlpha(0.15f);
+                        relLayout.setAlpha(0.15f);
+                        progressBarHandler.post(new Runnable() {
+                            public void run() {
+                                donut_progress.setProgress(progressBarStatus);
+                            }
+                        });
+                    }
+                    // performing operation if file is downloaded,
+                    if (progressBarStatus >= 100) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+            }).start();
         }
 
     }
@@ -584,6 +624,10 @@ public class HomeActivity extends BaseActivity implements HomeView {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            progressLayout.setVisibility(View.GONE);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            linLayout.setAlpha(1.0f);
+            relLayout.setAlpha(1.0f);
             progressDialog.setMessage("Extracting files...");
             progressDialog.setCancelable(false);
             progressDialog.show();
@@ -735,6 +779,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
             getRecommendedList();
             mainViewPager.updateRecentlyList(new ArrayList<>());
             progressDialog.dismiss();
+
+
         }
 
     }

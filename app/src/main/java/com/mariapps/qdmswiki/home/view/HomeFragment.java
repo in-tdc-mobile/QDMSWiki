@@ -49,8 +49,6 @@ public class HomeFragment extends BaseFragment {
     RelativeLayout relMainLL;
     @BindView(R.id.relLL)
     RelativeLayout relLL;
-    @BindView(R.id.noDataLL)
-    LinearLayout noDataLL;
 //    @BindView(R.id.customProgressBar)
 //    CustomProgressBar customProgressBar;
     @BindView(R.id.overViewLL)

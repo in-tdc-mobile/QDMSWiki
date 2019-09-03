@@ -8,16 +8,8 @@
     android:fitsSystemWindows="true">
 
 
-    <com.github.lzyzsd.circleprogress.ArcProgress
-        android:visibility="gone"
-        android:id="@+id/arc_progress"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
-        android:background="#214193"
-        app:arc_bottom_text="QDMS" />
-
     <LinearLayout
+        android:id="@+id/linLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -122,11 +114,42 @@
 
         </FrameLayout>
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/progressLayout"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+    <com.github.lzyzsd.circleprogress.DonutProgress
+        android:id="@+id/donut_progress"
+        app:donut_circle_starting_degree="-90"
+        app:donut_progress="1"
+        app:donut_text_size="@dimen/dimen_30dp"
+        app:donut_unfinished_stroke_width="@dimen/dimen_5dp"
+        app:donut_finished_stroke_width="@dimen/dimen_5dp"
+        app:donut_unfinished_color="@color/grey_400"
+        app:donut_finished_color="@color/searchType"
+        app:donut_text_color="@color/searchType"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center" />
+
+    <com.mariapps.qdmswiki.custom.CustomTextView
+        android:layout_marginTop="@dimen/dimen_10dp"
+        android:textSize="@dimen/primary_text_size"
+        android:layout_gravity="center"
+        android:textColor="@color/searchType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Downloading..."/>
 
     </LinearLayout>
 
-
     <RelativeLayout
+        android:id="@+id/relLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom">
