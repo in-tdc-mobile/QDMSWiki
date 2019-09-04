@@ -40,7 +40,7 @@ public class HomePresenter {
     private HomeDatabase homeDatabase;
     private ServiceController serviceController;
     String url;
-    int notificationCount;
+    List<NotificationModel> notificationList;
     List<DocumentModel> folderList = new ArrayList<>();
     UserInfoModel userInfoModel;
     CategoryModel categoryModel;
@@ -50,6 +50,7 @@ public class HomePresenter {
         this.homeView = homeView;
         serviceController = ApiServiceFactory.getInstance().getFacade();
         homeDatabase = HomeDatabase.getInstance(context);
+        //url = "http://10.201.1.19:8899/QDMSMobileService/api/Home/DownloadFile";
         url = "http://pal4-demo-app.westeurope.cloudapp.azure.com:8099/file/Extract1.zip";
         //url = "https://drive.google.com/uc?export=download&id=1pxjQIdxMLFJmg2bg4Y4sVkk6bFHIWihr";
     }
@@ -892,7 +893,7 @@ public class HomePresenter {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-                notificationCount = homeDatabase.homeDao().getNotificationCount();
+                notificationList = homeDatabase.homeDao().getNotificationCount();
 
             }
         }).observeOn(AndroidSchedulers.mainThread())
@@ -904,7 +905,7 @@ public class HomePresenter {
 
             @Override
             public void onComplete() {
-                homeView.onGetNotificationCountSuccess(notificationCount);
+                homeView.onGetNotificationCountSuccess(notificationList);
             }
 
 

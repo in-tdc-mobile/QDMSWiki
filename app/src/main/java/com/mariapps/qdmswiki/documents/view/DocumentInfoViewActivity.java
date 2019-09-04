@@ -25,6 +25,7 @@ import com.mariapps.qdmswiki.home.model.TagModel;
 import com.mariapps.qdmswiki.home.presenter.HomePresenter;
 import com.mariapps.qdmswiki.home.view.HomeActivity;
 import com.mariapps.qdmswiki.home.view.HomeView;
+import com.mariapps.qdmswiki.notification.model.NotificationModel;
 import com.mariapps.qdmswiki.search.model.BreadCrumbItem;
 import com.mariapps.qdmswiki.serviceclasses.APIException;
 import com.mariapps.qdmswiki.usersettings.UserInfoModel;
@@ -245,7 +246,7 @@ public class DocumentInfoViewActivity extends BaseActivity implements HomeView {
     }
 
     @Override
-    public void onGetNotificationCountSuccess(int notificaitonCount) {
+    public void onGetNotificationCountSuccess(List<NotificationModel> notificationList) {
 
     }
 

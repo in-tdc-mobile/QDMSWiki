@@ -450,8 +450,8 @@ public interface HomeDao {
     @Query("SELECT * FROM CategoryEntity")
     List<CategoryModel> getCategory();
 
-    @Query("SELECT COUNT(Id) FROM NotificationEntity")
-    int getNotificationCount();
+    @Query("SELECT Id,Receviers FROM NotificationEntity")
+    List<NotificationModel> getNotificationCount();
 
     @Query("SELECT notification.Message, " +
             " notification.SendTime, " +

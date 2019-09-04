@@ -3,6 +3,7 @@ package com.mariapps.qdmswiki.home.view;
 import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.CategoryModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.notification.model.NotificationModel;
 import com.mariapps.qdmswiki.search.model.SearchModel;
 import com.mariapps.qdmswiki.serviceclasses.APIException;
 import com.mariapps.qdmswiki.usersettings.UserInfoModel;
@@ -29,6 +30,6 @@ public interface HomeView {
     void onGetDocumentInfoSuccess(DocumentModel documentModel);
     void onGetDocumentInfoError();
 
-    void onGetNotificationCountSuccess(int notificaitonCount);
+    void onGetNotificationCountSuccess(List<NotificationModel> notificationList);
     void onGetNotificationCountError();
 }

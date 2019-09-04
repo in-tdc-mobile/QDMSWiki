@@ -440,8 +440,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
         if (file.exists()) {
             progressLayout.setVisibility(View.GONE);
             return;
-//            ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
-//            readAndInsertJsonData.execute();
+//          ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
+//          readAndInsertJsonData.execute();
         } else {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
@@ -608,7 +608,16 @@ public class HomeActivity extends BaseActivity implements HomeView {
     }
 
     @Override
-    public void onGetNotificationCountSuccess(int notificaitonCount) {
+    public void onGetNotificationCountSuccess(List<NotificationModel> notificationList) {
+        int notificaitonCount = 0;
+        for(int i=0;i<notificationList.size();i++){
+            List<ReceiverModel> receiverList = notificationList.get(i).getReceviers();
+            for(int j=0;j<receiverList.size();j++){
+                if(receiverList.get(j).getUnread()) {
+                    notificaitonCount = notificaitonCount + 1;
+                }
+            }
+        }
         notificationsBadgeTextView.setText(String.valueOf(notificaitonCount));
     }
 
@@ -784,8 +793,6 @@ public class HomeActivity extends BaseActivity implements HomeView {
             getRecommendedList();
             mainViewPager.updateRecentlyList(new ArrayList<>());
             setNotificationCount();
-
-
 
         }
 

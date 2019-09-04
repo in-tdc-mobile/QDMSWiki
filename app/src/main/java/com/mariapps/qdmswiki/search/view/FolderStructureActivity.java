@@ -18,6 +18,7 @@ import com.mariapps.qdmswiki.home.model.CategoryModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
 import com.mariapps.qdmswiki.home.presenter.HomePresenter;
 import com.mariapps.qdmswiki.home.view.HomeView;
+import com.mariapps.qdmswiki.notification.model.NotificationModel;
 import com.mariapps.qdmswiki.search.adapter.BreadCrumbAdapter;
 import com.mariapps.qdmswiki.search.model.BreadCrumbItem;
 import com.mariapps.qdmswiki.serviceclasses.APIException;
@@ -294,7 +295,7 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
     }
 
     @Override
-    public void onGetNotificationCountSuccess(int notificaitonCount) {
+    public void onGetNotificationCountSuccess(List<NotificationModel> notificationList) {
 
     }
 
