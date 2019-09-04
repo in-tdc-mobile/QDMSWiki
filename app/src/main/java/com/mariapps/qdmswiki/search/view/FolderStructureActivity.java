@@ -86,12 +86,12 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             FolderFragment folderFragment = new FolderFragment();
             Bundle args = new Bundle();
-            args.putString(AppConfig.BUNDLE_FOLDER_ID, id);
+            args.putString(AppConfig.BUNDLE_FOLDER_ID, categoryId);
             folderFragment.setArguments(args);
             ft.addToBackStack(null);
-            ft.add(R.id.frameLayout, folderFragment);
+            ft.add(R.id.frameLafyout, folderFragment);
             ft.commit();
-            initBreadCrumb(name, id);
+            initBreadCrumb(name, categoryId);
         }
 
     }

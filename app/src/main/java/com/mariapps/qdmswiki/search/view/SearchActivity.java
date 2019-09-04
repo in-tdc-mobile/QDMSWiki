@@ -161,7 +161,13 @@ public class SearchActivity extends BaseActivity {
                 intent.putExtra(AppConfig.BUNDLE_NAME,item.getName());
                 intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,item.getCategoryName());
                 intent.putExtra(AppConfig.BUNDLE_ID,item.getId());
-                intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,item.getCategoryId());
+                if(item.getType().equals("Article")) {
+                    String categoryId = item.getCategoryId().replace("[\"", "");
+                    categoryId = categoryId.replace("\"]","");
+                    intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, categoryId);
+                }
+                else
+                    intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,item.getCategoryId());
                 intent.putExtra(AppConfig.BUNDLE_VERSION,item.getVersion());
                 startActivity(intent);
 
