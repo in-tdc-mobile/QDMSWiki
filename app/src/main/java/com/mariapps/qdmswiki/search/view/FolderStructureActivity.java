@@ -89,7 +89,7 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
             args.putString(AppConfig.BUNDLE_FOLDER_ID, categoryId);
             folderFragment.setArguments(args);
             ft.addToBackStack(null);
-            ft.add(R.id.frameLafyout, folderFragment);
+            ft.add(R.id.frameLayout, folderFragment);
             ft.commit();
             initBreadCrumb(name, categoryId);
         }

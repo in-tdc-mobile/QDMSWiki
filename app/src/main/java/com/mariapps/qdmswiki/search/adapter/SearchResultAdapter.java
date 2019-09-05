@@ -12,12 +12,14 @@ import android.widget.Filterable;
 import android.widget.LinearLayout;
 
 import com.google.gson.Gson;
+import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.search.model.FilterBooleanItem;
 import com.mariapps.qdmswiki.search.model.SearchModel;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -49,22 +51,36 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
     public void onBindViewHolder(@NonNull final SearchResultAdapter.SearchVH holder, int i) {
         SearchModel searchModel = filteredItems.get(holder.getAdapterPosition());
         holder.nameTV.setText(searchModel.getName());
-        holder.descriptionTV.setText(searchModel.getCategoryName());
 
-        if(fromPage.equals("Folder"))
+
+        if(fromPage.equals("Folder")) {
             holder.openIV.setVisibility(View.GONE);
+        }
+            if(searchModel.getType().equals("Article")) {
+                try {
+                    List<String> categoryNames = Collections.singletonList(searchModel.getCategoryName().substring(1, searchModel.getCategoryName().length() - 1));
+                    holder.descriptionTV.setText(categoryNames.get(0).replace("\"", ""));
+                } catch (Exception e) {
+                    holder.descriptionTV.setText(searchModel.getCategoryName());
+                }
+            }
+            else{
+                holder.descriptionTV.setText(searchModel.getCategoryName());
+            }
+
 
         if(searchModel.getType().equals("Folder")) {
             holder.typeIV.setImageDrawable(ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.ic_folder_inactive, null));
             holder.descriptionTV.setVisibility(View.GONE);
         }
-        else if(searchModel.getType().equals("Document"))
-            holder.typeIV.setImageDrawable(ResourcesCompat.getDrawable(mContext.getResources(),R.drawable.ic_document_inactive,null));
-        else if(searchModel.getType().equals("Article"))
-            holder.typeIV.setImageDrawable(ResourcesCompat.getDrawable(mContext.getResources(),R.drawable.ic_article_inactive,null));
-        else if(searchModel.getType().equals("Forms"))
-            holder.typeIV.setImageDrawable(ResourcesCompat.getDrawable(mContext.getResources(),R.drawable.ic_document_inactive,null));
+        else if(searchModel.getType().equals("Document")) {
+            holder.typeIV.setImageDrawable(ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.ic_document_inactive, null));
+            holder.descriptionTV.setText(searchModel.getCategoryName());
+        }
+        else if(searchModel.getType().equals("Article")) {
+            holder.typeIV.setImageDrawable(ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.ic_article_inactive, null));
 
+        }
 
         holder.mainLL.setOnClickListener(new View.OnClickListener() {
             @Override

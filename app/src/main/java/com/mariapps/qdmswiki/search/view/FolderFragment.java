@@ -201,19 +201,19 @@ public class FolderFragment extends BaseFragment{
             @Override
             public void run() throws Exception {
                 if(isDocumentSelected && isArticleSelected && isFolderSelected)
-                    searchList = homeDatabase.homeDao().getAllDocumentsArticlesAndFoldersInsideFolder(id);
+                    searchList = homeDatabase.homeDao().getAllDocumentsArticlesAndFoldersInsideFolder("%"+id+"%");
                 else if(isDocumentSelected && isArticleSelected)
-                    searchList = homeDatabase.homeDao().getAllDocumentsAndArticlesInsideFolder(id);
+                    searchList = homeDatabase.homeDao().getAllDocumentsAndArticlesInsideFolder("%"+id+"%");
                 else if(isDocumentSelected && isFolderSelected)
-                    searchList = homeDatabase.homeDao().getAllDocumentsAndFoldersInsideFolder(id);
+                    searchList = homeDatabase.homeDao().getAllDocumentsAndFoldersInsideFolder("%"+id+"%");
                 else if(isArticleSelected && isFolderSelected)
-                    searchList = homeDatabase.homeDao().getAllArticlesAndFoldersInsideFolder(id);
+                    searchList = homeDatabase.homeDao().getAllArticlesAndFoldersInsideFolder("%"+id+"%");
                 else if(isDocumentSelected && !isArticleSelected && !isFolderSelected)
-                    searchList = homeDatabase.homeDao().getAllDocumentsInsideFolder(id);
+                    searchList = homeDatabase.homeDao().getAllDocumentsInsideFolder("%"+id+"%");
                 else if(!isDocumentSelected && isArticleSelected && !isFolderSelected)
-                    searchList = homeDatabase.homeDao().getAllArticlesInsideFolder(id);
+                    searchList = homeDatabase.homeDao().getAllArticlesInsideFolder("%"+id+"%");
                 else if(isFolderSelected && !isDocumentSelected && !isArticleSelected)
-                    searchList = homeDatabase.homeDao().getAllCategoriesInsideFolder(id);
+                    searchList = homeDatabase.homeDao().getAllCategoriesInsideFolder("%"+id+"%");
 
 
             }

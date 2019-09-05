@@ -23,6 +23,7 @@ import com.mariapps.qdmswiki.search.model.SearchModel;
 import com.mariapps.qdmswiki.search.model.SearchFilterModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -159,15 +160,19 @@ public class SearchActivity extends BaseActivity {
                 Intent intent = new Intent(SearchActivity.this, FolderStructureActivity.class);
                 intent.putExtra(AppConfig.BUNDLE_TYPE,item.getType());
                 intent.putExtra(AppConfig.BUNDLE_NAME,item.getName());
-                intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,item.getCategoryName());
+
                 intent.putExtra(AppConfig.BUNDLE_ID,item.getId());
                 if(item.getType().equals("Article")) {
-                    String categoryId = item.getCategoryId().replace("[\"", "");
-                    categoryId = categoryId.replace("\"]","");
-                    intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, categoryId);
+                    List<String> categoryIds = Collections.singletonList(item.getCategoryId().substring(1, item.getCategoryId().length() - 1));
+                    intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, categoryIds.get(0).replace("\"",""));
+
+                    List<String> categoryNames = Collections.singletonList(item.getCategoryName().substring(1, item.getCategoryName().length() - 1));
+                    intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME, categoryNames.get(0).replace("\"",""));
                 }
-                else
-                    intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,item.getCategoryId());
+                else {
+                    intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, item.getCategoryId());
+                    intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,item.getCategoryName());
+                }
                 intent.putExtra(AppConfig.BUNDLE_VERSION,item.getVersion());
                 startActivity(intent);
 
