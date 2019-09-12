@@ -446,7 +446,10 @@ public interface HomeDao {
     @Query("SELECT * FROM CategoryEntity")
     List<CategoryModel> getCategory();
 
-    @Query("SELECT Id,Receviers FROM NotificationEntity")
+    @Query("SELECT Id,Receviers FROM NotificationEntity "+
+            " WHERE (NotificationEntity.EventDescription = 0 "+
+            " OR NotificationEntity.EventDescription = 1.0 " +
+            " OR NotificationEntity.EventDescription = 1) ")
     List<NotificationModel> getNotificationCount();
 
     @Query("SELECT notification.Message, " +
@@ -456,7 +459,10 @@ public interface HomeDao {
             " FROM NotificationEntity as notification " +
             " LEFT JOIN userinfoentity as userinfo "+
             " ON notification.SenderId = userinfo.Id "+
-            " ORDER BY notification.SendTime desc")
+            " WHERE (notification.EventDescription = 0 "+
+            " OR notification.EventDescription = 1.0 " +
+            " OR notification.EventDescription = 1) "+
+            " ORDER BY notification.SendTime desc ")
     List<NotificationModel> getNotifications();
 
     @Query("SELECT * FROM BookMarkEntity")

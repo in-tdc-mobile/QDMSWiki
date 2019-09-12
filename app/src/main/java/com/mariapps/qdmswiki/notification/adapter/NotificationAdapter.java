@@ -2,6 +2,7 @@ package com.mariapps.qdmswiki.notification.adapter;
 
 import android.content.Context;
 import android.os.Build;
+import android.service.voice.VoiceInteractionSessionService;
 import android.support.annotation.NonNull;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.AppCompatImageView;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.mariapps.qdmswiki.R;
+import com.mariapps.qdmswiki.SessionManager;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
@@ -29,10 +31,12 @@ public class NotificationAdapter extends CustomRecyclerView.Adapter<Notification
 
     private Context mContext;
     private List<NotificationModel> notificationList;
+    private SessionManager sessionManager;
 
     public NotificationAdapter(Context context, List<NotificationModel> list) {
         mContext = context;
         notificationList = list;
+        sessionManager = new SessionManager(mContext);
     }
 
     @NonNull
@@ -52,11 +56,12 @@ public class NotificationAdapter extends CustomRecyclerView.Adapter<Notification
         }
         holder.statusTV.setText("Last updated by " + " : ");
         for(int i=0;i<notificationModel.getReceviers().size();i++){
-            if(notificationModel.getReceviers().get(i).getUnread()) {
+            if(notificationModel.getReceviers().get(i).getRecevierId().equals(sessionManager.getUserInfoId()) && notificationModel.getReceviers().get(i).getUnread()) {
                 holder.linNotification.setBackgroundColor(mContext.getResources().getColor(R.color.grey_200));
                 holder.imgStatus.setVisibility(View.VISIBLE);
+
             }
-            else {
+            else if(notificationModel.getReceviers().get(i).getRecevierId().equals(sessionManager.getUserInfoId()) && !notificationModel.getReceviers().get(i).getUnread()){
                 holder.linNotification.setBackgroundColor(mContext.getResources().getColor(R.color.white));
                 holder.imgStatus.setVisibility(View.GONE);
             }

@@ -44,6 +44,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.github.lzyzsd.circleprogress.DonutProgress;
 import com.google.gson.Gson;
 import com.mariapps.qdmswiki.AppConfig;
@@ -73,7 +74,9 @@ import com.mariapps.qdmswiki.usersettings.UserSettingsCategoryModel;
 import com.mariapps.qdmswiki.usersettings.UserSettingsModel;
 import com.mariapps.qdmswiki.usersettings.UserSettingsTagModel;
 import com.mariapps.qdmswiki.utils.ScreenUtils;
+
 import org.json.JSONObject;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -85,6 +88,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import io.reactivex.Completable;
@@ -203,10 +207,10 @@ public class HomeActivity extends BaseActivity implements HomeView {
             int downloadedIndex = c.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR);
             long size = c.getInt(sizeIndex);
             long downloaded = c.getInt(downloadedIndex);
-            if (size != -1) progress = (int) (downloaded*100/size);
+            if (size != -1) progress = (int) (downloaded * 100 / size);
         }
-            return progress;
-}
+        return progress;
+    }
 
     private void getParentFolders() {
         homePresenter.getParentFolders();
@@ -331,7 +335,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
     }
 
     private void setNotificationCount() {
-       homePresenter.getNotificationCount();
+        homePresenter.getNotificationCount();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -440,7 +444,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         if (file.exists()) {
             progressLayout.setVisibility(View.GONE);
             return;
-//          ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
+//            ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
 //          readAndInsertJsonData.execute();
         } else {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
@@ -610,10 +614,10 @@ public class HomeActivity extends BaseActivity implements HomeView {
     @Override
     public void onGetNotificationCountSuccess(List<NotificationModel> notificationList) {
         int notificationCount = 0;
-        for(int i=0;i<notificationList.size();i++){
+        for (int i = 0; i < notificationList.size(); i++) {
             List<ReceiverModel> receiverList = notificationList.get(i).getReceviers();
-            for(int j=0;j<receiverList.size();j++){
-                if(receiverList.get(j).getUnread()) {
+            for (int j = 0; j < receiverList.size(); j++) {
+                if (receiverList.get(j).getRecevierId().equals(sessionManager.getUserInfoId()) && receiverList.get(j).getUnread()) {
                     notificationCount = notificationCount + 1;
                 }
             }
@@ -721,119 +725,125 @@ public class HomeActivity extends BaseActivity implements HomeView {
             }
 
             for (int i = 0; i < userInfoList.size(); i++) {
-                if (!String.valueOf(userInfoList.get(i).getUserId()).equals(sessionManager.getUserId())) {
-                    userInfoList.get(i).setImageName("");
-                } else {
+                if (String.valueOf(userInfoList.get(i).getUserId()).equals(sessionManager.getUserId())) {
                     sessionManager.setUserInfoId(userInfoList.get(i).getId());
-                    userInfoList.get(i).setImageName(userInfoList.get(i).getImageName());
+                    break;
                 }
             }
-            homePresenter.deleteUserInfo(userInfoList);
 
-            for (int i = 0; i < userSettingsList.size(); i++) {
-                if (userSettingsList.get(i).getUserID().equals(sessionManager.getUserInfoId())) {
-                    homePresenter.deleteUserSettings(userSettingsList.get(i));
-                } else
-                    continue;
-            }
-
-            for (int i = 0; i < notificationList.size(); i++) {
-                List<ReceiverModel> receiverList = notificationList.get(i).getReceviers();
-                for (int j = 0; j < receiverList.size(); j++) {
-                    if (receiverList.get(j).getRecevierId().equals(sessionManager.getUserInfoId())) {
-                        homePresenter.deleteNotifications(notificationList.get(i));
-                        homePresenter.deleteReceivers(receiverList.get(j));
-                        break;
+                for (int i = 0; i < userInfoList.size(); i++) {
+                    if (!(String.valueOf(userInfoList.get(i).getUserId()).equals(sessionManager.getUserId()))) {
+                        userInfoList.get(i).setImageName("");
+                    } else {
+                        userInfoList.get(i).setImageName(userInfoList.get(i).getImageName());
                     }
                 }
-            }
+                homePresenter.deleteUserInfo(userInfoList);
 
-            //Recommended logic
-            for (int i = 0; i < documentList.size(); i++) {
-                boolean isRecommended = false;
-                List<TagModel> tagList = documentList.get(i).getTags();
-                for (int j = 0; j < userSettingsList.size(); j++) {
-                    if (userSettingsList.get(j).getUserID().equals(sessionManager.getUserInfoId())) {
-                        //loop tags
-                        List<UserSettingsTagModel> userSettingsTagList = userSettingsList.get(j).getTags();
-                        for (int k = 0; k < tagList.size(); k++) {
-                            for (int l = 0; l < userSettingsTagList.size(); l++) {
-                                if (tagList.get(k).getId().equals(userSettingsTagList.get(l).getId())) {
-                                    documentList.get(i).setIsRecommended("YES");
-                                    homePresenter.updateIsRecommended(documentList.get(i).getId());
-                                    isRecommended = true;
-                                    break;
-                                }
-                            }
+                for (int i = 0; i < userSettingsList.size(); i++) {
+                    if (userSettingsList.get(i).getUserID().equals(sessionManager.getUserInfoId())) {
+                        homePresenter.deleteUserSettings(userSettingsList.get(i));
+                    } else
+                        continue;
+                }
+
+                for (int i = 0; i < notificationList.size(); i++) {
+                    List<ReceiverModel> receiverList = notificationList.get(i).getReceviers();
+                    for (int j = 0; j < receiverList.size(); j++) {
+                        if (receiverList.get(j).getRecevierId().equals(sessionManager.getUserInfoId())) {
+                            homePresenter.deleteNotifications(notificationList.get(i));
+                            //homePresenter.deleteReceivers(receiverList.get(j));
+                            break;
                         }
-                        //loop categories
-                        if (!isRecommended) {
-                            List<UserSettingsCategoryModel> userSettingsCategoryList = userSettingsList.get(j).getCategory();
+                    }
+                }
+
+                //Recommended logic
+                for (int i = 0; i < documentList.size(); i++) {
+                    boolean isRecommended = false;
+                    List<TagModel> tagList = documentList.get(i).getTags();
+                    for (int j = 0; j < userSettingsList.size(); j++) {
+                        if (userSettingsList.get(j).getUserID().equals(sessionManager.getUserInfoId())) {
+                            //loop tags
+                            List<UserSettingsTagModel> userSettingsTagList = userSettingsList.get(j).getTags();
                             for (int k = 0; k < tagList.size(); k++) {
-                                for (int l = 0; l < userSettingsCategoryList.size(); l++) {
-                                    if (documentList.get(i).getCategoryId().equals(userSettingsCategoryList.get(l).getId())) {
+                                for (int l = 0; l < userSettingsTagList.size(); l++) {
+                                    if (tagList.get(k).getId().equals(userSettingsTagList.get(l).getId())) {
                                         documentList.get(i).setIsRecommended("YES");
                                         homePresenter.updateIsRecommended(documentList.get(i).getId());
+                                        isRecommended = true;
                                         break;
+                                    }
+                                }
+                            }
+                            //loop categories
+                            if (!isRecommended) {
+                                List<UserSettingsCategoryModel> userSettingsCategoryList = userSettingsList.get(j).getCategory();
+                                for (int k = 0; k < tagList.size(); k++) {
+                                    for (int l = 0; l < userSettingsCategoryList.size(); l++) {
+                                        if (documentList.get(i).getCategoryId().equals(userSettingsCategoryList.get(l).getId())) {
+                                            documentList.get(i).setIsRecommended("YES");
+                                            homePresenter.updateIsRecommended(documentList.get(i).getId());
+                                            break;
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
-            }
 
-            for (int i = 0; i < documentList.size(); i++) {
-                if (documentList.get(i).getIsRecommended().equals("YES"))
-                    recommendedList.add(documentList.get(i));
-            }
+                for (int i = 0; i < documentList.size(); i++) {
+                    if (documentList.get(i).getIsRecommended().equals("YES"))
+                        recommendedList.add(documentList.get(i));
+                }
 
-            mainViewPager.updateDocumentList(documentList);
-            mainViewPager.updateArticleList(articleList);
-            getRecommendedList();
-            mainViewPager.updateRecentlyList(new ArrayList<>());
-            setNotificationCount();
+                mainViewPager.updateDocumentList(documentList);
+                mainViewPager.updateArticleList(articleList);
+                getRecommendedList();
+                mainViewPager.updateRecentlyList(new ArrayList<>());
+                setNotificationCount();
+
+            }
 
         }
 
+        public void getRecommendedList() {
+            Completable.fromAction(new Action() {
+                @Override
+                public void run() throws Exception {
+                    recommendedList = homeDatabase.homeDao().getRecommendedDocuments();
+                }
+            }).observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+                @Override
+                public void onSubscribe(Disposable d) {
+
+                }
+
+                @Override
+                public void onComplete() {
+                    mainViewPager.updateRecommendedList(recommendedList);
+                    progressDialog.dismiss();
+                }
+
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+            });
+        }
+
+        private void updateUserImage() {
+            homePresenter.getUserImage(sessionManager.getUserId());
+        }
+
+        @Override
+        public void onDestroy() {
+            super.onDestroy();
+            unregisterReceiver(onDownloadComplete);
+        }
     }
-
-    public void getRecommendedList() {
-        Completable.fromAction(new Action() {
-            @Override
-            public void run() throws Exception {
-                recommendedList = homeDatabase.homeDao().getRecommendedDocuments();
-            }
-        }).observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
-            @Override
-            public void onSubscribe(Disposable d) {
-
-            }
-
-            @Override
-            public void onComplete() {
-                mainViewPager.updateRecommendedList(recommendedList);
-                progressDialog.dismiss();
-            }
-
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-        });
-    }
-
-    private void updateUserImage() {
-        homePresenter.getUserImage(sessionManager.getUserId());
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(onDownloadComplete);
-    }
-}
 
 
