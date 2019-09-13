@@ -46,7 +46,7 @@ dependencies {
 
     implementation 'com.android.support:support-v4:28.0.0'
     implementation 'com.android.support:design:28.0.0'
-    compile 'com.android.support:multidex:1.0.0'
+    implementation 'com.android.support:multidex:1.0.0'
 
     //ButterKnife
     implementation 'com.jakewharton:butterknife:8.8.1'
@@ -61,7 +61,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.8.0'
 
     //Room
-    compile 'android.arch.persistence.room:runtime:1.1.1'
+    implementation 'android.arch.persistence.room:runtime:1.1.1'
     annotationProcessor 'android.arch.persistence.room:compiler:1.1.1'
 
     //RxJava

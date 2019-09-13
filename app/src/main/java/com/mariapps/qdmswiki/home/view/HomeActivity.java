@@ -422,6 +422,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
                             intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME, documentModel.getCategoryName());
                             intent.putExtra(AppConfig.BUNDLE_ID, documentModel.getId());
                             intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, documentModel.getCatId());
+                            intent.putExtra(AppConfig.BUNDLE_VERSION, documentModel.getVersion());
                             startActivity(intent);
                         }
                     }

@@ -60,13 +60,13 @@ public class CategoryModel implements Parcelable {
 
     @ColumnInfo(name = "DisplayOrder")
     @SerializedName("DisplayOrder")
-    private String displayOrder;
+    private int displayOrder;
 
     @ColumnInfo(name = "IsDashBoardEnabled")
     @SerializedName("IsDashBoardEnabled")
     private Boolean isDashBoardEnabled;
 
-    public CategoryModel(String id, String appId, String name, String parent, Boolean isActive, String slug, String ancestors, Boolean isFullVisibilityOn, Boolean isLeafNode, String type, String displayOrder, Boolean isDashBoardEnabled) {
+    public CategoryModel(String id, String appId, String name, String parent, Boolean isActive, String slug, String ancestors, Boolean isFullVisibilityOn, Boolean isLeafNode, String type, int displayOrder, Boolean isDashBoardEnabled) {
         this.id = id;
         this.appId = appId;
         this.name = name;
@@ -161,11 +161,11 @@ public class CategoryModel implements Parcelable {
         this.type = type;
     }
 
-    public String getDisplayOrder() {
+    public int getDisplayOrder() {
         return displayOrder;
     }
 
-    public void setDisplayOrder(String displayOrder) {
+    public void setDisplayOrder(int displayOrder) {
         this.displayOrder = displayOrder;
     }
 
@@ -194,7 +194,7 @@ public class CategoryModel implements Parcelable {
         isFullVisibilityOn = in.readByte() != 0;
         isLeafNode = in.readByte() != 0;
         type = in.readString();
-        displayOrder = in.readString();
+        displayOrder = in.readInt();
         isDashBoardEnabled = in.readByte() != 0;
     }
 
@@ -210,7 +210,7 @@ public class CategoryModel implements Parcelable {
         dest.writeByte((byte) (isFullVisibilityOn ? 1 : 0));
         dest.writeByte((byte) (isLeafNode ? 1 : 0));
         dest.writeString(type);
-        dest.writeString(displayOrder);
+        dest.writeInt(displayOrder);
         dest.writeByte((byte) (isDashBoardEnabled ? 1 : 0));
     }
 

@@ -9,6 +9,7 @@ import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.home.model.TagModel;
+import com.mariapps.qdmswiki.utils.CommonUtils;
 
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class TagsAdapter extends CustomRecyclerView.Adapter<TagsAdapter.Departme
 
     @Override
     public void onBindViewHolder(@NonNull final TagsAdapter.DepartmentsVH holder, int i) {
-        holder.tvHeadingText.setText(tagList.get(i).getName());
+        holder.tvHeadingText.setText(CommonUtils.toTitleCase(tagList.get(i).getName()));
     }
 
     @Override

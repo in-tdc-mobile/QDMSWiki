@@ -201,13 +201,13 @@ public interface HomeDao {
             " ORDER BY category.DisplayOrder")
     List<DocumentModel> getParentFolders();
 
-    @Query("SELECT document.Id as id, " +
+    @Query("SELECT document.Id, " +
             " 'Document' as type, " +
             " document.DocumentName as categoryName, " +
-            " document.Version as version, " +
+            " document.Version, " +
             " document.CategoryId as catId " +
             " FROM DocumentEntity as document " +
-            " WHERE document.CategoryId=:parentId" +
+            " WHERE document.CategoryId=:parentId " +
             " UNION "+
             " SELECT category.Id as id, " +
             " 'Folder' as type, " +
@@ -397,7 +397,7 @@ public interface HomeDao {
             " UNION "+
             " SELECT category.Id as id, " +
             " 'Folder' as type, " +
-            " '' as name, " +
+            " category.CategoryName as name, " +
             " '' as version, " +
             " category.Id as categoryId," +
             " '' as categoryName " +
