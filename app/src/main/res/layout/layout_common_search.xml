@@ -5,17 +5,21 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <RelativeLayout
+    <LinearLayout
+        android:paddingLeft="@dimen/dimen_10dp"
+        android:paddingRight="@dimen/dimen_10dp"
+        android:weightSum="1"
+        android:orientation="horizontal"
         android:id="@+id/searchRL"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:background="@color/grey_300">
 
         <com.mariapps.qdmswiki.custom.CustomEditText
+            android:layout_weight="0.99"
             android:id="@+id/searchET"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
             android:layout_margin="@dimen/dimen_8dp"
             android:background="@drawable/drawable_search_edittext_white"
             android:drawableEnd="@drawable/ic_search_grey"
@@ -24,7 +28,31 @@
             android:paddingEnd="@dimen/dimen_10dp"
             android:singleLine="true" />
 
-    </RelativeLayout>
+        <LinearLayout
+            android:layout_weight="0.01"
+            android:gravity="center_horizontal"
+            android:layout_alignParentEnd="true"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/btnUp"
+                android:layout_gravity="center"
+                android:layout_width="@dimen/dimen_30dp"
+                android:layout_height="@dimen/dimen_30dp"
+                android:src="@mipmap/ic_up_arrow"/>
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/btnDown"
+                android:layout_gravity="center"
+                android:layout_width="@dimen/dimen_30dp"
+                android:layout_height="@dimen/dimen_30dp"
+                android:src="@mipmap/ic_down_arrow"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <com.mariapps.qdmswiki.custom.CustomProgressBar
         android:id="@+id/lfProgress"

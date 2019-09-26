@@ -8,6 +8,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.AppCompatImageView;
+import android.support.v7.widget.SearchView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +41,7 @@ import com.mariapps.qdmswiki.home.model.RecentlyViewedModel;
 import com.mariapps.qdmswiki.home.presenter.HomePresenter;
 import com.mariapps.qdmswiki.utils.DateUtils;
 
+import java.lang.reflect.Method;
 import java.util.Date;
 
 import butterknife.BindView;
@@ -54,6 +58,10 @@ public class DocumentViewFragment extends BaseFragment {
 
     @BindView(R.id.searchET)
     CustomEditText searchET;
+    @BindView(R.id.btnDown)
+    AppCompatImageView btnDown;
+    @BindView(R.id.btnUp)
+    AppCompatImageView btnUp;
     @BindView(R.id.showMenuFab)
     FloatingActionButton showMenuFab;
     @BindView(R.id.webView)
@@ -71,6 +79,7 @@ public class DocumentViewFragment extends BaseFragment {
     private HomeDatabase homeDatabase;
     private RecentlyViewedModel recentlyViewedModel;
     private String articleData;
+    private boolean flag = false;
 
     @Override
     protected void setUpPresenter() {
@@ -91,7 +100,7 @@ public class DocumentViewFragment extends BaseFragment {
             folderName = args.getString(AppConfig.BUNDLE_FOLDER_NAME, "");
             version = args.getString(AppConfig.BUNDLE_VERSION, "");
 
-            if(type.equals("Document")) {
+            if (type.equals("Document")) {
                 recentlyViewedModel = new RecentlyViewedModel(id, name, folderId, folderName, version, DateUtils.getCurrentDate());
                 insertRecentlyViewedDocument(recentlyViewedModel);
             }
@@ -100,6 +109,58 @@ public class DocumentViewFragment extends BaseFragment {
         }
 
         homeDatabase = HomeDatabase.getInstance(getActivity());
+        btnDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!flag) {
+                   // webView.findAllAsync(searchET.getText().toString());
+                    flag = true;
+                    try {
+                        Method m = WebView.class.getMethod("setFindIsUp", Boolean.TYPE);
+                        m.invoke(webView, true);
+                    } catch (Throwable ignored) {
+                    }
+                } else {
+                    webView.findNext(true);
+                }
+            }
+
+        });
+
+        btnUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!flag) {
+                    //webView.findAllAsync(searchET.getText().toString());
+                    flag = true;
+                    try {
+                        Method m = WebView.class.getMethod("setFindIsUp", Boolean.TYPE);
+                        m.invoke(webView, true);
+                    } catch (Throwable ignored) {
+                    }
+                } else {
+                    webView.findNext(false);
+                }
+            }
+
+        });
+
+        searchET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                webView.findAllAsync(s.toString());
+            }
+        });
         loadDocument();
 
         return view;
@@ -142,7 +203,7 @@ public class DocumentViewFragment extends BaseFragment {
                         Intent intent = new Intent(getActivity(), DocumentInfoViewActivity.class);
                         intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME, folderName);
                         intent.putExtra(AppConfig.BUNDLE_ID, id);
-                        intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,folderId);
+                        intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, folderId);
                         startActivity(intent);
                     }
                 });
@@ -166,11 +227,10 @@ public class DocumentViewFragment extends BaseFragment {
             @Override
             public void run() throws Exception {
 
-                if(type.equals("Document")){
-                documentModel = homeDatabase.homeDao().getDocumentData(id);
-                documentData = documentModel.getDocumentData();
-                }
-                else{
+                if (type.equals("Document")) {
+                    documentModel = homeDatabase.homeDao().getDocumentData(id);
+                    documentData = documentModel.getDocumentData();
+                } else {
                     documentModel = new DocumentModel();
                     articleModel = homeDatabase.homeDao().getArticleData(id);
                     documentData = articleModel.getDocumentData();
@@ -194,7 +254,7 @@ public class DocumentViewFragment extends BaseFragment {
 
             @Override
             public void onError(Throwable e) {
-                Toast.makeText(getContext(),e.getMessage(),Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

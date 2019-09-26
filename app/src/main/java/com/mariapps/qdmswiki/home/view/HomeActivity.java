@@ -445,8 +445,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
         if (file.exists()) {
             progressLayout.setVisibility(View.GONE);
             return;
-//            ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
-//          readAndInsertJsonData.execute();
+            //ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
+            //readAndInsertJsonData.execute();
         } else {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
@@ -656,7 +656,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         protected MainModel doInBackground(String... params) {
             try {
                 gson = new Gson();
-                mainModel = gson.fromJson(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/Extract1/MasterList.json"), MainModel.class);
+                mainModel = gson.fromJson(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/MasterList.json"), MainModel.class);
             } catch (Exception e) {
                 progressDialog.dismiss();
             }

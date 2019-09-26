@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "867996156907",
+    "firebase_url": "https://qdmswikibsm.firebaseio.com",
+    "project_id": "qdmswikibsm",
+    "storage_bucket": "qdmswikibsm.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:867996156907:android:d5f10855d5809fb12acfae",
+        "android_client_info": {
+          "package_name": "com.mariapps.qdmswiki"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "867996156907-m096q1v69k3r8sdajebom9ki07uljt6t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mariapps.qdmswiki",
+            "certificate_hash": "bfb3559f3e4e8cc2c21d8db8a55675d763a94be9"
+          }
+        },
+        {
+          "client_id": "867996156907-2psrhr120cvlg9dl6obt8qh76lv9gcv2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBd_J0Q6Mmf6kH0jBpvXix7AgN4macJkpo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "867996156907-2psrhr120cvlg9dl6obt8qh76lv9gcv2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "867996156907-110p4f28s4oui4fkd9djgod7ido0u6lq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mariapps.QDMS-wiki"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
