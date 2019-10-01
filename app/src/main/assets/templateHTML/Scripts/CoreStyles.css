@@ -1,10 +1,34 @@
+
+@font-face {
+    font-family: 'Calibri';
+    src: url('file:///android_asset/fonts/Calibri.eot'); /* IE9 Compat Modes */
+    src: url('file:///android_asset/fonts/Calibri.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('file:///android_asset/fonts/Calibri.woff') format('woff'), /* Modern Browsers */
+    url('file:///android_asset/fonts/Calibri.ttf')  format('truetype'), /* Safari, Android, iOS */
+    url('file:///android_asset/fonts/Calibri.svg#Calibri') format('svg'); /* Legacy iOS */
+}
+
+@font-face { font-family: 'Arial'; src:  local('Arial'), url('file:///android_asset/fonts/Arial.ttf') format('truetype');}
+@font-face { font-family: 'Arial Narrow'; src:  local('Arial'), url('file:///android_asset/fonts/Arial.ttf') format('truetype');}
+
+@font-face { font-family: 'OpenSans'; src:  url('file:///android_asset/fonts/OpenSans-Bold.ttf') format('truetype'),
+    url('file:///android_asset/fonts/OpenSans-BoldItalic.ttf') format('truetype'),
+    url('file:///android_asset/fonts/OpenSans-ExtraBold.ttf') format('truetype'),
+    url('file:///android_asset/fonts/OpenSans-ExtraBoldItalic.ttf') format('truetype'),
+    url('file:///android_asset/fonts/OpenSans-Italic.ttf') format('truetype'),
+    url('file:///android_asset/fonts/OpenSans-LightItalic.ttf') format('truetype'),
+    url('file:///android_asset/fonts/OpenSans-Light.ttf') format('truetype');}
+
+@font-face { font-family: 'Wingdings 3'; src:  local('Wingdings3'), url('file:///android_asset/fonts/Wingdings3.ttf') format('truetype');}
+    
+}
 html {
     box-sizing: border-box;
 }
 
 /**, *::after, *::before {
-    box-sizing: inherit;
-}*/
+ box-sizing: inherit;
+ }*/
 
 ul, ol {
     list-style-type: none;
@@ -27,13 +51,18 @@ th {
     text-align: left;
 }
 /*td {
-	border-bottom: 1px solid #ddd;padding: 0.75em 0;
-}*/
+ border-bottom: 1px solid #ddd;padding: 0.75em 0;
+ }*/
 tr, td, th {
     vertical-align: middle;
 }
 
+html, body {
+    text-rendering: geometricPrecision;
+    -webkit-font-feature-settings: "kern" 1;
+}
 body {
+    font-weight: 400;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -54,13 +83,13 @@ a {
     outline: 0;
 }
 
-    a, a:active, a:focus {
-        outline: none !important;
-    }
+a, a:active, a:focus {
+    outline: none !important;
+}
 
-        a:active, a.nice-select.open, a:focus, a:hover {
-            color: #355e98;
-        }
+a:active, a.nice-select.open, a:focus, a:hover {
+    color: #355e98;
+}
 
 hr {
     border-bottom: 1px solid #ddd;
@@ -107,20 +136,20 @@ button, input[type="button"], input[type="reset"], input[type="submit"] {
     white-space: nowrap;
 }
 
-    button:hover, button:focus, input[type="button"]:hover, input[type="button"]:focus, input[type="reset"]:hover, input[type="reset"]:focus, input[type="submit"]:hover, input[type="submit"]:focus {
-        background-color: #3e5fbf;
-        color: #fff;
-        outline: none;
-    }
+button:hover, button:focus, input[type="button"]:hover, input[type="button"]:focus, input[type="reset"]:hover, input[type="reset"]:focus, input[type="submit"]:hover, input[type="submit"]:focus {
+    background-color: #3e5fbf;
+    color: #fff;
+    outline: none;
+}
 
-    button:disabled, input[type="button"]:disabled, input[type="reset"]:disabled, input[type="submit"]:disabled {
-        cursor: not-allowed;
-        opacity: 0.5;
-    }
+button:disabled, input[type="button"]:disabled, input[type="reset"]:disabled, input[type="submit"]:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
 
-        button:disabled:hover, input[type="button"]:disabled:hover, input[type="reset"]:disabled:hover, input[type="submit"]:disabled:hover {
-            background-color: #4b8abd;
-        }
+button:disabled:hover, input[type="button"]:disabled:hover, input[type="reset"]:disabled:hover, input[type="submit"]:disabled:hover {
+    background-color: #4b8abd;
+}
 
 input[type="color"], input[type="date"], input[type="datetime"], input[type="datetime-local"], input[type="email"], input[type="month"], input[type="number"], input[type="password"], input[type="search"], input[type="tel"], input[type="text"], input[type="time"], input[type="url"], input[type="week"], input:not([type]), textarea, select[multiple=multiple] {
     background-color: #fff;
@@ -136,23 +165,23 @@ input[type="color"], input[type="date"], input[type="datetime"], input[type="dat
     width: 100%;
 }
 
-    input[type="color"]:hover, input[type="date"]:hover, input[type="datetime"]:hover, input[type="datetime-local"]:hover, input[type="email"]:hover, input[type="month"]:hover, input[type="number"]:hover, input[type="password"]:hover, input[type="search"]:hover, input[type="tel"]:hover, input[type="text"]:hover, input[type="time"]:hover, input[type="url"]:hover, input[type="week"]:hover, input:not([type]):hover, textarea:hover, select[multiple=multiple]:hover {
-        border-color: #b1b1b1;
-    }
+input[type="color"]:hover, input[type="date"]:hover, input[type="datetime"]:hover, input[type="datetime-local"]:hover, input[type="email"]:hover, input[type="month"]:hover, input[type="number"]:hover, input[type="password"]:hover, input[type="search"]:hover, input[type="tel"]:hover, input[type="text"]:hover, input[type="time"]:hover, input[type="url"]:hover, input[type="week"]:hover, input:not([type]):hover, textarea:hover, select[multiple=multiple]:hover {
+    border-color: #b1b1b1;
+}
 
-    input[type="color"]:focus, input[type="date"]:focus, input[type="datetime"]:focus, input[type="datetime-local"]:focus, input[type="email"]:focus, input[type="month"]:focus, input[type="number"]:focus, input[type="password"]:focus, input[type="search"]:focus, input[type="tel"]:focus, input[type="text"]:focus, input[type="time"]:focus, input[type="url"]:focus, input[type="week"]:focus, input:not([type]):focus, textarea:focus, select[multiple=multiple]:focus {
-        box-shadow: transparent !important;
-        outline: none;
-    }
+input[type="color"]:focus, input[type="date"]:focus, input[type="datetime"]:focus, input[type="datetime-local"]:focus, input[type="email"]:focus, input[type="month"]:focus, input[type="number"]:focus, input[type="password"]:focus, input[type="search"]:focus, input[type="tel"]:focus, input[type="text"]:focus, input[type="time"]:focus, input[type="url"]:focus, input[type="week"]:focus, input:not([type]):focus, textarea:focus, select[multiple=multiple]:focus {
+    box-shadow: transparent !important;
+    outline: none;
+}
 
-    input[type="color"]:disabled, input[type="date"]:disabled, input[type="datetime"]:disabled, input[type="datetime-local"]:disabled, input[type="email"]:disabled, input[type="month"]:disabled, input[type="number"]:disabled, input[type="password"]:disabled, input[type="search"]:disabled, input[type="tel"]:disabled, input[type="text"]:disabled, input[type="time"]:disabled, input[type="url"]:disabled, input[type="week"]:disabled, input:not([type]):disabled, textarea:disabled, select[multiple=multiple]:disabled {
-        background-color: #f2f2f2;
-        cursor: not-allowed;
-    }
+input[type="color"]:disabled, input[type="date"]:disabled, input[type="datetime"]:disabled, input[type="datetime-local"]:disabled, input[type="email"]:disabled, input[type="month"]:disabled, input[type="number"]:disabled, input[type="password"]:disabled, input[type="search"]:disabled, input[type="tel"]:disabled, input[type="text"]:disabled, input[type="time"]:disabled, input[type="url"]:disabled, input[type="week"]:disabled, input:not([type]):disabled, textarea:disabled, select[multiple=multiple]:disabled {
+    background-color: #f2f2f2;
+    cursor: not-allowed;
+}
 
-        input[type="color"]:disabled:hover, input[type="date"]:disabled:hover, input[type="datetime"]:disabled:hover, input[type="datetime-local"]:disabled:hover, input[type="email"]:disabled:hover, input[type="month"]:disabled:hover, input[type="number"]:disabled:hover, input[type="password"]:disabled:hover, input[type="search"]:disabled:hover, input[type="tel"]:disabled:hover, input[type="text"]:disabled:hover, input[type="time"]:disabled:hover, input[type="url"]:disabled:hover, input[type="week"]:disabled:hover, input:not([type]):disabled:hover, textarea:disabled:hover, select[multiple=multiple]:disabled:hover {
-            border: 1px solid #ddd;
-        }
+input[type="color"]:disabled:hover, input[type="date"]:disabled:hover, input[type="datetime"]:disabled:hover, input[type="datetime-local"]:disabled:hover, input[type="email"]:disabled:hover, input[type="month"]:disabled:hover, input[type="number"]:disabled:hover, input[type="password"]:disabled:hover, input[type="search"]:disabled:hover, input[type="tel"]:disabled:hover, input[type="text"]:disabled:hover, input[type="time"]:disabled:hover, input[type="url"]:disabled:hover, input[type="week"]:disabled:hover, input:not([type]):disabled:hover, textarea:disabled:hover, select[multiple=multiple]:disabled:hover {
+    border: 1px solid #ddd;
+}
 
 #divLetterPDF {
     text-align: center;
@@ -162,21 +191,21 @@ input[type="color"], input[type="date"], input[type="datetime"], input[type="dat
     margin: 12px 0 0 0;
 }
 
-    #previeweditor [data-column="column-two-layout"] table tbody > tr:hover > td {
-        border-color: 2px dashed transparent !important;
-    }
+#previeweditor [data-column="column-two-layout"] table tbody > tr:hover > td {
+    border-color: 2px dashed transparent !important;
+}
 
-        #previeweditor [data-column="column-two-layout"] table tbody > tr:hover > td:focus {
-            outline: none;
-        }
+#previeweditor [data-column="column-two-layout"] table tbody > tr:hover > td:focus {
+    outline: none;
+}
 
-        #previeweditor [data-column="column-two-layout"] table tbody > tr:hover > td:first-child {
-            border-right: 2px dashed transparent !important;
-        }
+#previeweditor [data-column="column-two-layout"] table tbody > tr:hover > td:first-child {
+    border-right: 2px dashed transparent !important;
+}
 
-        #previeweditor [data-column="column-two-layout"] table tbody > tr:hover > td:last-child-child {
-            border-left: 2px dashed transparent !important;
-        }
+#previeweditor [data-column="column-two-layout"] table tbody > tr:hover > td:last-child-child {
+    border-left: 2px dashed transparent !important;
+}
 
 #previeweditor table tbody:hover {
     border-color: transparent !important;
@@ -210,10 +239,10 @@ input[type="color"], input[type="date"], input[type="datetime"], input[type="dat
     padding: 0;
 }
 
-    .emailStyle .maillefttab hr {
-        border-top: 1px solid #59802e;
-        margin: 0 -15px;
-    }
+.emailStyle .maillefttab hr {
+    border-top: 1px solid #59802e;
+    margin: 0 -15px;
+}
 
 .middleContainer .tooltip-inner {
     word-break: break-all;
@@ -306,18 +335,18 @@ input[type="color"], input[type="date"], input[type="datetime"], input[type="dat
     margin: 20px 0;
 }
 
-    .user-edit-options li a {
-        text-decoration: none;
-        text-align: center;
-        opacity: 0.5;
-        -webkit-transition: opacity 0.15s ease-in;
-        -moz-transition: opacity 0.15s ease-in;
-        transition: opacity 0.15s ease-in;
-    }
+.user-edit-options li a {
+    text-decoration: none;
+    text-align: center;
+    opacity: 0.5;
+    -webkit-transition: opacity 0.15s ease-in;
+    -moz-transition: opacity 0.15s ease-in;
+    transition: opacity 0.15s ease-in;
+}
 
-        .user-edit-options li a:hover, .user-edit-options li a:focus {
-            opacity: 1;
-        }
+.user-edit-options li a:hover, .user-edit-options li a:focus {
+    opacity: 1;
+}
 
 .bdr-btm {
     border-bottom: 1px solid #ccc;
@@ -386,9 +415,9 @@ aside {
     transition: all 0.15s ease; /*border-right: 1px dotted #495a6e;*/
 }
 
-    aside .tooltip {
-        display: none !important;
-    }
+aside .tooltip {
+    display: none !important;
+}
 
 .disabled {
     pointer-events: none;
@@ -430,39 +459,39 @@ aside {
     overflow: hidden !important;
 }
 
-    .middleContainer > label {
-        display: none;
-    }
+.middleContainer > label {
+    display: none;
+}
 
 .search {
     position: relative;
     margin-bottom: 10px;
 }
 
-    .search .imgsearch {
-        float: right;
-        position: absolute;
-        top: 4px;
-        right: 10px;
-        left: auto;
-        opacity: 0.5;
-        -webkit-transition: opacity 0.15s ease-in;
-        -moz-transition: opacity 0.15s ease-in;
-        transition: opacity 0.15s ease-in;
-    }
+.search .imgsearch {
+    float: right;
+    position: absolute;
+    top: 4px;
+    right: 10px;
+    left: auto;
+    opacity: 0.5;
+    -webkit-transition: opacity 0.15s ease-in;
+    -moz-transition: opacity 0.15s ease-in;
+    transition: opacity 0.15s ease-in;
+}
 
-        .search .imgsearch:hover, .search .imgsearch:focus {
-            opacity: 1;
-        }
+.search .imgsearch:hover, .search .imgsearch:focus {
+    opacity: 1;
+}
 
 .list-view [role="option"] {
     padding: 5px 10px;
     border: 1px solid #F7F7F7;
 }
 
-    .list-view [role="option"] > span {
-        font-size: 12px;
-    }
+.list-view [role="option"] > span {
+    font-size: 12px;
+}
 
 .do-nt {
     pointer-events: none;
@@ -483,9 +512,9 @@ aside {
     cursor: default;
 }
 
-    .selected .stepNumber:after {
-        display: block !important;
-    }
+.selected .stepNumber:after {
+    display: block !important;
+}
 /* Form Styles */
 .txtBox {
     border: 1px solid #CCCCCC;
@@ -495,15 +524,15 @@ aside {
     width: 430px;
 }
 
-    .txtBox:focus {
-        border: 1px solid #EA8511;
-    }
+.txtBox:focus {
+    border: 1px solid #EA8511;
+}
 
 @-webkit-keyframes blinker {
     from {
         opacity: 1.0;
     }
-
+    
     to {
         opacity: 0.0;
     }
@@ -522,17 +551,17 @@ aside {
     border-color: #F44336 !important;
 }
 
-    .error-doc .animatedbulletin .icon-ply svg polygon {
-        fill: #F44336 !important;
-    }
+.error-doc .animatedbulletin .icon-ply svg polygon {
+    fill: #F44336 !important;
+}
 
 .warning-doc .animatedbulletin {
     border-color: #e67e22 !important;
 }
 
-    .warning-doc .animatedbulletin .icon-ply svg polygon {
-        fill: #e67e22 !important;
-    }
+.warning-doc .animatedbulletin .icon-ply svg polygon {
+    fill: #e67e22 !important;
+}
 
 .isTrue .stepNumber {
     border: 2px solid #5b852b;
@@ -569,18 +598,18 @@ aside {
     opacity: 0.5;
 }
 
-    .btn-disabled:hover, .btn-disabled:focus {
-        background-color: transparent;
-    }
+.btn-disabled:hover, .btn-disabled:focus {
+    background-color: transparent;
+}
 
 .update-box-size {
     margin: -8px;
 }
 
-    .update-box-size .col-sm-3 {
-        padding-left: 4px;
-        padding-right: 4px;
-    }
+.update-box-size .col-sm-3 {
+    padding-left: 4px;
+    padding-right: 4px;
+}
 
 .thumb {
     display: block;
@@ -647,7 +676,7 @@ aside {
     from {
         opacity: 0;
     }
-
+    
     to {
         opacity: 1;
     }
@@ -657,7 +686,7 @@ aside {
     from {
         opacity: 0;
     }
-
+    
     to {
         opacity: 1;
     }
@@ -667,7 +696,7 @@ aside {
     from {
         opacity: 0;
     }
-
+    
     to {
         opacity: 1;
     }
@@ -677,7 +706,7 @@ aside {
     from {
         opacity: 0;
     }
-
+    
     to {
         opacity: 1;
     }
@@ -691,17 +720,17 @@ aside {
     bottom: -29px;
 }
 
-    .template-content .template-builder {
-        height: 100%;
-        position: relative;
-    }
+.template-content .template-builder {
+    height: 100%;
+    position: relative;
+}
 
-    .template-content .sitebody {
-        margin-left: 295px;
-        height: 100%;
-        background: #F2F2F4;
-        transition: all ease 300ms;
-    }
+.template-content .sitebody {
+    margin-left: 295px;
+    height: 100%;
+    background: #F2F2F4;
+    transition: all ease 300ms;
+}
 
 .docInfo-panel-close .template-content .sitebody {
     margin-left: 24px;
@@ -721,8 +750,8 @@ aside {
 }
 
 /*#resizeTable ul, #resizeTable ul {
-    margin-left: 21px !important;
-}*/
+ margin-left: 21px !important;
+ }*/
 
 #resizeTable ul li, #resizeTable ul li {
     line-height: 18px !important;
@@ -734,8 +763,8 @@ aside {
 }
 
 /*#resizeTable tr:last-child td {
-    border-bottom: 0;
-}*/
+ border-bottom: 0;
+ }*/
 
 #resizeTable .ui-resizable-s {
     bottom: -1px !important;
@@ -792,14 +821,14 @@ aside {
     border-radius: 0;
 }
 
-    .template-content .wide .list {
-        width: 100% !important;
-        height: auto;
-    }
+.template-content .wide .list {
+    width: 100% !important;
+    height: auto;
+}
 
-    .template-content .wide .option {
-        width: 100% !important;
-    }
+.template-content .wide .option {
+    width: 100% !important;
+}
 
 .template-content .form-group {
     margin-bottom: 10px;
@@ -846,9 +875,9 @@ aside {
     position: relative;
 }
 
-    .template-content .template-details .form-group label {
-        margin-bottom: 10px;
-    }
+.template-content .template-details .form-group label {
+    margin-bottom: 10px;
+}
 
 .view-gd .checkbox label {
     background: #fff;
@@ -856,13 +885,13 @@ aside {
     height: 30px;
 }
 
-    .view-gd .checkbox label:after {
-        background: #bbb;
-        top: 3px;
-        left: 4px;
-        width: 22px;
-        height: 22px;
-    }
+.view-gd .checkbox label:after {
+    background: #bbb;
+    top: 3px;
+    left: 4px;
+    width: 22px;
+    height: 22px;
+}
 
 .view-gd .checkbox input:checked + label:after {
     left: 40px;
@@ -895,13 +924,13 @@ aside {
     z-index: 99;
 }
 /*.template-builder-body-viewmode {
-	width: 270px;
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	background-color: #fff;
-	z-index: 99;
-}*/
+ width: 270px;
+ position: absolute;
+ top: 0;
+ bottom: 0;
+ background-color: #fff;
+ z-index: 99;
+ }*/
 #template-tools-tab {
     position: absolute;
     width: 25px;
@@ -913,92 +942,92 @@ aside {
     border-width: 0 1px 0 0;
 }
 
-    #template-tools-tab span {
-        -moz-transform: rotate(-90deg);
-        -webkit-transform: rotate(-90deg);
-        transform: rotate(-90deg);
-        display: inline-block;
-        position: absolute;
-        cursor: pointer;
-    }
+#template-tools-tab span {
+    -moz-transform: rotate(-90deg);
+    -webkit-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+    display: inline-block;
+    position: absolute;
+    cursor: pointer;
+}
 
-    #template-tools-tab .tab-1 {
-        top: 57px;
-        left: -58px;
-        height: 24px;
-        width: 140px;
-        line-height: 23px;
-        padding: 0 8px;
-        /*background: #f2f2f4;*/
-        border: solid #cbcbcb;
-        border-width: 0 1px;
-        text-align: center;
-    }
+#template-tools-tab .tab-1 {
+    top: 57px;
+    left: -58px;
+    height: 24px;
+    width: 140px;
+    line-height: 23px;
+    padding: 0 8px;
+    /*background: #f2f2f4;*/
+    border: solid #cbcbcb;
+    border-width: 0 1px;
+    text-align: center;
+}
 
-    #template-tools-tab .tab-2 {
-        top: 196px;
-        left: -58px;
-        height: 24px;
-        width: 140px;
-        line-height: 23px;
-        padding: 0 8px;
-        background: #ffffff;
-        border: solid #cbcbcb;
-        border-width: 0 1px;
-        text-align: center;
-    }
+#template-tools-tab .tab-2 {
+    top: 196px;
+    left: -58px;
+    height: 24px;
+    width: 140px;
+    line-height: 23px;
+    padding: 0 8px;
+    background: #ffffff;
+    border: solid #cbcbcb;
+    border-width: 0 1px;
+    text-align: center;
+}
 
-    #template-tools-tab .tab-3 {
-        top: 335px;
-        left: -58px;
-        height: 24px;
-        width: 140px;
-        line-height: 23px;
-        padding: 0 8px;
-        background: #ffffff;
-        border: solid #cbcbcb;
-        border-width: 0 1px;
-        text-align: center;
-    }
+#template-tools-tab .tab-3 {
+    top: 335px;
+    left: -58px;
+    height: 24px;
+    width: 140px;
+    line-height: 23px;
+    padding: 0 8px;
+    background: #ffffff;
+    border: solid #cbcbcb;
+    border-width: 0 1px;
+    text-align: center;
+}
 
-    #template-tools-tab .tab-4 {
-        top: 474px;
-        left: -63px;
-        height: 24px;
-        width: 151px;
-        line-height: 23px;
-        padding: 0 8px;
-        background: #ffffff;
-        border: solid #cbcbcb;
-        border-width: 0 1px;
-        text-align: center;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
+#template-tools-tab .tab-4 {
+    top: 474px;
+    left: -63px;
+    height: 24px;
+    width: 151px;
+    line-height: 23px;
+    padding: 0 8px;
+    background: #ffffff;
+    border: solid #cbcbcb;
+    border-width: 0 1px;
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
 
-    #template-tools-tab .article-print {
-        top: 343px !important;
-        left: -67px !important;
-        height: 25px !important;
-        width: 156px !important;
-        line-height: 23px;
-        padding: 0 8px;
-        background: #ffffff;
-        border: solid #cbcbcb;
-        border-width: 0 1px;
-        text-align: center;
-    }
+#template-tools-tab .article-print {
+    top: 343px !important;
+    left: -67px !important;
+    height: 25px !important;
+    width: 156px !important;
+    line-height: 23px;
+    padding: 0 8px;
+    background: #ffffff;
+    border: solid #cbcbcb;
+    border-width: 0 1px;
+    text-align: center;
+}
 
-    #template-tools-tab span.active {
-        background: #fff;
-        border-bottom: solid 2px #e14f58;
-        color: #df4f5a;
-    }
+#template-tools-tab span.active {
+    background: #fff;
+    border-bottom: solid 2px #e14f58;
+    color: #df4f5a;
+}
 
-    #template-tools-tab span:hover {
-        color: #df4f5a;
-    }
+#template-tools-tab span:hover {
+    color: #df4f5a;
+}
 
 .eTemplates .animate-btn:hover .btn {
     -webkit-transform: translate3d(0, 90px, 0) !important;
@@ -1024,10 +1053,10 @@ aside {
     margin-left: -1.5px;
 }
 
-    .templatesLogo > * {
-        padding-left: 3px;
-        padding-right: 3px;
-    }
+.templatesLogo > * {
+    padding-left: 3px;
+    padding-right: 3px;
+}
 
 .close-btn {
     display: inline-block;
@@ -1046,73 +1075,73 @@ aside {
     margin-left: 0;
 }
 
-    .template-draggable .draggable-container * {
-        box-sizing: border-box;
-    }
+.template-draggable .draggable-container * {
+    box-sizing: border-box;
+}
 
-    .template-draggable .draggable-container > li {
-        margin-bottom: 5px;
-        cursor: pointer;
-        padding-left: 5px;
-        padding-right: 5px;
-    }
-   
+.template-draggable .draggable-container > li {
+    margin-bottom: 5px;
+    cursor: pointer;
+    padding-left: 5px;
+    padding-right: 5px;
+}
 
-        .template-draggable .draggable-container > li:hover .bk-overlay, .template-draggable .draggable-container > li:focus .bk-overlay {
-            opacity: 1;
-            @inlude transition(all ease-in 0.15s);
-        }
 
-        .template-draggable .draggable-container > li .thumb {
-            -webkit-box-shadow: 0px 0px 13px 3px #f0f0f0;
-            -moz-box-shadow: 0px 0px 13px 3px #f0f0f0;
-            box-shadow: 0px 0px 13px 3px #f0f0f0;
-            border-radius: 2px;
-            overflow: hidden;
-        }
+.template-draggable .draggable-container > li:hover .bk-overlay, .template-draggable .draggable-container > li:focus .bk-overlay {
+    opacity: 1;
+    @inlude transition(all ease-in 0.15s);
+}
 
-        .template-draggable .draggable-container > li .bk-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            opacity: 0;
-        }
+.template-draggable .draggable-container > li .thumb {
+    -webkit-box-shadow: 0px 0px 13px 3px #f0f0f0;
+    -moz-box-shadow: 0px 0px 13px 3px #f0f0f0;
+    box-shadow: 0px 0px 13px 3px #f0f0f0;
+    border-radius: 2px;
+    overflow: hidden;
+}
 
-        .template-draggable .draggable-container > li .animate-btn {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            right: 0;
-            text-align: center;
-        }
+.template-draggable .draggable-container > li .bk-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+}
 
-            .template-draggable .draggable-container > li .animate-btn:hover .btn {
-                -webkit-transform: translate3d(0, 35px, 0);
-                transform: translate3d(0, 35px, 0);
-            }
+.template-draggable .draggable-container > li .animate-btn {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    right: 0;
+    text-align: center;
+}
 
-            .template-draggable .draggable-container > li .animate-btn .btn {
-                -webkit-transform: translate3d(0, 100px, 0);
-                transform: translate3d(0, 100px, 0);
-                -webkit-transition: -webkit-transform 0.35s;
-                transition: transform 0.35s;
-                font-size: 13px;
-                text-transform: uppercase;
-                padding: 4px;
-                letter-spacing: 0.3px;
-                border-radius: 50%;
-                width: 25px;
-                height: 25px;
-                line-height: 15px;
-                margin-left: 5px;
-                float: right;
-                margin-right: 45px;
-            }
+.template-draggable .draggable-container > li .animate-btn:hover .btn {
+    -webkit-transform: translate3d(0, 35px, 0);
+    transform: translate3d(0, 35px, 0);
+}
+
+.template-draggable .draggable-container > li .animate-btn .btn {
+    -webkit-transform: translate3d(0, 100px, 0);
+    transform: translate3d(0, 100px, 0);
+    -webkit-transition: -webkit-transform 0.35s;
+    transition: transform 0.35s;
+    font-size: 13px;
+    text-transform: uppercase;
+    padding: 4px;
+    letter-spacing: 0.3px;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    line-height: 15px;
+    margin-left: 5px;
+    float: right;
+    margin-right: 45px;
+}
 
 .btnLoadFile {
     position: relative;
@@ -1124,15 +1153,15 @@ aside {
     margin: 0;
 }
 
-    .section .sec-title h2:after {
-        width: 60px;
-        content: "";
-        height: 2px;
-        background-color: #080808;
-        margin-top: 10px;
-        margin-bottom: 20px;
-        display: block;
-    }
+.section .sec-title h2:after {
+    width: 60px;
+    content: "";
+    height: 2px;
+    background-color: #080808;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    display: block;
+}
 
 .align-middle {
     position: absolute;
@@ -1144,17 +1173,17 @@ aside {
     font-size: 36px;
 }
 
-    .align-middle .align-middle {
-        display: table;
-        width: 100%;
-        height: 100%;
-    }
+.align-middle .align-middle {
+    display: table;
+    width: 100%;
+    height: 100%;
+}
 
-        .align-middle .align-middle .template-count {
-            display: table-cell;
-            vertical-align: middle;
-            text-align: center;
-        }
+.align-middle .align-middle .template-count {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
 
 .gray-bg {
     background-color: rgba(0, 0, 0, 0.44);
@@ -1174,9 +1203,9 @@ aside {
     display: none !important;
 }
 
-    .template-content > .nicescroll-rails-hr .nicescroll-cursors {
-        display: none !important;
-    }
+.template-content > .nicescroll-rails-hr .nicescroll-cursors {
+    display: none !important;
+}
 
 .file-uploader {
     background-color: #b0cbe6;
@@ -1184,24 +1213,24 @@ aside {
     padding: 24px 0;
 }
 
-    .file-uploader .icon {
-        display: block;
-        margin: auto;
-        width: 30px;
-        color: #3e5fbf;
-        font-size: 24px;
-        text-align: center;
-    }
+.file-uploader .icon {
+    display: block;
+    margin: auto;
+    width: 30px;
+    color: #3e5fbf;
+    font-size: 24px;
+    text-align: center;
+}
 
-        .file-uploader .icon svg {
-            opacity: 0.5;
-        }
+.file-uploader .icon svg {
+    opacity: 0.5;
+}
 
-    .file-uploader span {
-        font-family: "Times New Roman", Georgia, Serif;
-        font-style: italic;
-        color: #2659ef;
-    }
+.file-uploader span {
+    font-family: "Times New Roman", Georgia, Serif;
+    font-style: italic;
+    color: #2659ef;
+}
 
 .form-group label {
     font-weight: 400;
@@ -1226,38 +1255,38 @@ aside {
     transition: all ease-in 0.15s;
 }
 
-    .edit-button.open-btn-menu {
-        left: 0 !important;
-        -webkit-transition: all ease-in 0.2s;
-        -moz-transition: all ease-in 0.2s;
-        -ms-transition: all ease-in 0.2s;
-        -o-transition: all ease-in 0.2s;
-        transition: all ease-in 0.2s;
-    }
+.edit-button.open-btn-menu {
+    left: 0 !important;
+    -webkit-transition: all ease-in 0.2s;
+    -moz-transition: all ease-in 0.2s;
+    -ms-transition: all ease-in 0.2s;
+    -o-transition: all ease-in 0.2s;
+    transition: all ease-in 0.2s;
+}
 
-    .edit-button > h3 {
-        font-size: 14px;
-        font-weight: bold;
-        margin: 15px 0 20px;
-        border-bottom: 1px solid #c7c7c7;
-        padding-bottom: 12px;
-    }
+.edit-button > h3 {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 15px 0 20px;
+    border-bottom: 1px solid #c7c7c7;
+    padding-bottom: 12px;
+}
 
-    .edit-button .form-group label {
-        margin-bottom: 8px;
-    }
+.edit-button .form-group label {
+    margin-bottom: 8px;
+}
 
-    .edit-button .btn-group .btn-primary {
-        background-color: #6ea034;
-        border-color: #76ac38;
-        box-shadow: none;
-        padding: 8px 12px;
-    }
+.edit-button .btn-group .btn-primary {
+    background-color: #6ea034;
+    border-color: #76ac38;
+    box-shadow: none;
+    padding: 8px 12px;
+}
 
-        .edit-button .btn-group .btn-primary:hover, .edit-button .btn-group .btn-primary:focus, .edit-button .btn-group .btn-primary.active {
-            background-color: #6ea034;
-            border-color: #6ea034;
-        }
+.edit-button .btn-group .btn-primary:hover, .edit-button .btn-group .btn-primary:focus, .edit-button .btn-group .btn-primary.active {
+    background-color: #6ea034;
+    border-color: #6ea034;
+}
 
 .name-fileds > .dropItem {
     display: block;
@@ -1270,16 +1299,16 @@ aside {
     cursor: move;
 }
 
-    .name-fileds > .dropItem:after {
-        font-family: FontAwesome;
-        content: "\f047";
-        display: inline-block;
-        position: absolute;
-        right: 11px;
-        top: 11px;
-        color: #cacaca;
-        font-size: 13px;
-    }
+.name-fileds > .dropItem:after {
+    font-family: FontAwesome;
+    content: "\f047";
+    display: inline-block;
+    position: absolute;
+    right: 11px;
+    top: 11px;
+    color: #cacaca;
+    font-size: 13px;
+}
 
 .name-fileds input {
     padding: 1px;
@@ -1308,8 +1337,8 @@ aside {
 }
 
 /*.thumb-wrapper.openPanel .ui-wrapper, .thumb-wrapper.openPanel .ui-wrapper img {
-        width: 100% !important;
-    }*/
+ width: 100% !important;
+ }*/
 
 .thumb-mail {
     position: absolute;
@@ -1322,18 +1351,18 @@ aside {
     margin-top: 0;
 }
 
-    .thumb-mail i {
-        display: block;
-        margin: auto auto 5px;
-        font-size: 30px;
-    }
+.thumb-mail i {
+    display: block;
+    margin: auto auto 5px;
+    font-size: 30px;
+}
 
-    .thumb-mail .span-text {
-        font-size: 12px;
-        font-weight: bold;
-        margin-left: 10px;
-        font-size: 18px;
-    }
+.thumb-mail .span-text {
+    font-size: 12px;
+    font-weight: bold;
+    margin-left: 10px;
+    font-size: 18px;
+}
 
 .thumb-ic-wrp {
     position: absolute;
@@ -1345,14 +1374,14 @@ aside {
     color: #e24d83;
 }
 
-    .thumb-ic-wrp i {
-        font-size: 20px;
-        margin-right: 7px;
-    }
+.thumb-ic-wrp i {
+    font-size: 20px;
+    margin-right: 7px;
+}
 
-    .thumb-ic-wrp .span-text {
-        font-size: 20px;
-    }
+.thumb-ic-wrp .span-text {
+    font-size: 20px;
+}
 
 .noselect {
     -webkit-touch-callout: none;
@@ -1366,7 +1395,7 @@ aside {
     -ms-user-select: none;
     /* Internet Explorer/Edge */
     user-select: none; /* Non-prefixed version, currently
-                                  not supported by any browser */
+                        not supported by any browser */
 }
 
 .nofileselect {
@@ -1381,7 +1410,7 @@ aside {
     -ms-user-select: none;
     /* Internet Explorer/Edge */
     user-select: none; /* Non-prefixed version, currently
-                                  not supported by any browser */
+                        not supported by any browser */
 }
 
 .scrollSec .preloader.mRt-150 {
@@ -1402,11 +1431,11 @@ aside {
     margin: auto;
 }
 
-    .template-area .templateDrop {
-        background-color: green;
-        min-height: 500px;
-        display: block;
-    }
+.template-area .templateDrop {
+    background-color: green;
+    min-height: 500px;
+    display: block;
+}
 
 .data-sc {
     max-width: 900px;
@@ -1415,22 +1444,22 @@ aside {
     position: relative;
 }
 
-    .data-sc:hover {
-        border-color: #45A1E0;
-        -webkit-transition: all ease-in 0.22;
-        -moz-transition: all ease-in 0.22;
-        -ms-transition: all ease-in 0.22;
-        -o-transition: all ease-in 0.22;
-        transition: all ease-in 0.22;
-    }
+.data-sc:hover {
+    border-color: #45A1E0;
+    -webkit-transition: all ease-in 0.22;
+    -moz-transition: all ease-in 0.22;
+    -ms-transition: all ease-in 0.22;
+    -o-transition: all ease-in 0.22;
+    transition: all ease-in 0.22;
+}
 
-        .data-sc:hover .icon-btn {
-            opacity: 1;
-        }
+.data-sc:hover .icon-btn {
+    opacity: 1;
+}
 
-    .data-sc.no-bdr:hover {
-        border-color: transparent;
-    }
+.data-sc.no-bdr:hover {
+    border-color: transparent;
+}
 
 .template-fade {
     opacity: 0;
@@ -1438,7 +1467,7 @@ aside {
 
 .icon-btn {
     position: absolute;
-    top: -12px;
+    top: -25px;
     right: 0;
     display: block;
     width: 18px;
@@ -1454,55 +1483,55 @@ aside {
     transition: all ease-in 0.22s;
 }
 
-    .icon-btn.drag-template {
-        cursor: move;
-        right: 58px;
-    }
+.icon-btn.drag-template {
+    cursor: move;
+    right: 58px;
+}
 
-    .icon-btn.add-row {
-        right: 119px;
-    }
+.icon-btn.add-row {
+    right: 119px;
+}
 
-    .icon-btn.delete-row {
-        right: 89px;
-    }
+.icon-btn.delete-row {
+    right: 89px;
+}
 
-    .icon-btn.copy-template {
-        right: 58px;
-    }
+.icon-btn.copy-template {
+    right: 58px;
+}
 
-    .icon-btn.edit-template {
-        right: 88px;
-        background: #03a9f4;
-        padding: 2px 5px 0px 3px;
-    }
+.icon-btn.edit-template {
+    right: 88px;
+    background: #03a9f4;
+    padding: 2px 5px 0px 3px;
+}
 
-        .icon-btn.edit-template svg {
-            width: 16px;
-            height: 17px;
-        }
+.icon-btn.edit-template svg {
+    width: 16px;
+    height: 17px;
+}
 
-    /* for bookamrk */
-    .icon-btn.add-bookmark {
-        right: 0;
-        z-index:9999;
-        background-color: #4f9be4;
-        height:auto;
-        width:40px;
-    }
+/* for bookamrk */
+.icon-btn.add-bookmark {
+    right: 0;
+    z-index:9999;
+    background-color: #4f9be4;
+    height:auto;
+    width:30px;
+}
 /*.icon-btn.add-bookmark:hover {*/
 /*    background-color: #000;*/
 /*     */
 /* }*/
-    .icon-btn.copy-template {
-        right: 28px;
-        background-color: #1979a5;
-    }
+.icon-btn.copy-template {
+    right: 28px;
+    background-color: #1979a5;
+}
 
-    .icon-btn.remove-template {
-        right: 0;
-        background-color: #e74c3c;
-    }
+.icon-btn.remove-template {
+    right: 0;
+    background-color: #e74c3c;
+}
 
 .templateSettings {
     display: none;
@@ -1634,25 +1663,25 @@ aside {
     height: 100%;
 }
 
-    .vtwrapper .vtwrapperin {
-        display: table-cell;
-        vertical-align: middle;
-        text-align: center;
-    }
+.vtwrapper .vtwrapperin {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
 
-        .vtwrapper .vtwrapperin .vtwrapperinic {
-            width: 100px;
-            height: 100px;
-            margin: auto;
-            opacity: 0.7;
-        }
+.vtwrapper .vtwrapperin .vtwrapperinic {
+    width: 100px;
+    height: 100px;
+    margin: auto;
+    opacity: 0.7;
+}
 
-        .vtwrapper .vtwrapperin p {
-            font-weight: 100;
-            font-size: 18px;
-            color: black;
-            letter-spacing: 0.5px;
-        }
+.vtwrapper .vtwrapperin p {
+    font-weight: 100;
+    font-size: 18px;
+    color: black;
+    letter-spacing: 0.5px;
+}
 
 .editor-container .email-loader {
     background-color: #fff;
@@ -1677,62 +1706,62 @@ aside {
     z-index: 9;
 }
 
-    .email-loader .load {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 50px;
-        height: 50px;
-    }
+.email-loader .load {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+}
 
-        .email-loader .load.sm-loader hr {
-            width: 25%;
-            height: 25%;
-        }
+.email-loader .load.sm-loader hr {
+    width: 25%;
+    height: 25%;
+}
 
-        .email-loader .load hr {
-            border: 0;
-            margin: 0;
-            width: 40%;
-            height: 40%;
-            position: absolute;
-            border-radius: 50%;
-            animation: spinner-animate 2s ease infinite;
-        }
+.email-loader .load hr {
+    border: 0;
+    margin: 0;
+    width: 40%;
+    height: 40%;
+    position: absolute;
+    border-radius: 50%;
+    animation: spinner-animate 2s ease infinite;
+}
 
-            .email-loader .load hr:first-child {
-                background: #19A68C;
-                animation-delay: -1.5s;
-            }
+.email-loader .load hr:first-child {
+    background: #19A68C;
+    animation-delay: -1.5s;
+}
 
-            .email-loader .load hr:nth-child(2) {
-                background: #F63D3A;
-                animation-delay: -1s;
-            }
+.email-loader .load hr:nth-child(2) {
+    background: #F63D3A;
+    animation-delay: -1s;
+}
 
-            .email-loader .load hr:nth-child(3) {
-                background: #FDA543;
-                animation-delay: -0.5s;
-            }
+.email-loader .load hr:nth-child(3) {
+    background: #FDA543;
+    animation-delay: -0.5s;
+}
 
-            .email-loader .load hr:last-child {
-                background: #193B48;
-            }
+.email-loader .load hr:last-child {
+    background: #193B48;
+}
 
 @keyframes spinner-animate {
     0%, 100% {
         transform: translate(0);
     }
-
+    
     25% {
         transform: translate(160%);
     }
-
+    
     50% {
         transform: translate(160%, 160%);
     }
-
+    
     75% {
         transform: translate(0, 160%);
     }
@@ -1742,8 +1771,8 @@ aside {
     position: relative;
 }
 /*.template-draggable .ht180 {
-	min-height: 386px;
-}*/
+ min-height: 386px;
+ }*/
 .template-draggable .demo-section {
     margin: 0px 0 12px;
     border-radius: 4px !important;
@@ -1754,10 +1783,10 @@ aside {
     margin-left: 5px;
 }
 
-    .paper-area .logoWrapping .preloader .wrapper span {
-        height: 20px;
-        width: 20px;
-    }
+.paper-area .logoWrapping .preloader .wrapper span {
+    height: 20px;
+    width: 20px;
+}
 
 .paper-area .logoWrap {
     display: block;
@@ -1773,59 +1802,59 @@ aside {
     min-height: 58px;
 }
 
-    .paper-area .logoWrap img {
-        max-width: 100%;
-    }
+.paper-area .logoWrap img {
+    max-width: 100%;
+}
 
-    .paper-area .logoWrap:hover .aLwRaPeR {
-        opacity: 1;
-    }
+.paper-area .logoWrap:hover .aLwRaPeR {
+    opacity: 1;
+}
 
-    .paper-area .logoWrap .aLwRaPeR {
-        position: absolute;
-        top: 20px;
-        right: 66px;
-        opacity: 1;
-        z-index: 8;
-        -webkit-transition: all ease-in 0.22s;
-        -moz-transition: all ease-in 0.22s;
-        -ms-transition: all ease-in 0.22s;
-        -o-transition: all ease-in 0.22s;
-        transition: all ease-in 0.22s;
-    }
+.paper-area .logoWrap .aLwRaPeR {
+    position: absolute;
+    top: 20px;
+    right: 66px;
+    opacity: 1;
+    z-index: 8;
+    -webkit-transition: all ease-in 0.22s;
+    -moz-transition: all ease-in 0.22s;
+    -ms-transition: all ease-in 0.22s;
+    -o-transition: all ease-in 0.22s;
+    transition: all ease-in 0.22s;
+}
 
-        .paper-area .logoWrap .aLwRaPeR .list-inline > li {
-            color: white;
-            border-radius: 100%;
-            width: 20px;
-            height: 20px;
-            font-size: 13px;
-            padding: 4px;
-            line-height: 6px;
-            margin-right: 3px;
-            cursor: pointer !important;
-            -webkit-transition: all ease-in 0.22s;
-            -moz-transition: all ease-in 0.22s;
-            -ms-transition: all ease-in 0.22s;
-            -o-transition: all ease-in 0.22s;
-            transition: all ease-in 0.22s;
-        }
+.paper-area .logoWrap .aLwRaPeR .list-inline > li {
+    color: white;
+    border-radius: 100%;
+    width: 20px;
+    height: 20px;
+    font-size: 13px;
+    padding: 4px;
+    line-height: 6px;
+    margin-right: 3px;
+    cursor: pointer !important;
+    -webkit-transition: all ease-in 0.22s;
+    -moz-transition: all ease-in 0.22s;
+    -ms-transition: all ease-in 0.22s;
+    -o-transition: all ease-in 0.22s;
+    transition: all ease-in 0.22s;
+}
 
-            .paper-area .logoWrap .aLwRaPeR .list-inline > li.delete {
-                background-color: rgba(228, 0, 0, 0.71);
-            }
+.paper-area .logoWrap .aLwRaPeR .list-inline > li.delete {
+    background-color: rgba(228, 0, 0, 0.71);
+}
 
-                .paper-area .logoWrap .aLwRaPeR .list-inline > li.delete:hover {
-                    background-color: rgba(203, 0, 0, 0.71);
-                }
+.paper-area .logoWrap .aLwRaPeR .list-inline > li.delete:hover {
+    background-color: rgba(203, 0, 0, 0.71);
+}
 
-            .paper-area .logoWrap .aLwRaPeR .list-inline > li.move {
-                background-color: #5b852b;
-            }
+.paper-area .logoWrap .aLwRaPeR .list-inline > li.move {
+    background-color: #5b852b;
+}
 
-                .paper-area .logoWrap .aLwRaPeR .list-inline > li.move:hover {
-                    background-color: #4b8abd;
-                }
+.paper-area .logoWrap .aLwRaPeR .list-inline > li.move:hover {
+    background-color: #4b8abd;
+}
 
 .paper-area .upload-logo {
     border-radius: 5px;
@@ -1842,73 +1871,73 @@ aside {
     transition: all ease-in 0.22s;
 }
 
-    .paper-area .upload-logo:hover .aLwRaPeR {
-        opacity: 1;
-    }
+.paper-area .upload-logo:hover .aLwRaPeR {
+    opacity: 1;
+}
 
-    .paper-area .upload-logo .aLwRaPeR {
-        position: absolute;
-        top: 0;
-        right: 0;
-        opacity: 0;
-        -webkit-transition: all ease-in 0.22s;
-        -moz-transition: all ease-in 0.22s;
-        -ms-transition: all ease-in 0.22s;
-        -o-transition: all ease-in 0.22s;
-        transition: all ease-in 0.22s;
-    }
+.paper-area .upload-logo .aLwRaPeR {
+    position: absolute;
+    top: 0;
+    right: 0;
+    opacity: 0;
+    -webkit-transition: all ease-in 0.22s;
+    -moz-transition: all ease-in 0.22s;
+    -ms-transition: all ease-in 0.22s;
+    -o-transition: all ease-in 0.22s;
+    transition: all ease-in 0.22s;
+}
 
-        .paper-area .upload-logo .aLwRaPeR .list-inline > li {
-            background-color: rgba(228, 0, 0, 0.71);
-            color: white;
-            border-radius: 100%;
-            width: 18px;
-            height: 18px;
-            display: block;
-            font-size: 13px;
-            padding: 3px 2px 2px 2px;
-            line-height: 6px;
-        }
+.paper-area .upload-logo .aLwRaPeR .list-inline > li {
+    background-color: rgba(228, 0, 0, 0.71);
+    color: white;
+    border-radius: 100%;
+    width: 18px;
+    height: 18px;
+    display: block;
+    font-size: 13px;
+    padding: 3px 2px 2px 2px;
+    line-height: 6px;
+}
 
-    .paper-area .upload-logo .logo-outline {
-        display: inline-block;
-        background-color: #b0cbe6;
-        border-radius: 4px;
-        padding: 15px 40px;
-        min-height: 70px;
-        min-width: 60px;
-        background-color: #f7f7f7;
-        border: 3px dashed #e0e0e0;
-    }
+.paper-area .upload-logo .logo-outline {
+    display: inline-block;
+    background-color: #b0cbe6;
+    border-radius: 4px;
+    padding: 15px 40px;
+    min-height: 70px;
+    min-width: 60px;
+    background-color: #f7f7f7;
+    border: 3px dashed #e0e0e0;
+}
 
-        .paper-area .upload-logo .logo-outline .preloader .wrapper {
-            margin-top: -15px;
-            margin-left: 5px;
-        }
+.paper-area .upload-logo .logo-outline .preloader .wrapper {
+    margin-top: -15px;
+    margin-left: 5px;
+}
 
-            .paper-area .upload-logo .logo-outline .preloader .wrapper span {
-                height: 20px;
-                width: 20px;
-            }
+.paper-area .upload-logo .logo-outline .preloader .wrapper span {
+    height: 20px;
+    width: 20px;
+}
 
-    .paper-area .upload-logo .icon {
-        max-width: 150px;
-        min-width: 50px;
-        margin: auto;
-        display: block;
-        font-size: 30px;
-        margin-bottom: 10px;
-        color: #e24d83;
-    }
+.paper-area .upload-logo .icon {
+    max-width: 150px;
+    min-width: 50px;
+    margin: auto;
+    display: block;
+    font-size: 30px;
+    margin-bottom: 10px;
+    color: #e24d83;
+}
 
-    .paper-area .upload-logo .text {
-        font-family: "Times New Roman", Georgia, Serif;
-        font-style: italic;
-        color: #e24d83;
-        display: block;
-        margin-top: -7px;
-        margin-bottom: 0;
-    }
+.paper-area .upload-logo .text {
+    font-family: "Times New Roman", Georgia, Serif;
+    font-style: italic;
+    color: #e24d83;
+    display: block;
+    margin-top: -7px;
+    margin-bottom: 0;
+}
 
 .paper-area .upload-banner {
     background-color: rgba(26, 188, 156, 0.11);
@@ -1926,11 +1955,11 @@ aside {
     position: relative;
 }
 
-    .temp-topbar .btn-sm {
-        /*background: none;*/
-        color: #bc4078;
-        font-weight: normal;
-    }
+.temp-topbar .btn-sm {
+    /*background: none;*/
+    color: #bc4078;
+    font-weight: normal;
+}
 
 .commentbuttonactive {
     background: #fff;
@@ -1973,7 +2002,7 @@ aside {
     overflow: hidden;
     white-space: nowrap;
     height: 19px;
-  
+    
 }
 
 .temp-topbar ul li {
@@ -1983,28 +2012,28 @@ aside {
 .red-buttons i {
     color: white !important;
 }
-    .temp-topbar ul li i {
-        width: 16px;
-        display: inline-block;
-        height: 15px;
-        vertical-align: middle;
-        margin-right: 5px;
-        text-decoration: none;
-        font-size: 14px;
-        /*color: #ad2045 !important;*/
-    }
+.temp-topbar ul li i {
+    width: 16px;
+    display: inline-block;
+    height: 15px;
+    vertical-align: middle;
+    margin-right: 5px;
+    text-decoration: none;
+    font-size: 14px;
+    /*color: #ad2045 !important;*/
+}
 
 
-        .temp-topbar ul li i.large {
-            width: 30px;
-            display: inline-block;
-            height: 30px;
-        }
+.temp-topbar ul li i.large {
+    width: 30px;
+    display: inline-block;
+    height: 30px;
+}
 
-    .temp-topbar ul li .text {
-        display: inline-block;
-        vertical-align: middle;
-    }
+.temp-topbar ul li .text {
+    display: inline-block;
+    vertical-align: middle;
+}
 
 .temp-topbar .view-gd {
     display: inline-block;
@@ -2013,18 +2042,18 @@ aside {
     text-align: center;
 }
 
-    .temp-topbar .view-gd .icon {
-        margin: 0;
-    }
+.temp-topbar .view-gd .icon {
+    margin: 0;
+}
 
-        .temp-topbar .view-gd .icon i {
-            font-size: 19px;
-            color: gray;
-        }
+.temp-topbar .view-gd .icon i {
+    font-size: 19px;
+    color: gray;
+}
 
-            .temp-topbar .view-gd .icon i.fa-mobile {
-                font-size: 26px;
-            }
+.temp-topbar .view-gd .icon i.fa-mobile {
+    font-size: 26px;
+}
 
 .em-tp-icon {
     width: 30px;
@@ -2043,19 +2072,19 @@ aside {
     padding-bottom: 4px;
 }
 
-    .template-draggable .section .form-group button .icon {
-        width: 20px;
-        height: 20px;
-        display: block;
-    }
+.template-draggable .section .form-group button .icon {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
 
 #tableWrapper > table {
     margin: 0;
 }
 /*#tableWrapper td {
-	border-bottom-width: 0;
-	outline: none;
-}*/
+ border-bottom-width: 0;
+ outline: none;
+ }*/
 #tableDragger td tr td, #dcrltableDragger td tr td, #htmldifftableDragger td tr td {
     padding: 2px 0px;
     position: relative;
@@ -2080,161 +2109,161 @@ td span.toggle-article {
     padding-top: 0 !important;
 }
 
-    .tempPad .emailHd {
-        margin-top: 14px !important;
-        height: 42px !important;
-        width: 117px;
-        float: right;
-        position: absolute;
-        right: 0;
-        z-index: 99;
-        background-color: transparent !important;
-        border: transparent;
-        overflow: visible !important;
-    }
+.tempPad .emailHd {
+    margin-top: 14px !important;
+    height: 42px !important;
+    width: 117px;
+    float: right;
+    position: absolute;
+    right: 0;
+    z-index: 99;
+    background-color: transparent !important;
+    border: transparent;
+    overflow: visible !important;
+}
 
-    .tempPad .temp-topbar .pull-left h2 {
-        margin: 0;
-        font-size: 28px;
-        color: black;
-        font-weight: bold;
-    }
+.tempPad .temp-topbar .pull-left h2 {
+    margin: 0;
+    font-size: 28px;
+    color: black;
+    font-weight: bold;
+}
 
-    .tempPad .temp-topbar ul.list-inline {
-        margin-right: 96px;
-    }
+.tempPad .temp-topbar ul.list-inline {
+    margin-right: 96px;
+}
 
-        .tempPad .temp-topbar ul.list-inline > li .btn {
-            border-radius: 15px;
-        }
+.tempPad .temp-topbar ul.list-inline > li .btn {
+    border-radius: 15px;
+}
 
-        .tempPad .temp-topbar ul.list-inline i {
-            margin: 0;
-        }
+.tempPad .temp-topbar ul.list-inline i {
+    margin: 0;
+}
 
-    .tempPad h2 {
-        margin-top: 10px;
-    }
+.tempPad h2 {
+    margin-top: 10px;
+}
 
-    .tempPad .tableDraggSort [data-column="column-two-layout"] table {
-        margin: 12px 0 0 0;
-    }
+.tempPad .tableDraggSort [data-column="column-two-layout"] table {
+    margin: 12px 0 0 0;
+}
 
-        .tempPad .tableDraggSort [data-column="column-two-layout"] table tbody > tr:hover > td {
-            border-color: #67afe9 !important;
-        }
+.tempPad .tableDraggSort [data-column="column-two-layout"] table tbody > tr:hover > td {
+    border-color: #67afe9 !important;
+}
 
-            .tempPad .tableDraggSort [data-column="column-two-layout"] table tbody > tr:hover > td:focus {
-                outline: none;
-            }
+.tempPad .tableDraggSort [data-column="column-two-layout"] table tbody > tr:hover > td:focus {
+    outline: none;
+}
 
-            .tempPad .tableDraggSort [data-column="column-two-layout"] table tbody > tr:hover > td:first-child {
-                border-right: 2px dashed transparent !important;
-            }
+.tempPad .tableDraggSort [data-column="column-two-layout"] table tbody > tr:hover > td:first-child {
+    border-right: 2px dashed transparent !important;
+}
 
-            .tempPad .tableDraggSort [data-column="column-two-layout"] table tbody > tr:hover > td:last-child-child {
-                border-left: 2px dashed transparent !important;
-            }
+.tempPad .tableDraggSort [data-column="column-two-layout"] table tbody > tr:hover > td:last-child-child {
+    border-left: 2px dashed transparent !important;
+}
 
-    .tempPad .tableDraggSort table {
-        margin: 12px 0 0 0;
-    }
+.tempPad .tableDraggSort table {
+    margin: 12px 0 0 0;
+}
 
-        .tempPad .tableDraggSort table tbody {
-            border: 2px dashed transparent !important;
-            vertical-align: top !important;
-            -webkit-transition: border 0.2s ease-in-out;
-            -moz-transition: border 0.2s ease-in-out;
-            -ms-transition: border 0.2s ease-in-out;
-            -o-transition: border 0.2s ease-in-out;
-            transition: border 0.2s ease-in-out;
-        }
+.tempPad .tableDraggSort table tbody {
+    border: 2px dashed transparent !important;
+    vertical-align: top !important;
+    -webkit-transition: border 0.2s ease-in-out;
+    -moz-transition: border 0.2s ease-in-out;
+    -ms-transition: border 0.2s ease-in-out;
+    -o-transition: border 0.2s ease-in-out;
+    transition: border 0.2s ease-in-out;
+}
 
-            .tempPad .tableDraggSort table tbody:hover {
-                border-color: #67afe9 !important;
-            }
+.tempPad .tableDraggSort table tbody:hover {
+    border-color: #67afe9 !important;
+}
 
-            .tempPad .tableDraggSort table tbody tr > td {
-                border: 2px dashed transparent !important;
-                vertical-align: top !important;
-                -webkit-transition: border 0.2s ease-in-out;
-                -moz-transition: border 0.2s ease-in-out;
-                -ms-transition: border 0.2s ease-in-out;
-                -o-transition: border 0.2s ease-in-out;
-                transition: border 0.2s ease-in-out;
-            }
+.tempPad .tableDraggSort table tbody tr > td {
+    border: 2px dashed transparent !important;
+    vertical-align: top !important;
+    -webkit-transition: border 0.2s ease-in-out;
+    -moz-transition: border 0.2s ease-in-out;
+    -ms-transition: border 0.2s ease-in-out;
+    -o-transition: border 0.2s ease-in-out;
+    transition: border 0.2s ease-in-out;
+}
 
-                .tempPad .tableDraggSort table tbody tr > td:hover {
-                    border-color: #67afe9 !important;
-                }
+.tempPad .tableDraggSort table tbody tr > td:hover {
+    border-color: #67afe9 !important;
+}
 
-    .tempPad .w-minimize, .tempPad .w-pin {
-        display: inline-block;
-        margin-bottom: 0;
-        font-weight: normal;
-        text-align: center;
-        vertical-align: middle;
-        touch-action: manipulation;
-        cursor: pointer;
-        background-image: none;
-        border: 1px solid transparent !important;
-        white-space: nowrap;
-        padding: 6px 12px;
-        font-size: 14px;
-        line-height: 1.42857;
-        border-radius: 0;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-        font-size: 13px;
-        -webkit-transition: all ease-in 0.15;
-        -o-transition: all ease-in 0.15;
-        transition: all ease-in 0.15;
-        color: #333;
-        background-color: transparent;
-        border-color: #ccc;
-        border-radius: 15px;
-        width: auto !important;
-        height: auto !important;
-        opacity: 1;
-    }
+.tempPad .w-minimize, .tempPad .w-pin {
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: normal;
+    text-align: center;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent !important;
+    white-space: nowrap;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857;
+    border-radius: 0;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-size: 13px;
+    -webkit-transition: all ease-in 0.15;
+    -o-transition: all ease-in 0.15;
+    transition: all ease-in 0.15;
+    color: #333;
+    background-color: transparent;
+    border-color: #ccc;
+    border-radius: 15px;
+    width: auto !important;
+    height: auto !important;
+    opacity: 1;
+}
 
-        .tempPad .w-minimize:hover, .tempPad .w-pin:hover {
-            color: #333 !important;
-            background-color: transparent !important;
-            border-color: transparent !important;
-        }
+.tempPad .w-minimize:hover, .tempPad .w-pin:hover {
+    color: #333 !important;
+    background-color: transparent !important;
+    border-color: transparent !important;
+}
 
-    .tempPad .w-pin, .tempPad .w-minimize {
-        top: 0px !important;
-    }
+.tempPad .w-pin, .tempPad .w-minimize {
+    top: 0px !important;
+}
 
-    .tempPad .w-minimize {
-        right: 50px;
-        font-size: 17px;
-        top: 2px !important;
-    }
+.tempPad .w-minimize {
+    right: 50px;
+    font-size: 17px;
+    top: 2px !important;
+}
 
-    .tempPad .w-pin {
-        top: -1px !important;
-        right: 84px !important;
-        transform: rotate(45deg);
-        font-size: 17px;
-    }
+.tempPad .w-pin {
+    top: -1px !important;
+    right: 84px !important;
+    transform: rotate(45deg);
+    font-size: 17px;
+}
 
-    .tempPad .topbar-right-btns li button {
-        background-color: transparent;
-        padding: 4px 11px 8px 8px;
-    }
+.tempPad .topbar-right-btns li button {
+    background-color: transparent;
+    padding: 4px 11px 8px 8px;
+}
 
-        .tempPad .topbar-right-btns li button:hover, .tempPad .topbar-right-btns li button:focus {
-            color: black;
-        }
+.tempPad .topbar-right-btns li button:hover, .tempPad .topbar-right-btns li button:focus {
+    color: black;
+}
 
-    .tempPad ul.topbar-right-btns {
-        margin-top: 6px;
-    }
+.tempPad ul.topbar-right-btns {
+    margin-top: 6px;
+}
 
 .borderhas {
     border: 1px solid red;
@@ -2252,15 +2281,15 @@ td span.toggle-article {
     overflow: hidden;
 }
 
-    .sp-container.sp-flat {
-        position: relative;
-    }
-    /* Fix for * { box-sizing: border-box; } */
-    .sp-container, .sp-container * {
-        -webkit-box-sizing: content-box;
-        -moz-box-sizing: content-box;
-        box-sizing: content-box;
-    }
+.sp-container.sp-flat {
+    position: relative;
+}
+/* Fix for * { box-sizing: border-box; } */
+.sp-container, .sp-container * {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
 /* http://ansciath.tumblr.com/post/7347495869/css-aspect-ratio */
 .sp-top {
     position: relative;
@@ -2347,9 +2376,9 @@ td span.toggle-article {
     display: none;
 }
 
-    .sp-clear.sp-clear-display {
-        background-position: center;
-    }
+.sp-clear.sp-clear-display {
+    background-position: center;
+}
 
 .sp-clear-enabled .sp-clear {
     display: block;
@@ -2368,17 +2397,17 @@ td span.toggle-article {
     user-select: none;
 }
 
-    .sp-container.sp-input-disabled .sp-input-container {
-        display: none;
-    }
+.sp-container.sp-input-disabled .sp-input-container {
+    display: none;
+}
 
-    .sp-container.sp-buttons-disabled .sp-button-container {
-        display: none;
-    }
+.sp-container.sp-buttons-disabled .sp-button-container {
+    display: none;
+}
 
-    .sp-container.sp-palette-buttons-disabled .sp-palette-button-container {
-        display: none;
-    }
+.sp-container.sp-palette-buttons-disabled .sp-palette-button-container {
+    display: none;
+}
 
 .sp-palette-only .sp-picker-container {
     display: none;
@@ -2445,11 +2474,11 @@ td span.toggle-article {
     .sp-color {
         right: 40%;
     }
-
+    
     .sp-hue {
         left: 63%;
     }
-
+    
     .sp-fill {
         padding-top: 60%;
     }
@@ -2479,10 +2508,10 @@ td span.toggle-article {
     opacity: .8;
 }
 /*
-Theme authors:
-Here are the basic themeable display options (colors, fonts, global widths).
-See http://bgrins.github.io/spectrum/themes/ for instructions.
-*/
+ Theme authors:
+ Here are the basic themeable display options (colors, fonts, global widths).
+ See http://bgrins.github.io/spectrum/themes/ for instructions.
+ */
 .sp-container {
     border-radius: 0;
     background-color: #ffffff;
@@ -2491,13 +2520,13 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     box-shadow: 0 0 14px 0 rgba(22, 45, 61, 0.18);
 }
 
-    .sp-container, .sp-container button, .sp-container input, .sp-color, .sp-hue, .sp-clear {
-        font: normal 12px "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
-        -webkit-box-sizing: border-box;
-        -moz-box-sizing: border-box;
-        -ms-box-sizing: border-box;
-        box-sizing: border-box;
-    }
+.sp-container, .sp-container button, .sp-container input, .sp-color, .sp-hue, .sp-clear {
+    font: normal 12px "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+}
 
 .sp-top {
     margin-bottom: 3px;
@@ -2528,14 +2557,14 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     color: #222;
 }
 
-    .sp-input:focus {
-        border: 1px solid orange;
-    }
+.sp-input:focus {
+    border: 1px solid orange;
+}
 
-    .sp-input.sp-validation-error {
-        border: 1px solid red;
-        background: #fdd;
-    }
+.sp-input.sp-validation-error {
+    border: 1px solid red;
+    background: #fdd;
+}
 
 .sp-picker-container, .sp-palette-container {
     float: left;
@@ -2569,9 +2598,9 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     border: solid 2px transparent;
 }
 
-    .sp-palette .sp-thumb-el:hover, .sp-palette .sp-thumb-el.sp-thumb-active {
-        border-color: orange;
-    }
+.sp-palette .sp-thumb-el:hover, .sp-palette .sp-thumb-el.sp-thumb-active {
+    border-color: orange;
+}
 
 .sp-thumb-el {
     position: relative;
@@ -2582,18 +2611,18 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     border: solid 1px #333;
 }
 
-    .sp-initial span {
-        width: 30px;
-        height: 25px;
-        border: none;
-        display: block;
-        float: left;
-        margin: 0;
-    }
+.sp-initial span {
+    width: 30px;
+    height: 25px;
+    border: none;
+    display: block;
+    float: left;
+    margin: 0;
+}
 
-    .sp-initial .sp-clear-display {
-        background-position: center;
-    }
+.sp-initial .sp-clear-display {
+    background-position: center;
+}
 /* Buttons */
 .sp-palette-button-container, .sp-button-container {
     float: right;
@@ -2613,16 +2642,16 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     vertical-align: middle;
 }
 
-    .sp-replacer:hover, .sp-replacer.sp-active {
-        border-color: #F0C49B;
-        color: #111;
-    }
+.sp-replacer:hover, .sp-replacer.sp-active {
+    border-color: #F0C49B;
+    color: #111;
+}
 
-    .sp-replacer.sp-disabled {
-        cursor: default;
-        border-color: silver;
-        color: silver;
-    }
+.sp-replacer.sp-disabled {
+    cursor: default;
+    border-color: silver;
+    color: silver;
+}
 
 .sp-dd {
     padding: 2px 0;
@@ -2647,58 +2676,58 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     max-width: 220px;
 }
 
-    .sp-palette .sp-thumb-el {
-        width: 16px;
-        height: 16px;
-        margin: 2px 1px;
-        border: solid 1px #d0d0d0;
-    }
+.sp-palette .sp-thumb-el {
+    width: 16px;
+    height: 16px;
+    margin: 2px 1px;
+    border: solid 1px #d0d0d0;
+}
 
 .sp-container {
     padding-bottom: 0;
 }
-    /* Buttons: http://hellohappy.org/css3-buttons/ */
-    .sp-container button {
-        background-color: #eeeeee;
-        background-image: -webkit-linear-gradient(top, #eeeeee, #cccccc);
-        background-image: -moz-linear-gradient(top, #eeeeee, #cccccc);
-        background-image: -ms-linear-gradient(top, #eeeeee, #cccccc);
-        background-image: -o-linear-gradient(top, #eeeeee, #cccccc);
-        background-image: linear-gradient(to bottom, #eeeeee, #cccccc);
-        border: 1px solid #ccc;
-        border-bottom: 1px solid #bbb;
-        border-radius: 3px;
-        color: #333;
-        font-size: 14px;
-        line-height: 1;
-        padding: 5px 4px;
-        text-align: center;
-        text-shadow: 0 1px 0 #eee;
-        vertical-align: middle;
-    }
+/* Buttons: http://hellohappy.org/css3-buttons/ */
+.sp-container button {
+    background-color: #eeeeee;
+    background-image: -webkit-linear-gradient(top, #eeeeee, #cccccc);
+    background-image: -moz-linear-gradient(top, #eeeeee, #cccccc);
+    background-image: -ms-linear-gradient(top, #eeeeee, #cccccc);
+    background-image: -o-linear-gradient(top, #eeeeee, #cccccc);
+    background-image: linear-gradient(to bottom, #eeeeee, #cccccc);
+    border: 1px solid #ccc;
+    border-bottom: 1px solid #bbb;
+    border-radius: 3px;
+    color: #333;
+    font-size: 14px;
+    line-height: 1;
+    padding: 5px 4px;
+    text-align: center;
+    text-shadow: 0 1px 0 #eee;
+    vertical-align: middle;
+}
 
-        .sp-container button:hover {
-            background-color: #dddddd;
-            background-image: -webkit-linear-gradient(top, #dddddd, #bbbbbb);
-            background-image: -moz-linear-gradient(top, #dddddd, #bbbbbb);
-            background-image: -ms-linear-gradient(top, #dddddd, #bbbbbb);
-            background-image: -o-linear-gradient(top, #dddddd, #bbbbbb);
-            background-image: linear-gradient(to bottom, #dddddd, #bbbbbb);
-            border: 1px solid #bbb;
-            border-bottom: 1px solid #999;
-            cursor: pointer;
-            text-shadow: 0 1px 0 #ddd;
-        }
+.sp-container button:hover {
+    background-color: #dddddd;
+    background-image: -webkit-linear-gradient(top, #dddddd, #bbbbbb);
+    background-image: -moz-linear-gradient(top, #dddddd, #bbbbbb);
+    background-image: -ms-linear-gradient(top, #dddddd, #bbbbbb);
+    background-image: -o-linear-gradient(top, #dddddd, #bbbbbb);
+    background-image: linear-gradient(to bottom, #dddddd, #bbbbbb);
+    border: 1px solid #bbb;
+    border-bottom: 1px solid #999;
+    cursor: pointer;
+    text-shadow: 0 1px 0 #ddd;
+}
 
-        .sp-container button:active, .sp-container button.nice-select.open {
-            border: 1px solid #aaa;
-            border-bottom: 1px solid #888;
-            -webkit-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
-            -moz-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
-            -ms-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
-            -o-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
-            box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
-        }
+.sp-container button:active, .sp-container button.nice-select.open {
+    border: 1px solid #aaa;
+    border-bottom: 1px solid #888;
+    -webkit-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
+    -moz-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
+    -ms-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
+    -o-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
+    box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
+}
 
 .sp-cancel {
     font-size: 11px;
@@ -2710,10 +2739,10 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     text-decoration: none;
 }
 
-    .sp-cancel:hover {
-        color: #d93f3f !important;
-        text-decoration: underline;
-    }
+.sp-cancel:hover {
+    color: #d93f3f !important;
+    text-decoration: underline;
+}
 
 .sp-palette span:hover, .sp-palette span.sp-thumb-active {
     border-color: #000;
@@ -2792,61 +2821,61 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     max-width: 760px;
 }
 
-    .medium-insert-images figure, .mediumInsert figure {
-        margin: 0;
-        display: block;
-    }
+.medium-insert-images figure, .mediumInsert figure {
+    margin: 0;
+    display: block;
+}
 
-        .medium-insert-images figure img, .mediumInsert figure img {
-            max-width: 100%;
-            margin-top: 1em;
-            vertical-align: top;
-        }
+.medium-insert-images figure img, .mediumInsert figure img {
+    max-width: 100%;
+    margin-top: 1em;
+    vertical-align: top;
+}
 
-        .medium-insert-images figure:first-child img, .mediumInsert figure:first-child img {
-            margin-top: 0;
-        }
+.medium-insert-images figure:first-child img, .mediumInsert figure:first-child img {
+    margin-top: 0;
+}
 
-    .medium-insert-images.medium-insert-images-left, .medium-insert-images-left.mediumInsert, .mediumInsert.small {
-        max-width: 33.33%;
-        float: left;
-        margin: 0 30px 20px 0;
-    }
+.medium-insert-images.medium-insert-images-left, .medium-insert-images-left.mediumInsert, .mediumInsert.small {
+    max-width: 33.33%;
+    float: left;
+    margin: 0 30px 20px 0;
+}
 
-    .medium-insert-images.medium-insert-images-right, .medium-insert-images-right.mediumInsert {
-        max-width: 33.33%;
-        float: right;
-        margin: 0 0 20px 30px;
-    }
+.medium-insert-images.medium-insert-images-right, .medium-insert-images-right.mediumInsert {
+    max-width: 33.33%;
+    float: right;
+    margin: 0 0 20px 30px;
+}
 
-    .medium-insert-images.medium-insert-images-grid, .medium-insert-images-grid.mediumInsert {
-        display: -webkit-box;
-        display: -webkit-flex;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-flex-wrap: wrap;
-        -ms-flex-wrap: wrap;
-        flex-wrap: wrap;
-        -webkit-box-align: start;
-        -webkit-align-items: flex-start;
-        -ms-flex-align: start;
-        align-items: flex-start;
-        -webkit-box-pack: center;
-        -webkit-justify-content: center;
-        -ms-flex-pack: center;
-        justify-content: center;
-        margin: 0.5em -0.5em;
-    }
+.medium-insert-images.medium-insert-images-grid, .medium-insert-images-grid.mediumInsert {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -webkit-box-align: start;
+    -webkit-align-items: flex-start;
+    -ms-flex-align: start;
+    align-items: flex-start;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    margin: 0.5em -0.5em;
+}
 
-        .medium-insert-images.medium-insert-images-grid figure, .medium-insert-images-grid.mediumInsert figure {
-            width: 33.33%;
-            display: inline-block;
-        }
+.medium-insert-images.medium-insert-images-grid figure, .medium-insert-images-grid.mediumInsert figure {
+    width: 33.33%;
+    display: inline-block;
+}
 
-            .medium-insert-images.medium-insert-images-grid figure img, .medium-insert-images-grid.mediumInsert figure img {
-                max-width: calc(100% - 1em);
-                margin: 0.5em;
-            }
+.medium-insert-images.medium-insert-images-grid figure img, .medium-insert-images-grid.mediumInsert figure img {
+    max-width: calc(100% - 1em);
+    margin: 0.5em;
+}
 
 .medium-insert-embeds, .mediumInsert-embeds {
     text-align: center;
@@ -2854,150 +2883,150 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     position: relative;
 }
 
-    .medium-insert-embeds iframe, .mediumInsert-embeds iframe {
-        margin: 0 auto !important;
-    }
+.medium-insert-embeds iframe, .mediumInsert-embeds iframe {
+    margin: 0 auto !important;
+}
 
-    .medium-insert-embeds div, .mediumInsert-embeds div {
-        margin: 0 auto !important;
-    }
+.medium-insert-embeds div, .mediumInsert-embeds div {
+    margin: 0 auto !important;
+}
 
-    .medium-insert-embeds.medium-insert-embeds-left, .medium-insert-embeds-left.mediumInsert-embeds {
-        width: 33.33%;
-        float: left;
-        margin: 0 30px 20px 0;
-    }
+.medium-insert-embeds.medium-insert-embeds-left, .medium-insert-embeds-left.mediumInsert-embeds {
+    width: 33.33%;
+    float: left;
+    margin: 0 30px 20px 0;
+}
 
-    .medium-insert-embeds.medium-insert-embeds-right, .medium-insert-embeds-right.mediumInsert-embeds {
-        width: 33.33%;
-        float: right;
-        margin: 0 0 20px 30px;
-    }
+.medium-insert-embeds.medium-insert-embeds-right, .medium-insert-embeds-right.mediumInsert-embeds {
+    width: 33.33%;
+    float: right;
+    margin: 0 0 20px 30px;
+}
 
-    .medium-insert-images figure, .mediumInsert figure, .medium-insert-embeds figure, .mediumInsert-embeds figure {
-        position: relative;
-    }
+.medium-insert-images figure, .mediumInsert figure, .medium-insert-embeds figure, .mediumInsert-embeds figure {
+    position: relative;
+}
 
-        .medium-insert-images figure figcaption, .mediumInsert figure figcaption, .medium-insert-embeds figure figcaption, .mediumInsert-embeds figure figcaption {
-            position: relative;
-            z-index: 1;
-            display: block;
-            text-align: center;
-            margin: 10px 0;
-            color: #ccc;
-            font-size: 0.8em;
-            font-style: italic;
-            outline: 0 solid transparent;
-        }
+.medium-insert-images figure figcaption, .mediumInsert figure figcaption, .medium-insert-embeds figure figcaption, .mediumInsert-embeds figure figcaption {
+    position: relative;
+    z-index: 1;
+    display: block;
+    text-align: center;
+    margin: 10px 0;
+    color: #ccc;
+    font-size: 0.8em;
+    font-style: italic;
+    outline: 0 solid transparent;
+}
 
-            .medium-insert-images figure figcaption:focus, .mediumInsert figure figcaption:focus, .medium-insert-embeds figure figcaption:focus, .mediumInsert-embeds figure figcaption:focus {
-                outline: 0 solid transparent;
-            }
+.medium-insert-images figure figcaption:focus, .mediumInsert figure figcaption:focus, .medium-insert-embeds figure figcaption:focus, .mediumInsert-embeds figure figcaption:focus {
+    outline: 0 solid transparent;
+}
 
 .medium-editor-insert-plugin {
     outline: 0 solid transparent;
 }
 
-    .medium-editor-insert-plugin:focus {
-        outline: 0 solid transparent;
-    }
+.medium-editor-insert-plugin:focus {
+    outline: 0 solid transparent;
+}
 
-    .medium-editor-insert-plugin .clearfix:before, .medium-editor-insert-plugin:before, .medium-editor-insert-plugin .clearfix:after, .medium-editor-insert-plugin:after {
-        content: " ";
-        display: table;
-        clear: both;
-    }
+.medium-editor-insert-plugin .clearfix:before, .medium-editor-insert-plugin:before, .medium-editor-insert-plugin .clearfix:after, .medium-editor-insert-plugin:after {
+    content: " ";
+    display: table;
+    clear: both;
+}
 
-    .medium-editor-insert-plugin progress {
-        display: block;
-        margin: 1em auto;
-    }
+.medium-editor-insert-plugin progress {
+    display: block;
+    margin: 1em auto;
+}
 
-    .medium-editor-insert-plugin .hide {
-        display: none;
-    }
+.medium-editor-insert-plugin .hide {
+    display: none;
+}
 
-    .medium-editor-insert-plugin.medium-editor-placeholder:after {
-        padding: 1em 0;
-        margin: 0;
-    }
+.medium-editor-insert-plugin.medium-editor-placeholder:after {
+    padding: 1em 0;
+    margin: 0;
+}
 
-    .medium-editor-insert-plugin .medium-insert-buttons {
-        position: absolute;
-        color: #ddd;
-        font-size: 0.9em;
-    }
+.medium-editor-insert-plugin .medium-insert-buttons {
+    position: absolute;
+    color: #ddd;
+    font-size: 0.9em;
+}
 
-        .medium-editor-insert-plugin .medium-insert-buttons button {
-            display: block;
-            cursor: pointer;
-            color: #ddd;
-            background: #fff;
-            width: 32px;
-            height: 32px;
-            box-sizing: border-box;
-            border-radius: 20px;
-            border: 1px solid #ddd;
-            line-height: 30px;
-            text-align: center;
-            padding: 0;
-        }
+.medium-editor-insert-plugin .medium-insert-buttons button {
+    display: block;
+    cursor: pointer;
+    color: #ddd;
+    background: #fff;
+    width: 32px;
+    height: 32px;
+    box-sizing: border-box;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    line-height: 30px;
+    text-align: center;
+    padding: 0;
+}
 
-        .medium-editor-insert-plugin .medium-insert-buttons .medium-insert-buttons-show {
-            font-size: 25px;
-            color: #ddd;
-            -webkit-transform: rotate(0);
-            -ms-transform: rotate(0);
-            transform: rotate(0);
-            -webkit-transition: -webkit-transform 100ms;
-            transition: transform 100ms;
-        }
+.medium-editor-insert-plugin .medium-insert-buttons .medium-insert-buttons-show {
+    font-size: 25px;
+    color: #ddd;
+    -webkit-transform: rotate(0);
+    -ms-transform: rotate(0);
+    transform: rotate(0);
+    -webkit-transition: -webkit-transform 100ms;
+    transition: transform 100ms;
+}
 
-            .medium-editor-insert-plugin .medium-insert-buttons .medium-insert-buttons-show span {
-                display: block;
-                margin-top: -4px;
-            }
+.medium-editor-insert-plugin .medium-insert-buttons .medium-insert-buttons-show span {
+    display: block;
+    margin-top: -4px;
+}
 
-            .medium-editor-insert-plugin .medium-insert-buttons .medium-insert-buttons-show.medium-insert-buttons-rotate {
-                -webkit-transition: -webkit-transform 250ms;
-                transition: transform 250ms;
-                -webkit-transform: rotate(45deg);
-                -ms-transform: rotate(45deg);
-                transform: rotate(45deg);
-            }
+.medium-editor-insert-plugin .medium-insert-buttons .medium-insert-buttons-show.medium-insert-buttons-rotate {
+    -webkit-transition: -webkit-transform 250ms;
+    transition: transform 250ms;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
 
-        .medium-editor-insert-plugin .medium-insert-buttons .medium-insert-buttons-addons {
-            margin: 0;
-            padding: 0;
-            list-style: none;
-            display: none;
-            position: relative;
-            z-index: 2;
-            left: 55px;
-            top: -32px;
-        }
+.medium-editor-insert-plugin .medium-insert-buttons .medium-insert-buttons-addons {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: none;
+    position: relative;
+    z-index: 2;
+    left: 55px;
+    top: -32px;
+}
 
-            .medium-editor-insert-plugin .medium-insert-buttons .medium-insert-buttons-addons li {
-                display: inline-block;
-                margin: 0 5px;
-            }
+.medium-editor-insert-plugin .medium-insert-buttons .medium-insert-buttons-addons li {
+    display: inline-block;
+    margin: 0 5px;
+}
 
-                .medium-editor-insert-plugin .medium-insert-buttons .medium-insert-buttons-addons li .fa {
-                    font-size: 15px;
-                }
+.medium-editor-insert-plugin .medium-insert-buttons .medium-insert-buttons-addons li .fa {
+    font-size: 15px;
+}
 
 .medium-insert-caption-placeholder {
     position: relative;
 }
 
-    .medium-insert-caption-placeholder:after {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        text-align: center;
-        content: attr(data-placeholder);
-    }
+.medium-insert-caption-placeholder:after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    content: attr(data-placeholder);
+}
 
 .dragging {
     cursor: move;
@@ -3015,28 +3044,28 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     margin: 1em 0;
 }
 
-    .medium-insert-images .dragged, .mediumInsert .dragged {
-        position: absolute;
-        top: 0;
-        opacity: .5;
-        z-index: 2000;
-    }
+.medium-insert-images .dragged, .mediumInsert .dragged {
+    position: absolute;
+    top: 0;
+    opacity: .5;
+    z-index: 2000;
+}
 
-    .medium-insert-images .placeholder, .mediumInsert .placeholder {
-        position: relative;
-        margin: 0;
-        padding: 0;
-        border: none;
-    }
+.medium-insert-images .placeholder, .mediumInsert .placeholder {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
 
-    .medium-insert-images .medium-insert-images-progress, .mediumInsert .medium-insert-images-progress {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        right: 0;
-        background: rgba(255, 255, 255, 0.4);
-    }
+.medium-insert-images .medium-insert-images-progress, .mediumInsert .medium-insert-images-progress {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.4);
+}
 
 .medium-insert-embeds-input {
     position: relative;
@@ -3049,13 +3078,13 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     position: relative;
 }
 
-    .medium-insert-embeds-placeholder:after {
-        position: absolute;
-        top: 0;
-        left: 0;
-        content: attr(data-placeholder);
-        color: #ccc;
-    }
+.medium-insert-embeds-placeholder:after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: attr(data-placeholder);
+    color: #ccc;
+}
 
 .medium-insert-embeds-selected .medium-insert-embed {
     outline: 2px solid #000;
@@ -3087,22 +3116,22 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     color: #ddd;
 }
 
-    .medium-editor-insert-plugin .medium-insert-buttons .medium-insert-buttons-addons li a .fa {
-        font-size: 15px;
-    }
+.medium-editor-insert-plugin .medium-insert-buttons .medium-insert-buttons-addons li a .fa {
+    font-size: 15px;
+}
 
 .medium-insert-caption-placeholder {
     position: relative;
 }
 
-    .medium-insert-caption-placeholder:after {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        text-align: center;
-        content: attr(data-placeholder);
-    }
+.medium-insert-caption-placeholder:after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    content: attr(data-placeholder);
+}
 
 .dragging {
     cursor: move;
@@ -3120,28 +3149,28 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     margin: 1em 0;
 }
 
-    .medium-insert-images .dragged, .mediumInsert .dragged {
-        position: absolute;
-        top: 0;
-        opacity: .5;
-        z-index: 2000;
-    }
+.medium-insert-images .dragged, .mediumInsert .dragged {
+    position: absolute;
+    top: 0;
+    opacity: .5;
+    z-index: 2000;
+}
 
-    .medium-insert-images .placeholder, .mediumInsert .placeholder {
-        position: relative;
-        margin: 0;
-        padding: 0;
-        border: none;
-    }
+.medium-insert-images .placeholder, .mediumInsert .placeholder {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
 
-    .medium-insert-images .medium-insert-images-progress, .mediumInsert .medium-insert-images-progress {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        right: 0;
-        background: rgba(255, 255, 255, 0.4);
-    }
+.medium-insert-images .medium-insert-images-progress, .mediumInsert .medium-insert-images-progress {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.4);
+}
 
 .medium-insert-embeds-input {
     position: relative;
@@ -3154,13 +3183,13 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     position: relative;
 }
 
-    .medium-insert-embeds-placeholder:after {
-        position: absolute;
-        top: 0;
-        left: 0;
-        content: attr(data-placeholder);
-        color: #ccc;
-    }
+.medium-insert-embeds-placeholder:after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: attr(data-placeholder);
+    color: #ccc;
+}
 
 .medium-insert-embeds-selected .medium-insert-embed {
     outline: 2px solid #000;
@@ -3194,116 +3223,116 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     transition: all ease-in 0.15s;
 }
 
-    .draggable-item .drg-rmv {
-        position: relative;
-        z-index: 8;
-    }
+.draggable-item .drg-rmv {
+    position: relative;
+    z-index: 8;
+}
 
-    .draggable-item td:hover > .drg-rmv .icon-btn {
-        opacity: 1;
-    }
+.draggable-item td:hover > .drg-rmv .icon-btn {
+    opacity: 1;
+}
 
-    .draggable-item .drg-rmv-copy {
-        position: relative;
-        z-index: 8;
-    }
+.draggable-item .drg-rmv-copy {
+    position: relative;
+    z-index: 8;
+}
 
-    .draggable-item td:hover > .drg-rmv-copy .icon-btn {
-        opacity: 1;
-    }
+.draggable-item td:hover > .drg-rmv-copy .icon-btn {
+    opacity: 1;
+}
 
-    .draggable-item .drg-rmv-settings {
-        position: relative;
-        z-index: 8;
-    }
+.draggable-item .drg-rmv-settings {
+    position: relative;
+    z-index: 8;
+}
 
-        .draggable-item .drg-rmv-settings .edit-template {
-            right: 67px !important;
-        }
+.draggable-item .drg-rmv-settings .edit-template {
+    right: 67px !important;
+}
 
-        .draggable-item .drg-rmv-settings .drag-template {
-            right: 34px !important;
-        }
+.draggable-item .drg-rmv-settings .drag-template {
+    right: 34px !important;
+}
 
-    .draggable-item td:hover > .drg-rmv-settings .icon-btn {
-        opacity: 1;
-    }
+.draggable-item td:hover > .drg-rmv-settings .icon-btn {
+    opacity: 1;
+}
 
-    .draggable-item .drg-rmv-settings-copy {
-        position: relative;
-        z-index: 8;
-    }
+.draggable-item .drg-rmv-settings-copy {
+    position: relative;
+    z-index: 8;
+}
 
-    .draggable-item td:hover > .drg-rmv-settings-copy .icon-btn {
-        opacity: 1;
-    }
+.draggable-item td:hover > .drg-rmv-settings-copy .icon-btn {
+    opacity: 1;
+}
 
-    .draggable-item .drg-rmv-toc {
-        position: relative;
-        z-index: 8;
-    }
+.draggable-item .drg-rmv-toc {
+    position: relative;
+    z-index: 8;
+}
 
-    .draggable-item td:hover > .drg-rmv-toc .icon-btn {
-        opacity: 1;
-    }
+.draggable-item td:hover > .drg-rmv-toc .icon-btn {
+    opacity: 1;
+}
 
-    .draggable-item .drg-rmv-toc-copy {
-        position: relative;
-        z-index: 8;
-    }
+.draggable-item .drg-rmv-toc-copy {
+    position: relative;
+    z-index: 8;
+}
 
-    .draggable-item td:hover > .drg-rmv-toc-copy .icon-btn {
-        opacity: 1;
-    }
+.draggable-item td:hover > .drg-rmv-toc-copy .icon-btn {
+    opacity: 1;
+}
 
-    .draggable-item .drg-rmv-settings-toc {
-        position: relative;
-        z-index: 8;
-    }
+.draggable-item .drg-rmv-settings-toc {
+    position: relative;
+    z-index: 8;
+}
 
-    .draggable-item td:hover > .drg-rmv-settings-toc .icon-btn {
-        opacity: 1;
-    }
+.draggable-item td:hover > .drg-rmv-settings-toc .icon-btn {
+    opacity: 1;
+}
 
-    .draggable-item .drg-rmv-settings-toc-copy {
-        position: relative;
-        z-index: 8;
-    }
+.draggable-item .drg-rmv-settings-toc-copy {
+    position: relative;
+    z-index: 8;
+}
 
-    .draggable-item .drg-rmv-addrow-deleterow-toc-copy {
-        position: relative;
-        z-index: 8;
-    }
+.draggable-item .drg-rmv-addrow-deleterow-toc-copy {
+    position: relative;
+    z-index: 8;
+}
 
-    .draggable-item td:hover > .drg-rmv-addrow-deleterow-toc-copy .icon-btn {
-        opacity: 1;
-    }
+.draggable-item td:hover > .drg-rmv-addrow-deleterow-toc-copy .icon-btn {
+    opacity: 1;
+}
 
-    .draggable-item .drg-rmv .drag-template {
-        right: 32px !important;
-    }
+.draggable-item .drg-rmv .drag-template {
+    right: 32px !important;
+}
 
-    .draggable-item .drg-rmv-addrow-deleterow-withsubrow {
-        position: relative;
-        z-index: 8;
-    }
+.draggable-item .drg-rmv-addrow-deleterow-withsubrow {
+    position: relative;
+    z-index: 8;
+}
 
-    .draggable-item td:hover > .drg-rmv-addrow-deleterow-withsubrow .icon-btn {
-        opacity: 1;
-    }
+.draggable-item td:hover > .drg-rmv-addrow-deleterow-withsubrow .icon-btn {
+    opacity: 1;
+}
 
-    .draggable-item td:hover > .drg-rmv-settings-toc-copy .icon-btn {
-        opacity: 1;
-    }
-    /*for bookamrk*/
-    .draggable-item .bookmark-settings {
-        position: relative;
-        z-index: 8;
-    }
+.draggable-item td:hover > .drg-rmv-settings-toc-copy .icon-btn {
+    opacity: 1;
+}
+/*for bookamrk*/
+.draggable-item .bookmark-settings {
+    position: relative;
+    z-index: 8;
+}
 
-    .draggable-item td:hover > .bookmark-settings .icon-btn {
-        opacity: 1;
-    }
+.draggable-item td:hover > .bookmark-settings .icon-btn {
+    opacity: 1;
+}
 
 .text-resizer .ui-resizable {
     border: 1px solid #b9b9b9;
@@ -3475,45 +3504,45 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     display: flex;
     list-style: none;
     /*margin: 0 0px;
-    border-bottom: 1px solid #e4e4e4;
-    padding: 0 15px 0 0;*/
+     border-bottom: 1px solid #e4e4e4;
+     padding: 0 15px 0 0;*/
 }
 
-    .c-tabs-nav .c-tabs-nav__link {
-        flex: 1;
-        margin-right: 4px;
-        padding: 12px 0px;
-        color: #000;
-        text-align: center;
-        transition: all 0.3s;
-        border-bottom: 3px solid transparent;
-        text-decoration: none;
-    }
+.c-tabs-nav .c-tabs-nav__link {
+    flex: 1;
+    margin-right: 4px;
+    padding: 12px 0px;
+    color: #000;
+    text-align: center;
+    transition: all 0.3s;
+    border-bottom: 3px solid transparent;
+    text-decoration: none;
+}
 
-        .c-tabs-nav .c-tabs-nav__link:hover {
-            color: #6d6d6d;
-            border-bottom-color: #E4E4E4;
-        }
+.c-tabs-nav .c-tabs-nav__link:hover {
+    color: #6d6d6d;
+    border-bottom-color: #E4E4E4;
+}
 
-        .c-tabs-nav .c-tabs-nav__link:last-child {
-            margin-right: 0;
-        }
+.c-tabs-nav .c-tabs-nav__link:last-child {
+    margin-right: 0;
+}
 
-        .c-tabs-nav .c-tabs-nav__link.is-active {
-            color: #e24d83;
-            border-bottom: 3px solid #e24d83;
-            font-weight: bold;
-        }
+.c-tabs-nav .c-tabs-nav__link.is-active {
+    color: #e24d83;
+    border-bottom: 3px solid #e24d83;
+    font-weight: bold;
+}
 
-        .c-tabs-nav .c-tabs-nav__link > i, .c-tabs-nav .c-tabs-nav__link > span {
-            margin: 0;
-            padding: 0;
-            line-height: 1;
-        }
+.c-tabs-nav .c-tabs-nav__link > i, .c-tabs-nav .c-tabs-nav__link > span {
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+}
 
-        .c-tabs-nav .c-tabs-nav__link i {
-            font-size: 18px;
-        }
+.c-tabs-nav .c-tabs-nav__link i {
+    font-size: 18px;
+}
 
 @media all and (min-width: 720px) {
     .c-tabs-nav .c-tabs-nav__link i {
@@ -3538,9 +3567,9 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     display: none;
 }
 
-    .c-tab.is-active {
-        display: block;
-    }
+.c-tab.is-active {
+    display: block;
+}
 
 .c-tabs.no-js .c-tabs-nav {
     display: none;
@@ -3553,9 +3582,9 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     margin-bottom: 1.5rem;
 }
 
-    .c-tabs.no-js .c-tab:last-child {
-        margin-bottom: 0;
-    }
+.c-tabs.no-js .c-tab:last-child {
+    margin-bottom: 0;
+}
 
 .cuModal .modal-sm {
     width: 340px;
@@ -3565,15 +3594,15 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     padding: 0;
 }
 
-    .cuModal .modal-footer .btn {
-        display: block;
-        width: 50%;
-        float: left;
-        margin: 0 !important;
-        padding-top: 15px;
-        border: transparent !important;
-        padding-bottom: 15px;
-    }
+.cuModal .modal-footer .btn {
+    display: block;
+    width: 50%;
+    float: left;
+    margin: 0 !important;
+    padding-top: 15px;
+    border: transparent !important;
+    padding-bottom: 15px;
+}
 
 .cuModal .modal-view-del {
     text-align: center;
@@ -3599,11 +3628,11 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     opacity: 0.7;
 }
 
-    .no-result p {
-        color: #AFAFAF;
-        font-size: 15px;
-        font-weight: 100;
-    }
+.no-result p {
+    color: #AFAFAF;
+    font-size: 15px;
+    font-weight: 100;
+}
 
 .template-content::-moz-selection {
     background: #222;
@@ -3631,18 +3660,18 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     width: 1px !important;
 }
 
-    .jcrop-vline.right {
-        right: 0;
-    }
+.jcrop-vline.right {
+    right: 0;
+}
 
 .jcrop-hline {
     height: 1px !important;
     width: 100%;
 }
 
-    .jcrop-hline.bottom {
-        bottom: 0;
-    }
+.jcrop-hline.bottom {
+    bottom: 0;
+}
 
 .jcrop-tracker {
     -webkit-tap-highlight-color: transparent;
@@ -3660,61 +3689,61 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     width: 7px;
 }
 
-    .jcrop-handle.ord-n {
-        left: 50%;
-        margin-left: -4px;
-        margin-top: -4px;
-        top: 0;
-    }
+.jcrop-handle.ord-n {
+    left: 50%;
+    margin-left: -4px;
+    margin-top: -4px;
+    top: 0;
+}
 
-    .jcrop-handle.ord-s {
-        bottom: 0;
-        left: 50%;
-        margin-bottom: -4px;
-        margin-left: -4px;
-    }
+.jcrop-handle.ord-s {
+    bottom: 0;
+    left: 50%;
+    margin-bottom: -4px;
+    margin-left: -4px;
+}
 
-    .jcrop-handle.ord-e {
-        margin-right: -4px;
-        margin-top: -4px;
-        right: 0;
-        top: 50%;
-    }
+.jcrop-handle.ord-e {
+    margin-right: -4px;
+    margin-top: -4px;
+    right: 0;
+    top: 50%;
+}
 
-    .jcrop-handle.ord-w {
-        left: 0;
-        margin-left: -4px;
-        margin-top: -4px;
-        top: 50%;
-    }
+.jcrop-handle.ord-w {
+    left: 0;
+    margin-left: -4px;
+    margin-top: -4px;
+    top: 50%;
+}
 
-    .jcrop-handle.ord-nw {
-        left: 0;
-        margin-left: -4px;
-        margin-top: -4px;
-        top: 0;
-    }
+.jcrop-handle.ord-nw {
+    left: 0;
+    margin-left: -4px;
+    margin-top: -4px;
+    top: 0;
+}
 
-    .jcrop-handle.ord-ne {
-        margin-right: -4px;
-        margin-top: -4px;
-        right: 0;
-        top: 0;
-    }
+.jcrop-handle.ord-ne {
+    margin-right: -4px;
+    margin-top: -4px;
+    right: 0;
+    top: 0;
+}
 
-    .jcrop-handle.ord-se {
-        bottom: 0;
-        margin-bottom: -4px;
-        margin-right: -4px;
-        right: 0;
-    }
+.jcrop-handle.ord-se {
+    bottom: 0;
+    margin-bottom: -4px;
+    margin-right: -4px;
+    right: 0;
+}
 
-    .jcrop-handle.ord-sw {
-        bottom: 0;
-        left: 0;
-        margin-bottom: -4px;
-        margin-left: -4px;
-    }
+.jcrop-handle.ord-sw {
+    bottom: 0;
+    left: 0;
+    margin-bottom: -4px;
+    margin-left: -4px;
+}
 
 .jcrop-dragbar.ord-n, .jcrop-dragbar.ord-s {
     height: 7px;
@@ -3785,7 +3814,7 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
         -webkit-transform: scale(0);
         transform: scale(0);
     }
-
+    
     100% {
         -webkit-transform: scale(1);
         transform: scale(1);
@@ -3797,7 +3826,7 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
         -webkit-transform: scale(0);
         transform: scale(0);
     }
-
+    
     100% {
         -webkit-transform: scale(1);
         transform: scale(1);
@@ -3810,19 +3839,19 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
         -webkit-transform: matrix(0.97, 0, 0, 1, 0, 12);
         transform: matrix(0.97, 0, 0, 1, 0, 12);
     }
-
+    
     20% {
         opacity: .7;
         -webkit-transform: matrix(0.99, 0, 0, 1, 0, 2);
         transform: matrix(0.99, 0, 0, 1, 0, 2);
     }
-
+    
     40% {
         opacity: 1;
         -webkit-transform: matrix(1, 0, 0, 1, 0, -1);
         transform: matrix(1, 0, 0, 1, 0, -1);
     }
-
+    
     100% {
         -webkit-transform: matrix(1, 0, 0, 1, 0, 0);
         transform: matrix(1, 0, 0, 1, 0, 0);
@@ -3835,19 +3864,19 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
         -webkit-transform: matrix(0.97, 0, 0, 1, 0, 12);
         transform: matrix(0.97, 0, 0, 1, 0, 12);
     }
-
+    
     20% {
         opacity: .7;
         -webkit-transform: matrix(0.99, 0, 0, 1, 0, 2);
         transform: matrix(0.99, 0, 0, 1, 0, 2);
     }
-
+    
     40% {
         opacity: 1;
         -webkit-transform: matrix(1, 0, 0, 1, 0, -1);
         transform: matrix(1, 0, 0, 1, 0, -1);
     }
-
+    
     100% {
         -webkit-transform: matrix(1, 0, 0, 1, 0, 0);
         transform: matrix(1, 0, 0, 1, 0, 0);
@@ -3870,11 +3899,11 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     display: none;
 }
 
-    .medium-editor-anchor-preview a {
-        color: #fff;
-        display: inline-block;
-        margin: 5px 5px 10px;
-    }
+.medium-editor-anchor-preview a {
+    color: #fff;
+    display: inline-block;
+    margin: 5px 5px 10px;
+}
 
 .medium-editor-anchor-preview-active {
     visibility: visible;
@@ -3898,16 +3927,16 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     position: relative;
 }
 
-    .medium-editor-placeholder:after {
-        content: attr(data-placeholder) !important;
-        font-style: italic;
-        left: 0;
-        position: absolute;
-        top: 0;
-        white-space: pre;
-        padding: inherit;
-        margin: inherit;
-    }
+.medium-editor-placeholder:after {
+    content: attr(data-placeholder) !important;
+    font-style: italic;
+    left: 0;
+    position: absolute;
+    top: 0;
+    white-space: pre;
+    padding: inherit;
+    margin: inherit;
+}
 
 .medium-toolbar-arrow-under:after, .medium-toolbar-arrow-over:before {
     border-style: solid;
@@ -3939,43 +3968,43 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     z-index: 2000;
 }
 
-    .medium-editor-toolbar ul {
-        margin: 0;
-        padding: 0;
-    }
+.medium-editor-toolbar ul {
+    margin: 0;
+    padding: 0;
+}
 
-    .medium-editor-toolbar li {
-        float: left;
-        list-style: none;
-        margin: 0;
-        padding: 0;
-    }
+.medium-editor-toolbar li {
+    float: left;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
 
-        .medium-editor-toolbar li button {
-            box-sizing: border-box;
-            cursor: pointer;
-            display: block;
-            font-size: 13px;
-            line-height: 1.33;
-            margin: 0;
-            padding: 10px;
-            text-decoration: none;
-        }
+.medium-editor-toolbar li button {
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    font-size: 13px;
+    line-height: 1.33;
+    margin: 0;
+    padding: 10px;
+    text-decoration: none;
+}
 
-            .medium-editor-toolbar li button:focus {
-                outline: none;
-            }
+.medium-editor-toolbar li button:focus {
+    outline: none;
+}
 
-        .medium-editor-toolbar li .medium-editor-action-underline {
-            text-decoration: underline;
-        }
+.medium-editor-toolbar li .medium-editor-action-underline {
+    text-decoration: underline;
+}
 
-        .medium-editor-toolbar li .medium-editor-action-pre {
-            font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
-            font-size: 12px;
-            font-weight: 100;
-            padding: 15px 0;
-        }
+.medium-editor-toolbar li .medium-editor-action-pre {
+    font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    font-size: 12px;
+    font-weight: 100;
+    padding: 15px 0;
+}
 
 .medium-editor-toolbar-active {
     visibility: visible;
@@ -4007,47 +4036,47 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     display: none;
 }
 
-    .medium-editor-toolbar-form input, .medium-editor-toolbar-form a {
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    }
+.medium-editor-toolbar-form input, .medium-editor-toolbar-form a {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
 
-    .medium-editor-toolbar-form .medium-editor-toolbar-form-row {
-        line-height: 14px;
-        margin-left: 5px;
-        padding-bottom: 5px;
-    }
+.medium-editor-toolbar-form .medium-editor-toolbar-form-row {
+    line-height: 14px;
+    margin-left: 5px;
+    padding-bottom: 5px;
+}
 
-    .medium-editor-toolbar-form .medium-editor-toolbar-input {
-        color: #ccc;
-        height: 36px;
-        border: 1px solid #E8E8E8;
-    }
+.medium-editor-toolbar-form .medium-editor-toolbar-input {
+    color: #ccc;
+    height: 36px;
+    border: 1px solid #E8E8E8;
+}
 
-    .medium-editor-toolbar-form .medium-editor-toolbar-input, .medium-editor-toolbar-form label {
-        border: none;
-        box-sizing: border-box;
-        font-size: 14px;
-        margin: 0;
-        padding: 6px;
-        display: inline-block;
-    }
+.medium-editor-toolbar-form .medium-editor-toolbar-input, .medium-editor-toolbar-form label {
+    border: none;
+    box-sizing: border-box;
+    font-size: 14px;
+    margin: 0;
+    padding: 6px;
+    display: inline-block;
+}
 
-        .medium-editor-toolbar-form .medium-editor-toolbar-input:focus, .medium-editor-toolbar-form label:focus {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            border: none;
-            box-shadow: none;
-            outline: 0;
-        }
+.medium-editor-toolbar-form .medium-editor-toolbar-input:focus, .medium-editor-toolbar-form label:focus {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border: none;
+    box-shadow: none;
+    outline: 0;
+}
 
-    .medium-editor-toolbar-form a {
-        display: inline-block;
-        font-size: 24px;
-        font-weight: bolder;
-        margin: 0 10px;
-        text-decoration: none;
-    }
+.medium-editor-toolbar-form a {
+    display: inline-block;
+    font-size: 24px;
+    font-weight: bolder;
+    margin: 0 10px;
+    text-decoration: none;
+}
 
 .medium-editor-toolbar-form-active {
     display: block;
@@ -4064,17 +4093,17 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     min-height: 30px;
 }
 
-    [data-medium-editor-element] img {
-        max-width: 100%;
-    }
+[data-medium-editor-element] img {
+    max-width: 100%;
+}
 
-    [data-medium-editor-element] sub {
-        vertical-align: sub;
-    }
+[data-medium-editor-element] sub {
+    vertical-align: sub;
+}
 
-    [data-medium-editor-element] sup {
-        vertical-align: super;
-    }
+[data-medium-editor-element] sup {
+    vertical-align: super;
+}
 
 .medium-editor-hidden {
     display: none;
@@ -4089,9 +4118,9 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     width: 100%;
 }
 
-    .medium-insert-images-slideshow figure img {
-        margin: 0;
-    }
+.medium-insert-images-slideshow figure img {
+    margin: 0;
+}
 
 .medium-insert-images.medium-insert-images-grid.small-grid figure {
     width: 12.5%;
@@ -4124,24 +4153,24 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     visibility: visible;
 }
 
-    .medium-editor-toolbar li button {
-        border: 0;
-        color: #054765;
-        height: 39px;
-        min-width: 37px;
-        -webkit-transition: color .2s ease-in;
-        transition: background-color .2s ease-in;
-        background-color: white;
-    }
+.medium-editor-toolbar li button {
+    border: 0;
+    color: #054765;
+    height: 39px;
+    min-width: 37px;
+    -webkit-transition: color .2s ease-in;
+    transition: background-color .2s ease-in;
+    background-color: white;
+}
 
-        .medium-editor-toolbar li button:hover {
-            background: #f2f2f4;
-        }
+.medium-editor-toolbar li button:hover {
+    background: #f2f2f4;
+}
 
-    .medium-editor-toolbar li .medium-editor-button-active {
-        background-color: #E4E4E4;
-        color: #000;
-    }
+.medium-editor-toolbar li .medium-editor-button-active {
+    background-color: #E4E4E4;
+    color: #000;
+}
 
 .medium-editor-toolbar-form {
     background: #FEFEFE;
@@ -4153,16 +4182,16 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     width: 300px;
 }
 
-    .medium-editor-toolbar-form .medium-editor-toolbar-input {
-        box-sizing: border-box;
-        color: #ccc;
-        height: 30px;
-    }
+.medium-editor-toolbar-form .medium-editor-toolbar-input {
+    box-sizing: border-box;
+    color: #ccc;
+    height: 30px;
+}
 
-    .medium-editor-toolbar-form a {
-        color: #999;
-        font-size: 13px;
-    }
+.medium-editor-toolbar-form a {
+    color: #999;
+    font-size: 13px;
+}
 
 #medium-editor-anchor-preview-1 {
     display: none;
@@ -4260,59 +4289,59 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     font-size: 12px;
 }
 
-    .documentFields li {
-        position: relative;
-    }
+.documentFields li {
+    position: relative;
+}
 
-    .documentFields ul #CategoryName {
-        color: #fb435f;
-        font-weight: bold;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        margin-top: 5px;
-        /*white-space:nowrap;*/
-    }
+.documentFields ul #CategoryName {
+    color: #fb435f;
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 5px;
+    /*white-space:nowrap;*/
+}
 
-    .documentFields ul #approverName {
-        color: #cc8da6;
-        font-weight: normal;
-    }
+.documentFields ul #approverName {
+    color: #cc8da6;
+    font-weight: normal;
+}
 
-    .documentFields ul {
-        padding-bottom: 2px;
-        margin-bottom: 1px;
-    }
+.documentFields ul {
+    padding-bottom: 2px;
+    margin-bottom: 1px;
+}
 
-        .documentFields ul li {
-            margin-bottom: 5px;
-            position: relative; 
-            color: #444; 
-            font-weight: 600 !important;
-        }
+.documentFields ul li {
+    margin-bottom: 5px;
+    position: relative;
+    color: #444;
+    font-weight: 600 !important;
+}
 
-            .documentFields ul li span {
-                font-weight: normal !important;
-                color: #666;
-            }
+.documentFields ul li span {
+    font-weight: normal !important;
+    color: #666;
+}
 
-                .documentFields ul li span.tag-item {
-                    color: #fff;
-                }
+.documentFields ul li span.tag-item {
+    color: #fff;
+}
 
-            .documentFields ul li input[type=text] {
-                margin-bottom: 0;
-            }
+.documentFields ul li input[type=text] {
+    margin-bottom: 0;
+}
 
-            .documentFields ul li .required {
-                color: red;
-            }
+.documentFields ul li .required {
+    color: red;
+}
 
-    .documentFields li span label {
-        font-weight: bold !important;
-        font-size: 11px;
-        margin: 0 !important;
-        display: inline;
-    }
+.documentFields li span label {
+    font-weight: bold !important;
+    font-size: 11px;
+    margin: 0 !important;
+    display: inline;
+}
 
 .validation-error {
     color: #000 !important;
@@ -4355,34 +4384,34 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     background-color: transparent;
 }
 
-    .blankPage .blank-page-break {
-        position: relative;
-        background-color: #ddd;
-    }
+.blankPage .blank-page-break {
+    position: relative;
+    background-color: #ddd;
+}
 
-        .blankPage .blank-page-break:before {
-            content: "";
-            position: absolute;
-            width: 15px;
-            height: 14px;
-            background: #ddd;
-            top: 0;
-            left: -15px;
-        }
+.blankPage .blank-page-break:before {
+    content: "";
+    position: absolute;
+    width: 15px;
+    height: 14px;
+    background: #ddd;
+    top: 0;
+    left: -15px;
+}
 
-        .blankPage .blank-page-break:after {
-            content: "";
-            position: absolute;
-            width: 15px;
-            height: 14px;
-            background: #ddd;
-            top: 0;
-            right: -15px;
-        }
+.blankPage .blank-page-break:after {
+    content: "";
+    position: absolute;
+    width: 15px;
+    height: 14px;
+    background: #ddd;
+    top: 0;
+    right: -15px;
+}
 
-    .pagebreak td {
-        background-color: #ddd;
-    }
+.pagebreak td {
+    background-color: #ddd;
+}
 
 #content-middle {
     background: #fff;
@@ -4480,10 +4509,11 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     padding: 1px;
     margin: 2px 15px;
     font-size: 28px;
+    font-family:Arial !important;
 }
 
 .draggable-item .cautionDiv {
-    font-family: Calibri;
+     font-family: Calibri;
     font-style: italic;
     font-size: 20px;
     padding: 9px;
@@ -4495,12 +4525,12 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
 
 .cautionDiv li, .WarningText li, .noteLayout li {
     font-size: 20px !important;
-    font-family: Calibri;
+     font-family: Calibri;
 }
 
 .cautionDiv p, .WarningText p, .noteLayout p {
     font-size: 20px !important;
-    font-family: Calibri;
+     font-family: Calibri;
     line-height: 20px;
 }
 
@@ -4522,7 +4552,7 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
 
 .draggable-item .policy-table {
     border-collapse: collapse;
-    font-family: Calibri;
+     font-family: Calibri;
 }
 
 .noteLayout .note {
@@ -4537,19 +4567,20 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
 }
 
 .noteLayout .first-td {
-    width: 60px;
+    width: 70px;
     vertical-align: top;
 }
 
 .noteLayout .second-td {
     vertical-align: top;
+    padding-top:7px !important;
 }
 
-    .noteLayout .second-td span {
-        text-indent: 0;
-        line-height: 25px;
-        display: block;
-    }
+.noteLayout .second-td span {
+    text-indent: 0;
+    line-height: 25px;
+    display: block;
+}
 
 .noteLayout .toc-text {
     text-indent: 0;
@@ -4569,7 +4600,7 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     padding: 10px 10px;
     display: block;
     position: relative;
-    padding-left: 27px;
+    padding-left: 24px;
 }
 
 .referenceTemplate .referDiv {
@@ -4583,19 +4614,19 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
 }
 
 .referLast-td p {
-    font-family: Calibri;
+     font-family: Calibri;
     font-size: 10pt !important;
 }
 
 .referenceTemplate .main-div {
-    font-family: Calibri;
+     font-family: Calibri;
     display: inline-block;
     font-size: 10pt !important;
     width: 100%
 }
 /*.textDragger ol,.textDragger ul{
-    font-size:14pt;
-}*/
+ font-size:14pt;
+ }*/
 #logoLoaded {
     overflow: auto !important;
     margin-right: -10px;
@@ -4609,36 +4640,36 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     padding: 0 !important;
 }
 
-    .contextMenu li a {
-        padding: 7px 20px;
-        font-size: 13px;
-        margin: 0 !important;
-    }
+.contextMenu li a {
+    padding: 7px 20px;
+    font-size: 13px;
+    margin: 0 !important;
+}
 
-    .contextMenu > li > a:hover, #contextMenu > li > a:focus {
-        background-color: #953365 !important;
-    }
+.contextMenu > li > a:hover, #contextMenu > li > a:focus {
+    background-color: #953365 !important;
+}
 
-    .contextMenu li:hover a, #contextMenu li:hover a i {
-        color: #fff;
-    }
+.contextMenu li:hover a, #contextMenu li:hover a i {
+    color: #fff;
+}
 
-    /* folder context menu*/
+/* folder context menu*/
 .folder-contextMenu {
     padding: 0 !important;
 }
 
-    .folder-contextMenu li a {
-        padding: 7px 20px;
-        font-size: 13px;
-        margin: 0 !important;
-    }
+.folder-contextMenu li a {
+    padding: 7px 20px;
+    font-size: 13px;
+    margin: 0 !important;
+}
 
-    .folder-contextMenu > li > a:hover, .folder-contextMenu > li > a:focus {
-        background-color: #953365 !important;
-    }
+.folder-contextMenu > li > a:hover, .folder-contextMenu > li > a:focus {
+    background-color: #953365 !important;
+}
 
-   
+
 
 #fileUpload_Container h2 {
     margin: 5px;
@@ -4661,40 +4692,40 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     padding-right: 0 !important;
 }
 
-    /*.file-Uploaded li {
-        background: url('Images/tickicn.png') no-repeat 5px 22px;
-        padding-left: 45px !important;
-    }*/
+/*.file-Uploaded li {
+ background: url('Images/tickicn.png') no-repeat 5px 22px;
+ padding-left: 45px !important;
+ }*/
 
-    .file-Uploaded .thumb {
-        padding-bottom: 18% !important;
-        box-shadow: none !important;
-        margin-bottom: 5px;
-        border-bottom: 1px solid #e5e5e5 !important;
-    }
+.file-Uploaded .thumb {
+    padding-bottom: 18% !important;
+    box-shadow: none !important;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #e5e5e5 !important;
+}
 
-    .file-Uploaded .template-count {
-        text-align: left !important;
-        font-size: 16px;
-    }
+.file-Uploaded .template-count {
+    text-align: left !important;
+    font-size: 16px;
+}
 
-        .file-Uploaded .template-count a {
-            color: #404040;
-            margin-bottom: 3px;
-            line-height: 20px;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            width: 88%;
-            display: inline-block;
-        }
+.file-Uploaded .template-count a {
+    color: #404040;
+    margin-bottom: 3px;
+    line-height: 20px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 88%;
+    display: inline-block;
+}
 
-    .file-Uploaded .file-text {
-        font-size: 11px;
-        color: #999;
-        left: 0 !important;
-        padding-bottom: 6px;
-    }
+.file-Uploaded .file-text {
+    font-size: 11px;
+    color: #999;
+    left: 0 !important;
+    padding-bottom: 6px;
+}
 
 #fileLoaded {
     overflow: auto;
@@ -4713,27 +4744,27 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#bd3366', endColorstr='#da4268',GradientType=1 ) !important; /* IE6-9 fallback on horizontal gradient */
 }
 
-    .fileUpload span {
-        font-size: 20px;
-        font-weight: normal;
-    }
+.fileUpload span {
+    font-size: 20px;
+    font-weight: normal;
+}
 
-    .fileUpload input.upload {
-        position: absolute;
-        top: 0;
-        right: 0;
-        margin: 0;
-        padding: 0;
-        font-size: 20px;
-        cursor: pointer;
-        opacity: 0;
-        filter: alpha(opacity=0);
-    }
+.fileUpload input.upload {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
 
-    .fileUpload i {
-        font-size: 21px;
-        margin-left: 7px;
-    }
+.fileUpload i {
+    font-size: 21px;
+    margin-left: 7px;
+}
 
 .fileUploadimg {
     position: relative;
@@ -4746,22 +4777,22 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#bd3366', endColorstr='#da4268',GradientType=1 ) !important; /* IE6-9 fallback on horizontal gradient */
 }
 
-    /*.fileUploadimg span {
-        font-size: 20px;
-        font-weight: normal;
-    }*/
+/*.fileUploadimg span {
+ font-size: 20px;
+ font-weight: normal;
+ }*/
 
-    .fileUploadimg input.upload {
-        position: absolute;
-        top: 0;
-        right: 0;
-        margin: 0;
-        padding: 0;
-        font-size: 20px;
-        cursor: pointer;
-        opacity: 0;
-        filter: alpha(opacity=0);
-    }
+.fileUploadimg input.upload {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
 
 .filename {
     font-weight: 600;
@@ -4793,15 +4824,15 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     margin: 10px 0 13px 0;
 }
 
-    .uploadfilefooter input[type='text'] {
-        width: 100%;
-    }
+.uploadfilefooter input[type='text'] {
+    width: 100%;
+}
 
-    .uploadfilefooter label {
-        font-size: 12px;
-        color: #999;
-        font-weight: normal;
-    }
+.uploadfilefooter label {
+    font-size: 12px;
+    color: #999;
+    font-weight: normal;
+}
 
 .file-uploaded .animate-btn:hover .btn {
     -webkit-transform: translate3d(0, 22px, 0) !important;
@@ -4908,19 +4939,19 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     border-bottom: 3px solid transparent;
     text-decoration: none;
 }
-    .file-tab .c-tabs-nav .c-tabs-nav__link1.is-active {
-        color: #e24d83;
-        border-bottom: 3px solid #e24d83;
-        font-weight: bold;
-    }
-
-/*.expand-doc-history .sitebody {
-    margin-right: 260px;
+.file-tab .c-tabs-nav .c-tabs-nav__link1.is-active {
+    color: #e24d83;
+    border-bottom: 3px solid #e24d83;
+    font-weight: bold;
 }
 
-.expand-doc-bookmark .sitebody {
-    margin-right: 260px;
-}*/
+/*.expand-doc-history .sitebody {
+ margin-right: 260px;
+ }
+ 
+ .expand-doc-bookmark .sitebody {
+ margin-right: 260px;
+ }*/
 
 .tableset {
     border-collapse: initial;
@@ -4956,7 +4987,7 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
 }
 
 .checklist .insertMeidum h3 {
-    font-family: Arial;
+     font-family: Calibri;
     font-size: 18px;
     font-weight: bold;
     letter-spacing: 0.5px;
@@ -4967,48 +4998,48 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     padding: 2px 5px !important;
 }
 
-    .checklist .draggable-item td.checklist-notes {
-        width: 10%;
-    }
+.checklist .draggable-item td.checklist-notes {
+    width: 10%;
+}
 
-        .checklist .draggable-item td.checklist-notes .note-details {
-            padding: 5px 0;
-            line-height: 17px;
-        }
+.checklist .draggable-item td.checklist-notes .note-details {
+    padding: 5px 0;
+    line-height: 17px;
+}
 
 .checklist .insertMeidum table tr td .checklist-top {
     padding: 5px 5px 0;
     color: #000;
 }
 /*.checklist .insertMeidum .checklist-listing {
-    padding: 0 10px 10px 0px;
-}*/
+ padding: 0 10px 10px 0px;
+ }*/
 .checklist .insertMeidum .checklist-listing ol {
     margin-bottom: 10px;
 }
 
 .checklist .insertMeidum .checklist-listing p {
     color: #000;
-    font-family: Calibri;
+     font-family: Calibri;
     font-size: 14pt;
 }
 
 .checklist .insertMeidum .checklist-listing li {
     padding: 5px 0;
-    font-family: Calibri;
+     font-family: Calibri;
     font-size: 14pt;
     color: #000;
     position: relative;
 }
 
-    .checklist .insertMeidum .checklist-listing li input[type="checkbox"] {
-        float: right;
-        cursor: pointer;
-    }
+.checklist .insertMeidum .checklist-listing li input[type="checkbox"] {
+    float: right;
+    cursor: pointer;
+}
 
 .completed-svg {
     padding: 2px 0;
-    background-image: url(Images/bg-repeat.jpg);
+    background-image: url(file:///android_asset/bg-repeat.jpg);
     background-repeat: repeat-x;
     text-align: center;
 }
@@ -5020,28 +5051,28 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     counter-increment: root;
 }
 
-        .checklist ol.outerOl > li:before, .checklist ol.admin-outerOl > li:before {
-            content: counter(root) ") ";
-        }
+.checklist ol.outerOl > li:before, .checklist ol.admin-outerOl > li:before {
+    content: counter(root) ") ";
+}
 
-        .checklist ol.outerOl > li span:first-child, .checklist ol.admin-outerOl > li span:first-child {
-            padding-left: 8px;
-        }
+.checklist ol.outerOl > li span:first-child, .checklist ol.admin-outerOl > li span:first-child {
+    padding-left: 8px;
+}
 
 ol.innerOl {
     counter-reset: subsection;
     margin: 0;
 }
 
-    ol.innerOl > li {
-        list-style: none;
-        position: relative;
-        counter-increment: subsection;
-    }
+ol.innerOl > li {
+    list-style: none;
+    position: relative;
+    counter-increment: subsection;
+}
 
-        ol.innerOl > li:before {
-            content: counter(subsection, lower-alpha) ") ";
-        }
+ol.innerOl > li:before {
+    content: counter(subsection, lower-alpha) ") ";
+}
 
 .admin-outerOl .admin-innerOl {
     padding-left: 20px;
@@ -5049,10 +5080,10 @@ ol.innerOl {
     margin-top: 8px;
     margin-bottom: -2px !important;
 }
-    .admin-outerOl .admin-innerOl li {
-        padding: 3px 0;
-        margin-bottom: 0px;
-    }
+.admin-outerOl .admin-innerOl li {
+    padding: 3px 0;
+    margin-bottom: 0px;
+}
 .article-search {
     margin: 0 10px;
 }
@@ -5081,63 +5112,63 @@ ol.innerOl {
 .jobdetailsgridview {
     font-size: 12px !important;
     font-weight: bold;
-    font-family: Arial;
+     font-family: Calibri;
 }
 
-    .jobdetailsgridview tr {
-        line-height: 28px;
-    }
+.jobdetailsgridview tr {
+    line-height: 28px;
+}
 
 
-    .jobdetailsgridview th {
-        padding-left: 10px;
-        background-color: #cdcdcd;
-        border: 1px solid black;
-    }
+.jobdetailsgridview th {
+    padding-left: 10px;
+    background-color: #cdcdcd;
+    border: 1px solid black;
+}
 
-    .jobdetailsgridview td {
-        padding-left: 10px !important;
-        border: 1px solid black;
-    }
+.jobdetailsgridview td {
+    padding-left: 10px !important;
+    border: 1px solid black;
+}
 
-        .jobdetailsgridview td.first-td {
-            background-color: #cdcdcd;
-        }
+.jobdetailsgridview td.first-td {
+    background-color: #cdcdcd;
+}
 
 
 /**********JobObjectivegridview**********/
 .jobobjectivegridview {
     font-size: 12px !important;
     font-weight: bold;
-    font-family: Arial;
+     font-family: Calibri;
 }
 
-    .jobobjectivegridview tr {
-        line-height: 24px;
-    }
+.jobobjectivegridview tr {
+    line-height: 24px;
+}
 
 
-    .jobobjectivegridview th {
-        padding-left: 10px;
-        background-color: #cdcdcd;
-        border: 1px solid black;
-    }
+.jobobjectivegridview th {
+    padding-left: 10px;
+    background-color: #cdcdcd;
+    border: 1px solid black;
+}
 
-    .jobobjectivegridview td {
-        padding-left: 10px !important;
-        border: 1px solid black;
-        line-height: 16px;
-        font-weight: 500;
-    }
+.jobobjectivegridview td {
+    padding-left: 10px !important;
+    border: 1px solid black;
+    line-height: 16px;
+    font-weight: 500;
+}
 
-    .jobobjectivegridview li {
-        padding-left: 0px !important;
-        position: relative !important;
-        padding-bottom: 0px !important;
-        line-height: 16px !important;
-        font-size: 12pt !important;
-        font-family: Arial;
-    }
+.jobobjectivegridview li {
+    padding-left: 0px !important;
+    position: relative !important;
+    padding-bottom: 0px !important;
+    line-height: 16px !important;
+    font-size: 12pt !important;
+     font-family: Calibri;
+}
 
 .eighty-percentage-width {
     width: 90%;
@@ -5147,54 +5178,59 @@ ol.innerOl {
 .jobdimensiongridview {
     font-size: 12px !important;
     font-weight: bold;
-    font-family: Arial;
+     font-family: Calibri;
 }
 
-    .jobdimensiongridview td.first-td {
-        background-color: #cdcdcd;
-    }
+.jobdimensiongridview td.first-td {
+    background-color: #cdcdcd;
+}
 
-    .jobdimensiongridview tr {
-        line-height: 28px;
-    }
+.jobdimensiongridview tr {
+    line-height: 28px;
+}
 
 
-    .jobdimensiongridview th {
-        padding-left: 10px;
-        background-color: #cdcdcd;
-        border: 1px solid black;
-    }
+.jobdimensiongridview th {
+    padding-left: 10px;
+    background-color: #cdcdcd;
+    border: 1px solid black;
+}
 
-    .jobdimensiongridview td {
-        padding-left: 10px !important;
-        border: 1px solid black;
-        line-height: 24px;
-        font-weight: bold;
-    }
+.jobdimensiongridview td {
+    padding-left: 10px !important;
+    border: 1px solid black;
+    line-height: 24px;
+    font-weight: bold;
+}
 
-        .jobdimensiongridview td.text-area-td {
-            font-size: 10pt !important;
-            font-weight: normal !important;
-            font-family: Arial;
-            vertical-align: top;
-        }
+.jobdimensiongridview td.text-area-td {
+    font-size: 10pt !important;
+    font-weight: normal !important;
+     font-family: Calibri;
+    vertical-align: top;
+}
 
-    .jobdimensiongridview .key-td {
-        width: 50%;
-    }
-    .jobdimensiongridview .header-cell td {
-        padding-left: 10px !important;
-        padding-top: 8px !important;
-        background-color: #cdcdcd;
-    }
-    .jobdimensiongridview .header-cell td:nth-child(2) {
-        border-left-style:hidden;
-        border-right-style:hidden
-    }
+.jobdimensiongridview .key-td {
+    width: 50%;
+}
+.jobdimensiongridview .header-cell td {
+    padding-left: 10px !important;
+    padding-top: 8px !important;
+    background-color: #cdcdcd;
+}
+.jobdimensiongridview .header-cell td:nth-child(2) {
+    border-left-style:hidden;
+    border-right-style:hidden
+}
 
 .add-subrow {
     right: 150px;
 }
+
+.toc{
+    font-family:Arial !important;
+}
+
 
 .toc-table .toc-text-td {
     float: left;
@@ -5205,7 +5241,7 @@ ol.innerOl {
 
 .toc-table .toc-page-td {
     float: left;
-    width: 2%;
+    width: 2.2%;
     overflow: hidden;
     text-align: right;
     white-space: nowrap;
@@ -5216,8 +5252,11 @@ ol.innerOl {
     width: 100%;
     overflow: hidden;
     display: block;
+    color: #2e74b5;
 }
-
+.toc-page-td{
+    color: #2e74b5
+}
 .toc-text-td span.toc-no {
     padding-left: 0px;
 }
@@ -5261,16 +5300,16 @@ ol.innerOl {
     margin: auto;
 }
 
-    .loader:after,
-    .percentage:after {
-        content: "";
-        display: block;
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        top: 0;
-        left: 0;
-    }
+.loader:after,
+.percentage:after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
 
 .trackbar {
     width: 100%;
@@ -5305,15 +5344,15 @@ ol.innerOl {
     10% {
         opacity: 0.9;
     }
-
+    
     30% {
         opacity: 0.86;
     }
-
+    
     60% {
         opacity: 0.8;
     }
-
+    
     80% {
         opacity: 0.75;
     }
@@ -5355,7 +5394,7 @@ ol.innerOl {
     0% {
         opacity: 0;
     }
-
+    
     100% {
         opacity: 1;
     }
@@ -5365,7 +5404,7 @@ ol.innerOl {
     0% {
         opacity: 0;
     }
-
+    
     100% {
         opacity: 1;
     }
@@ -5384,3 +5423,25 @@ ol.innerOl {
     bottom: -3px;
     left: 49%;
 }
+.template-width.draggable-item {
+    background: none !important;
+}
+body {
+    text-rendering: optimizeLegibility;
+}
+
+
+url('file:///android_asset/fonts/Calibri Bold Italic.ttf') format('truetype'),
+url('file:///android_asset/fonts/Calibri Bold.ttf') format('truetype'),
+url('file:///android_asset/fonts/Calibri Italic.ttf') format('truetype'),
+url('file:///android_asset/fonts/Calibri Light Italic.ttf') format('truetype'),
+url('file:///android_asset/fonts/Calibri Light.ttf') format('truetype');}
+@font-face { font-family: 'Arial'; src:  local('Arial'), url('file:///android_asset/fonts/Arial.ttf') format('truetype');}
+@font-face { font-family: 'Arial Narrow'; src:  local('Arial'), url('file:///android_asset/fonts/Arial.ttf') format('truetype');}
+
+@font-face { font-family: 'OpenSans'; src:  local('OpenSans-Bold'), url('file:///android_asset/fonts/OpenSans-Bold.ttf') format('truetype'),
+    url('file:///android_asset/fonts/OpenSans-ExtraBold.ttf') format('truetype'),
+    url('file:///android_asset/fonts/OpenSans-ExtraBoldItalic.ttf') format('truetype'),
+    url('file:///android_asset/fonts/OpenSans-Italic.ttf') format('truetype'),
+    url('file:///android_asset/fonts/OpenSans-LightItalic.ttf') format('truetype'),
+    url('file:///android_asset/fonts/OpenSans-Light.ttf') format('truetype');}

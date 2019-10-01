@@ -11,6 +11,7 @@ import android.view.View;
 import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
+import com.mariapps.qdmswiki.bookmark.presenter.BookmarkPresenter;
 import com.mariapps.qdmswiki.bookmarks.adapter.BookmarkAdapter;
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkEntryModel;
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkModel;
@@ -20,7 +21,9 @@ import com.mariapps.qdmswiki.documents.view.DocumentInfoViewActivity;
 import com.mariapps.qdmswiki.home.database.HomeDatabase;
 import com.mariapps.qdmswiki.home.view.HomeActivity;
 import com.mariapps.qdmswiki.notification.view.NotificationActivity;
+import com.mariapps.qdmswiki.search.view.DocumentViewFragment;
 import com.mariapps.qdmswiki.search.view.FolderStructureActivity;
+import com.mariapps.qdmswiki.settings.presenter.SettingsPresenter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +38,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
 
-public class BookmarkActivity extends BaseActivity {
+public class BookmarkActivity extends BaseActivity implements BookmarkView{
     @BindView(R.id.headingTV)
     CustomTextView headingTV;
     @BindView(R.id.homeTV)
@@ -48,14 +51,16 @@ public class BookmarkActivity extends BaseActivity {
     CustomRecyclerView bookmarksRV;
 
     private BookmarkAdapter bookmarkAdapter;
-    private BookmarkModel bookmarkModel;
+    BookmarkPresenter bookmarkPresenter;
+    private List<BookmarkEntryModel> bookmarkModel;
     private String folderName;
     private String documentId;
     private HomeDatabase homeDatabase;
+    private int deletePosition;
 
     @Override
     protected void setUpPresenter() {
-
+        bookmarkPresenter=new BookmarkPresenter(this,this);
     }
 
     @Override
@@ -83,22 +88,30 @@ public class BookmarkActivity extends BaseActivity {
 
         homeDatabase = HomeDatabase.getInstance(BookmarkActivity.this);
         initView();
-        getBookMarkEntryList();
+        bookmarkPresenter.getBookMarkEntryList(documentId);
 
     }
 
-    private void initRecyclerView() {
-        bookmarkAdapter = new BookmarkAdapter(this,bookmarkModel.getBookmarkEntries());
+    private void initRecyclerView(List<BookmarkEntryModel> bookmarkEntryModels) {
+        bookmarkAdapter = new BookmarkAdapter(this,bookmarkEntryModels);
         bookmarksRV.setAdapter(bookmarkAdapter);
 
         bookmarkAdapter.setRowClickListener(new BookmarkAdapter.RowClickListener() {
             @Override
             public void onItemClicked(BookmarkEntryModel bookmarkEntryModel) {
-                Intent intent = new Intent(BookmarkActivity.this, FolderStructureActivity.class);
-                intent.putExtra(AppConfig.BUNDLE_TYPE,"Document");
-                //intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,bookmarkModel.getBookMark());
-                intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,bookmarkEntryModel.getBookmarkId());
-                startActivity(intent);
+                Intent intent = new Intent();
+                intent.putExtra(DocumentViewFragment.BOOKMARKID, bookmarkEntryModel.getBookmarkId());
+                setResult(DocumentViewFragment.RESULT_CODE, intent); // You can also send result without any data using setResult(int resultCode)
+                finish();
+
+            }
+        });
+
+        bookmarkAdapter.setDeleteClickListener(new BookmarkAdapter.DeleteClickListener() {
+            @Override
+            public void onDeleteClicked(BookmarkEntryModel bookmarkEntryModel, int position) {
+                deletePosition = position;
+                bookmarkPresenter.deleteBookmark(bookmarkEntryModel.getDocumentId(),bookmarkEntryModel.getBookmarkId());
             }
         });
     }
@@ -124,30 +137,24 @@ public class BookmarkActivity extends BaseActivity {
         }
     }
 
-    public void getBookMarkEntryList() {
-        Completable.fromAction(new Action() {
-            @Override
-            public void run() throws Exception {
-                bookmarkModel = homeDatabase.homeDao().getBookmarkEntries(documentId);
-            }
-        }).observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
-            @Override
-            public void onSubscribe(Disposable d) {
-
-            }
-
-            @Override
-            public void onComplete() {
-                initRecyclerView();
-            }
-
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-        });
+    @Override
+    public void onBookMarkEntryListSuccess(List<BookmarkEntryModel> bookmarkEntryModels) {
+        bookmarkModel = bookmarkEntryModels;
+        initRecyclerView(bookmarkEntryModels);
     }
 
+    @Override
+    public void onBookMarkEntryListError() {
+    }
+
+    @Override
+    public void onBookmarkDeleteSucess() {
+        bookmarkModel.remove(deletePosition);
+        bookmarkAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onBookmarkDeleteError() {
+
+    }
 }

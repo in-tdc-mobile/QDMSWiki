@@ -35,6 +35,31 @@
             app:fontface="@string/string_lato_semi_bold" />
     </LinearLayout>
 
+    <RelativeLayout
+        android:layout_below="@+id/headingLL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/noDataRL"
+        >
+
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:id="@+id/noFilesIV"
+            android:layout_centerInParent="true"
+            app:srcCompat="@drawable/ic_no_results"
+            android:layout_gravity="center"/>
+
+        <com.mariapps.qdmswiki.custom.CustomTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/noFilesIV"
+            android:layout_centerHorizontal="true"
+            android:text="@string/string_no_documents_found"/>
+
+    </RelativeLayout>
+
+
     <com.mariapps.qdmswiki.custom.CustomRecyclerView
         android:layout_height="wrap_content"
         android:layout_width="match_parent"

@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.SearchView;
 import android.text.Editable;
@@ -29,6 +31,8 @@ import android.widget.Toast;
 import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseFragment;
+import com.mariapps.qdmswiki.bookmarks.model.BookmarkEntryModel;
+import com.mariapps.qdmswiki.bookmarks.model.BookmarkModel;
 import com.mariapps.qdmswiki.bookmarks.view.BookmarkActivity;
 import com.mariapps.qdmswiki.custom.CustomEditText;
 import com.mariapps.qdmswiki.custom.CustomTextView;
@@ -38,11 +42,14 @@ import com.mariapps.qdmswiki.home.database.HomeDatabase;
 import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
 import com.mariapps.qdmswiki.home.model.RecentlyViewedModel;
+import com.mariapps.qdmswiki.home.model.TagModel;
 import com.mariapps.qdmswiki.home.presenter.HomePresenter;
 import com.mariapps.qdmswiki.utils.DateUtils;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -80,6 +87,10 @@ public class DocumentViewFragment extends BaseFragment {
     private RecentlyViewedModel recentlyViewedModel;
     private String articleData;
     private boolean flag = false;
+    private List<BookmarkEntryModel> bookmarkEntryModelList;
+    public static final int REQUEST_CODE = 11;
+    public static final String BOOKMARKID = "BOOKMARK_ID";
+    public static final int RESULT_CODE = 12;
 
     @Override
     protected void setUpPresenter() {
@@ -214,11 +225,19 @@ public class DocumentViewFragment extends BaseFragment {
                         Intent intent = new Intent(getActivity(), BookmarkActivity.class);
                         intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME, folderName);
                         intent.putExtra(AppConfig.BUNDLE_ID, id);
-                        startActivity(intent);
+                        startActivityForResult(intent, REQUEST_CODE);
                     }
                 });
 
                 break;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_CODE) {
+            gotoBookmark(data.getStringExtra("BOOKMARK_ID"));
         }
     }
 
@@ -231,7 +250,8 @@ public class DocumentViewFragment extends BaseFragment {
                     documentModel = homeDatabase.homeDao().getDocumentData(id);
                     documentData = documentModel.getDocumentData();
                 } else {
-                    documentModel = new DocumentModel();
+                    List<TagModel> taglist = new ArrayList<>();
+                    documentModel = new DocumentModel("", "", "", "", "", "", taglist);
                     articleModel = homeDatabase.homeDao().getArticleData(id);
                     documentData = articleModel.getDocumentData();
                 }
@@ -263,6 +283,7 @@ public class DocumentViewFragment extends BaseFragment {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setDisplayZoomControls(false);
         webView.getSettings().setBuiltInZoomControls(true);
+        webView.setWebContentsDebuggingEnabled(true);
         webView.addJavascriptInterface(new AppJavaScriptProxy(getActivity()), "androidAppProxy");
 
         webView.setWebViewClient(new WebViewClient() {
@@ -332,6 +353,78 @@ public class DocumentViewFragment extends BaseFragment {
         });
     }
 
+    public void gotoBookmark(String id){
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                webView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        webView.loadUrl("javascript:gotoElement('" + id + "')");
+                    }
+                });
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void openDocument(String id) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                documentModel = ((DocumentModel) homeDatabase.homeDao().getDocumentDetails(id));
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                webView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        DocumentViewFragment documentViewFragment = new DocumentViewFragment();
+                        Bundle args = new Bundle();
+                        args.putString(AppConfig.BUNDLE_TYPE, documentModel.getType());
+                        args.putString(AppConfig.BUNDLE_ID, documentModel.getId());
+                        args.putString(AppConfig.BUNDLE_NAME, documentModel.getDocumentName());
+                        args.putString(AppConfig.BUNDLE_FOLDER_ID, documentModel.getCategoryId());
+                        args.putString(AppConfig.BUNDLE_FOLDER_NAME, documentModel.getCategoryName());
+                        args.putString(AppConfig.BUNDLE_VERSION, documentModel.getVersion());
+                        documentViewFragment.setArguments(args);
+                        ((FolderStructureActivity) getActivity()).addFragments(documentViewFragment,documentModel.getId(),documentModel.getDocumentName());
+                        ((FolderStructureActivity)getActivity()).getBreadCrumbDetails(documentModel.getCategoryId());
+                    }
+                });
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+
     public void insertRecentlyViewedDocument(RecentlyViewedModel recentlyViewedModel) {
         Completable.fromAction(new Action() {
             @Override
@@ -379,11 +472,53 @@ public class DocumentViewFragment extends BaseFragment {
         }
 
         @JavascriptInterface
+        public void getDocumentAttachment(String fileId) {
+            //Toast.makeText(getActivity(), "Clicked " + bookmarkItem, Toast.LENGTH_LONG).show();
+            openDocument(fileId);
+        }
+
+        @JavascriptInterface
+        public void saveBookmark(String bookmarkEntity) {
+            String[] bookmarkEntityArray = bookmarkEntity.split("##");
+            BookmarkEntryModel bookmarkEntryModel = new BookmarkEntryModel(id,bookmarkEntityArray[0],bookmarkEntityArray[1]);
+            getBookmarkEntries(id,bookmarkEntryModel);
+        }
+
+        @JavascriptInterface
         public void showToast(String message) {
             Toast.makeText(getActivity(), "ALERT " + message, Toast.LENGTH_LONG).show();
         }
 
 
+    }
+
+    public void getBookmarkEntries(String documentId, BookmarkEntryModel bookmarkEntryModel) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                if (documentId != null) {
+                    homeDatabase.homeDao().deleteBookmarkEntry(bookmarkEntryModel.getDocumentId(),bookmarkEntryModel.getBookmarkId());
+                    homeDatabase.homeDao().insertBookmarkEntry(bookmarkEntryModel);
+                }
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
     }
 
     class Article {

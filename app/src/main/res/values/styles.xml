@@ -89,4 +89,12 @@
         <item name="colorControlHighlight">@color/black</item>
     </style>
 
+    <style name="ButtonStyle" parent="@style/Widget.AppCompat.Button.Borderless">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">35dp</item>
+        <item name="android:textColor">@color/searchDocument</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:background">@drawable/drawable_search_edittext_white</item>
+    </style>
+
 </resources>

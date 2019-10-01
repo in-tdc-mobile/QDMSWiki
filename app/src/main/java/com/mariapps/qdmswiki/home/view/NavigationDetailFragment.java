@@ -41,6 +41,10 @@ public class NavigationDetailFragment extends BaseFragment {
     CustomRecyclerView navigationRV;
     @BindView(R.id.navRL)
     RelativeLayout navRL;
+    @BindView(R.id.noFilesIV)
+    AppCompatImageView noFilesIV;
+    @BindView(R.id.noDataRL)
+    RelativeLayout noDataRL;
 
     private CustomNavigationDetailAdapter customNavigationDetailAdapter;
     private List<DocumentModel> documentList;
@@ -75,19 +79,25 @@ public class NavigationDetailFragment extends BaseFragment {
     private void initRecycler(List<DocumentModel> documentList) {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         navigationRV.setLayoutManager(mLayoutManager);
-        navigationRV.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+        if (documentList.size() > 0) {
+            noDataRL.setVisibility(View.GONE);
+            navigationRV.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
 
-        customNavigationDetailAdapter = new CustomNavigationDetailAdapter(getActivity(), documentList);
+            customNavigationDetailAdapter = new CustomNavigationDetailAdapter(getActivity(), documentList);
+            navigationRV.setAdapter(customNavigationDetailAdapter);
+            customNavigationDetailAdapter.setNavAdapterListener(new CustomNavigationDetailAdapter.NavAdapterListener() {
+                @Override
+                public void onItemClick(DocumentModel documentModel) {
+                    navigationDetailListener.onItemClicked(documentModel);
+                }
 
-        customNavigationDetailAdapter.setNavAdapterListener(new CustomNavigationDetailAdapter.NavAdapterListener() {
-            @Override
-            public void onItemClick(DocumentModel documentModel) {
-                navigationDetailListener.onItemClicked(documentModel);
+            });
+        }
+        else {
+                noDataRL.setVisibility(View.VISIBLE);
             }
 
-        });
 
-        navigationRV.setAdapter(customNavigationDetailAdapter);
     }
 
     @OnClick(R.id.headingLL)

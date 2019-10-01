@@ -46,7 +46,7 @@
     font-weight: 400;
     color: #9ba7ad;
     outline: none;
-    font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
+   /* font-family: Arial, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;*/
 }
 
     .ui-state-default a {
@@ -58,7 +58,7 @@
 .ui-state-hover, .ui-widget-content .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus {
     /*border: 1px solid #367fa9;*/
     background: #367fa9;
-    font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
+    /*font-family: Arial, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;*/
     color: #ffffff;
     outline: none;
 }

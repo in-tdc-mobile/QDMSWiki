@@ -1,3 +1,7 @@
+<html style="" class="js flexbox flexboxlegacy canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths js flexbox flexboxlegacy canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths k-webkit k-webkit75"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\:form{display:block;}</style>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="X-UA-Compatible" content="IE=9">
+    <header><meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=2.0, minimum-scale=0.0'></header>
 
 <body style="overflow-y: auto; -webkit-overflow-scrolling: touch;">
 <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
@@ -5,7 +9,6 @@
 
 <!--<link href="./Scripts/font_awesome.min.css" rel="stylesheet">-->
 <!-- Font Awesome -->
-
 <link href="./Scripts/ionicons.min.css" rel="stylesheet">
 
 <link href="./Scripts/BSMWiki.min.css" rel="stylesheet">
@@ -50,6 +53,7 @@
                          $(`.article-table`).attr(`data-visible`, false);
                          $(`.article-table:first`).attr(`data-visible`, true);
                          afterRenderDocView();
+                        $(`.article-table`).removeClass(`hide-state`);$(`.article-table>tbody>tr`).removeClass(`hide-article`);$(`span.toggle-article`).addClass(`opentoggle`)
                     } else {
                         alert("Running outside Android app");
                     }
@@ -67,3 +71,4 @@
             <!--$('mark').eq(0).css("background-color", "orange");-->
     <!--}-->
     </script>
+</body></html>

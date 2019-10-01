@@ -1,6 +1,27 @@
 /*@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic);*/
 @import url('https://fonts.googleapis.com/css?family=Open+Sans');
 
+
+@font-face {
+    font-family: 'Calibri';
+    src: url('file:///android_asset/fonts/Calibri.eot'); /* IE9 Compat Modes */
+    src: url('file:///android_asset/fonts/Calibri.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('file:///android_asset/fonts/Calibri.woff') format('woff'), /* Modern Browsers */
+    url('file:///android_asset/fonts/Calibri.ttf')  format('truetype'), /* Safari, Android, iOS */
+    url('file:///android_asset/fonts/Calibri.svg#Calibri') format('svg'); /* Legacy iOS */
+}
+@font-face { font-family: 'Arial'; src:  local('Arial'), url('file:///android_asset/fonts/Arial.ttf') format('truetype');}
+@font-face { font-family: 'Arial Narrow'; src:  local('Arial'), url('file:///android_asset/fonts/Arial.ttf') format('truetype');}
+
+@font-face { font-family: 'OpenSans'; src:  url('file:///android_asset/fonts/OpenSans-Bold.ttf') format('truetype'),
+    url('file:///android_asset/fonts/OpenSans-BoldItalic.ttf') format('truetype'),
+    url('file:///android_asset/fonts/OpenSans-ExtraBold.ttf') format('truetype'),
+    url('file:///android_asset/fonts/OpenSans-ExtraBoldItalic.ttf') format('truetype'),
+    url('file:///android_asset/fonts/OpenSans-Italic.ttf') format('truetype'),
+    url('.file:///android_asset/fonts/OpenSans-LightItalic.ttf') format('truetype'),
+    url('file:///android_asset/fonts/OpenSans-Light.ttf') format('truetype');}
+
+
 html, body {
     min-height: 100%;
     font-family: 'Open Sans', sans-serif !important;
@@ -10476,9 +10497,9 @@ hr {
 
 .viewdoc {
     position: absolute;
-    top: 0px;
+    top: 10px;
     background: #fff;
-    height: calc(100vh - 10px);
+    height: 100vh;
     left: 6px;
     overflow: auto;
     overflow-x: hidden;
@@ -11497,7 +11518,7 @@ border-bottom:none !important;
 }
 
 .checklist > td > table {
-    width:493.333px;
+    width: 556.33px;
     float: left;
 }
 
@@ -11937,7 +11958,7 @@ ol.guidlisce li,ul.guidlisce li {
 .trpgridview td.key-desc,.trpgridview td.key-desc p,.trpgridview td.trprownum p{
     font-size: 10pt !important;
     font-weight: normal !important;
-    font-family: Arial;
+     font-family: Calibri;
     vertical-align: top;
 }
 .eduqualifygrid th {
@@ -11957,14 +11978,14 @@ ol.guidlisce li,ul.guidlisce li {
 .eduqualifygrid .edugridItem p.edugridhead{
     font-size: 9pt !important;
     font-weight: bold !important;
-    font-family: Arial;
+     font-family: Calibri;
     vertical-align: top;
     margin-bottom: 10px;
 }
 .edugridItem p {
     font-size: 9pt !important;
     font-weight: bold !important;
-    font-family: Arial;
+     font-family: Calibri;
     vertical-align: top;
     margin-bottom: 10px;
 }
@@ -11977,7 +11998,7 @@ ol.guidlisce li,ul.guidlisce li {
         list-style-type: square;
         margin-bottom: 2px;
         font-size: 10pt !important;
-        font-family: Arial;
+         font-family: Calibri;
         padding-left: 6px;
     }
 .edugridItem .ul-box {
@@ -12029,7 +12050,7 @@ ol.guidlisce li,ul.guidlisce li {
 }
 .ComparisonGrid .comparisonContent ul li p{
     font-size: 10pt !important;
-    font-family: Arial;
+     font-family: Calibri;
 }
 
 .subheaderText .loadernew {
@@ -13356,3 +13377,4 @@ div#allowedlocation ul li .radio {
 .footerTemplate {
     height: 46px !important;
 }
+

@@ -41,7 +41,7 @@ public class BookmarkModel implements Parcelable {
 
     @ColumnInfo(name = "BookmarkEntries")
     @SerializedName("BookmarkEntries")
-    private List<BookmarkEntryModel> bookmarkEntries = null;
+    private List<BookmarkEntryModel> bookmarkEntries;
 
     @ColumnInfo(name = "IsActive")
     @SerializedName("IsActive")

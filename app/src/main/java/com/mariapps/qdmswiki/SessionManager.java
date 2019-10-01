@@ -19,7 +19,6 @@ public class SessionManager {
     private static final String KEY_USERNAME = "keyusername";
     private static final String KEY_USER_ID = "keyuserid";
     private static final String KEY_USER_INFO_ID = "keyuserinfoid";
-    private static final String KEY_MAIN_ID = "keymainid";
     private static final String KEY_LOGIN_NAME = "keyloginname";
 
     // Shared Preferences
@@ -59,15 +58,6 @@ public class SessionManager {
 
     public void setUserId(String id) {
         editor.putString(KEY_USER_ID, id);
-        editor.commit();
-    }
-
-    public String getMainId() {
-        return pref.getString(KEY_MAIN_ID, "");
-    }
-
-    public void setMainId(String id) {
-        editor.putString(KEY_MAIN_ID, id);
         editor.commit();
     }
 
@@ -121,17 +111,29 @@ public class SessionManager {
         editor.commit();
     }
 
-    public void setLoginParams(boolean isLoggedIn,String id,String fcmtoken,String apitoken,String name,String loginName){
+    public void setLoginParams(boolean isLoggedIn, String id, String fcmtoken, String apitoken, String name, String loginName) {
         editor.putBoolean(KEY_IS_LOGGEDIN, isLoggedIn);
         editor.putString(KEY_ID, id);
         editor.putString(KEY_API_TOKEN, apitoken);
         editor.putString(KEY_FCM_TOKEN_ID, fcmtoken);
-        editor.putString(KEY_USERNAME,name);
-        editor.putString(KEY_LOGIN_NAME,loginName);
+        editor.putString(KEY_USERNAME, name);
+        editor.putString(KEY_LOGIN_NAME, loginName);
         editor.commit();
     }
 
     public boolean isLoggedIn() {
         return pref.getBoolean(KEY_IS_LOGGEDIN, false);
     }
+
+    public void removeSession() {
+        setId("");
+        setApiToken("");
+        setLoggedin(false);
+        setDeviceId("");
+        setUserName("");
+        setLoginName("");
+        setUserId("");
+        setUserInfoId("");
+    }
+
 }

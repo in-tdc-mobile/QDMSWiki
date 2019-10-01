@@ -94,10 +94,6 @@ public class DocumentModel implements Parcelable {
         this.tags = tags;
     }
 
-    public DocumentModel() {
-
-    }
-
     public String getId() {
         return id;
     }

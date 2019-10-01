@@ -2,6 +2,8 @@ package com.mariapps.qdmswiki.serviceclasses;
 
 import com.mariapps.qdmswiki.login.model.LoginRequestObj;
 import com.mariapps.qdmswiki.login.model.LoginResponse;
+import com.mariapps.qdmswiki.settings.model.LogoutRequestObj;
+import com.mariapps.qdmswiki.settings.model.LogoutRespObj;
 
 import retrofit2.Response;
 import rx.Observable;
@@ -13,6 +15,8 @@ import rx.Observable;
 public interface ServiceController {
 
     Observable<LoginResponse> getLoggedIn(LoginRequestObj loginRequestObj);
+
+    Observable<LogoutRespObj> getLoggedOut(LogoutRequestObj logoutRequestObj);
 
     Observable<String> getDownloadUrl();
 }

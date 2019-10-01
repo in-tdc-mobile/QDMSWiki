@@ -18,6 +18,10 @@ public class BookmarkEntryModel implements Parcelable {
     @PrimaryKey(autoGenerate = true)
     public Long uId;
 
+    @ColumnInfo(name = "DocumentId")
+    @SerializedName("DocumentId")
+    private String documentId;
+
     @ColumnInfo(name = "BookmarkId")
     @SerializedName("BookmarkId")
     private String bookmarkId;
@@ -42,8 +46,25 @@ public class BookmarkEntryModel implements Parcelable {
         this.bookmarkTitle = bookmarkTitle;
     }
 
-    public BookmarkEntryModel(Long uId, String bookmarkId, String bookmarkTitle) {
+
+    public String getDocumentId() {
+        return documentId;
+    }
+
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
+    }
+
+    public Long getuId() {
+        return uId;
+    }
+
+    public void setuId(Long uId) {
         this.uId = uId;
+    }
+
+    public BookmarkEntryModel(String documentId,String bookmarkId, String bookmarkTitle) {
+        this.documentId = documentId;
         this.bookmarkId = bookmarkId;
         this.bookmarkTitle = bookmarkTitle;
     }
@@ -66,6 +87,7 @@ public class BookmarkEntryModel implements Parcelable {
         } else {
             uId = in.readLong();
         }
+        documentId = in.readString();
         bookmarkId = in.readString();
         bookmarkTitle = in.readString();
     }
@@ -83,6 +105,7 @@ public class BookmarkEntryModel implements Parcelable {
             dest.writeByte((byte) 1);
             dest.writeLong(uId);
         }
+        dest.writeString(documentId);
         dest.writeString(bookmarkId);
         dest.writeString(bookmarkTitle);
     }

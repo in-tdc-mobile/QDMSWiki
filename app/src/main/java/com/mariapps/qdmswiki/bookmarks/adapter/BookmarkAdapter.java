@@ -23,6 +23,7 @@ public class BookmarkAdapter extends CustomRecyclerView.Adapter<BookmarkAdapter.
 
     private Context mContext;
     private BookmarkAdapter.RowClickListener rowClickListener;
+    private BookmarkAdapter.DeleteClickListener deleteClickListener;
     private List<BookmarkEntryModel> bookmarkEntryList;
 
     public BookmarkAdapter(Context context, List<BookmarkEntryModel> bookmarkEntries) {
@@ -50,6 +51,14 @@ public class BookmarkAdapter extends CustomRecyclerView.Adapter<BookmarkAdapter.
             }
         });
 
+        holder.deleteIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteClickListener.onDeleteClicked(bookmarkEntryList.get(holder.getAdapterPosition()),i);
+            }
+        });
+
+
     }
 
     @Override
@@ -76,6 +85,14 @@ public class BookmarkAdapter extends CustomRecyclerView.Adapter<BookmarkAdapter.
 
     public interface RowClickListener {
         void onItemClicked(BookmarkEntryModel bookmarkEntryModel) ;
+    }
+
+    public void setDeleteClickListener(BookmarkAdapter.DeleteClickListener deleteClickListener) {
+        this.deleteClickListener = deleteClickListener;
+    }
+
+    public interface DeleteClickListener {
+        void onDeleteClicked(BookmarkEntryModel bookmarkEntryModel, int position) ;
     }
 }
 

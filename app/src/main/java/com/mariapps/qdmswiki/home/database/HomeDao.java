@@ -1,6 +1,7 @@
 package com.mariapps.qdmswiki.home.database;
 
 import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
@@ -64,6 +65,12 @@ public interface HomeDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertRecentlyViewedDocument(RecentlyViewedModel recentlyViewedModel);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertBookmarkEntry(BookmarkEntryModel bookmarkEntryModel);
+
+    @Query("DELETE FROM BookMarkEntryEntity WHERE BookmarkId=:bookmarkId AND DocumentId=:documentId")
+    void deleteBookmarkEntry(String documentId,String bookmarkId);
 
     @Query("SELECT document.Id as id, " +
             " 'Document' as type, " +
@@ -225,6 +232,19 @@ public interface HomeDao {
             " FROM DocumentEntity as document " +
             " WHERE document.Id=:documentId")
     DocumentModel getDocumentData(String documentId);
+
+    @Query("SELECT document.Id, " +
+            " document.DocumentName, " +
+            " document.CategoryId," +
+            " document.Version," +
+            " document.tags," +
+            " document.Date," +
+            " category.CategoryName as categoryName " +
+            " FROM DocumentEntity as document " +
+            " LEFT JOIN CategoryEntity as category" +
+            " ON category.Id = document.CategoryId" +
+            " WHERE document.Id=:documentId")
+    DocumentModel getDocumentDetails(String documentId);
 
 
     @Query("SELECT article.Id, " +
@@ -415,10 +435,12 @@ public interface HomeDao {
             " WHERE user.UserId=:userId")
     UserInfoModel getUserImage(String userId);
 
-    @Query(" SELECT bookmark.BookmarkEntries " +
-            " FROM BookMarkEntity as bookmark " +
+    @Query(" SELECT bookmark.DocumentId, " +
+            " bookmark.BookmarkId, " +
+            " bookmark.BookmarkTitle "+
+            " FROM BookMarkEntryEntity as bookmark " +
             " WHERE bookmark.DocumentId=:documentId")
-    BookmarkModel getBookmarkEntries(String documentId);
+    List<BookmarkEntryModel> getBookmarkEntries(String documentId);
 
     @Query(" SELECT document.DocumentNumber, " +
             " document.Version, "+

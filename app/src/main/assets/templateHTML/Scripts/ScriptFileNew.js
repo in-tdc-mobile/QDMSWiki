@@ -89,9 +89,11 @@ function afterRenderDocView(isArticle = false){
     
     
     if (isArticle == false ){
-        $("#tableDragger").find(".bookmark-settings").html(CommonFunc.Bookmark._bookmarkSettings());
-        $("#tableWrapper").find(".bookmark-settings").show();
+         $("#tableDragger tr.draggable-item").children("td").find(".bookmark-settings:first").html(CommonFunc.Bookmark._bookmarkSettings());
+         $("#tableWrapper").find(".bookmark-settings").show();
     }
+
+
     
     $("#tableWrapper").find('table').removeClass('NewDataArt');
     SetDocMode("view");
@@ -421,53 +423,53 @@ function ToggleExpand(control, articleName) {
 // Download file from DOcument view
 
 function downloadFileObject(fileId) {
-    $(".progressing-loader").show();
-    percentageUpdate();
-    
-    var formData = new FormData();
-    formData.append('id', fileId || 0);
-    var xhttp;
-    if (window.XMLHttpRequest) { xhttp = new XMLHttpRequest(); }//code for modern browsers}
-    else { xhttp = new ActiveXObject("Microsoft.XMLHTTP"); }// code for IE6, IE5
-    
-    xhttp.open("POST", $("#hfdUrlPath").val() + "/File/DownloadShowfile", true);
-    xhttp.onreadystatechange = function () {
-        
-        if (xhttp.readyState == 4) {
-            if (xhttp.status == 200) {
-                StopIntervel();
-                var d = $.Deferred();
-                setTimeout(function () {
-                           gauge.update(100);
-                           d.resolve(true);
-                           }, 1000);
-                
-                d.promise();
-                d.then(function () {
-                       var fileName = xhttp.getResponseHeader('File-Name');
-                       var blob = new Blob([xhttp.response], { type: "octet/stream" });
-                       var fileName = fileName;
-                       saveAs(blob, fileName);
-                       setTimeout(function () {
-                                  $(".progressing-loader").hide();
-                                  gauge.update(0);
-                                  }, 1000);
-                       });
-            }
-            else {
-                StopIntervel();
-                $(".progressing-loader").hide();
-                var win = window.open($("#hfdUrlPath").val() + "/Error/FileNotFound");
-                setTimeout(function () {
-                           win.close();
-                           gauge.update(0);
-                           }, 1000);
-            }
-        }
-        
-    };
-    xhttp.responseType = "arraybuffer";
-    xhttp.send(formData);
+//    $(".progressing-loader").show();
+//    percentageUpdate();
+//
+//    var formData = new FormData();
+//    formData.append('id', fileId || 0);
+//    var xhttp;
+//    if (window.XMLHttpRequest) { xhttp = new XMLHttpRequest(); }//code for modern browsers}
+//    else { xhttp = new ActiveXObject("Microsoft.XMLHTTP"); }// code for IE6, IE5
+//
+//    xhttp.open("POST", $("#hfdUrlPath").val() + "/File/DownloadShowfile", true);
+//    xhttp.onreadystatechange = function () {
+//
+//        if (xhttp.readyState == 4) {
+//            if (xhttp.status == 200) {
+//                StopIntervel();
+//                var d = $.Deferred();
+//                setTimeout(function () {
+//                           gauge.update(100);
+//                           d.resolve(true);
+//                           }, 1000);
+//
+//                d.promise();
+//                d.then(function () {
+//                       var fileName = xhttp.getResponseHeader('File-Name');
+//                       var blob = new Blob([xhttp.response], { type: "octet/stream" });
+//                       var fileName = fileName;
+//                       saveAs(blob, fileName);
+//                       setTimeout(function () {
+//                                  $(".progressing-loader").hide();
+//                                  gauge.update(0);
+//                                  }, 1000);
+//                       });
+//            }
+//            else {
+//                StopIntervel();
+//                $(".progressing-loader").hide();
+//                var win = window.open($("#hfdUrlPath").val() + "/Error/FileNotFound");
+//                setTimeout(function () {
+//                           win.close();
+//                           gauge.update(0);
+//                           }, 1000);
+//            }
+//        }
+//
+//    };
+//    xhttp.responseType = "arraybuffer";
+//    xhttp.send(formData);
 }
 
 // goto  Bookmark
@@ -511,7 +513,21 @@ function SetDocMode(mode) {
         $("body").addClass("show-historyTabStrip show-bookmarkTabStrip").removeClass("docInfo-panel-close hide-toolbox expand-doc-history");
         $("#draggableContainer").removeClass("view-mode-container");
     }
+
 }
+
+
+    function RenderLinkDocView(fileId) {
+        androidAppProxy.getDocumentAttachment(fileId);
+    }
+    function RenderLinkArticleView(fileId) {
+         alert("Article");
+        //window.webkit.messageHandlers.renderLinkArticleView.postMessage(fileId);
+    }
+    function downloadFileObject(fileId) {
+           androidAppProxy.getDocumentAttachment(fileId);
+         //window.webkit.messageHandlers.showAttachedItems.postMessage(fileId);
+      }
 
 
 

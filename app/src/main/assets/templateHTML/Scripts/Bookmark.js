@@ -20,7 +20,7 @@ CommonFunc.Bookmark = {
     },
     _addBookmark: function (bookmarkId, bookmarkTitle) {
         var bookmarkItem = bookmarkId + "##" + bookmarkTitle
-        window.webkit.messageHandlers.addBookmark.postMessage(bookmarkItem);
+        androidAppProxy.saveBookmark(bookmarkItem);
     //        if (bookmarks.filter(x => x.BookmarkId == bookmarkId).length == 0) {
     //            bookmarks.push({ 'BookmarkId': bookmarkId, 'BookmarkTitle': bookmarkTitle });
     //        }

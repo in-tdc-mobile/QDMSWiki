@@ -2,6 +2,8 @@ package com.mariapps.qdmswiki.serviceclasses;
 
 import com.mariapps.qdmswiki.login.model.LoginRequestObj;
 import com.mariapps.qdmswiki.login.model.LoginResponse;
+import com.mariapps.qdmswiki.settings.model.LogoutRequestObj;
+import com.mariapps.qdmswiki.settings.model.LogoutRespObj;
 
 import retrofit2.Response;
 import retrofit2.http.Body;
@@ -16,6 +18,9 @@ public interface QDMSWikiApi {
 
     @POST("Home/LoginQdms")
     Observable<Response<LoginResponse>> getLoggedIn(@Body LoginRequestObj loginRequestObj);
+
+    @POST("Home/LogoutQdms")
+    Observable<Response<LogoutRespObj>> getLoggedOut(@Body LogoutRequestObj logoutRequestObj);
 
     @POST("Home/GetDownloadUrl")
     Observable<Response<String>> getDownloadUrl();

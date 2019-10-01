@@ -722,6 +722,9 @@ public class HomeActivity extends BaseActivity implements HomeView {
 
             for (int i = 0; i < bookmarkList.size(); i++) {
                 List<BookmarkEntryModel> bookmarkEntryList = bookmarkList.get(i).getBookmarkEntries();
+                for(int j=0;j<bookmarkEntryList.size();j++){
+                    bookmarkEntryList.get(j).setDocumentId(bookmarkList.get(i).getDocumentId());
+                }
                 homePresenter.insertBookmarkEntries(bookmarkEntryList);
             }
 
