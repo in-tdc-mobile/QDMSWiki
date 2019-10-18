@@ -13,10 +13,7 @@ import java.util.List;
 @TypeConverters(HomeTypeConverter.class)
 public class MainModel {
 
-    @SerializedName("Documents")
-    private List<DocumentModel> documentModels;
-    @SerializedName("Articles")
-    private List<ArticleModel> articleModels;
+
     @SerializedName("Categories")
     private List<CategoryModel> categoryModels;
     @SerializedName("Notifications")
@@ -27,46 +24,12 @@ public class MainModel {
     private List<UserSettingsModel> userSettingsModels;
     @SerializedName("UserInfo")
     private List<UserInfoModel> userInfoModels;
+    @SerializedName("fileChunks")
+    private List<FileListModel> fileListModels;
+    @SerializedName("Forms")
+    private List<FormsModel> formsModels;
 
-    public List<DocumentModel> getDocumentCollection() {
-        return documentModels;
-    }
 
-    public void setDocumentCollection(List<DocumentModel> documentModels) {
-        this.documentModels = documentModels;
-    }
-
-    public List<CategoryModel> getCategory() {
-        return categoryModels;
-    }
-
-    public void setCategory(List<CategoryModel> categoryModels) {
-        this.categoryModels = categoryModels;
-    }
-
-    public List<ArticleModel> getArticle() {
-        return articleModels;
-    }
-
-    public void setArticle(List<ArticleModel> articleModels) {
-        this.articleModels = articleModels;
-    }
-
-    public List<DocumentModel> getDocumentModels() {
-        return documentModels;
-    }
-
-    public void setDocumentModels(List<DocumentModel> documentModels) {
-        this.documentModels = documentModels;
-    }
-
-    public List<ArticleModel> getArticleModels() {
-        return articleModels;
-    }
-
-    public void setArticleModels(List<ArticleModel> articleModels) {
-        this.articleModels = articleModels;
-    }
 
     public List<CategoryModel> getCategoryModels() {
         return categoryModels;
@@ -106,5 +69,21 @@ public class MainModel {
 
     public void setUserInfoModels(List<UserInfoModel> userInfoModels) {
         this.userInfoModels = userInfoModels;
+    }
+
+    public List<FileListModel> getFileListModels() {
+        return fileListModels;
+    }
+
+    public void setFileListModels(List<FileListModel> fileListModels) {
+        this.fileListModels = fileListModels;
+    }
+
+    public List<FormsModel> getFormsModels() {
+        return formsModels;
+    }
+
+    public void setFormsModels(List<FormsModel> formsModels) {
+        this.formsModels = formsModels;
     }
 }

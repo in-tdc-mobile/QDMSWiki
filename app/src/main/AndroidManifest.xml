@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mariapps.qdmswiki">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="false"
         android:hardwareAccelerated="true"
@@ -28,7 +34,12 @@
             android:name=".login.view.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme"
-            android:windowSoftInputMode="adjustPan"></activity> <!-- Firebase service -->
+            android:windowSoftInputMode="adjustPan"></activity>
+        <activity
+            android:name=".walkthrough.view.WalkthroughActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="user"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".home.view.HomeActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -90,11 +101,6 @@
             </intent-filter>
         </service>
     </application>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET" />
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 </manifest>

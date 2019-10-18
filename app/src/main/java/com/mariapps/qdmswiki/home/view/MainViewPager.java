@@ -1,5 +1,6 @@
 package com.mariapps.qdmswiki.home.view;
 
+import android.graphics.Bitmap;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -34,6 +35,12 @@ public class MainViewPager extends FragmentPagerAdapter {
         //Home Fragment
 
         homeFragment=new HomeFragment();
+        homeFragment.setClickListener(new HomeFragment.ClickListener() {
+            @Override
+            public void onInitDashBoard() {
+                mainVPListener.onInitDashBoard();
+            }
+        });
 
         fragments.add(homeFragment);
 
@@ -86,13 +93,7 @@ public class MainViewPager extends FragmentPagerAdapter {
         return currentFragment;
     }
 
-    public void setMainVPListener(MainVPListener mainVPListener){
-        this.mainVPListener = mainVPListener;
-    }
 
-    public interface MainVPListener {
-
-    }
 
     public void updateDocumentList(List<DocumentModel> documentList){
         documentsFragment.updateDocumentList(documentList);
@@ -111,6 +112,19 @@ public class MainViewPager extends FragmentPagerAdapter {
         homeFragment.updateRecentlyList(recentlyViewedList);
     }
 
+    public void setShowCaseForSearch() {
+        homeFragment.initShowCase();
+    }
+
+
+    public interface MainVPListener {
+        void onInitDashBoard();
+    }
+
+
+    public void setMainVPListener(MainVPListener mainVPListener){
+        this.mainVPListener = mainVPListener;
+    }
 }
 
 

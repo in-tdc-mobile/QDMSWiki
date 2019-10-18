@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
@@ -38,11 +39,14 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
     CustomTextView headingTV;
     @BindView(R.id.homeTV)
     CustomTextView homeTV;
+    @BindView(R.id.linLayout)
+    LinearLayout linLayout;
     @BindView(R.id.breadCrumbRV)
     CustomRecyclerView breadCrumbRV;
 
     private HomePresenter homePresenter;
     private BreadCrumbAdapter breadCrumbAdapter;
+    private String page;
     private String type = "Document";
     private String name = "";
     private String folderName = "";
@@ -58,6 +62,7 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
         setContentView(R.layout.activity_folder_structure);
 
         if (getIntent() != null && getIntent().getExtras() != null) {
+            page = getIntent().getExtras().getString(AppConfig.BUNDLE_PAGE);
             type = getIntent().getExtras().getString(AppConfig.BUNDLE_TYPE);
             name = getIntent().getExtras().getString(AppConfig.BUNDLE_NAME);
             folderName = getIntent().getExtras().getString(AppConfig.BUNDLE_FOLDER_NAME);
@@ -66,6 +71,11 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
             version = getIntent().getExtras().getString(AppConfig.BUNDLE_VERSION);
             headingTV.setText(name);
         }
+
+        if(page.equals("DocumentView"))
+            linLayout.setVisibility(View.GONE);
+        else
+            linLayout.setVisibility(View.VISIBLE);
 
         if (type.equals("Document") || type.equals("Article")) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -80,7 +90,8 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
             documentViewFragment.setArguments(args);
             ft.replace(R.id.frameLayout, documentViewFragment);
             ft.commit();
-            getBreadCrumbDetails(categoryId);
+            if(!page.equals("DocumentView"))
+                getBreadCrumbDetails(categoryId);
 
         } else {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -91,7 +102,8 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
             ft.addToBackStack(null);
             ft.add(R.id.frameLayout, folderFragment);
             ft.commit();
-            initBreadCrumb(name, categoryId);
+            if(!page.equals("DocumentView"))
+                initBreadCrumb(name, categoryId);
         }
 
     }
@@ -303,6 +315,37 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
     public void onGetNotificationCountError() {
 
     }
+
+    @Override
+    public void onInsertFileListSuccess() {
+
+    }
+
+    @Override
+    public void onInsertFileListError() {
+
+    }
+
+    @Override
+    public void onInsertFormSuccess() {
+
+    }
+
+    @Override
+    public void onInsertFormError() {
+
+    }
+
+    @Override
+    public void onInsertImageSuccess() {
+
+    }
+
+    @Override
+    public void onInsertImageError() {
+
+    }
+
 
 }
 

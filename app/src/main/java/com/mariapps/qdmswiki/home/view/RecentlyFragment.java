@@ -81,6 +81,7 @@ public class RecentlyFragment extends BaseFragment {
                 @Override
                 public void onItemClicked(RecentlyViewedModel recentlyViewedModel) {
                     Intent intent = new Intent(getActivity(), FolderStructureActivity.class);
+                    intent.putExtra(AppConfig.BUNDLE_PAGE,"Recently");
                     intent.putExtra(AppConfig.BUNDLE_TYPE,"Document");
                     intent.putExtra(AppConfig.BUNDLE_NAME,recentlyViewedModel.getDocumentName());
                     intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,recentlyViewedModel.getCategoryName());

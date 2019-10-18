@@ -32,4 +32,14 @@ public interface HomeView {
 
     void onGetNotificationCountSuccess(List<NotificationModel> notificationList);
     void onGetNotificationCountError();
+
+    void onInsertFileListSuccess();
+    void onInsertFileListError();
+
+    void onInsertFormSuccess();
+    void onInsertFormError();
+
+    void onInsertImageSuccess();
+    void onInsertImageError();
+
 }

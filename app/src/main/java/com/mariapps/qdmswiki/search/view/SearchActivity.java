@@ -158,6 +158,7 @@ public class SearchActivity extends BaseActivity {
             @Override
             public void onItemClicked(SearchModel item) {
                 Intent intent = new Intent(SearchActivity.this, FolderStructureActivity.class);
+                intent.putExtra(AppConfig.BUNDLE_PAGE,"Search");
                 intent.putExtra(AppConfig.BUNDLE_TYPE,item.getType());
                 intent.putExtra(AppConfig.BUNDLE_NAME,item.getName());
 

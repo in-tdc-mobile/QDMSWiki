@@ -20,6 +20,7 @@ public class SessionManager {
     private static final String KEY_USER_ID = "keyuserid";
     private static final String KEY_USER_INFO_ID = "keyuserinfoid";
     private static final String KEY_LOGIN_NAME = "keyloginname";
+    private static final String IS_FIRST_TIME_LAUNCH = "IsFirstTimeLaunch";
 
     // Shared Preferences
     SharedPreferences pref;
@@ -111,6 +112,15 @@ public class SessionManager {
         editor.commit();
     }
 
+    public void setFirstTimeLaunch(boolean isFirstTime) {
+        editor.putBoolean(IS_FIRST_TIME_LAUNCH, isFirstTime);
+        editor.commit();
+    }
+
+    public boolean isFirstTimeLaunch() {
+        return pref.getBoolean(IS_FIRST_TIME_LAUNCH, true);
+    }
+
     public void setLoginParams(boolean isLoggedIn, String id, String fcmtoken, String apitoken, String name, String loginName) {
         editor.putBoolean(KEY_IS_LOGGEDIN, isLoggedIn);
         editor.putString(KEY_ID, id);
@@ -134,6 +144,7 @@ public class SessionManager {
         setLoginName("");
         setUserId("");
         setUserInfoId("");
+        setFirstTimeLaunch(false);
     }
 
 }

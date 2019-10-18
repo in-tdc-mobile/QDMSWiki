@@ -81,6 +81,8 @@ dependencies {
     //Firebase
     implementation 'com.google.firebase:firebase-core:11.4.0'
     implementation 'com.google.firebase:firebase-messaging:11.4.0'
+
+    implementation 'com.tonyodev.fetch2:fetch2:3.0.10'
 }
 
 apply plugin: 'com.google.gms.google-services'

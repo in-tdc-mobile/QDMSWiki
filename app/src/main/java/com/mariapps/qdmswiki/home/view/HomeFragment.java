@@ -1,11 +1,15 @@
 package com.mariapps.qdmswiki.home.view;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -20,11 +24,14 @@ import com.mariapps.qdmswiki.baseclasses.BaseFragment;
 import com.mariapps.qdmswiki.custom.CustomEditText;
 import com.mariapps.qdmswiki.custom.CustomProgressBar;
 import com.mariapps.qdmswiki.custom.CustomViewPager;
+import com.mariapps.qdmswiki.custom.taptargetview.TapTarget;
+import com.mariapps.qdmswiki.custom.taptargetview.TapTargetView;
 import com.mariapps.qdmswiki.home.adapter.HomeFragmentAdapter;
 import com.mariapps.qdmswiki.home.database.HomeDatabase;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
 import com.mariapps.qdmswiki.home.model.RecentlyViewedModel;
 import com.mariapps.qdmswiki.search.view.SearchActivity;
+import com.mariapps.qdmswiki.utils.ShowCasePreferenceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,11 +56,11 @@ public class HomeFragment extends BaseFragment {
     RelativeLayout relMainLL;
     @BindView(R.id.relLL)
     RelativeLayout relLL;
-//    @BindView(R.id.customProgressBar)
+    //    @BindView(R.id.customProgressBar)
 //    CustomProgressBar customProgressBar;
     @BindView(R.id.overViewLL)
     LinearLayout overViewLL;
-//    @BindView(R.id.pullToRefresh)
+    //    @BindView(R.id.pullToRefresh)
 //    SwipeRefreshLayout pullToRefresh;
     @BindView(R.id.viewPager)
     CustomViewPager viewPager;
@@ -65,6 +72,8 @@ public class HomeFragment extends BaseFragment {
     private List<RecentlyViewedModel> recentlyViewedList;
     private List<DocumentModel> recommendedList = new ArrayList<>();
     private HomeDatabase homeDatabase;
+    private ShowCasePreferenceUtil util;
+    private ClickListener clickListener;
 
     @Override
     protected void setUpPresenter() {
@@ -78,6 +87,7 @@ public class HomeFragment extends BaseFragment {
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         ButterKnife.bind(this, view);
+        util = new ShowCasePreferenceUtil(getActivity());
         fragmentManager = getFragmentManager();
         homeDatabase = HomeDatabase.getInstance(getActivity());
 
@@ -95,7 +105,7 @@ public class HomeFragment extends BaseFragment {
             case R.id.searchET:
                 Intent intent = new Intent(getActivity(), SearchActivity.class);
                 this.startActivity(intent);
-                getActivity().overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
+                getActivity().overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
 
                 break;
         }
@@ -150,5 +160,43 @@ public class HomeFragment extends BaseFragment {
     public void updateRecentlyList(List<RecentlyViewedModel> recentlyViewedList) {
         recentlyFragment.updateRecentlyList(recentlyViewedList);
     }
+
+    @SuppressLint("ResourceType")
+    public void initShowCase() {
+        util.setShowCaseName(ShowCasePreferenceUtil.SEARCH);
+        TapTargetView.showFor(getActivity(),
+                TapTarget.forView(searchET, "Search here for documents/articles/folders", "")
+                        // All options below are optional
+                        .outerCircleColor(R.color.searchHint)
+                        .outerCircleAlpha(0.90f)
+                        .targetCircleColor(R.color.white)
+                        .titleTextSize(18)
+                        .titleTextColor(R.color.white)
+                        .descriptionTextSize(10)
+                        .descriptionTextColor(R.color.white)
+                        .textColor(R.color.white)
+                        .textTypeface(Typeface.SANS_SERIF)
+                        .drawShadow(true)
+                        .cancelable(true)
+                        .tintTarget(true)
+                        .transparentTarget(true)
+                        .targetRadius(40),
+                new TapTargetView.Listener() {
+                    @Override
+                    public void onTargetDismissed(TapTargetView view, boolean userInitiated) {
+                        super.onTargetDismissed(view, userInitiated);
+                    }
+                });
+
+    }
+
+    public interface ClickListener {
+        void onInitDashBoard();
+    }
+
+    public void setClickListener(ClickListener clickListener) {
+        this.clickListener = clickListener;
+    }
+
 
 }

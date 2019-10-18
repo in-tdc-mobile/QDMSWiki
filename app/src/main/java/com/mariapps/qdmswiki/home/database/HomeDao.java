@@ -1,17 +1,20 @@
 package com.mariapps.qdmswiki.home.database;
 
 import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
-import android.nfc.Tag;
+import android.media.Image;
 
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkEntryModel;
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkModel;
 import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.CategoryModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.home.model.FileBlobListModel;
+import com.mariapps.qdmswiki.home.model.FileListModel;
+import com.mariapps.qdmswiki.home.model.FormsModel;
+import com.mariapps.qdmswiki.home.model.ImageModel;
 import com.mariapps.qdmswiki.home.model.RecentlyViewedModel;
 import com.mariapps.qdmswiki.home.model.TagModel;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
@@ -68,6 +71,15 @@ public interface HomeDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertBookmarkEntry(BookmarkEntryModel bookmarkEntryModel);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertFileList(List<FileListModel> fileListModel);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertFormsList(List<FormsModel> formsModels);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertImageList(List<ImageModel> imageModels);
 
     @Query("DELETE FROM BookMarkEntryEntity WHERE BookmarkId=:bookmarkId AND DocumentId=:documentId")
     void deleteBookmarkEntry(String documentId,String bookmarkId);
@@ -234,6 +246,7 @@ public interface HomeDao {
     DocumentModel getDocumentData(String documentId);
 
     @Query("SELECT document.Id, " +
+            " 'Document' as type, " +
             " document.DocumentName, " +
             " document.CategoryId," +
             " document.Version," +
@@ -245,6 +258,17 @@ public interface HomeDao {
             " ON category.Id = document.CategoryId" +
             " WHERE document.Id=:documentId")
     DocumentModel getDocumentDetails(String documentId);
+
+    @Query("SELECT article.Id, " +
+            " 'Article' as type, " +
+            " article.ArticleName, " +
+            " '' as categoryId, " +
+            " article.Version, " +
+            " article.Date, " +
+            " '' as categoryName " +
+            " FROM ArticleEntity as article " +
+            " WHERE article.Id=:articleId")
+    ArticleModel getArticleDetails(String articleId);
 
 
     @Query("SELECT article.Id, " +
@@ -487,6 +511,12 @@ public interface HomeDao {
             " ORDER BY notification.SendTime desc ")
     List<NotificationModel> getNotifications();
 
+    @Query("SELECT FileID,FileName,FileExtention FROM FormsEntity WHERE Id =:id")
+    FormsModel getFileId(String id);
+
+    @Query("SELECT Data FROM FileChunksEntity WHERE FilesId =:id")
+    String getFileData(String id);
+
     @Query("SELECT * FROM BookMarkEntity")
     List<BookmarkModel> getBookmarks();
 
@@ -525,5 +555,14 @@ public interface HomeDao {
 
     @Query("DELETE FROM UserInfoEntity")
     void deleteUserInfoEntity();
+
+    @Query("DELETE FROM FileChunksEntity")
+    void deleteFileListEntity();
+
+    @Query("DELETE FROM FormsEntity")
+    void deleteFormListEntity();
+
+    @Query("DELETE FROM ImageEntity")
+    void deleteImageListEntity();
 }
 

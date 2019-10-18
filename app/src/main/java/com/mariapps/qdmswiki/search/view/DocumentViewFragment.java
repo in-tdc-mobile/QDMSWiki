@@ -1,24 +1,31 @@
 package com.mariapps.qdmswiki.search.view;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.SearchView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
+import android.webkit.MimeTypeMap;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -29,6 +36,7 @@ import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.mariapps.qdmswiki.AppConfig;
+import com.mariapps.qdmswiki.BuildConfig;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.baseclasses.BaseFragment;
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkEntryModel;
@@ -41,11 +49,16 @@ import com.mariapps.qdmswiki.home.database.HomeDao;
 import com.mariapps.qdmswiki.home.database.HomeDatabase;
 import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.home.model.FormsModel;
 import com.mariapps.qdmswiki.home.model.RecentlyViewedModel;
 import com.mariapps.qdmswiki.home.model.TagModel;
 import com.mariapps.qdmswiki.home.presenter.HomePresenter;
+import com.mariapps.qdmswiki.home.view.HomeActivity;
 import com.mariapps.qdmswiki.utils.DateUtils;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
@@ -91,6 +104,9 @@ public class DocumentViewFragment extends BaseFragment {
     public static final int REQUEST_CODE = 11;
     public static final String BOOKMARKID = "BOOKMARK_ID";
     public static final int RESULT_CODE = 12;
+    private String fileData;
+    private FormsModel formsModel;
+    private String imageFolderPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/QDMSWiki/Images/";
 
     @Override
     protected void setUpPresenter() {
@@ -256,6 +272,7 @@ public class DocumentViewFragment extends BaseFragment {
                     documentData = articleModel.getDocumentData();
                 }
                 documentData = documentData.replace("<script src=\"/WikiPALApp/Scripts/TemplateSettings/toc-template-settings.js\"></script>", "<script src=\"./Scripts/toc-template-settings.js.download\"></script>");
+                documentData = documentData.replace("src=\"/WikiPALApp/Uploads/Image/","src= \"file://"+imageFolderPath);
                 documentData = documentData.replace("\n", "");
                 documentModel.setDocumentData(documentData);
             }
@@ -325,6 +342,7 @@ public class DocumentViewFragment extends BaseFragment {
                 articleModel = ((ArticleModel) homeDatabase.homeDao().getArticleData(id));
                 String articleData = articleModel.getDocumentData();
                 articleData = articleData.replace("<script src=\"/WikiPALApp/Scripts/TemplateSettings/toc-template-settings.js\"></script>", "<script src=\"./Scripts/toc-template-settings.js.download\"></script>");
+                articleData = articleData.replace("src=\"/WikiPALApp/Uploads/Image/", "src= \"file://"+imageFolderPath);
                 articleData = articleData.replace("\n", "");
                 articleModel.setDocumentData(articleData);
             }
@@ -383,10 +401,11 @@ public class DocumentViewFragment extends BaseFragment {
         });
     }
 
-    public void openDocument(String id) {
+    public void openDocumentAttachment(String id) {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
+                documentModel = new DocumentModel("", "", "", "", "", "", new ArrayList<TagModel>());
                 documentModel = ((DocumentModel) homeDatabase.homeDao().getDocumentDetails(id));
             }
         }).observeOn(AndroidSchedulers.mainThread())
@@ -401,17 +420,15 @@ public class DocumentViewFragment extends BaseFragment {
                 webView.post(new Runnable() {
                     @Override
                     public void run() {
-                        DocumentViewFragment documentViewFragment = new DocumentViewFragment();
-                        Bundle args = new Bundle();
-                        args.putString(AppConfig.BUNDLE_TYPE, documentModel.getType());
-                        args.putString(AppConfig.BUNDLE_ID, documentModel.getId());
-                        args.putString(AppConfig.BUNDLE_NAME, documentModel.getDocumentName());
-                        args.putString(AppConfig.BUNDLE_FOLDER_ID, documentModel.getCategoryId());
-                        args.putString(AppConfig.BUNDLE_FOLDER_NAME, documentModel.getCategoryName());
-                        args.putString(AppConfig.BUNDLE_VERSION, documentModel.getVersion());
-                        documentViewFragment.setArguments(args);
-                        ((FolderStructureActivity) getActivity()).addFragments(documentViewFragment,documentModel.getId(),documentModel.getDocumentName());
-                        ((FolderStructureActivity)getActivity()).getBreadCrumbDetails(documentModel.getCategoryId());
+                        Intent intent = new Intent(getActivity(), FolderStructureActivity.class);
+                        intent.putExtra(AppConfig.BUNDLE_PAGE,"DocumentView");
+                        intent.putExtra(AppConfig.BUNDLE_TYPE, documentModel.getType());
+                        intent.putExtra(AppConfig.BUNDLE_NAME, documentModel.getDocumentName());
+                        intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME, documentModel.getCategoryName());
+                        intent.putExtra(AppConfig.BUNDLE_ID, documentModel.getId());
+                        intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, documentModel.getCategoryId());
+                        intent.putExtra(AppConfig.BUNDLE_VERSION, documentModel.getVersion());
+                        startActivity(intent);
                     }
                 });
             }
@@ -422,6 +439,126 @@ public class DocumentViewFragment extends BaseFragment {
 
             }
         });
+    }
+
+    public void openArticleAttachment(String id) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                articleModel = new ArticleModel("", "", "", new ArrayList<String>());
+                articleModel = ((ArticleModel) homeDatabase.homeDao().getArticleDetails(id));
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                webView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent intent = new Intent(getActivity(), FolderStructureActivity.class);
+                        intent.putExtra(AppConfig.BUNDLE_PAGE,"DocumentView");
+                        intent.putExtra(AppConfig.BUNDLE_TYPE, "Article");
+                        intent.putExtra(AppConfig.BUNDLE_NAME, articleModel.getArticleName());
+                        intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME, "");
+                        intent.putExtra(AppConfig.BUNDLE_ID, articleModel.getId());
+                        intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,"");
+                        intent.putExtra(AppConfig.BUNDLE_VERSION, articleModel.getVersion());
+                        startActivity(intent);
+                    }
+                });
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+
+    public void openFileAttachment(String id) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                formsModel = homeDatabase.homeDao().getFileId(id);
+                fileData = homeDatabase.homeDao().getFileData(formsModel.getFileID());
+
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                decodeFile(fileData,formsModel.getFileName(),formsModel.getFileExtention());
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void decodeFile(String strFile, String filename, String fileExtention) {
+        String fullpath = "";
+        try {
+            byte[] data = Base64.decode(strFile, Base64.DEFAULT);
+            File ext = Environment.getExternalStorageDirectory();
+            File mydir = new File(ext.getAbsolutePath() + "/QDMSWiki");
+            if (!mydir.exists()) {
+                mydir.mkdirs();
+            }
+
+            if(fileExtention.equals(".jfif")){
+                filename = filename+".jpeg";
+            }
+            fullpath = ext.getAbsolutePath() + "/QDMSWiki/" + filename;
+            File file = new File(mydir, filename);
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(data);
+            fos.close();
+            FileOpen(fullpath,fileExtention);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void FileOpen(String FilePath, String fileExtention) {
+        if (!FilePath.equals("")) {
+            try {
+                Uri uri = FileProvider.getUriForFile(getActivity(), BuildConfig.APPLICATION_ID + ".provider", new File(FilePath));
+
+                String type = FilePath.substring(FilePath.lastIndexOf('.'));
+                String extension = MimeTypeMap.getFileExtensionFromUrl(type);
+
+                    type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.toLowerCase());
+                Intent i = new Intent();
+                i.setAction(Intent.ACTION_VIEW);
+                i.setDataAndType(uri, type);
+                i.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
+                try {
+                    startActivity(i);
+                } catch (ActivityNotFoundException e) {
+                    Toast.makeText(getActivity(), "No handler for this type of file.", Toast.LENGTH_LONG).show();
+                }
+            } catch (Exception e) {
+                Toast.makeText(getActivity(), "No handler for this type of file.", Toast.LENGTH_LONG).show();
+            }
+        }
+
     }
 
 
@@ -473,8 +610,17 @@ public class DocumentViewFragment extends BaseFragment {
 
         @JavascriptInterface
         public void getDocumentAttachment(String fileId) {
-            //Toast.makeText(getActivity(), "Clicked " + bookmarkItem, Toast.LENGTH_LONG).show();
-            openDocument(fileId);
+            openDocumentAttachment(fileId);
+        }
+
+        @JavascriptInterface
+        public void getArticleAttachment(String fileId) {
+            openArticleAttachment(fileId);
+        }
+
+        @JavascriptInterface
+        public void getFileAttachment(String fileId) {
+            openFileAttachment(fileId);
         }
 
         @JavascriptInterface

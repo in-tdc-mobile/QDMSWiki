@@ -254,4 +254,35 @@ public class DocumentInfoViewActivity extends BaseActivity implements HomeView {
     public void onGetNotificationCountError() {
 
     }
+
+    @Override
+    public void onInsertFileListSuccess() {
+
+    }
+
+    @Override
+    public void onInsertFileListError() {
+
+    }
+
+    @Override
+    public void onInsertFormSuccess() {
+
+    }
+
+    @Override
+    public void onInsertFormError() {
+
+    }
+
+    @Override
+    public void onInsertImageSuccess() {
+
+    }
+
+    @Override
+    public void onInsertImageError() {
+
+    }
+
 }

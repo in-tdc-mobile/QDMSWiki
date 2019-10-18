@@ -9,11 +9,14 @@ import com.mariapps.qdmswiki.bookmarks.model.BookmarkModel;
 import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.CategoryModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
-import com.mariapps.qdmswiki.home.model.MainModel;
+import com.mariapps.qdmswiki.home.model.FileListModel;
+import com.mariapps.qdmswiki.home.model.FormsModel;
 import com.mariapps.qdmswiki.home.model.TagModel;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
 import com.mariapps.qdmswiki.notification.model.ReceiverModel;
+import com.mariapps.qdmswiki.usersettings.UserInfoModel;
 import com.mariapps.qdmswiki.usersettings.UserSettingsCategoryModel;
+import com.mariapps.qdmswiki.usersettings.UserSettingsModel;
 import com.mariapps.qdmswiki.usersettings.UserSettingsTagModel;
 
 import java.lang.reflect.Type;
@@ -23,21 +26,21 @@ import java.util.List;
 public class HomeTypeConverter {
 
     private static Gson gson = new Gson();
-    @TypeConverter
-    public static List<MainModel> mainEntityToList(String data) {
-        if (data == null) {
-            return Collections.emptyList();
-        }
-
-        Type listType = new TypeToken<List<MainModel>>() {}.getType();
-
-        return gson.fromJson(data, listType);
-    }
-
-    @TypeConverter
-    public static String mainEntityToString(List<MainModel> mainModelList) {
-        return gson.toJson(mainModelList);
-    }
+//    @TypeConverter
+//    public static List<MainModel> mainEntityToList(String data) {
+//        if (data == null) {
+//            return Collections.emptyList();
+//        }
+//
+//        Type listType = new TypeToken<List<MainModel>>() {}.getType();
+//
+//        return gson.fromJson(data, listType);
+//    }
+//
+//    @TypeConverter
+//    public static String mainEntityToString(List<MainModel> mainModelList) {
+//        return gson.toJson(mainModelList);
+//    }
 
     @TypeConverter
     public static List<DocumentModel> documentEntityToList(String data) {
@@ -214,6 +217,71 @@ public class HomeTypeConverter {
     @TypeConverter
     public static String userSettinsgCategoryEntityToString(List<UserSettingsCategoryModel> userSettingsCategoryModel) {
         return gson.toJson(userSettingsCategoryModel);
+    }
+
+
+    @TypeConverter
+    public static List<UserSettingsModel> userSettinsgEntityToList(String data) {
+        if (data == null) {
+            return Collections.emptyList();
+        }
+
+        Type listType = new TypeToken<List<UserSettingsModel>>() {}.getType();
+
+        return gson.fromJson(data, listType);
+    }
+
+    @TypeConverter
+    public static String userSettinsgEntityToString(List<UserSettingsModel> userSettingsModel){
+        return gson.toJson(userSettingsModel);
+    }
+
+    @TypeConverter
+    public static List<UserInfoModel> userInfoEntityToList(String data) {
+        if (data == null) {
+            return Collections.emptyList();
+        }
+
+        Type listType = new TypeToken<List<UserInfoModel>>() {}.getType();
+
+        return gson.fromJson(data, listType);
+    }
+
+    @TypeConverter
+    public static String userInfoEntityToString(List<UserInfoModel> userInfoModel){
+        return gson.toJson(userInfoModel);
+    }
+
+    @TypeConverter
+    public static List<FileListModel> fileListEntityToList(String data) {
+        if (data == null) {
+            return Collections.emptyList();
+        }
+
+        Type listType = new TypeToken<List<FileListModel>>() {}.getType();
+
+        return gson.fromJson(data, listType);
+    }
+
+    @TypeConverter
+    public static String fileListEntityToString(List<FileListModel> fileListModel){
+        return gson.toJson(fileListModel);
+    }
+
+    @TypeConverter
+    public static List<FormsModel> formsEntityToList(String data) {
+        if (data == null) {
+            return Collections.emptyList();
+        }
+
+        Type listType = new TypeToken<List<FormsModel>>() {}.getType();
+
+        return gson.fromJson(data, listType);
+    }
+
+    @TypeConverter
+    public static String formsEntityToString(List<FormsModel> formsModel){
+        return gson.toJson(formsModel);
     }
 
 }

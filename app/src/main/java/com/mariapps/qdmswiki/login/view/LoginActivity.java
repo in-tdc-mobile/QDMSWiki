@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.ActivityCompat;
@@ -25,7 +26,9 @@ import com.mariapps.qdmswiki.login.model.LoginRequestObj;
 import com.mariapps.qdmswiki.login.model.LoginResponse;
 import com.mariapps.qdmswiki.login.presenter.LoginPresenter;
 import com.mariapps.qdmswiki.utils.CommonUtils;
+import com.mariapps.qdmswiki.walkthrough.view.WalkthroughActivity;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PrimitiveIterator;
@@ -159,8 +162,17 @@ public class LoginActivity extends BaseActivity implements LoginView{
                 if (loginResponse.getCommonEntity().getTransactionstatus() != null && loginResponse.getCommonEntity().getTransactionstatus().equals("Y")) {
                     sessionManager.setLoggedin(true);
                     sessionManager.setUserId(loginResponse.getLoginQdms().getUserId());
-                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                    startActivity(intent);
+
+                    if (sessionManager.isFirstTimeLaunch()) {
+                        Intent intent = new Intent(LoginActivity.this, WalkthroughActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                    } else {
+                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                    }
+
                 } else if (loginResponse.getCommonEntity().getMessage() != null) {
                     Toast.makeText(LoginActivity.this, loginResponse.getCommonEntity().getMessage(), Toast.LENGTH_LONG).show();
                 }
@@ -176,4 +188,5 @@ public class LoginActivity extends BaseActivity implements LoginView{
         loginBtn.setVisibility(View.VISIBLE);
         loadinLoadingPB.setVisibility(View.GONE);
     }
+
 }

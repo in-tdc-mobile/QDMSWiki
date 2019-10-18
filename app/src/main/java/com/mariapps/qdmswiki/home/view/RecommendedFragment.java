@@ -77,6 +77,7 @@ public class RecommendedFragment extends BaseFragment {
                 @Override
                 public void onItemClicked(DocumentModel documentModel) {
                     Intent intent = new Intent(getActivity(), FolderStructureActivity.class);
+                    intent.putExtra(AppConfig.BUNDLE_PAGE,"Recommended");
                     intent.putExtra(AppConfig.BUNDLE_TYPE,"Document");
                     intent.putExtra(AppConfig.BUNDLE_NAME,documentModel.getDocumentName());
                     intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,documentModel.getCategoryName());

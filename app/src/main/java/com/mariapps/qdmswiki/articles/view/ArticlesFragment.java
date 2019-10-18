@@ -58,6 +58,7 @@ public class ArticlesFragment extends BaseFragment {
     List<String> categoryNames = new ArrayList<>();
     private HomeDatabase homeDatabase;
     private String categoryName;
+    String categoriesString;
 
     @Override
     protected void setUpPresenter() {
@@ -109,6 +110,16 @@ public class ArticlesFragment extends BaseFragment {
 
             @Override
             public void onComplete() {
+
+                for(int i=0;i<articleList.size();i++){
+                    List<String> categoryNames = new ArrayList<>();
+                    for(int j=0;j<articleList.get(i).getCategoryIds().size();j++){
+                        categoryName = getCategoryName(articleList.get(i).getCategoryIds().get(j));
+                        if(categoryName!=null && !categoryNames.contains(categoryName))
+                            categoryNames.add(categoryName);
+                    }
+                    articleList.get(i).setCategoryNames(categoryNames);
+                }
                 setData();
             }
 
@@ -120,6 +131,33 @@ public class ArticlesFragment extends BaseFragment {
         });
     }
 
+
+    public String getCategoryName(String categoryId) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                categoryName = homeDatabase.homeDao().getCategoryName(categoryId);
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+
+        return categoryName;
+    }
 
 
     @OnTextChanged(R.id.searchET)
@@ -137,6 +175,7 @@ public class ArticlesFragment extends BaseFragment {
             @Override
             public void onItemClicked(ArticleModel articleModel) {
                 Intent intent = new Intent(getActivity(), FolderStructureActivity.class);
+                intent.putExtra(AppConfig.BUNDLE_PAGE,"Article");
                 intent.putExtra(AppConfig.BUNDLE_TYPE, "Article");
                 intent.putExtra(AppConfig.BUNDLE_NAME, articleModel.getArticleName());
                 intent.putExtra(AppConfig.BUNDLE_ID, articleModel.getId());

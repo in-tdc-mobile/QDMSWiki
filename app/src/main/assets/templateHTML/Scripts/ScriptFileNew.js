@@ -521,11 +521,10 @@ function SetDocMode(mode) {
         androidAppProxy.getDocumentAttachment(fileId);
     }
     function RenderLinkArticleView(fileId) {
-         alert("Article");
-        //window.webkit.messageHandlers.renderLinkArticleView.postMessage(fileId);
+         androidAppProxy.getArticleAttachment(fileId);
     }
     function downloadFileObject(fileId) {
-           androidAppProxy.getDocumentAttachment(fileId);
+           androidAppProxy.getFileAttachment(fileId);
          //window.webkit.messageHandlers.showAttachedItems.postMessage(fileId);
       }
 

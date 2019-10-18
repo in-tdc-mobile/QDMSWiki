@@ -70,4 +70,15 @@
     <string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
 
     <string name="proceedMsg">Are you sure to proceed?</string>
+    <string name="skip">Skip</string>
+    <string name="start">Got it</string>
+
+    <string name="walkthrough_slide1_title">Slide 1</string>
+    <string name="walkthrough_slide1_desc">Slide 1 desc</string>
+    <string name="walkthrough_slide2_title">Slide 2</string>
+    <string name="walkthrough_slide2_desc">Slide 2 desc</string>
+    <string name="walkthrough_slide3_title">Slide 3</string>
+    <string name="walkthrough_slide3_desc">Slide 3 desc</string>
+    <string name="walkthrough_slide4_title">Slide 4</string>
+    <string name="walkthrough_slide4_desc">Slide 4 desc</string>
 </resources>
