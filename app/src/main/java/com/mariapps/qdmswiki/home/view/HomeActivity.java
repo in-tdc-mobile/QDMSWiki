@@ -463,7 +463,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         mainVP.post(new Runnable(){
             @Override
             public void run() {
-                if(mainVP.getCurrentItem() == 0)
+                if(mainVP.getCurrentItem() == 0 && sessionManager.isFirstTimeLaunch())
                     mainViewPager.setShowCaseForSearch();
             }
         });
