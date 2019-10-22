@@ -21,6 +21,7 @@ import com.mariapps.qdmswiki.documents.model.DocumentInfoModel;
 import com.mariapps.qdmswiki.documents.model.UserModel;
 import com.mariapps.qdmswiki.home.model.CategoryModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.home.model.DownloadFilesResponseModel;
 import com.mariapps.qdmswiki.home.model.TagModel;
 import com.mariapps.qdmswiki.home.presenter.HomePresenter;
 import com.mariapps.qdmswiki.home.view.HomeActivity;
@@ -282,6 +283,16 @@ public class DocumentInfoViewActivity extends BaseActivity implements HomeView {
 
     @Override
     public void onInsertImageError() {
+
+    }
+
+    @Override
+    public void onGetDownloadFilesSuccess(DownloadFilesResponseModel downloadFilesResponseModel) {
+
+    }
+
+    @Override
+    public void onGetDownloadFilesError() {
 
     }
 

@@ -75,6 +75,7 @@ import com.mariapps.qdmswiki.home.database.HomeDatabase;
 import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.CategoryModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.home.model.DownloadFilesResponseModel;
 import com.mariapps.qdmswiki.home.model.FileBlobListModel;
 import com.mariapps.qdmswiki.home.model.FileListModel;
 import com.mariapps.qdmswiki.home.model.FormsModel;
@@ -268,9 +269,9 @@ public class HomeActivity extends BaseActivity implements HomeView {
         homePresenter = new HomePresenter(this, this);
         util = new ShowCasePreferenceUtil(this);
 
-        String url = homePresenter.getDownloadUrl();
+
         mainModel = new MainModel();
-        beginDownload(url);
+        beginDownload("https://qdmswiki2019.blob.core.windows.net/updateversions/20191022100905.zip");
         setSupportActionBar(toolbar);
         mainVP.setCurrentItem(0);
 
@@ -540,7 +541,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
             return;
 
         } else {
-
+            linLayout.setAlpha(0.15f);
+            relLayout.setAlpha(0.15f);
             FetchConfiguration fetchConfiguration = new FetchConfiguration.Builder(this)
                     .setDownloadConcurrentLimit(3)
                     .enableRetryOnNetworkGain(true)
@@ -902,6 +904,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            progressLayout.setVisibility(View.GONE);
             progressDialog.setMessage("Unzipping file...");
             progressDialog.setCancelable(false);
             progressDialog.show();
@@ -1091,6 +1094,16 @@ public class HomeActivity extends BaseActivity implements HomeView {
 
     }
 
+    @Override
+    public void onGetDownloadFilesSuccess(DownloadFilesResponseModel downloadFilesResponseModel) {
+
+    }
+
+    @Override
+    public void onGetDownloadFilesError() {
+
+    }
+
     public class ReadAndInsertJsonData extends AsyncTask<String, Integer, String> {
 
         JSONObject jsonObject;
@@ -1102,7 +1115,6 @@ public class HomeActivity extends BaseActivity implements HomeView {
         protected void onPreExecute() {
             super.onPreExecute();
             createImageFolder();
-            progressLayout.setVisibility(View.GONE);
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             linLayout.setAlpha(1.0f);
             relLayout.setAlpha(1.0f);

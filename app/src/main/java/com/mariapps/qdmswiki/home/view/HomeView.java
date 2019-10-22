@@ -3,6 +3,7 @@ package com.mariapps.qdmswiki.home.view;
 import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.CategoryModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.home.model.DownloadFilesResponseModel;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
 import com.mariapps.qdmswiki.search.model.SearchModel;
 import com.mariapps.qdmswiki.serviceclasses.APIException;
@@ -41,5 +42,8 @@ public interface HomeView {
 
     void onInsertImageSuccess();
     void onInsertImageError();
+
+    void onGetDownloadFilesSuccess(DownloadFilesResponseModel downloadFilesResponseModel);
+    void onGetDownloadFilesError();
 
 }

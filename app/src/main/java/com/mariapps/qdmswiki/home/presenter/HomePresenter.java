@@ -8,6 +8,7 @@ import com.mariapps.qdmswiki.home.database.HomeDatabase;
 import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.CategoryModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.home.model.DownloadFilesResponseModel;
 import com.mariapps.qdmswiki.home.model.FileBlobListModel;
 import com.mariapps.qdmswiki.home.model.FileListModel;
 import com.mariapps.qdmswiki.home.model.FormsModel;
@@ -16,8 +17,10 @@ import com.mariapps.qdmswiki.home.model.TagModel;
 import com.mariapps.qdmswiki.home.view.HomeView;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
 import com.mariapps.qdmswiki.notification.model.ReceiverModel;
+import com.mariapps.qdmswiki.serviceclasses.APIException;
 import com.mariapps.qdmswiki.serviceclasses.ApiServiceFactory;
 import com.mariapps.qdmswiki.serviceclasses.ServiceController;
+import com.mariapps.qdmswiki.serviceclasses.SimpleObserver;
 import com.mariapps.qdmswiki.usersettings.UserInfoModel;
 import com.mariapps.qdmswiki.usersettings.UserSettingsCategoryModel;
 import com.mariapps.qdmswiki.usersettings.UserSettingsModel;
@@ -52,34 +55,32 @@ public class HomePresenter {
         //url = "http://10.201.1.19:8899/QDMSMobileService/api/Home/DownloadFile";
         //url = "http://pal4-demo-app.westeurope.cloudapp.azure.com:8099/file/Extract1.zip";
         //url = "https://qdmswiki2019.blob.core.windows.net/sqldata/09102019124722.zip";//700mb
-        url = "https://qdmswiki2019.blob.core.windows.net/baseversions/20191015.zip";//new 700 mb
+        //url = "https://qdmswiki2019.blob.core.windows.net/baseversions/20191015.zip";//new 700 mb
         //url = "https://qdmswiki2019.blob.core.windows.net/sqldata/09102019072523.zip";//90 mb
-        //url = "https://drive.google.com/uc?export=download&id=1pxjQIdxMLFJmg2bg4Y4sVkk6bFHIWihr";
+        url = "https://qdmswiki2019.blob.core.windows.net/updateversions/20191022100905.zip";//18 mb
     }
 
-    public String getDownloadUrl() {
-        return url;
-//        serviceController.getDownloadUrl()
-//                .subscribe(new SimpleObserver<String>() {
-//
-//
-//                    @Override
-//                    public void onNext(String downloadUrl) {
-//                        super.onNext(downloadUrl);
-//                        homeView.onGetDownloadUrlSuccess(downloadUrl);
-//                    }
-//
-//                    @Override
-//                    public void onNetworkFailure() {
-//                        super.onNetworkFailure();
-//                    }
-//
-//                    @Override
-//                    public void onAPIError(APIException e) {
-//                        super.onAPIError(e);
-//                        homeView.onGetDownloadUrlError(e);
-//                    }
-//                });
+    public void getDownloadUrl(String fileName) {
+        serviceController.getUrls(fileName)
+                .subscribe(new SimpleObserver<DownloadFilesResponseModel>() {
+
+                    @Override
+                    public void onNext(DownloadFilesResponseModel downloadFilesResponseModel) {
+                        super.onNext(downloadFilesResponseModel);
+                        homeView.onGetDownloadFilesSuccess(downloadFilesResponseModel);
+                    }
+
+                    @Override
+                    public void onNetworkFailure() {
+                        super.onNetworkFailure();
+                    }
+
+                    @Override
+                    public void onAPIError(APIException e) {
+                        super.onAPIError(e);
+                        homeView.onGetDownloadFilesError();
+                    }
+                });
     }
 
     public void deleteDocuments(List<DocumentModel> documentModels) {

@@ -17,6 +17,7 @@ import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.home.model.CategoryModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.home.model.DownloadFilesResponseModel;
 import com.mariapps.qdmswiki.home.presenter.HomePresenter;
 import com.mariapps.qdmswiki.home.view.HomeView;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
@@ -343,6 +344,16 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
 
     @Override
     public void onInsertImageError() {
+
+    }
+
+    @Override
+    public void onGetDownloadFilesSuccess(DownloadFilesResponseModel downloadFilesResponseModel) {
+
+    }
+
+    @Override
+    public void onGetDownloadFilesError() {
 
     }
 
