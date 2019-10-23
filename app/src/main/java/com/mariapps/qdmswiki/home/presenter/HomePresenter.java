@@ -8,6 +8,7 @@ import com.mariapps.qdmswiki.home.database.HomeDatabase;
 import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.CategoryModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.home.model.DownloadFilesRequestModel;
 import com.mariapps.qdmswiki.home.model.DownloadFilesResponseModel;
 import com.mariapps.qdmswiki.home.model.FileBlobListModel;
 import com.mariapps.qdmswiki.home.model.FileListModel;
@@ -60,8 +61,8 @@ public class HomePresenter {
         url = "https://qdmswiki2019.blob.core.windows.net/updateversions/20191022100905.zip";//18 mb
     }
 
-    public void getDownloadUrl(String fileName) {
-        serviceController.getUrls(fileName)
+    public void getDownloadUrl(DownloadFilesRequestModel downloadFilesRequestModel) {
+        serviceController.getUrls(downloadFilesRequestModel)
                 .subscribe(new SimpleObserver<DownloadFilesResponseModel>() {
 
                     @Override

@@ -34,6 +34,7 @@ public class DownloadFilesResponseModel {
         return commonEntity;
     }
 
+    public static class DownloadEntityList implements Serializable {
 
         @PrimaryKey(autoGenerate = true)
         public Long uId;

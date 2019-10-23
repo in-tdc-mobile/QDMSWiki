@@ -126,7 +126,7 @@
     <com.github.lzyzsd.circleprogress.DonutProgress
         android:id="@+id/donut_progress"
         app:donut_circle_starting_degree="-90"
-        app:donut_progress="1"
+        app:donut_progress="0"
         app:donut_text_size="@dimen/dimen_30dp"
         app:donut_unfinished_stroke_width="@dimen/dimen_5dp"
         app:donut_finished_stroke_width="@dimen/dimen_5dp"

@@ -1,5 +1,6 @@
 package com.mariapps.qdmswiki.serviceclasses;
 
+import com.mariapps.qdmswiki.home.model.DownloadFilesRequestModel;
 import com.mariapps.qdmswiki.home.model.DownloadFilesResponseModel;
 import com.mariapps.qdmswiki.login.model.LoginRequestObj;
 import com.mariapps.qdmswiki.login.model.LoginResponse;
@@ -24,6 +25,6 @@ public interface QDMSWikiApi {
     Observable<Response<LogoutRespObj>> getLoggedOut(@Body LogoutRequestObj logoutRequestObj);
 
     @POST("Home/DownloadFiles")
-    Observable<Response<DownloadFilesResponseModel>> getUrls(String fileName);
+    Observable<Response<DownloadFilesResponseModel>> getUrls(@Body DownloadFilesRequestModel downloadFilesRequestModel);
 
 }

@@ -20,6 +20,7 @@ public class SessionManager {
     private static final String KEY_USER_ID = "keyuserid";
     private static final String KEY_USER_INFO_ID = "keyuserinfoid";
     private static final String KEY_LOGIN_NAME = "keyloginname";
+    private static final String KEY_LAST_UPDATED_FILE_NAME = "keylastupdatedfilename";
     private static final String IS_FIRST_TIME_LAUNCH = "IsFirstTimeLaunch";
 
     // Shared Preferences
@@ -114,6 +115,16 @@ public class SessionManager {
 
     public void setFirstTimeLaunch(boolean isFirstTime) {
         editor.putBoolean(IS_FIRST_TIME_LAUNCH, isFirstTime);
+        editor.commit();
+    }
+
+
+    public String getKeyLastUpdatedFileName() {
+        return pref.getString(KEY_LAST_UPDATED_FILE_NAME, "");
+    }
+
+    public void setKeyLastUpdatedFileName(String lastUpdatedFileName) {
+        editor.putString(KEY_LAST_UPDATED_FILE_NAME, lastUpdatedFileName);
         editor.commit();
     }
 

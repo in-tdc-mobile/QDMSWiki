@@ -1,6 +1,7 @@
 package com.mariapps.qdmswiki.serviceclasses;
 
 import com.mariapps.qdmswiki.QDMSWikiApplication;
+import com.mariapps.qdmswiki.home.model.DownloadFilesRequestModel;
 import com.mariapps.qdmswiki.home.model.DownloadFilesResponseModel;
 import com.mariapps.qdmswiki.login.model.LoginRequestObj;
 import com.mariapps.qdmswiki.login.model.LoginResponse;
@@ -29,7 +30,7 @@ public class ServiceControllerImpl implements ServiceController {
     }
 
     @Override
-    public Observable<DownloadFilesResponseModel> getUrls(String fileName) {
-        return null;
+    public Observable<DownloadFilesResponseModel> getUrls(DownloadFilesRequestModel downloadFilesRequestModel) {
+        return service.getUrls(downloadFilesRequestModel).compose(new RXResponseTransformer<>());
     }
 }
