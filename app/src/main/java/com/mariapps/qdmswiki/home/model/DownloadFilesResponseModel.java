@@ -3,8 +3,11 @@ package com.mariapps.qdmswiki.home.model;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.PrimaryKey;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
+import com.mariapps.qdmswiki.bookmarks.model.BookmarkEntryModel;
 import com.mariapps.qdmswiki.commonmodels.CommonEntity;
 
 import java.io.Serializable;
@@ -34,7 +37,7 @@ public class DownloadFilesResponseModel {
         return commonEntity;
     }
 
-    public static class DownloadEntityList implements Serializable {
+    public static class DownloadEntityList implements Parcelable {
 
         @PrimaryKey(autoGenerate = true)
         public Long uId;
@@ -89,5 +92,48 @@ public class DownloadFilesResponseModel {
         public void setFileSize(String fileSize) {
             this.fileSize = fileSize;
         }
+
+
+        protected DownloadEntityList(Parcel in) {
+            if (in.readByte() == 0) {
+                uId = null;
+            } else {
+                uId = in.readLong();
+            }
+            downloadLink = in.readString();
+            fileName = in.readString();
+            fileSize = in.readString();
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            if (uId == null) {
+                dest.writeByte((byte) 0);
+            } else {
+                dest.writeByte((byte) 1);
+                dest.writeLong(uId);
+            }
+            dest.writeString(downloadLink);
+            dest.writeString(fileName);
+            dest.writeString(fileSize);
+        }
+
+
+        public static final Creator<DownloadEntityList> CREATOR = new Creator<DownloadEntityList>() {
+            @Override
+            public DownloadEntityList createFromParcel(Parcel in) {
+                return new DownloadEntityList(in);
+            }
+
+            @Override
+            public DownloadEntityList[] newArray(int size) {
+                return new DownloadEntityList[size];
+            }
+        };
     }
 }

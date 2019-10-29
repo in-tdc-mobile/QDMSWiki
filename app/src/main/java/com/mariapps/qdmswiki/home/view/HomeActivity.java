@@ -169,6 +169,9 @@ public class HomeActivity extends BaseActivity implements HomeView {
     List<FormsModel> formsList = new ArrayList<>();
     List<ImageModel> imageList = new ArrayList<>();
     List<DocumentModel> documentsList = new ArrayList<>();
+    List<DownloadFilesResponseModel.DownloadEntityList> downloadEntityLists = new ArrayList<>();
+    private int urlNum = 0;
+    private Fetch fetch;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -428,7 +431,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
         }
     }
 
-    private void beginDownload(DownloadFilesResponseModel downloadFilesResponseModel) {
+    private void beginDownload(String url,String zipFileName) {
+        progressLayout.setVisibility(View.VISIBLE);
         linLayout.setAlpha(0.15f);
         relLayout.setAlpha(0.15f);
         
@@ -436,99 +440,93 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 .enableRetryOnNetworkGain(true)
                 .build();
 
-        Fetch fetch = Fetch.Impl.getInstance(fetchConfiguration);
-        List<DownloadFilesResponseModel.DownloadEntityList> downloadEntityLists = downloadFilesResponseModel.getDownloadEntityList();
-        for(int i=0;i<downloadEntityLists.size();i++){
-            if(i==downloadEntityLists.size()-1)
-                sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(i).getFileName());
-            zipFileName = downloadEntityLists.get(i).getFileName();
-            final Request request = new Request(downloadEntityLists.get(i).getDownloadLink(), Environment.getExternalStorageDirectory() + "/QDMSWiki/"+zipFileName);
-            request.setPriority(Priority.HIGH);
-            request.setNetworkType(NetworkType.ALL);
-            request.addHeader("clientKey", "SD78DF93_3947&MVNGHE1WONG");
+        fetch = Fetch.Impl.getInstance(fetchConfiguration);
 
-            fetch.enqueue(request, updatedRequest -> {
+        final Request request = new Request(url, Environment.getExternalStorageDirectory() + "/QDMSWiki/"+zipFileName);
+        request.setPriority(Priority.HIGH);
+        request.setNetworkType(NetworkType.ALL);
+        request.addHeader("clientKey", "SD78DF93_3947&MVNGHE1WONG");
 
-            }, error -> {
-                //An error occurred enqueuing the request.
-            });
+        fetch.enqueue(request, updatedRequest -> {
 
-            fetchListener = new FetchListener() {
-                @Override
-                public void onWaitingNetwork(@NotNull Download download) {
-                    fetch.resume(downloadID);
+        }, error -> {
+            //An error occurred enqueuing the request.
+        });
+
+        fetchListener = new FetchListener() {
+            @Override
+            public void onWaitingNetwork(@NotNull Download download) {
+                fetch.resume(downloadID);
+            }
+
+            @Override
+            public void onStarted(@NotNull Download download, @NotNull List<? extends DownloadBlock> list, int i) {
+                if (request.getId() == download.getId()) {
+                    downloadID = download.getId();
                 }
+            }
 
-                @Override
-                public void onStarted(@NotNull Download download, @NotNull List<? extends DownloadBlock> list, int i) {
-                    if (request.getId() == download.getId()) {
-                        downloadID = download.getId();
-                    }
+            @Override
+            public void onProgress(@NotNull Download download, long l, long l1) {
+                int progress = download.getProgress();
+                donut_progress.setProgress(progress);
+            }
+
+
+            @Override
+            public void onError(@NotNull Download download, @NotNull Error error, @org.jetbrains.annotations.Nullable Throwable throwable) {
+                Toast.makeText(HomeActivity.this, error.getHttpResponse().toString(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onDownloadBlockUpdated(@NotNull Download download, @NotNull DownloadBlock downloadBlock, int i) {
+
+            }
+
+            @Override
+            public void onAdded(@NotNull Download download) {
+
+            }
+
+            @Override
+            public void onQueued(@NotNull Download download, boolean waitingOnNetwork) {
+                if (request.getId() == download.getId()) {
+                    //showDownloadInList(download);
                 }
+            }
 
-                @Override
-                public void onProgress(@NotNull Download download, long l, long l1) {
-                    int progress = download.getProgress();
-                    donut_progress.setProgress(progress);
-                }
+            @Override
+            public void onCompleted(@NotNull Download download) {
+                Toast.makeText(HomeActivity.this, "Download Completed", Toast.LENGTH_SHORT).show();
+                Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/"+zipFileName, Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
+                decompress.execute();
+            }
 
+            @Override
+            public void onPaused(@NotNull Download download) {
+            }
 
-                @Override
-                public void onError(@NotNull Download download, @NotNull Error error, @org.jetbrains.annotations.Nullable Throwable throwable) {
-                    Toast.makeText(HomeActivity.this, error.getHttpResponse().toString(), Toast.LENGTH_SHORT).show();
-                }
+            @Override
+            public void onResumed(@NotNull Download download) {
+            }
 
-                @Override
-                public void onDownloadBlockUpdated(@NotNull Download download, @NotNull DownloadBlock downloadBlock, int i) {
+            @Override
+            public void onCancelled(@NotNull Download download) {
 
-                }
+            }
 
-                @Override
-                public void onAdded(@NotNull Download download) {
+            @Override
+            public void onRemoved(@NotNull Download download) {
 
-                }
+            }
 
-                @Override
-                public void onQueued(@NotNull Download download, boolean waitingOnNetwork) {
-                    if (request.getId() == download.getId()) {
-                        //showDownloadInList(download);
-                    }
-                }
+            @Override
+            public void onDeleted(@NotNull Download download) {
 
-                @Override
-                public void onCompleted(@NotNull Download download) {
-                    Toast.makeText(HomeActivity.this, "Download Completed", Toast.LENGTH_SHORT).show();
-                    Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/"+zipFileName, Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
-                    decompress.execute();
-                }
+            }
+        };
 
-                @Override
-                public void onPaused(@NotNull Download download) {
-                }
-
-                @Override
-                public void onResumed(@NotNull Download download) {
-                }
-
-                @Override
-                public void onCancelled(@NotNull Download download) {
-
-                }
-
-                @Override
-                public void onRemoved(@NotNull Download download) {
-
-                }
-
-                @Override
-                public void onDeleted(@NotNull Download download) {
-
-                }
-            };
-
-            fetch.addListener(fetchListener);
-        }
-
+        fetch.addListener(fetchListener);
 
 
     }
@@ -739,7 +737,12 @@ public class HomeActivity extends BaseActivity implements HomeView {
 
     @Override
     public void onGetDownloadFilesSuccess(DownloadFilesResponseModel downloadFilesResponseModel) {
-        beginDownload(downloadFilesResponseModel);
+        downloadEntityLists = downloadFilesResponseModel.getDownloadEntityList();
+
+        if (downloadEntityLists.size() > 0) {
+            beginDownload(downloadEntityLists.get(0).getDownloadLink(),downloadEntityLists.get(0).getFileName());
+        }
+
     }
 
     @Override
@@ -925,6 +928,13 @@ public class HomeActivity extends BaseActivity implements HomeView {
             if (file1.exists()) {
                 file1.delete();
             }
+
+            fetch.removeListener(fetchListener);
+            urlNum = urlNum + 1;
+            if(urlNum == downloadEntityLists.size()-1)
+                sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum).getFileName());
+            else
+                beginDownload(downloadEntityLists.get(urlNum).getDownloadLink(),downloadEntityLists.get(urlNum).getFileName());
 
         }
 
