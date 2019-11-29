@@ -23,6 +23,7 @@ import com.mariapps.qdmswiki.home.view.HomeView;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
 import com.mariapps.qdmswiki.search.adapter.BreadCrumbAdapter;
 import com.mariapps.qdmswiki.search.model.BreadCrumbItem;
+import com.mariapps.qdmswiki.search.model.SearchModel;
 import com.mariapps.qdmswiki.serviceclasses.APIException;
 import com.mariapps.qdmswiki.usersettings.UserInfoModel;
 
@@ -99,6 +100,7 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
             FolderFragment folderFragment = new FolderFragment();
             Bundle args = new Bundle();
             args.putString(AppConfig.BUNDLE_FOLDER_ID, categoryId);
+            args.putString(AppConfig.BUNDLE_FOLDER_NAME, folderName);
             folderFragment.setArguments(args);
             ft.addToBackStack(null);
             ft.add(R.id.frameLayout, folderFragment);
@@ -251,7 +253,7 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
     }
 
     @Override
-    public void onGetChildFoldersList(List<DocumentModel> documentModels) {
+    public void onGetChildFoldersList(List<SearchModel> documentModels) {
 
     }
 

@@ -17,7 +17,7 @@ public interface HomeView {
     void onGetDownloadUrlError(APIException e);
 
     void onGetParentFolderSuccess(List<DocumentModel> documentModels);
-    void onGetChildFoldersList(List<DocumentModel> documentModels);
+    void onGetChildFoldersList(List<SearchModel> documentModels);
 
     void onGetUserImageSuccess(UserInfoModel userInfoModel);
     void onGetUserImageError();
@@ -45,5 +45,8 @@ public interface HomeView {
 
     void onGetDownloadFilesSuccess(DownloadFilesResponseModel downloadFilesResponseModel);
     void onGetDownloadFilesError();
+//
+//    void onGetCategoryNameSuccess(String categoryName);
+//    void onGetCategoryNameError();
 
 }

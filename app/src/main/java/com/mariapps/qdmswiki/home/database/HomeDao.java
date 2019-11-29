@@ -31,25 +31,25 @@ import java.util.List;
 public interface HomeDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertDocument(List<DocumentModel> documentModel);
+    void insertDocument(DocumentModel documentModel);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertArticle(List<ArticleModel> articleModel);
+    void insertArticle(ArticleModel articleModel);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertTag(List<TagModel> tagModel);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertCategory(List<CategoryModel> categoryModel);
+    void insertCategory(CategoryModel categoryModel);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertNotifications(NotificationModel notificationModel);
+    void insertNotification(NotificationModel notificationModel);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertReceivers(ReceiverModel receiverModel);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertBookmarks(List<BookmarkModel> bookmarkModel);
+    void insertBookmark(BookmarkModel bookmarkModel);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertBookmarkEntries(List<BookmarkEntryModel> bookmarkEntryModel);
@@ -64,7 +64,7 @@ public interface HomeDao {
     void insertUserSettingsCategory(List<UserSettingsCategoryModel> userSettingsCategoryModel);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertUserInfo(List<UserInfoModel> userInfoModel);
+    void insertUserInfo(UserInfoModel userInfoModel);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertRecentlyViewedDocument(RecentlyViewedModel recentlyViewedModel);
@@ -73,16 +73,49 @@ public interface HomeDao {
     void insertBookmarkEntry(BookmarkEntryModel bookmarkEntryModel);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertFileList(List<FileListModel> fileListModel);
+    void insertFileListModel(FileListModel fileListModel);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertFormsList(List<FormsModel> formsModels);
+    void insertForm(FormsModel formsModel);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertImageList(List<ImageModel> imageModels);
+    void insertImage(ImageModel imageModel);
 
     @Query("DELETE FROM BookMarkEntryEntity WHERE BookmarkId=:bookmarkId AND DocumentId=:documentId")
     void deleteBookmarkEntry(String documentId,String bookmarkId);
+
+    @Query("DELETE FROM ReceiverEntity WHERE notificationId=:notificationId")
+    void deleteReceiver(String notificationId);
+
+    @Query("DELETE FROM DocumentEntity WHERE Id=:documentId")
+    void deleteDocument(String documentId);
+
+    @Query("DELETE FROM TagEntity WHERE Id=:tagId")
+    void deleteTag(String tagId);
+
+    @Query("DELETE FROM ArticleEntity WHERE Id=:articleId")
+    void deleteArticle(String articleId);
+
+    @Query("DELETE FROM CategoryEntity WHERE Id=:categoryId")
+    void deleteCategory(String categoryId);
+
+    @Query("DELETE FROM ImageEntity WHERE Id=:imageId")
+    void deleteImage(String imageId);
+
+    @Query("DELETE FROM FileChunksEntity WHERE Id=:deletefileListModel")
+    void deletefileListModel(String deletefileListModel);
+
+    @Query("DELETE FROM BookMarkEntity WHERE Id=:bookmarkId")
+    void deleteBookmark(String bookmarkId);
+
+    @Query("DELETE FROM UserInfoEntity WHERE Id=:id")
+    void deleteUserInfoEntity(String id);
+
+    @Query("DELETE FROM FormsEntity WHERE Id=:id")
+    void deleteForm(String id);
+
+    @Query("DELETE FROM NotificationEntity WHERE Id=:id")
+    void deleteNotification(String id);
 
     @Query("SELECT document.Id as id, " +
             " 'Document' as type, " +
@@ -109,7 +142,7 @@ public interface HomeDao {
     List<SearchModel> getAllArticles();
 
     @Query("SELECT category.Id as id, " +
-            " 'Folder' as type, " +
+            " 'Category' as type, " +
             " category.CategoryName as name, " +
             " category.Id as categoryId," +
             " '' as categoryName " +
@@ -147,17 +180,18 @@ public interface HomeDao {
             " ON category.Id = document.CategoryId"+
             " UNION "+
             " SELECT category.Id as id, " +
-            " 'Folder' as type, " +
+            " 'Category' as type, " +
             " category.CategoryName as name, " +
             " '' as version, " +
             " category.Id as categoryId," +
             " '' as categoryName " +
             " FROM CategoryEntity as category " +
-            " WHERE category.CategoryName != 'Entire QDMS'")
+            " WHERE category.CategoryName != 'Entire QDMS' ")
     List<SearchModel> getAllDocumentsAndFolders();
 
     @Query("SELECT document.Id, " +
             " document.DocumentName, " +
+            " document.DocumentNumber, " +
             " document.CategoryId," +
             " document.Version," +
             " document.tags," +
@@ -200,6 +234,7 @@ public interface HomeDao {
 
     @Query("SELECT article.Id, " +
             " article.ArticleName, " +
+            " article.ArticleNumber, " +
             " article.CategoryIds," +
             " article.categoryNames," +
             " article.Version," +
@@ -209,15 +244,26 @@ public interface HomeDao {
             " ORDER BY article.Date desc")
     List<ArticleModel> getArticles();
 
+    @Query("SELECT article.Id, " +
+            " article.ArticleName, " +
+            " article.CategoryIds," +
+            " article.categoryNames," +
+            " article.Version," +
+            " article.tags," +
+            " article.Date " +
+            " FROM ArticleEntity as article "+
+            " WHERE article.Id = :articleId")
+    ArticleModel getArticleDetail(String articleId);
+
     @Query("SELECT category.Id as folderid, " +
             " category.CategoryName as categoryName, " +
-            " 'Folder' as type, " +
+            " 'Category' as type, " +
             " category.Id as categoryId " +
             " FROM CategoryEntity as category " +
             " WHERE category.Parent = (SELECT category1.Id as id " +
-                    " FROM CategoryEntity as category1 " +
-                    " WHERE category1.categoryName = 'Entire QDMS')"+
-            " ORDER BY category.DisplayOrder")
+            " FROM CategoryEntity as category1 " +
+            " WHERE category1.categoryName = 'Entire QDMS')"+
+            " ORDER BY category.DisplayOrder, category.CategoryName COLLATE NOCASE ")
     List<DocumentModel> getParentFolders();
 
     @Query("SELECT document.Id, " +
@@ -229,12 +275,20 @@ public interface HomeDao {
             " WHERE document.CategoryId=:parentId " +
             " UNION "+
             " SELECT category.Id as id, " +
-            " 'Folder' as type, " +
+            " 'Category' as type, " +
             " category.CategoryName as categoryName, " +
             " '' as version, " +
             " category.Id as catId" +
             " FROM CategoryEntity as category" +
-            " WHERE category.Parent=:parentId")
+            " WHERE category.Parent=:parentId"+
+            " UNION "+
+            " SELECT article.Id as id, " +
+            " 'Article' as type, " +
+            " article.ArticleName as categoryName, " +
+            " article.Version as version, " +
+            " article.CategoryIds as catId "+
+            " FROM ArticleEntity as article " +
+            " WHERE article.categoryIds LIKE :parentId")
     List<DocumentModel> getChildFoldersList(String parentId);
 
     @Query("SELECT document.Id, " +
@@ -312,13 +366,13 @@ public interface HomeDao {
             " AND document.CategoryId LIKE :folderId " +
             " UNION "+
             " SELECT category.Id as id, " +
-            " 'Folder' as type, " +
+            " 'Category' as type, " +
             " category.CategoryName as name, " +
             " '' as version, " +
             " category.Id as categoryId, " +
             " '' as categoryName "+
             " FROM CategoryEntity as category" +
-            " WHERE category.Parent LIKE :folderId")
+            " WHERE category.Parent LIKE :folderId ")
     List<SearchModel> getAllDocumentsAndFoldersInsideFolder(String folderId);
 
     @Query("SELECT document.Id as id, " +
@@ -344,12 +398,12 @@ public interface HomeDao {
     List<SearchModel> getAllArticlesInsideFolder(String folderId);
 
     @Query("SELECT category.Id as id, " +
-            " 'Folder' as type, " +
+            " 'Category' as type, " +
             " category.CategoryName as name, " +
             " category.Id as categoryId," +
             " '' as categoryName " +
             " FROM CategoryEntity as category"+
-            " WHERE category.Parent LIKE :folderId")
+            " WHERE category.Parent LIKE :folderId ")
     List<SearchModel> getAllCategoriesInsideFolder(String folderId);
 
     @Query("SELECT article.Id as id, " +
@@ -362,13 +416,13 @@ public interface HomeDao {
             " WHERE article.categoryIds LIKE :folderId " +
             " UNION "+
             " SELECT category.Id as id, " +
-            " 'Folder' as type, " +
+            " 'Category' as type, " +
             " category.CategoryName as name, " +
             " '' as version, " +
             " category.Id as categoryId, " +
             " '' as categoryName "+
             " FROM CategoryEntity as category" +
-            " WHERE category.Parent LIKE :folderId")
+            " WHERE category.Parent LIKE :folderId ")
     List<SearchModel> getAllArticlesAndFoldersInsideFolder(String folderId);
 
     @Query("SELECT document.Id as id, " +
@@ -392,13 +446,13 @@ public interface HomeDao {
             " WHERE article.categoryIds LIKE :folderId " +
             " UNION "+
             " SELECT category.Id as id, " +
-            " 'Folder' as type, " +
+            " 'Category' as type, " +
             " category.CategoryName as name, " +
             " '' as version, " +
             " category.Id as categoryId, " +
             " ''as categoryName "+
             " FROM CategoryEntity as category" +
-            " WHERE category.Parent LIKE :folderId")
+            " WHERE category.Parent LIKE :folderId ")
     List<SearchModel> getAllDocumentsArticlesAndFoldersInsideFolder(String folderId);
 
     @Query("SELECT article.Id as id, " +
@@ -412,13 +466,13 @@ public interface HomeDao {
             " ON category.Id = article.CategoryIds"+
             " UNION "+
             " SELECT category.Id as id, " +
-            " 'Folder' as type, " +
+            " 'Category' as type, " +
             " category.CategoryName as name, " +
             " '' as version, " +
             " category.Id as categoryId," +
             " '' as categoryName " +
             " FROM CategoryEntity as category "+
-            " WHERE category.CategoryName != 'Entire QDMS'")
+            " WHERE category.CategoryName != 'Entire QDMS' ")
     List<SearchModel> getAllArticlesAndFolders();
 
     @Query("SELECT document.Id as id, " +
@@ -440,13 +494,13 @@ public interface HomeDao {
             " FROM ArticleEntity as article " +
             " UNION "+
             " SELECT category.Id as id, " +
-            " 'Folder' as type, " +
+            " 'Category' as type, " +
             " category.CategoryName as name, " +
             " '' as version, " +
             " category.Id as categoryId," +
             " '' as categoryName " +
             " FROM CategoryEntity as category "+
-            " WHERE category.CategoryName != 'Entire QDMS'")
+            " WHERE category.CategoryName != 'Entire QDMS' ")
     List<SearchModel> getAllDocumentsArticlesAndFolders();
 
     @Query("SELECT user.Id, " +
@@ -480,6 +534,13 @@ public interface HomeDao {
     @Query( " UPDATE DocumentEntity SET isRecommended = 'YES' WHERE Id =:documentId")
     void updateIsRecommended(String documentId);
 
+    @Query("UPDATE ReceiverEntity SET IsUnread = 0 WHERE ReceiverId =:receiverID AND NotificationId = :nottificationId")
+    void updateReceiver(String receiverID,String nottificationId);
+
+//    @Query("UPDATE NotificationEntity SET Receviers = receiverEntity.receivers "+
+//    " WHERE (SELECT Receviers from ReceiverEntity )")
+//    void updateNotification(String nottificationId);
+
     @Query("SELECT CategoryName FROM CategoryEntity WHERE Id =:id")
     String getCategoryName(String id);
 
@@ -494,18 +555,23 @@ public interface HomeDao {
 
     @Query("SELECT Id,Receviers FROM NotificationEntity "+
             " WHERE (NotificationEntity.EventDescription = 0 "+
+            " OR NotificationEntity.EventDescription = 0.0 " +
             " OR NotificationEntity.EventDescription = 1.0 " +
             " OR NotificationEntity.EventDescription = 1) ")
     List<NotificationModel> getNotificationCount();
 
-    @Query("SELECT notification.Message, " +
+    @Query("SELECT DISTINCT notification.Id, "+
+            " notification.EventDescription, " +
+            " notification.Message, " +
             " notification.SendTime, " +
             " notification.Receviers, " +
+            " notification.EventId, " +
             " userInfo.Name as senderName "+
             " FROM NotificationEntity as notification " +
             " LEFT JOIN userinfoentity as userinfo "+
             " ON notification.SenderId = userinfo.Id "+
             " WHERE (notification.EventDescription = 0 "+
+            " OR notification.EventDescription = 0.0 "+
             " OR notification.EventDescription = 1.0 " +
             " OR notification.EventDescription = 1) "+
             " ORDER BY notification.SendTime desc ")

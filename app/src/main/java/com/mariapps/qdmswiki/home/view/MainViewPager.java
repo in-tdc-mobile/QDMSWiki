@@ -12,6 +12,7 @@ import com.mariapps.qdmswiki.documents.view.DocumentsFragment;
 import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
 import com.mariapps.qdmswiki.home.model.RecentlyViewedModel;
+import com.mariapps.qdmswiki.utils.ShowCasePreferenceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,11 +97,13 @@ public class MainViewPager extends FragmentPagerAdapter {
 
 
     public void updateDocumentList(List<DocumentModel> documentList){
+        System.out.println("document1");
         documentsFragment.updateDocumentList(documentList);
 
     }
 
     public void updateArticleList(List<ArticleModel> articleList){
+        System.out.println("article1");
         articlesFragment.updateArticleList(articleList);
     }
 
@@ -112,8 +115,8 @@ public class MainViewPager extends FragmentPagerAdapter {
         homeFragment.updateRecentlyList(recentlyViewedList);
     }
 
-    public void setShowCaseForSearch() {
-        homeFragment.initShowCase();
+    public void setShowCaseForSearch(ShowCasePreferenceUtil util) {
+        homeFragment.initShowCase(util);
     }
 
 

@@ -21,6 +21,7 @@ import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.home.adapter.CustomNavigationDetailAdapter;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
 import com.mariapps.qdmswiki.home.model.NavDrawerObj;
+import com.mariapps.qdmswiki.search.model.SearchModel;
 
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class NavigationDetailFragment extends BaseFragment {
     RelativeLayout noDataRL;
 
     private CustomNavigationDetailAdapter customNavigationDetailAdapter;
-    private List<DocumentModel> documentList;
+    private List<SearchModel> documentList;
     private String folderName;
     private NavigationDetailListener navigationDetailListener;
 
@@ -63,7 +64,7 @@ public class NavigationDetailFragment extends BaseFragment {
         ButterKnife.bind(this, view);
 
         if (getArguments() != null) {
-            documentList = (List<DocumentModel>) getArguments().getSerializable(AppConfig.BUNDLE_NAV_DETAILS_LIST);
+            documentList = (List<SearchModel>) getArguments().getSerializable(AppConfig.BUNDLE_NAV_DETAILS_LIST);
             folderName =  getArguments().getString(AppConfig.BUNDLE_FOLDER_NAME);
             if (documentList != null) {
                 initRecycler(documentList);
@@ -76,7 +77,7 @@ public class NavigationDetailFragment extends BaseFragment {
         return view;
     }
 
-    private void initRecycler(List<DocumentModel> documentList) {
+    private void initRecycler(List<SearchModel> documentList) {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         navigationRV.setLayoutManager(mLayoutManager);
         if (documentList.size() > 0) {
@@ -87,7 +88,7 @@ public class NavigationDetailFragment extends BaseFragment {
             navigationRV.setAdapter(customNavigationDetailAdapter);
             customNavigationDetailAdapter.setNavAdapterListener(new CustomNavigationDetailAdapter.NavAdapterListener() {
                 @Override
-                public void onItemClick(DocumentModel documentModel) {
+                public void onItemClick(SearchModel documentModel) {
                     navigationDetailListener.onItemClicked(documentModel);
                 }
 
@@ -116,7 +117,7 @@ public class NavigationDetailFragment extends BaseFragment {
 
 
     public interface NavigationDetailListener {
-        void onItemClicked(DocumentModel documentModel);
+        void onItemClicked(SearchModel documentModel);
     }
 
     public void setNavigationDetailListener(NavigationDetailListener navigationDetailListener) {

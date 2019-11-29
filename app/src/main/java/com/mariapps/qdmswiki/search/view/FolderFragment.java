@@ -23,6 +23,7 @@ import com.mariapps.qdmswiki.search.model.SearchFilterModel;
 import com.mariapps.qdmswiki.search.model.SearchModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -72,6 +73,7 @@ public class FolderFragment extends BaseFragment{
         try{
             Bundle args = getArguments();
             id= args.getString(AppConfig.BUNDLE_FOLDER_ID, "");
+            folderName= args.getString(AppConfig.BUNDLE_FOLDER_NAME, "");
         }
         catch (Exception e){}
 
@@ -92,7 +94,7 @@ public class FolderFragment extends BaseFragment{
 
     private void setSearchTypeData() {
         searchType = new ArrayList<>();
-        searchType.add(new SearchFilterModel(1, "Folder", false));
+        searchType.add(new SearchFilterModel(1, "Category", false));
         searchType.add(new SearchFilterModel(2, "Document", true));
         searchType.add(new SearchFilterModel(3, "Article", false));
        // searchType.add(new SearchFilterModel(4, "Forms", false));
@@ -103,7 +105,7 @@ public class FolderFragment extends BaseFragment{
         searchFilterAdapter.setItemClickListener(new SearchFilterAdapter.ItemClickListener() {
             @Override
             public void onItemClicked(SearchFilterModel item) {
-                if (item.getSearchType().equals("Folder")) {
+                if (item.getSearchType().equals("Category")) {
                     if (item.isSelected()) {
                         item.setSelected(false);
                         isFolderSelected = false;
@@ -154,17 +156,18 @@ public class FolderFragment extends BaseFragment{
 
     private void setSearchList() {
 
-        searchResultAdapter = new SearchResultAdapter(getActivity(), searchList,"Folder");
+        searchResultAdapter = new SearchResultAdapter(getActivity(), searchList,"Category",folderName);
         searchResultRV.setAdapter(searchResultAdapter);
         searchResultAdapter.notifyDataSetChanged();
 
         searchResultAdapter.setItemClickListener(new SearchResultAdapter.ItemClickListener() {
             @Override
             public void onItemClicked(SearchModel item) {
-                if(item.getType().equals("Folder")) {
+                if(item.getType().equals("Category")) {
                     FolderFragment folderFragment = new FolderFragment();
                     Bundle args = new Bundle();
                     args.putString(AppConfig.BUNDLE_FOLDER_ID, item.getId());
+                    args.putString(AppConfig.BUNDLE_FOLDER_NAME, item.getCategoryName());
                     folderFragment.setArguments(args);
                     ((FolderStructureActivity) getActivity()).addFragments(folderFragment,item.getId(),item.getName());
                     ((FolderStructureActivity)getActivity()).initBreadCrumb(item.getName(),item.getId());
@@ -175,8 +178,8 @@ public class FolderFragment extends BaseFragment{
                     args.putString(AppConfig.BUNDLE_TYPE, item.getType());
                     args.putString(AppConfig.BUNDLE_ID, item.getId());
                     args.putString(AppConfig.BUNDLE_NAME, item.getName());
-                    args.putString(AppConfig.BUNDLE_FOLDER_ID, item.getCategoryId());
-                    args.putString(AppConfig.BUNDLE_FOLDER_NAME, item.getCategoryName());
+                    args.putString(AppConfig.BUNDLE_FOLDER_ID, id);
+                    args.putString(AppConfig.BUNDLE_FOLDER_NAME, folderName);
                     args.putString(AppConfig.BUNDLE_VERSION, item.getVersion());
                     documentViewFragment.setArguments(args);
                     ((FolderStructureActivity) getActivity()).addFragments(documentViewFragment,item.getId(),item.getName());
@@ -215,6 +218,12 @@ public class FolderFragment extends BaseFragment{
                 else if(isFolderSelected && !isDocumentSelected && !isArticleSelected)
                     searchList = homeDatabase.homeDao().getAllCategoriesInsideFolder("%"+id+"%");
 
+                for(int i=0;i<searchList.size();i++){
+                    if(searchList.get(i).getType().equals("Article")){
+                        List<String> categoryIds = Collections.singletonList(searchList.get(i).getCategoryId().substring(1, searchList.get(i).getCategoryId().length() - 1));
+                        searchList.get(i).setCategoryName(homeDatabase.homeDao().getCategoryName(categoryIds.get(0).replace("\"","")));
+                    }
+                }
 
             }
         }).observeOn(AndroidSchedulers.mainThread())

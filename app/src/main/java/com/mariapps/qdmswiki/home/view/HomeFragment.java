@@ -162,7 +162,7 @@ public class HomeFragment extends BaseFragment {
     }
 
     @SuppressLint("ResourceType")
-    public void initShowCase() {
+    public void initShowCase(ShowCasePreferenceUtil util) {
         util.setShowCaseName(ShowCasePreferenceUtil.SEARCH);
         TapTargetView.showFor(getActivity(),
                 TapTarget.forView(searchET, "Search here for documents/articles/folders", "")
@@ -187,7 +187,6 @@ public class HomeFragment extends BaseFragment {
                         super.onTargetDismissed(view, userInitiated);
                     }
                 });
-
     }
 
     public interface ClickListener {
@@ -197,6 +196,5 @@ public class HomeFragment extends BaseFragment {
     public void setClickListener(ClickListener clickListener) {
         this.clickListener = clickListener;
     }
-
 
 }

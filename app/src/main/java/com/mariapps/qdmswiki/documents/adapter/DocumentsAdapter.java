@@ -51,6 +51,7 @@ public class DocumentsAdapter extends CustomRecyclerView.Adapter<DocumentsAdapte
 
         holder.tvHeadingText.setText(documentsModel.getDocumentName());
         holder.tvCategory.setText(documentsModel.getCategoryName());
+        holder.tvNumber.setText("Document Number : "+documentsModel.getDocumentNumber());
         holder.tvDate.setText(DateUtils.getFormattedDate(documentsModel.getDate()));
         holder.tvVersion.setText("V " +documentsModel.getVersion());
 
@@ -90,7 +91,8 @@ public class DocumentsAdapter extends CustomRecyclerView.Adapter<DocumentsAdapte
                         ArrayList<DocumentModel> filteredList = new ArrayList<>();
 
                         for (DocumentModel documentsModel : documentsList) {
-                            if (documentsModel.getDocumentName().toLowerCase().contains(charString.toLowerCase())) {
+                            if (documentsModel.getDocumentName().toLowerCase().contains(charString.toLowerCase()) ||
+                                    documentsModel.getDocumentNumber().contains(charString)) {
                                 filteredList.add(documentsModel);
                             }
                         }
@@ -118,6 +120,8 @@ public class DocumentsAdapter extends CustomRecyclerView.Adapter<DocumentsAdapte
         CustomTextView tvHeadingText;
         @BindView(R.id.tvCategory)
         CustomTextView tvCategory;
+        @BindView(R.id.tvNumber)
+        CustomTextView tvNumber;
         @BindView(R.id.tvDate)
         CustomTextView tvDate;
         @BindView(R.id.tvVersion)

@@ -8,6 +8,15 @@
     android:gravity="center"
     android:orientation="vertical">
 
+    <ProgressBar
+        android:id="@+id/loading_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:indeterminateTint="@color/blue_A200"
+        android:indeterminateTintMode="src_atop"
+        android:visibility="gone" />
 
     <com.mariapps.qdmswiki.custom.CustomTextView
         android:background="@color/white"
@@ -80,7 +89,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/noFilesIV"
             android:layout_centerHorizontal="true"
-            android:text="@string/string_no_recently_found"/>
+            android:text="@string/string_no_documents_found"/>
 
     </RelativeLayout>
 
@@ -91,19 +100,6 @@
         android:layout_height="match_parent"
         android:divider="@color/grey_200"
         android:dividerHeight="0.5dp"/>
-
-    <com.mariapps.qdmswiki.custom.CustomProgressBar
-        android:layout_below="@+id/dateAndSearchLL"
-        android:id="@+id/customProgressBar"
-        android:gravity="center_horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dimen_15dp"
-        app:amount="10"
-        app:duration="20"
-        app:endColor="@color/searchType"
-        app:startColor="@color/grey_500"
-        app:animationDirection="left"
-        />
 
 </RelativeLayout>
 

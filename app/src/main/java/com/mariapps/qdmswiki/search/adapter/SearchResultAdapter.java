@@ -16,8 +16,11 @@ import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
+import com.mariapps.qdmswiki.home.database.HomeDatabase;
 import com.mariapps.qdmswiki.search.model.FilterBooleanItem;
 import com.mariapps.qdmswiki.search.model.SearchModel;
+import com.mariapps.qdmswiki.search.view.SearchActivity;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,12 +35,16 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
     private List<SearchModel> searchList;
     private SearchResultAdapter.ItemClickListener itemClickListener;
     private String fromPage;
+    private String categoryName;
+    private HomeDatabase homeDatabase;
 
-    public SearchResultAdapter(Context context, List<SearchModel> list, String page) {
+    public SearchResultAdapter(Context context, List<SearchModel> list, String page,String folderName) {
         mContext = context;
         searchList = list;
         this.filteredItems = list;
         this.fromPage = page;
+        homeDatabase = HomeDatabase.getInstance(mContext);
+        categoryName = folderName;
     }
 
     @NonNull
@@ -53,23 +60,23 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
         holder.nameTV.setText(searchModel.getName());
 
 
-        if(fromPage.equals("Folder")) {
+        if(fromPage.equals("Category")) {
             holder.openIV.setVisibility(View.GONE);
         }
-            if(searchModel.getType().equals("Article")) {
-                try {
-                    List<String> categoryNames = Collections.singletonList(searchModel.getCategoryName().substring(1, searchModel.getCategoryName().length() - 1));
-                    holder.descriptionTV.setText(categoryNames.get(0).replace("\"", ""));
-                } catch (Exception e) {
-                    holder.descriptionTV.setText(searchModel.getCategoryName());
-                }
-            }
-            else{
+//            if(searchModel.getType().equals("Article")) {
+//                try {
+//                    List<String> categoryIds = Collections.singletonList(searchModel.getCategoryId().substring(1, searchModel.getCategoryId().length() - 1));
+//                    holder.descriptionTV.setText(homeDatabase.homeDao().getCategoryName( categoryIds.get(0).replace("\"","")));
+//                } catch (Exception e) {
+//                    holder.descriptionTV.setText(searchModel.getCategoryName());
+//                }
+//            }
+           // else{
                 holder.descriptionTV.setText(searchModel.getCategoryName());
-            }
+            //}
 
 
-        if(searchModel.getType().equals("Folder")) {
+        if(searchModel.getType().equals("Category")) {
             holder.typeIV.setImageDrawable(ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.ic_folder_inactive, null));
             holder.descriptionTV.setVisibility(View.GONE);
         }
@@ -135,7 +142,7 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
                     } else {
                         ArrayList<SearchModel> filteredList = new ArrayList<>();
                         for (SearchModel searchModel : searchList) {
-                            if (searchModel.getType().equals("Folder") ||
+                            if (searchModel.getType().equals("Category") ||
                                     searchModel.getType().equals("Document") ||
                                     searchModel.getType().equals("Article") ||
                                     searchModel.getType().equals("Forms")) {
@@ -165,7 +172,7 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
                     } else {
                         ArrayList<SearchModel> filteredList = new ArrayList<>();
                         for (SearchModel searchModel : searchList) {
-                            if (searchModel.getType().equals("Folder")||
+                            if (searchModel.getType().equals("Category")||
                                     searchModel.getType().equals("Document") ||
                                     searchModel.getType().equals("Article")) {
                                 filteredList.add(searchModel);
@@ -225,7 +232,7 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
                     } else {
                         ArrayList<SearchModel> filteredList = new ArrayList<>();
                         for (SearchModel searchModel : searchList) {
-                            if (searchModel.getType().equals("Folder")||
+                            if (searchModel.getType().equals("Category")||
                                     searchModel.getType().equals("Document")||
                                     searchModel.getType().equals("Forms")) {
                                 filteredList.add(searchModel);
@@ -255,7 +262,7 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
                     } else {
                         ArrayList<SearchModel> filteredList = new ArrayList<>();
                         for (SearchModel searchModel : searchList) {
-                            if (searchModel.getType().equals("Folder")||
+                            if (searchModel.getType().equals("Category")||
                                     searchModel.getType().equals("Article") ||
                                     searchModel.getType().equals("Forms")) {
                                 filteredList.add(searchModel);
@@ -285,7 +292,7 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
                     } else {
                         ArrayList<SearchModel> filteredList = new ArrayList<>();
                         for (SearchModel searchModel : searchList) {
-                            if (searchModel.getType().equals("Folder")||
+                            if (searchModel.getType().equals("Category")||
                                     searchModel.getType().equals("Document")) {
                                 filteredList.add(searchModel);
                             }
@@ -376,7 +383,7 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
                     } else {
                         ArrayList<SearchModel> filteredList = new ArrayList<>();
                         for (SearchModel searchModel : searchList) {
-                            if (searchModel.getType().equals("Folder")||
+                            if (searchModel.getType().equals("Category")||
                                     searchModel.getType().equals("Forms")) {
                                 filteredList.add(searchModel);
                             }
@@ -435,7 +442,7 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
                     } else {
                         ArrayList<SearchModel> filteredList = new ArrayList<>();
                         for (SearchModel searchModel : searchList) {
-                            if (searchModel.getType().equals("Folder")) {
+                            if (searchModel.getType().equals("Category")) {
                                 filteredList.add(searchModel);
                             }
                         }
@@ -552,7 +559,7 @@ public class SearchResultAdapter extends CustomRecyclerView.Adapter<SearchResult
                     else {
                         ArrayList<SearchModel> filteredList = new ArrayList<>();
                         for (SearchModel searchModel : searchList) {
-                            if (searchModel.getType().equals("Folder") ||
+                            if (searchModel.getType().equals("Category") ||
                                     searchModel.getType().equals("Document") ||
                                     searchModel.getType().equals("Article") ||
                                     searchModel.getType().equals("Forms")) {

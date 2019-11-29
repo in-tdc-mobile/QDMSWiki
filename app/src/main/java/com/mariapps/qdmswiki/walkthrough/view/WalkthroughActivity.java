@@ -68,7 +68,7 @@ public class WalkthroughActivity extends BaseActivity {
 
         setContentView(R.layout.activity_walk_through);
         sessionManager = new SessionManager(WalkthroughActivity.this);
-
+        sessionManager.setFirstTimeLaunch(true);
         // layouts of all welcome sliders
         // add few more layouts if you want
         layouts = new int[]{
@@ -117,7 +117,7 @@ public class WalkthroughActivity extends BaseActivity {
     }
 
     private void launchHomeScreen() {
-        sessionManager.setFirstTimeLaunch(false);
+
         Intent intent = new Intent(WalkthroughActivity.this, HomeActivity.class);
         finish();
         startActivity(intent);

@@ -1,6 +1,7 @@
 package com.mariapps.qdmswiki.search.view;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -33,6 +34,7 @@ import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.mariapps.qdmswiki.AppConfig;
@@ -107,6 +109,7 @@ public class DocumentViewFragment extends BaseFragment {
     private String fileData;
     private FormsModel formsModel;
     private String imageFolderPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/QDMSWiki/Images/";
+    private ProgressDialog progressDialog;
 
     @Override
     protected void setUpPresenter() {
@@ -126,6 +129,7 @@ public class DocumentViewFragment extends BaseFragment {
             folderId = args.getString(AppConfig.BUNDLE_FOLDER_ID, "");
             folderName = args.getString(AppConfig.BUNDLE_FOLDER_NAME, "");
             version = args.getString(AppConfig.BUNDLE_VERSION, "");
+            progressDialog = new ProgressDialog(getActivity());
 
             if (type.equals("Document")) {
                 recentlyViewedModel = new RecentlyViewedModel(id, name, folderId, folderName, version, DateUtils.getCurrentDate());
@@ -224,6 +228,10 @@ public class DocumentViewFragment extends BaseFragment {
                 LinearLayout linBookmark = popupView.findViewById(R.id.linBookmark);
                 LinearLayout linDownload = popupView.findViewById(R.id.linDownload);
 
+                if(type.equals("Article"))
+                    linBookmark.setVisibility(View.GONE);
+                else
+                    linBookmark.setVisibility(View.VISIBLE);
                 linInfo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

@@ -14,6 +14,7 @@ import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
 import com.mariapps.qdmswiki.home.model.NavDrawerObj;
+import com.mariapps.qdmswiki.search.model.SearchModel;
 
 import java.util.List;
 
@@ -24,9 +25,9 @@ public class CustomNavigationDetailAdapter extends RecyclerView.Adapter<CustomNa
 
     private Context context;
     private NavAdapterListener navAdapterListener;
-    List<DocumentModel> navigationItems;
+    List<SearchModel> navigationItems;
 
-    public CustomNavigationDetailAdapter(Context context, List<DocumentModel> list) {
+    public CustomNavigationDetailAdapter(Context context, List<SearchModel> list) {
         this.context = context;
         this.navigationItems = list;
     }
@@ -42,16 +43,20 @@ public class CustomNavigationDetailAdapter extends RecyclerView.Adapter<CustomNa
     @Override
     public void onBindViewHolder(@NonNull final CustomNavigationDetailVH1 customNavigationDetailVH1, int i) {
         if (customNavigationDetailVH1.getAdapterPosition() < navigationItems.size()) {
-            final DocumentModel documentModel = navigationItems.get(customNavigationDetailVH1.getAdapterPosition());
-            if (documentModel != null) {
-                customNavigationDetailVH1.drawerItemName.setText(documentModel.getCategoryName());
-                if(documentModel.getType().equals("Folder")) {
+            final SearchModel searchModel = navigationItems.get(customNavigationDetailVH1.getAdapterPosition());
+            if (searchModel != null) {
+                customNavigationDetailVH1.drawerItemName.setText(searchModel.getName());
+                if(searchModel.getType().equals("Category")) {
                     customNavigationDetailVH1.drawerIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_menu_folder));
                     customNavigationDetailVH1.arrowIV.setVisibility(View.VISIBLE);
                     customNavigationDetailVH1.arrowIV.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_inactive));
                 }
-                else {
+                else if(searchModel.getType().equals("Document")) {
                     customNavigationDetailVH1.drawerIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_document_active));
+                    customNavigationDetailVH1.arrowIV.setVisibility(View.GONE);
+                }
+                else if(searchModel.getType().equals("Article")) {
+                    customNavigationDetailVH1.drawerIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_article_active));
                     customNavigationDetailVH1.arrowIV.setVisibility(View.GONE);
                 }
             }
@@ -95,7 +100,7 @@ public class CustomNavigationDetailAdapter extends RecyclerView.Adapter<CustomNa
 
 
     public interface NavAdapterListener {
-        void onItemClick(DocumentModel documentModel);
+        void onItemClick(SearchModel searchModel);
     }
 
     public void setNavAdapterListener(NavAdapterListener navAdapterListener) {

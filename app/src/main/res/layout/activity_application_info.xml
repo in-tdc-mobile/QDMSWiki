@@ -84,11 +84,13 @@
        </LinearLayout>
 
        <View
+           android:visibility="gone"
            android:layout_width="match_parent"
            android:layout_height="1dp"
            android:background="@color/grey_200"/>
 
        <LinearLayout
+           android:visibility="gone"
            android:weightSum="1"
            android:layout_width="match_parent"
            android:layout_height="@dimen/dimen_50dp"
@@ -116,11 +118,13 @@
        </LinearLayout>
 
        <View
+           android:visibility="gone"
            android:layout_width="match_parent"
            android:layout_height="1dp"
            android:background="@color/grey_200"/>
 
        <LinearLayout
+           android:visibility="gone"
            android:weightSum="1"
            android:layout_width="match_parent"
            android:layout_height="@dimen/dimen_50dp"
@@ -148,11 +152,13 @@
        </LinearLayout>
 
        <View
+           android:visibility="gone"
            android:layout_width="match_parent"
            android:layout_height="1dp"
            android:background="@color/grey_200"/>
 
        <LinearLayout
+           android:visibility="gone"
            android:weightSum="1"
            android:layout_width="match_parent"
            android:layout_height="@dimen/dimen_50dp"

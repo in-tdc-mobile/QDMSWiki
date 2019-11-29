@@ -18,6 +18,9 @@ public class ReceiverModel implements Parcelable {
     @PrimaryKey(autoGenerate = true)
     public Long uId;
 
+    @ColumnInfo(name = "NotificationId")
+    private String notificationId;
+
     @ColumnInfo(name = "ReceiverId")
     @SerializedName("RecevierId")
     private String recevierId;
@@ -50,6 +53,14 @@ public class ReceiverModel implements Parcelable {
         isUnread = unread;
     }
 
+    public String getNotificationId() {
+        return notificationId;
+    }
+
+    public void setNotificationId(String notificationId) {
+        this.notificationId = notificationId;
+    }
+
     public ReceiverModel(Long uId, String recevierId, Boolean isUnread) {
         this.uId = uId;
         this.recevierId = recevierId;
@@ -62,6 +73,7 @@ public class ReceiverModel implements Parcelable {
         } else {
             uId = in.readLong();
         }
+        notificationId = in.readString();
         recevierId = in.readString();
         isUnread = in.readByte() != 0;
     }
@@ -79,6 +91,7 @@ public class ReceiverModel implements Parcelable {
             dest.writeByte((byte) 1);
             dest.writeLong(uId);
         }
+        dest.writeString(notificationId);
         dest.writeString(recevierId);
         dest.writeInt(isUnread ? 1 : 0);
     }

@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.mariapps.qdmswiki.AppConfig;
@@ -42,15 +43,16 @@ public class DocumentsFragment extends BaseFragment {
     CustomRecyclerView rvDocuments;
     @BindView(R.id.searchET)
     CustomEditText searchET;
-    @BindView(R.id.customProgressBar)
-    CustomProgressBar customProgressBar;
     @BindView(R.id.noDataRL)
     RelativeLayout noDataRL;
+    @BindView(R.id.loading_spinner)
+    ProgressBar loadingSpinner;
 
     private FragmentManager fragmentManager;
     private DocumentsAdapter documentsAdapter;
     private List<DocumentModel> documentsList = new ArrayList<>();
     private HomeDatabase homeDatabase;
+//    DocumentListener documentListener;
 
     @Override
     protected void setUpPresenter() {
@@ -73,8 +75,9 @@ public class DocumentsFragment extends BaseFragment {
         return view;
     }
 
-    private void setData() {
-        customProgressBar.setVisibility(View.GONE);
+    private void setData(List<DocumentModel> documentsList) {
+        loadingSpinner.setVisibility(View.GONE);
+        System.out.println("document list size " + documentsList.size());
         if (documentsList != null && documentsList.size() > 0) {
             noDataRL.setVisibility(View.GONE);
             documentsAdapter = new DocumentsAdapter(getActivity(), documentsList, "DOCUMENTS");
@@ -84,25 +87,25 @@ public class DocumentsFragment extends BaseFragment {
                 @Override
                 public void onItemClicked(DocumentModel documentModel) {
                     Intent intent = new Intent(getActivity(), FolderStructureActivity.class);
-                    intent.putExtra(AppConfig.BUNDLE_PAGE,"Document");
+                    intent.putExtra(AppConfig.BUNDLE_PAGE, "Document");
                     intent.putExtra(AppConfig.BUNDLE_TYPE, "Document");
                     intent.putExtra(AppConfig.BUNDLE_NAME, documentModel.getDocumentName());
                     intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME, documentModel.getCategoryName());
-                    intent.putExtra(AppConfig.BUNDLE_ID,documentModel.getId());
-                    intent.putExtra(AppConfig.BUNDLE_FOLDER_ID,documentModel.getCategoryId());
-                    intent.putExtra(AppConfig.BUNDLE_VERSION,documentModel.getVersion());
+                    intent.putExtra(AppConfig.BUNDLE_ID, documentModel.getId());
+                    intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, documentModel.getCategoryId());
+                    intent.putExtra(AppConfig.BUNDLE_VERSION, documentModel.getVersion());
                     startActivity(intent);
 
                 }
             });
-        }
-        else{
+        } else {
             rvDocuments.setAdapter(null);
             noDataRL.setVisibility(View.VISIBLE);
         }
     }
 
     public void getDocumentList() {
+        loadingSpinner.setVisibility(View.VISIBLE);
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
@@ -117,20 +120,15 @@ public class DocumentsFragment extends BaseFragment {
 
             @Override
             public void onComplete() {
-                setData();
+                setData(documentsList);
             }
 
 
             @Override
             public void onError(Throwable e) {
-
+                loadingSpinner.setVisibility(View.GONE);
             }
         });
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
     }
 
     @OnTextChanged(R.id.searchET)
@@ -141,8 +139,37 @@ public class DocumentsFragment extends BaseFragment {
 
     }
 
+
     public void updateDocumentList(List<DocumentModel> documentsList) {
-        this.documentsList = documentsList;
-        setData();
+        System.out.println("document2");
+        setData(documentsList);
     }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        if (getActivity() != null) {
+                getDocumentList();
+        }
+        super.setUserVisibleHint(isVisibleToUser);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!getUserVisibleHint()) {
+            return;
+        }
+    }
+
+//
+//    public interface DocumentListener {
+//        void onDocumentsLoaded();
+//
+//    }
+//
+//    public void setDocumentListener(DocumentListener documentListener) {
+//        this.documentListener = documentListener;
+//    }
+
+
 }

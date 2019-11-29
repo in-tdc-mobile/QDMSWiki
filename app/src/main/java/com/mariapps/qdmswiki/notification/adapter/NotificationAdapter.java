@@ -17,6 +17,8 @@ import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.SessionManager;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
+import com.mariapps.qdmswiki.documents.adapter.DocumentsAdapter;
+import com.mariapps.qdmswiki.home.model.DocumentModel;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
 import com.mariapps.qdmswiki.utils.CommonUtils;
 import com.mariapps.qdmswiki.utils.DateUtils;
@@ -32,6 +34,7 @@ public class NotificationAdapter extends CustomRecyclerView.Adapter<Notification
     private Context mContext;
     private List<NotificationModel> notificationList;
     private SessionManager sessionManager;
+    private RowClickListener rowClickListener;
 
     public NotificationAdapter(Context context, List<NotificationModel> list) {
         mContext = context;
@@ -68,6 +71,13 @@ public class NotificationAdapter extends CustomRecyclerView.Adapter<Notification
         }
         holder.updatedByTV.setText(notificationModel.getSenderName());
         holder.tvTime.setText(DateUtils.getFormattedDate(notificationModel.getSendTime()));
+
+        holder.linNotification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    rowClickListener.onItemClicked(notificationList.get(holder.getAdapterPosition()));
+            }
+        });
     }
 
     @Override
@@ -93,6 +103,14 @@ public class NotificationAdapter extends CustomRecyclerView.Adapter<Notification
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
+    }
+
+    public void setRowClickListener(RowClickListener rowClickListener) {
+        this.rowClickListener = rowClickListener;
+    }
+
+    public interface RowClickListener {
+        void onItemClicked(NotificationModel notificationModel) ;
     }
 
 }

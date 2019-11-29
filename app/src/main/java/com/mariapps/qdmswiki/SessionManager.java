@@ -155,7 +155,6 @@ public class SessionManager {
         setLoginName("");
         setUserId("");
         setUserInfoId("");
-        setFirstTimeLaunch(false);
     }
 
 }

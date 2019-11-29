@@ -2,7 +2,8 @@ package com.mariapps.qdmswiki;
 
 
 public class AppConfig {
-    public static final String BASE_URL = "http://10.201.1.19:8899/QDMSMobileService/api/";
+    //public static final String BASE_URL = "http://10.201.1.19:8899/QDMSMobileService/api/";//DEV
+    public static final String BASE_URL = "http://10.201.1.164/QDMSMobileService/api/";//QA
     public static final String TIMESTAMP_FORMAT = "yyyyMMdd_HHmmss";
 
     //Bundles

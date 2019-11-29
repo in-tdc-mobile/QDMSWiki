@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mariapps.qdmswiki.BuildConfig;
 import com.mariapps.qdmswiki.R;
@@ -20,6 +21,8 @@ import com.mariapps.qdmswiki.applicationinfo.view.ApplicationInfoActivity;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
+import com.mariapps.qdmswiki.home.model.DownloadFilesRequestModel;
+import com.mariapps.qdmswiki.home.model.DownloadFilesResponseModel;
 import com.mariapps.qdmswiki.home.view.HomeActivity;
 import com.mariapps.qdmswiki.login.view.LoginActivity;
 import com.mariapps.qdmswiki.settings.adapter.SettingsAdapter;
@@ -82,16 +85,16 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
             public void onSettingsClicked(int position) {
                 switch (position){
                     case 0:
-                        break;
-                    case 1:
-                        break;
-                    case 2:
                         Intent intent = new Intent(SettingsActivity.this, ApplicationInfoActivity.class);
                         startActivity(intent);
                         break;
-                    case 3:
-                       createAlert();
+                    case 1:
+                        settingsPresenter.getDownloadUrl(new DownloadFilesRequestModel(sessionManager.getKeyLastUpdatedFileName()));
                         break;
+                    case 2:
+                        createAlert();
+                        break;
+
                 }
             }
         });
@@ -161,9 +164,11 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
 
     private List<SettingsItem> initSettingList(){
         settingsItems.clear();
-        settingsItems.add(new SettingsItem(R.drawable.ic_settings_inactive,"Settings",R.color.black));
-        settingsItems.add(new SettingsItem(R.drawable.ic_help,"Help",R.color.black));
+//        settingsItems.add(new SettingsItem(R.drawable.ic_settings_inactive,"Settings",R.color.black));
+////        settingsItems.add(new SettingsItem(R.drawable.ic_help,"Help",R.color.black));
+
         settingsItems.add(new SettingsItem(R.drawable.ic_app_info,"App Info",R.color.black));
+        settingsItems.add(new SettingsItem(R.drawable.ic_check_update,"Check for QDMS data updates",R.color.black));
         settingsItems.add(new SettingsItem(R.drawable.ic_logout,"Logout",R.color.red_900));
         return settingsItems;
     }
@@ -180,6 +185,21 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
 
     @Override
     public void onLogoutError() {
+
+    }
+
+    @Override
+    public void onGetDownloadFilesSuccess(DownloadFilesResponseModel downloadFilesResponseModel) {
+        if(downloadFilesResponseModel.getDownloadEntityList() == null || downloadFilesResponseModel.getDownloadEntityList().size() == 0)
+            Toast.makeText(SettingsActivity.this,"No updates available",Toast.LENGTH_LONG).show();
+        else {
+            Intent homeIntent = new Intent(SettingsActivity.this, HomeActivity.class);
+            startActivity(homeIntent);
+        }
+    }
+
+    @Override
+    public void onGetDownloadFilesError() {
 
     }
 }

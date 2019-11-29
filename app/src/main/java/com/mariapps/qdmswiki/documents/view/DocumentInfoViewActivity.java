@@ -28,6 +28,7 @@ import com.mariapps.qdmswiki.home.view.HomeActivity;
 import com.mariapps.qdmswiki.home.view.HomeView;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
 import com.mariapps.qdmswiki.search.model.BreadCrumbItem;
+import com.mariapps.qdmswiki.search.model.SearchModel;
 import com.mariapps.qdmswiki.serviceclasses.APIException;
 import com.mariapps.qdmswiki.usersettings.UserInfoModel;
 import com.mariapps.qdmswiki.utils.DateUtils;
@@ -181,7 +182,7 @@ public class DocumentInfoViewActivity extends BaseActivity implements HomeView {
     }
 
     @Override
-    public void onGetChildFoldersList(List<DocumentModel> documentModels) {
+    public void onGetChildFoldersList(List<SearchModel> documentModels) {
 
     }
 

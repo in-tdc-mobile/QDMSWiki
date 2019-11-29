@@ -38,6 +38,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.github.lzyzsd.circleprogress.DonutProgress;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -66,7 +67,9 @@ import com.mariapps.qdmswiki.home.presenter.HomePresenter;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
 import com.mariapps.qdmswiki.notification.model.ReceiverModel;
 import com.mariapps.qdmswiki.notification.view.NotificationActivity;
+import com.mariapps.qdmswiki.search.model.SearchModel;
 import com.mariapps.qdmswiki.search.view.FolderStructureActivity;
+import com.mariapps.qdmswiki.search.view.SearchActivity;
 import com.mariapps.qdmswiki.serviceclasses.APIException;
 import com.mariapps.qdmswiki.settings.view.SettingsActivity;
 import com.mariapps.qdmswiki.usersettings.UserInfoModel;
@@ -74,6 +77,7 @@ import com.mariapps.qdmswiki.usersettings.UserSettingsCategoryModel;
 import com.mariapps.qdmswiki.usersettings.UserSettingsModel;
 import com.mariapps.qdmswiki.usersettings.UserSettingsTagModel;
 import com.mariapps.qdmswiki.utils.ScreenUtils;
+import com.mariapps.qdmswiki.utils.ShowCasePreferenceUtil;
 import com.tonyodev.fetch2.Download;
 import com.tonyodev.fetch2.Error;
 import com.tonyodev.fetch2.Fetch;
@@ -83,19 +87,30 @@ import com.tonyodev.fetch2.NetworkType;
 import com.tonyodev.fetch2.Priority;
 import com.tonyodev.fetch2.Request;
 import com.tonyodev.fetch2core.DownloadBlock;
+
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.channels.FileChannel;
+import java.security.spec.ECField;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import io.reactivex.Completable;
@@ -152,10 +167,10 @@ public class HomeActivity extends BaseActivity implements HomeView {
     private int progressBarStatus;
     private Handler progressBarHandler = new Handler();
     private FetchListener fetchListener;
-    private String zipFileName;
+    private String zippedFileName;
 
     private DocumentModel documentModel;
-    List<DocumentModel> childList = new ArrayList<>();
+    List<SearchModel> childList = new ArrayList<>();
     List<DocumentModel> parentFolderList = new ArrayList<>();
     List<DocumentModel> recommendedList = new ArrayList<>();
     List<DocumentModel> documentList = new ArrayList<>();
@@ -172,6 +187,9 @@ public class HomeActivity extends BaseActivity implements HomeView {
     List<DownloadFilesResponseModel.DownloadEntityList> downloadEntityLists = new ArrayList<>();
     private int urlNum = 0;
     private Fetch fetch;
+    private String log;
+    private String folderId;
+    private String folderName;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -183,13 +201,12 @@ public class HomeActivity extends BaseActivity implements HomeView {
         sessionManager = new SessionManager(HomeActivity.this);
         homeDatabase = HomeDatabase.getInstance(HomeActivity.this);
         progressDialog = new ProgressDialog(HomeActivity.this);
-
-
+        //sessionManager.setKeyLastUpdatedFileNaame("20191126122635");//"20191121092627"
         homePresenter.getDownloadUrl(new DownloadFilesRequestModel(sessionManager.getKeyLastUpdatedFileName()));
-        //beginDownload("https://qdmswiki2019.blob.core.windows.net/updateversions/20191022100905.zip");
+        //beginDownload("https://qdmswiki2k19.blob.core.windows.net/update/20191114153246.zip","20191114153246.zip");
+
         setSupportActionBar(toolbar);
         mainVP.setCurrentItem(0);
-
 
         getParentFolders();
         initViewpager();
@@ -339,6 +356,22 @@ public class HomeActivity extends BaseActivity implements HomeView {
     private void initViewpager() {
         mainViewPager = new MainViewPager(getSupportFragmentManager());
         mainViewPager.setCount(3);
+//        mainViewPager.setMainVPListener(new MainViewPager.MainVPListener() {
+//            @Override
+//            public void onInitDashBoard() {
+//
+//            }
+//
+//            @Override
+//            public void loadDocuments() {
+//                getCurrentDocumentList();
+//            }
+//
+//            @Override
+//            public void loadArticles() {
+//                getArticleList();
+//            }
+//        });
         mainVP.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
             @Override
@@ -361,13 +394,6 @@ public class HomeActivity extends BaseActivity implements HomeView {
 
         mainVP.setOffscreenPageLimit(3);
         mainVP.setAdapter(mainViewPager);
-        mainVP.post(new Runnable() {
-            @Override
-            public void run() {
-                if (mainVP.getCurrentItem() == 0 && sessionManager.isFirstTimeLaunch())
-                    mainViewPager.setShowCaseForSearch();
-            }
-        });
     }
 
     @Override
@@ -402,22 +428,29 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 NavigationDetailFragment navigationDetailFragment = new NavigationDetailFragment();
                 navigationDetailFragment.setNavigationDetailListener(new NavigationDetailFragment.NavigationDetailListener() {
                     @Override
-                    public void onItemClicked(DocumentModel docModel) {
-                        documentModel = docModel;
-                        if (documentModel.getType().equals("Folder"))
-                            homePresenter.getChildFoldersList(documentModel.getCatId());
-                        else {
+                    public void onItemClicked(SearchModel searchModel) {
+                        //documentModel = docModel;
+                        if (searchModel.getType().equals("Category"))
+                            homePresenter.getChildFoldersList("%"+searchModel.getCategoryId()+"%");
+                        else{
                             Intent intent = new Intent(HomeActivity.this, FolderStructureActivity.class);
-                            intent.putExtra(AppConfig.BUNDLE_PAGE, "Home");
-                            intent.putExtra(AppConfig.BUNDLE_TYPE, documentModel.getType());
-                            intent.putExtra(AppConfig.BUNDLE_NAME, documentModel.getCategoryName());
-                            intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME, documentModel.getCategoryName());
-                            intent.putExtra(AppConfig.BUNDLE_ID, documentModel.getId());
-                            intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, documentModel.getCatId());
-                            intent.putExtra(AppConfig.BUNDLE_VERSION, documentModel.getVersion());
+                            intent.putExtra(AppConfig.BUNDLE_PAGE,"Home");
+                            intent.putExtra(AppConfig.BUNDLE_TYPE,searchModel.getType());
+                            intent.putExtra(AppConfig.BUNDLE_NAME,searchModel.getName());
+                            intent.putExtra(AppConfig.BUNDLE_ID,searchModel.getId());
+                            if(searchModel.getType().equals("Article")) {
+                                List<String> categoryIds = Collections.singletonList(searchModel.getCategoryId().substring(1, searchModel.getCategoryId().length() - 1));
+                                intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, categoryIds.get(0).replace("\"",""));
+                            }
+                            else {
+                                intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, searchModel.getCategoryId());
+                                intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,searchModel.getCategoryName());
+                            }
+                            intent.putExtra(AppConfig.BUNDLE_VERSION,searchModel.getVersion());
                             startActivity(intent);
                         }
                     }
+
 
                 });
                 Bundle bundleNavDetail = new Bundle();
@@ -431,18 +464,22 @@ public class HomeActivity extends BaseActivity implements HomeView {
         }
     }
 
-    private void beginDownload(String url,String zipFileName) {
+    public void beginDownload(String url, String zipFileName) {
+        appendLog("Downloading url " + url);
+        zippedFileName = zipFileName;
         progressLayout.setVisibility(View.VISIBLE);
+
         linLayout.setAlpha(0.15f);
         relLayout.setAlpha(0.15f);
-        
+
+
         FetchConfiguration fetchConfiguration = new FetchConfiguration.Builder(this)
                 .enableRetryOnNetworkGain(true)
                 .build();
 
         fetch = Fetch.Impl.getInstance(fetchConfiguration);
 
-        final Request request = new Request(url, Environment.getExternalStorageDirectory() + "/QDMSWiki/"+zipFileName);
+        final Request request = new Request(url, Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zipFileName);
         request.setPriority(Priority.HIGH);
         request.setNetworkType(NetworkType.ALL);
         request.addHeader("clientKey", "SD78DF93_3947&MVNGHE1WONG");
@@ -469,12 +506,13 @@ public class HomeActivity extends BaseActivity implements HomeView {
             @Override
             public void onProgress(@NotNull Download download, long l, long l1) {
                 int progress = download.getProgress();
-                donut_progress.setProgress(progress);
+                donut_progress.setProgress(Math.round(progress));
             }
 
 
             @Override
             public void onError(@NotNull Download download, @NotNull Error error, @org.jetbrains.annotations.Nullable Throwable throwable) {
+                appendLog("Error while Downloading " + error.getHttpResponse());
                 Toast.makeText(HomeActivity.this, error.getHttpResponse().toString(), Toast.LENGTH_SHORT).show();
             }
 
@@ -497,8 +535,10 @@ public class HomeActivity extends BaseActivity implements HomeView {
 
             @Override
             public void onCompleted(@NotNull Download download) {
-                Toast.makeText(HomeActivity.this, "Download Completed", Toast.LENGTH_SHORT).show();
-                Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/"+zipFileName, Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
+                //Toast.makeText(HomeActivity.this, "Download Completed", Toast.LENGTH_SHORT).show();
+                appendLog("Downloading " + url + " completed");
+                progressLayout.setVisibility(View.GONE);
+                Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zipFileName, Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
                 decompress.execute();
             }
 
@@ -545,7 +585,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressLayout.setVisibility(View.GONE);
+            appendLog("Unzipping " + zipFilePath);
             progressDialog.setMessage("Unzipping file...");
             progressDialog.setCancelable(false);
             progressDialog.show();
@@ -553,33 +593,46 @@ public class HomeActivity extends BaseActivity implements HomeView {
 
         @Override
         protected String doInBackground(Void... voids) {
+            ZipFile zip = null;
             try {
+                byte[] buffer = new byte[1024];
                 File destDir = new File(destDirectory);
                 if (!destDir.exists()) {
                     destDir.mkdir();
                 }
-                ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath));
+                FileInputStream fis = new FileInputStream(zipFilePath);
+                ZipInputStream zipIn = new ZipInputStream(fis);
                 ZipEntry entry = zipIn.getNextEntry();
-                // iterates over entries in the zip file
                 while (entry != null) {
-                    String filePath = destDirectory + File.separator + entry.getName();
-                    if (!entry.isDirectory()) {
-                        // if the entry is a file, extracts it
-                        extractFile(zipIn, filePath);
-                    } else {
-                        // if the entry is a directory, make the directory
-                        File dir = new File(filePath);
-                        dir.mkdir();
+                    String fileName = entry.getName();
+                    File newFile = new File(destDir + File.separator + fileName);
+                    //create directories for sub directories in zip
+                    new File(newFile.getParent()).mkdirs();
+                    FileOutputStream fos = new FileOutputStream(newFile);
+                    int len;
+                    while ((len = zipIn.read(buffer)) > 0) {
+                        fos.write(buffer, 0, len);
                     }
+                    fos.close();
                     zipIn.closeEntry();
                     entry = zipIn.getNextEntry();
                 }
-            } catch (Exception e) {
-                progressDialog.dismiss();
-                Log.e("Decompress", "unzip", e);
-                return "Error";
-            }
 
+                zipIn.closeEntry();
+                zipIn.close();
+                fis.close();
+            } catch (Exception e) {
+                appendLog("Unzipping error " + e.getMessage());
+                return "Error";
+            } finally {
+                if (zip != null) {
+                    try {
+                        zip.close();
+                    } catch (IOException ignored) {
+                    }
+                }
+            }
+            appendLog("Unzipping success");
             return "Success";
         }
 
@@ -615,6 +668,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         while ((read = zipIn.read(bytesIn)) != -1) {
             bos.write(bytesIn, 0, read);
         }
+        zipIn.closeEntry();
         bos.close();
     }
 
@@ -636,7 +690,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
     }
 
     @Override
-    public void onGetChildFoldersList(List<DocumentModel> list) {
+    public void onGetChildFoldersList(List<SearchModel> list) {
         childList = list;
         setupFragments(findFragmentById(AppConfig.FRAG_NAV_DETAILS_DRAWER), true, true);
     }
@@ -737,17 +791,63 @@ public class HomeActivity extends BaseActivity implements HomeView {
 
     @Override
     public void onGetDownloadFilesSuccess(DownloadFilesResponseModel downloadFilesResponseModel) {
-        downloadEntityLists = downloadFilesResponseModel.getDownloadEntityList();
+        if (downloadFilesResponseModel.getDownloadEntityList() != null) {
+            downloadEntityLists = downloadFilesResponseModel.getDownloadEntityList();
+            appendLog("DownloadEntityList size =" + downloadEntityLists.size());
 
-        if (downloadEntityLists.size() > 0) {
-            beginDownload(downloadEntityLists.get(0).getDownloadLink(),downloadEntityLists.get(0).getFileName());
+            if (downloadFilesResponseModel != null && downloadEntityLists.size() > 0) {
+                beginDownload(downloadEntityLists.get(urlNum).getDownloadLink(), downloadEntityLists.get(urlNum).getFileName());
+                urlNum = urlNum + 1;
+            }
         }
 
+    }
+
+    public void appendLog(String text) {
+        File logFile = new File("sdcard/QDMSWiki/qdms_log_file.txt");
+        if (!logFile.exists()) {
+            try {
+                logFile.createNewFile();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        try {
+            //BufferedWriter for performance, true to set append to file flag
+            BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
+            buf.append(text);
+            buf.newLine();
+            buf.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onGetDownloadFilesError() {
 
+    }
+
+    public static void copyFile(File sourceFile, File destFile) throws IOException {
+        if (destFile.exists())
+            return;
+        FileChannel source = null;
+        FileChannel destination = null;
+
+        try {
+            source = new FileInputStream(sourceFile).getChannel();
+            destination = new FileOutputStream(destFile).getChannel();
+            destination.transferFrom(source, 0, source.size());
+        } finally {
+            if (source != null) {
+                source.close();
+            }
+            if (destination != null) {
+                destination.close();
+            }
+        }
     }
 
     public class ReadAndInsertJsonData extends AsyncTask<String, Integer, String> {
@@ -762,8 +862,11 @@ public class HomeActivity extends BaseActivity implements HomeView {
             super.onPreExecute();
             createImageFolder();
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            linLayout.setAlpha(1.0f);
-            relLayout.setAlpha(1.0f);
+            if (urlNum == downloadEntityLists.size()) {
+                linLayout.setAlpha(1.0f);
+                relLayout.setAlpha(1.0f);
+            }
+            appendLog("Extracting files...");
             progressDialog.setMessage("Extracting files...");
             progressDialog.setCancelable(false);
             progressDialog.show();
@@ -771,103 +874,150 @@ public class HomeActivity extends BaseActivity implements HomeView {
 
         @Override
         protected String doInBackground(String... params) {
-            File file1 = null;
             try {
                 File folder = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"); //This is just to cast to a File type since you pass it as a String
                 File[] filesInFolder = folder.listFiles(); // This returns all the folders and files in your path
+
                 for (File file : filesInFolder) { //For each of the entries do:
-                    file1 = file;
-                    JsonParser parser = new JsonParser();
-                    JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles/" + file.getName()));//path to the JSON file.
-                    if (!file.isDirectory() && file.getName().contains("docs")) {
-                        JsonArray jsonArray = data.getAsJsonArray("Documents");
-                        documentList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<DocumentModel>>() {
-                        }.getType());
-                        homePresenter.insertDocuments(documentList);
-
-                        for (int i = 0; i < documentList.size(); i++) {
-                            documentList.get(i).setIsRecommended("NO");
-                            List<TagModel> tagList = documentList.get(i).getTags();
-                            homePresenter.insertTags(tagList);
-                        }
-
-
-                    } else if (!file.isDirectory() && file.getName().contains("art")) { //check that it's not a dir
-                        JsonArray jsonArray = data.getAsJsonArray("Articles");
-                        articleList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ArticleModel>>() {
-                        }.getType());
-                        homePresenter.insertArticles(articleList);
-                    } else if (!file.isDirectory() && file.getName().contains("file")) { //check that it's not a dir
-                        JsonArray jsonArray = data.getAsJsonArray("fileChunks");
-                        fileList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FileListModel>>() {
-                        }.getType());
-                        homePresenter.insertFileLists(fileList);
-                    } else if (!file.isDirectory() && file.getName().contains("image")) { //check that it's not a dir
-                        JsonArray jsonArray = data.getAsJsonArray("Images");
-                        imageList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ImageModel>>() {
-                        }.getType());
-                        homePresenter.insertImageLists(imageList);
-                        for (int i = 0; i < imageList.size(); i++) {
-                            try {
-                                decodeFile(imageList.get(i).getImageStream(), imageList.get(i).getImageName());
-                            } catch (Exception e) {
-                                decodeFile(imageList.get(i).getImageDataAsString(), imageList.get(i).getImageName());
-                            }
-
+                    if (file.isDirectory()) {
+                        appendLog("Extracting directory " + file.getName());
+                        File[] filesInsideFolder = file.listFiles();
+                        for (File eachFile : filesInsideFolder) {
+                            appendLog("Copying " + eachFile.getName() + " to image folder");
+                            copyFile(new File(eachFile.getAbsolutePath()), new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/Images/" + eachFile.getName()));
                         }
                     } else {
-                        if (!file.isDirectory() && file.getName().contains("category")) {
-                            JsonArray jsonArray = data.getAsJsonArray("Categories");
-                            categoryList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<CategoryModel>>() {
-                            }.getType());
-                            homePresenter.insertCategories(categoryList);
-                        } else if (!file.isDirectory() && file.getName().contains("bookmarks")) {
-                            JsonArray jsonArray = data.getAsJsonArray("Bookmarks");
-                            bookmarkList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<BookmarkModel>>() {
-                            }.getType());
-                            homePresenter.insertBookmarks(bookmarkList);
-                            for (int i = 0; i < bookmarkList.size(); i++) {
-                                List<BookmarkEntryModel> bookmarkEntryList = bookmarkList.get(i).getBookmarkEntries();
-                                for (int j = 0; j < bookmarkEntryList.size(); j++) {
-                                    bookmarkEntryList.get(j).setDocumentId(bookmarkList.get(i).getDocumentId());
-                                }
-                                homePresenter.insertBookmarkEntries(bookmarkEntryList);
-                            }
-                        } else if (!file.isDirectory() && file.getName().contains("notifications")) {
-                            JsonArray jsonArray = data.getAsJsonArray("Notifications");
-                            notificationList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<NotificationModel>>() {
-                            }.getType());
-                        } else if (!file.isDirectory() && file.getName().contains("userInfo")) {
-                            JsonArray jsonArray = data.getAsJsonArray("UserInfo");
-                            userInfoList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<UserInfoModel>>() {
+                        JsonParser parser = new JsonParser();
+                        JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles/" + file.getName()));//path to the JSON file.
+                        if (file.getName().contains("docs")) {
+                            appendLog("Extracting document " + file.getName());
+                            JsonArray jsonArray = data.getAsJsonArray("Documents");
+                            documentList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<DocumentModel>>() {
                             }.getType());
 
-                            for (int i = 0; i < userInfoList.size(); i++) {
-                                if (String.valueOf(userInfoList.get(i).getUserId()).equals(sessionManager.getUserId())) {
-                                    sessionManager.setUserInfoId(userInfoList.get(i).getId());
-                                    break;
-                                }
+                            for (int i = 0; i < documentList.size(); i++) {
+                                homePresenter.deleteDocument(documentList.get(i));
                             }
 
-                            for (int i = 0; i < userInfoList.size(); i++) {
-                                if (!(String.valueOf(userInfoList.get(i).getUserId()).equals(sessionManager.getUserId()))) {
-                                    userInfoList.get(i).setImageName("");
-                                } else {
-                                    userInfoList.get(i).setImageName(userInfoList.get(i).getImageName());
+                            for (int i = 0; i < documentList.size(); i++) {
+                                documentList.get(i).setIsRecommended("NO");
+                                List<TagModel> tagList = documentList.get(i).getTags();
+                                homePresenter.insertTags(tagList);
+                            }
+
+
+                        } else if (file.getName().contains("art")) { //check that it's not a dir
+                            appendLog("Extracting article " + file.getName());
+                            JsonArray jsonArray = data.getAsJsonArray("Articles");
+                            articleList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ArticleModel>>() {
+                            }.getType());
+                            for (int i = 0; i < articleList.size(); i++) {
+                                homePresenter.deleteArticles(articleList.get(i));
+                            }
+
+                        } else if (file.getName().contains("file")) { //check that it's not a dir
+                            appendLog("Extracting file " + file.getName());
+                            JsonArray jsonArray = data.getAsJsonArray("fileChunks");
+                            fileList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FileListModel>>() {
+                            }.getType());
+
+                            for (int i = 0; i < fileList.size(); i++) {
+                                homePresenter.deleteFile(fileList.get(i));
+                            }
+
+                        } else if (file.getName().contains("image")) { //check that it's not a dir
+                            appendLog("Extracting image " + file.getName());
+                            JsonArray jsonArray = data.getAsJsonArray("Images");
+                            imageList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ImageModel>>() {
+                            }.getType());
+
+
+                            for (int i = 0; i < imageList.size(); i++) {
+                                homePresenter.deleteImage(imageList.get(i));
+                            }
+
+
+                            for (int i = 0; i < imageList.size(); i++) {
+                                try {
+                                    if (imageList.get(i).getImageStream() != null && !imageList.get(i).getImageStream().isEmpty())
+                                        decodeFile(imageList.get(i).getImageStream(), imageList.get(i).getImageName());
+                                } catch (Exception e) {
+                                    try {
+                                        if (imageList.get(i).getImageDataAsString() != null && !imageList.get(i).getImageDataAsString().isEmpty())
+                                            decodeFile(imageList.get(i).getImageDataAsString(), imageList.get(i).getImageName());
+                                    } catch (Exception e1) {
+                                        continue;
+                                    }
+                                }
+
+                            }
+
+                        } else {
+                            if (file.getName().contains("category")) {
+                                appendLog("Extracting category " + file.getName());
+                                JsonArray jsonArray = data.getAsJsonArray("Categories");
+                                categoryList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<CategoryModel>>() {
+                                }.getType());
+                                for (int i = 0; i < categoryList.size(); i++) {
+                                    homePresenter.deleteCategory(categoryList.get(i));
+                                }
+                            } else if (file.getName().contains("bookmarks")) {
+                                appendLog("Extracting bookmark " + file.getName());
+                                JsonArray jsonArray = data.getAsJsonArray("Bookmarks");
+                                bookmarkList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<BookmarkModel>>() {
+                                }.getType());
+                                //homePresenter.deleteBookmarks(bookmarkList);
+                                for (int i = 0; i < bookmarkList.size(); i++) {
+                                    homePresenter.deleteBookmark(bookmarkList.get(i));
+                                    List<BookmarkEntryModel> bookmarkEntryList = bookmarkList.get(i).getBookmarkEntries();
+                                    for (int j = 0; j < bookmarkEntryList.size(); j++) {
+                                        bookmarkEntryList.get(j).setDocumentId(bookmarkList.get(i).getDocumentId());
+                                    }
+                                    homePresenter.insertBookmarkEntries(bookmarkEntryList);
+                                }
+                            } else if (file.getName().contains("notifications")) {
+                                JsonArray jsonArray = data.getAsJsonArray("Notifications");
+                                notificationList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<NotificationModel>>() {
+                                }.getType());
+                            } else if (file.getName().contains("userInfo")) {
+                                appendLog("Extracting user info " + file.getName());
+                                JsonArray jsonArray = data.getAsJsonArray("UserInfo");
+                                userInfoList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<UserInfoModel>>() {
+                                }.getType());
+
+                                for (int i = 0; i < userInfoList.size(); i++) {
+                                    appendLog("User Id " + sessionManager.getUserId() + " : User Info Id " + userInfoList.get(i).getUserId());
+                                    if (String.valueOf(userInfoList.get(i).getUserId()).equals(sessionManager.getUserId())) {
+                                        sessionManager.setUserInfoId(userInfoList.get(i).getId());
+                                        break;
+                                    }
+                                }
+
+                                for (int i = 0; i < userInfoList.size(); i++) {
+                                    homePresenter.insertUserInfo(userInfoList.get(i));
+                                    if (!(String.valueOf(userInfoList.get(i).getUserId()).equals(sessionManager.getUserId()))) {
+                                        userInfoList.get(i).setImageName("");
+                                    } else {
+                                        userInfoList.get(i).setImageName(userInfoList.get(i).getImageName());
+                                    }
+                                }
+
+
+                            } else if (file.getName().contains("userSet")) {
+                                JsonArray jsonArray = data.getAsJsonArray("UserSettings");
+                                userSettingsList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<UserSettingsModel>>() {
+                                }.getType());
+
+                            } else if (file.getName().contains("forms")) {
+                                appendLog("Extracting form " + file.getName());
+                                JsonArray jsonArray = data.getAsJsonArray("Forms");
+                                formsList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FormsModel>>() {
+                                }.getType());
+                                for (int i = 0; i < formsList.size(); i++) {
+                                    homePresenter.deleteForm(formsList.get(i));
+
                                 }
                             }
-                            homePresenter.insertUserInfo(userInfoList);
-
-                        } else if (!file.isDirectory() && file.getName().contains("userSet")) {
-                            JsonArray jsonArray = data.getAsJsonArray("UserSettings");
-                            userSettingsList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<UserSettingsModel>>() {
-                            }.getType());
-
-                        } else if (!file.isDirectory() && file.getName().contains("forms")) {
-                            JsonArray jsonArray = data.getAsJsonArray("Forms");
-                            formsList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FormsModel>>() {
-                            }.getType());
-                            homePresenter.insertFormsList(formsList);
                         }
                     }
 
@@ -876,7 +1026,6 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 return "Success";
 
             } catch (OutOfMemoryError e) {
-                Toast.makeText(getApplicationContext(), file1.getName(), Toast.LENGTH_LONG).show();
                 progressDialog.dismiss();
                 return "Error";
             } catch (Exception e) {
@@ -895,46 +1044,78 @@ public class HomeActivity extends BaseActivity implements HomeView {
 
         @Override
         protected void onPostExecute(String result) {
+
             super.onPostExecute(result);
-            setRecommendedList();
-
-
             for (int i = 0; i < userSettingsList.size(); i++) {
-                if (userSettingsList.get(i).getUserID().equals(sessionManager.getUserInfoId())) {
-                    homePresenter.insertUserSettings(userSettingsList.get(i));
-                } else
+                try {
+                    appendLog("Session User Info Id " + sessionManager.getUserInfoId() + ": User settings user id " + userSettingsList.get(i).getUserID());
+                    if (userSettingsList.get(i).getUserID().equals(sessionManager.getUserInfoId())) {
+                        appendLog("Extracting user settings");
+                        homePresenter.deleteUserSettings(userSettingsList.get(i));
+                        break;
+                    }
+                } catch (Exception e) {
                     continue;
+                }
             }
 
             for (int i = 0; i < notificationList.size(); i++) {
                 List<ReceiverModel> receiverList = notificationList.get(i).getReceviers();
                 for (int j = 0; j < receiverList.size(); j++) {
-                    if (receiverList.get(j).getRecevierId().equals(sessionManager.getUserInfoId())) {
-                        homePresenter.insertNotifications(notificationList.get(i));
-                        break;
+                    try {
+                        appendLog("Session User Info Id " + sessionManager.getUserInfoId() + " : Receiver id " + receiverList.get(j).getRecevierId());
+                        if (receiverList.get(j).getRecevierId().equals(sessionManager.getUserInfoId())) {
+                            appendLog("Extracting notifications");
+                            homePresenter.deleteNotification(notificationList.get(i));
+                            receiverList.get(j).setNotificationId(notificationList.get(i).getId());
+                            homePresenter.deleteReceivers(notificationList.get(i).getId(),receiverList.get(j));
+                            break;
+                        }
+                    } catch (Exception e) {
+
                     }
                 }
             }
 
-            mainViewPager.updateRecentlyList(new ArrayList<>());
+            //mainViewPager.updateRecentlyList(new ArrayList<>());
             setNotificationCount();
 
-            File file = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/"+zipFileName);
+            File file = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zippedFileName);
             if (file.exists()) {
                 file.delete();
             }
 
-            File file1 = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
-            if (file1.exists()) {
-                file1.delete();
+            File extractedFiles = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
+            if (extractedFiles.exists()) {
+                extractedFiles.delete();
             }
 
             fetch.removeListener(fetchListener);
-            urlNum = urlNum + 1;
-            if(urlNum == downloadEntityLists.size()-1)
-                sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum).getFileName());
-            else
-                beginDownload(downloadEntityLists.get(urlNum).getDownloadLink(),downloadEntityLists.get(urlNum).getFileName());
+
+
+            if (urlNum == downloadEntityLists.size()) {
+                setRecommendedList();
+                appendLog("Finished downloading all base/updated versions");
+                sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum - 1).getFileName());
+                progressDialog.dismiss();
+                mainVP.post(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if (mainVP.getCurrentItem() == 0 && sessionManager.isFirstTimeLaunch()) {
+                            ShowCasePreferenceUtil util = new ShowCasePreferenceUtil(HomeActivity.this);
+                            try {
+                                mainViewPager.setShowCaseForSearch(util);
+                            } catch (Exception e) {
+                            }
+                            sessionManager.setFirstTimeLaunch(false);
+                        }
+                    }
+                });
+            } else if (urlNum < downloadEntityLists.size()) {
+                beginDownload(downloadEntityLists.get(urlNum).getDownloadLink(), downloadEntityLists.get(urlNum).getFileName());
+                urlNum = urlNum + 1;
+            }
 
         }
 
@@ -943,13 +1124,16 @@ public class HomeActivity extends BaseActivity implements HomeView {
     public void decodeFile(String strFile, String filename) {
         try {
             if (!strFile.isEmpty()) {
-                byte[] data = Base64.decode(strFile, Base64.DEFAULT);
                 File ext = Environment.getExternalStorageDirectory();
-                File mydir = new File(ext.getAbsolutePath() + "/QDMSWiki/Images");
-                File file = new File(mydir, filename);
-                FileOutputStream fos = new FileOutputStream(file);
-                fos.write(data);
-                fos.close();
+                if (!new File(ext.getAbsolutePath() + "/QDMSWiki/Images/" + filename).exists()) {
+                    byte[] data = Base64.decode(strFile, Base64.DEFAULT);
+                    File mydir = new File(ext.getAbsolutePath() + "/QDMSWiki/Images");
+                    File file = new File(mydir, filename);
+                    FileOutputStream fos = new FileOutputStream(file);
+                    fos.write(data);
+                    fos.close();
+                }
+
             }
 
         } catch (IOException e) {
@@ -966,52 +1150,71 @@ public class HomeActivity extends BaseActivity implements HomeView {
         }
     }
 
-    private void setRecommendedList() {
-        //Recommended logic
-        documentList = getDocumentList();
-        for (int i = 0; i < documentList.size(); i++) {
-            boolean isRecommended = false;
-            List<TagModel> tagList = documentList.get(i).getTags();
-            for (int j = 0; j < userSettingsList.size(); j++) {
-                if (userSettingsList.get(j).getUserID().equals(sessionManager.getUserInfoId())) {
-                    //loop tags
-                    List<UserSettingsTagModel> userSettingsTagList = userSettingsList.get(j).getTags();
-                    for (int k = 0; k < tagList.size(); k++) {
-                        for (int l = 0; l < userSettingsTagList.size(); l++) {
-                            if (tagList.get(k).getId().equals(userSettingsTagList.get(l).getId())) {
-                                documentList.get(i).setIsRecommended("YES");
-                                homePresenter.updateIsRecommended(documentList.get(i).getId());
-                                isRecommended = true;
-                                break;
+
+    public void setRecommendedList() {
+
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                documentList = homeDatabase.homeDao().getDocuments();
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                for (int i = 0; i < documentList.size(); i++) {
+                    boolean isRecommended = false;
+                    List<TagModel> tagList = documentList.get(i).getTags();
+                    for (int j = 0; j < userSettingsList.size(); j++) {
+                        if (userSettingsList.get(j).getUserID().equals(sessionManager.getUserInfoId())) {
+                            //loop tags
+                            List<UserSettingsTagModel> userSettingsTagList = userSettingsList.get(j).getTags();
+                            for (int k = 0; k < tagList.size(); k++) {
+                                for (int l = 0; l < userSettingsTagList.size(); l++) {
+                                    if (tagList.get(k).getId().equals(userSettingsTagList.get(l).getId())) {
+                                        documentList.get(i).setIsRecommended("YES");
+                                        homePresenter.updateIsRecommended(documentList.get(i).getId());
+                                        isRecommended = true;
+                                        break;
+                                    }
+                                }
                             }
-                        }
-                    }
-                    //loop categories
-                    if (!isRecommended) {
-                        List<UserSettingsCategoryModel> userSettingsCategoryList = userSettingsList.get(j).getCategory();
-                        for (int k = 0; k < tagList.size(); k++) {
-                            for (int l = 0; l < userSettingsCategoryList.size(); l++) {
-                                if (documentList.get(i).getCategoryId().equals(userSettingsCategoryList.get(l).getId())) {
-                                    documentList.get(i).setIsRecommended("YES");
-                                    homePresenter.updateIsRecommended(documentList.get(i).getId());
-                                    break;
+                            //loop categories
+                            if (!isRecommended) {
+                                List<UserSettingsCategoryModel> userSettingsCategoryList = userSettingsList.get(j).getCategory();
+                                for (int l = 0; l < userSettingsCategoryList.size(); l++) {
+                                    if (documentList.get(i).getCategoryId().equals(userSettingsCategoryList.get(l).getId())) {
+                                        documentList.get(i).setIsRecommended("YES");
+                                        homePresenter.updateIsRecommended(documentList.get(i).getId());
+                                        isRecommended = true;
+                                        break;
+                                    }
+
                                 }
                             }
                         }
                     }
                 }
+
+                getRecommendedList();
             }
-        }
 
-        getRecommendedList();
 
-//        for (int i = 0; i < documentList.size(); i++) {
-//            if (documentList.get(i).getIsRecommended().equals("YES"))
-//                recommendedList.add(documentList.get(i));
-//        }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+
     }
 
-    public List<DocumentModel> getDocumentList() {
+    public void getCurrentDocumentList() {
 
         Completable.fromAction(new Action() {
             @Override
@@ -1027,7 +1230,12 @@ public class HomeActivity extends BaseActivity implements HomeView {
 
             @Override
             public void onComplete() {
+                for (int i = 0; i < documentsList.size(); i++) {
+                    System.out.println("document " + documentsList.get(i).getDocumentName() + ":" + documentsList.get(i).getCategoryName());
+                }
 
+                mainViewPager.updateDocumentList(documentsList);
+                getArticleList();
             }
 
 
@@ -1037,9 +1245,38 @@ public class HomeActivity extends BaseActivity implements HomeView {
             }
         });
 
-        return documentsList;
     }
 
+
+    public void getArticleList() {
+
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                articleList = homeDatabase.homeDao().getArticles();
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                for (int i = 0; i < articleList.size(); i++) {
+                    System.out.println("article " + articleList.get(i).getArticleName() + ":" + articleList.get(i).getCategoryIds());
+                }
+                mainViewPager.updateArticleList(articleList);
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
 
     public void getRecommendedList() {
         Completable.fromAction(new Action() {
@@ -1057,7 +1294,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
             @Override
             public void onComplete() {
                 mainViewPager.updateRecommendedList(recommendedList);
-                progressDialog.dismiss();
+                //getCurrentDocumentList();
             }
 
 
@@ -1076,6 +1313,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
     public void onDestroy() {
         super.onDestroy();
     }
+
+
 }
 
 

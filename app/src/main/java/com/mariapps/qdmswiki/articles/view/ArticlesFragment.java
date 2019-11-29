@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.mariapps.qdmswiki.AppConfig;
@@ -21,6 +22,7 @@ import com.mariapps.qdmswiki.custom.CustomEditText;
 import com.mariapps.qdmswiki.custom.CustomProgressBar;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.documents.adapter.DocumentsAdapter;
+import com.mariapps.qdmswiki.documents.view.DocumentsFragment;
 import com.mariapps.qdmswiki.home.database.HomeDatabase;
 import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
@@ -46,10 +48,10 @@ public class ArticlesFragment extends BaseFragment {
     CustomRecyclerView rvDocuments;
     @BindView(R.id.searchET)
     CustomEditText searchET;
-    @BindView(R.id.customProgressBar)
-    CustomProgressBar customProgressBar;
     @BindView(R.id.noDataRL)
     RelativeLayout noDataRL;
+    @BindView(R.id.loading_spinner)
+    ProgressBar loadingSpinner;
 
     private FragmentManager fragmentManager;
     private ArticlesAdapter articlesAdapter;
@@ -58,7 +60,8 @@ public class ArticlesFragment extends BaseFragment {
     List<String> categoryNames = new ArrayList<>();
     private HomeDatabase homeDatabase;
     private String categoryName;
-    String categoriesString;
+    String folderName;
+//    ArticleListener articleListener;
 
     @Override
     protected void setUpPresenter() {
@@ -83,7 +86,7 @@ public class ArticlesFragment extends BaseFragment {
     }
 
     private void setData() {
-        customProgressBar.setVisibility(View.GONE);
+        loadingSpinner.setVisibility(View.GONE);
         if (articleList != null && articleList.size() > 0) {
             setRecyclerView();
             noDataRL.setVisibility(View.GONE);
@@ -96,10 +99,20 @@ public class ArticlesFragment extends BaseFragment {
     }
 
     public void getArticlesList() {
+        loadingSpinner.setVisibility(View.VISIBLE);
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
                 articleList = homeDatabase.homeDao().getArticles();
+                for(int i=0;i<articleList.size();i++){
+                    categoryNames = new ArrayList<>();
+                    for(int j=0;j<articleList.get(i).getCategoryIds().size();j++){
+                        categoryName = homeDatabase.homeDao().getCategoryName(articleList.get(i).getCategoryIds().get(j));
+                        if(!categoryNames.contains(categoryName))
+                            categoryNames.add(categoryName);
+                    }
+                    articleList.get(i).setCategoryNames(categoryNames);
+                }
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
@@ -110,53 +123,29 @@ public class ArticlesFragment extends BaseFragment {
 
             @Override
             public void onComplete() {
-
-                for(int i=0;i<articleList.size();i++){
-                    List<String> categoryNames = new ArrayList<>();
-                    for(int j=0;j<articleList.get(i).getCategoryIds().size();j++){
-                        categoryName = getCategoryName(articleList.get(i).getCategoryIds().get(j));
-                        if(categoryName!=null && !categoryNames.contains(categoryName))
-                            categoryNames.add(categoryName);
-                    }
-                    articleList.get(i).setCategoryNames(categoryNames);
-                }
                 setData();
             }
 
 
             @Override
             public void onError(Throwable e) {
-
+                loadingSpinner.setVisibility(View.GONE);
             }
         });
     }
 
-
-    public String getCategoryName(String categoryId) {
-        Completable.fromAction(new Action() {
-            @Override
-            public void run() throws Exception {
-                categoryName = homeDatabase.homeDao().getCategoryName(categoryId);
+    private void setCategoryNames(List<ArticleModel> articleList) {
+        System.out.println("article list size "+articleList.size());
+        for(int i=0;i<articleList.size();i++){
+            categoryNames = new ArrayList<>();
+            for(int j=0;j<articleList.get(i).getCategoryIds().size();j++){
+                categoryName = homeDatabase.homeDao().getCategoryName(articleList.get(i).getCategoryIds().get(j));
+                if(!categoryNames.contains(categoryName))
+                    categoryNames.add(categoryName);
             }
-        }).observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
-            @Override
-            public void onSubscribe(Disposable d) {
-
-            }
-
-            @Override
-            public void onComplete() {
-            }
-
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-        });
-
-        return categoryName;
+            articleList.get(i).setCategoryNames(categoryNames);
+        }
+        setData();
     }
 
 
@@ -189,7 +178,34 @@ public class ArticlesFragment extends BaseFragment {
     }
 
     public void updateArticleList(List<ArticleModel> articleList) {
-        this.articleList = articleList;
-        setData();
+        setCategoryNames(articleList);
     }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        if (getActivity() != null) {
+            getArticlesList();
+        }
+        super.setUserVisibleHint(isVisibleToUser);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!getUserVisibleHint()) {
+            return;
+        }
+    }
+
+//
+//
+//    public interface ArticleListener {
+//        void onArticlesLoaded();
+//
+//    }
+//
+//    public void setArticleListener(ArticleListener articleListener) {
+//        this.articleListener = articleListener;
+//    }
+
 }

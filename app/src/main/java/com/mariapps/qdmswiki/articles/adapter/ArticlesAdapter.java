@@ -61,6 +61,7 @@ public class ArticlesAdapter extends CustomRecyclerView.Adapter<ArticlesAdapter.
         }
 
         holder.tvCategory.setText(categoriesString);
+        holder.tvNumber.setText("Article Number : "+articleModel.getArticleNumber());
         holder.tvDate.setText(DateUtils.getFormattedDate(articleModel.getDate()));
         holder.tvVersion.setText("V "+String.valueOf(articleModel.getVersion()));
 
@@ -100,8 +101,8 @@ public class ArticlesAdapter extends CustomRecyclerView.Adapter<ArticlesAdapter.
                     ArrayList<ArticleModel> filteredList = new ArrayList<>();
 
                     for (ArticleModel articleModel : documentsList) {
-                        if (articleModel.getArticleName().toLowerCase().contains(charString.toLowerCase())) {
-
+                        if (articleModel.getArticleName().toLowerCase().contains(charString.toLowerCase()) ||
+                                articleModel.getArticleNumber().toString().contains(charString)) {
                             filteredList.add(articleModel);
                         }
                     }
@@ -129,6 +130,8 @@ public class ArticlesAdapter extends CustomRecyclerView.Adapter<ArticlesAdapter.
         CustomTextView tvHeadingText;
         @BindView(R.id.tvCategory)
         CustomTextView tvCategory;
+        @BindView(R.id.tvNumber)
+        CustomTextView tvNumber;
         @BindView(R.id.tvDate)
         CustomTextView tvDate;
         @BindView(R.id.tvVersion)

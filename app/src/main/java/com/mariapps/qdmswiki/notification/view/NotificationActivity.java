@@ -16,8 +16,15 @@ import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.home.database.HomeDatabase;
+import com.mariapps.qdmswiki.home.model.ArticleModel;
+import com.mariapps.qdmswiki.home.model.DocumentModel;
+import com.mariapps.qdmswiki.home.presenter.HomePresenter;
 import com.mariapps.qdmswiki.notification.adapter.NotificationAdapter;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
+import com.mariapps.qdmswiki.notification.model.ReceiverModel;
+import com.mariapps.qdmswiki.notification.presenter.NotificationPresenter;
+import com.mariapps.qdmswiki.search.view.DocumentViewFragment;
+import com.mariapps.qdmswiki.search.view.FolderStructureActivity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -32,7 +39,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
 
-public class NotificationActivity extends BaseActivity {
+public class NotificationActivity extends BaseActivity implements NotificationView{
 
     @BindView(R.id.headingTV)
     CustomTextView headingTV;
@@ -43,7 +50,9 @@ public class NotificationActivity extends BaseActivity {
 
     private NotificationAdapter notificationAdapter;
     private List<NotificationModel> notificationList = new ArrayList<>();
+    private List<ReceiverModel> receiverList = new ArrayList<>();
     private HomeDatabase homeDatabase;
+    private NotificationPresenter notificationPresenter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,7 +70,7 @@ public class NotificationActivity extends BaseActivity {
 
     @Override
     protected void setUpPresenter() {
-
+        notificationPresenter = new NotificationPresenter(this, this);
     }
 
     @Override
@@ -84,6 +93,18 @@ public class NotificationActivity extends BaseActivity {
 
     private void initRecycler() {
         notificationAdapter = new NotificationAdapter(this, notificationList);
+        notificationAdapter.setRowClickListener(new NotificationAdapter.RowClickListener() {
+            @Override
+            public void onItemClicked(NotificationModel notificationModel) {
+                getReceiverList(notificationModel.getReceviers(),notificationModel);
+                if(notificationModel.getEventDescription()==0 || notificationModel.getEventDescription()==0.0){
+                    notificationPresenter.getDocumentDetails(notificationModel.getEventId());
+                }
+                else{
+                    notificationPresenter.getArticleDetail(notificationModel.getEventId());
+                }
+            }
+        });
         rvNotifications.setAdapter(notificationAdapter);
     }
 
@@ -113,4 +134,70 @@ public class NotificationActivity extends BaseActivity {
         });
     }
 
+    public void getReceiverList(List<ReceiverModel> receviers, NotificationModel notificationModel) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                for(int i=0;i<receviers.size();i++){
+                    homeDatabase.homeDao().updateReceiver(receviers.get(i).getRecevierId(),notificationModel.getId());
+                    receviers.get(i).setUnread(false);
+                }
+                //notificationModel.updateNotification(notificationModel.getId());
+                notificationModel.setReceviers(receviers);
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                initRecycler();
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+
+    @Override
+    public void onGetDocumentInfoSuccess(DocumentModel documentModel)   {
+        Intent intent = new Intent(NotificationActivity.this, FolderStructureActivity.class);
+        intent.putExtra(AppConfig.BUNDLE_PAGE,"Document");
+        intent.putExtra(AppConfig.BUNDLE_TYPE, "Document");
+        intent.putExtra(AppConfig.BUNDLE_NAME, documentModel.getDocumentName());
+        intent.putExtra(AppConfig.BUNDLE_ID, documentModel.getId());
+        intent.putExtra(AppConfig.BUNDLE_VERSION,documentModel.getVersion());
+        intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, documentModel.getCategoryId());
+        startActivity(intent);
+    }
+
+    @Override
+    public void onGetDocumentInfoError() {
+
+    }
+
+    @Override
+    public void onGetArticleInfoSuccess(ArticleModel articleModel) {
+        Intent intent = new Intent(NotificationActivity.this, FolderStructureActivity.class);
+        intent.putExtra(AppConfig.BUNDLE_PAGE,"Article");
+        intent.putExtra(AppConfig.BUNDLE_TYPE, "Article");
+        intent.putExtra(AppConfig.BUNDLE_NAME, articleModel.getArticleName());
+        intent.putExtra(AppConfig.BUNDLE_ID, articleModel.getId());
+        intent.putExtra(AppConfig.BUNDLE_VERSION,articleModel.getVersion());
+        if(articleModel.getCategoryIds().size() > 0)
+            intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, articleModel.getCategoryIds().get(0));
+        startActivity(intent);
+    }
+
+    @Override
+    public void onGetArticleInfoError() {
+
+    }
 }

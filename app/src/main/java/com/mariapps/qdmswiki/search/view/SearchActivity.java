@@ -88,7 +88,7 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void setSearchTypeData() {
-        searchType.add(new SearchFilterModel(1, "Folder", false));
+        searchType.add(new SearchFilterModel(1, "Category", false));
         searchType.add(new SearchFilterModel(2, "Document", true));
         searchType.add(new SearchFilterModel(3, "Article", false));
         //searchType.add(new SearchFilterModel(4, "Forms", false));
@@ -99,7 +99,7 @@ public class SearchActivity extends BaseActivity {
         searchFilterAdapter.setItemClickListener(new SearchFilterAdapter.ItemClickListener() {
             @Override
             public void onItemClicked(SearchFilterModel item) {
-                    if (item.getSearchType().equals("Folder")) {
+                    if (item.getSearchType().equals("Category")) {
                         if (item.isSelected()) {
                             item.setSelected(false);
                             isFolderSelected = false;
@@ -151,7 +151,7 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void setData() {
-        searchResultAdapter = new SearchResultAdapter(this, searchList,"Search");
+        searchResultAdapter = new SearchResultAdapter(this, searchList,"Search","");
         rvSearchList.setAdapter(searchResultAdapter);
 
         searchResultAdapter.setItemClickListener(new SearchResultAdapter.ItemClickListener() {
@@ -166,14 +166,12 @@ public class SearchActivity extends BaseActivity {
                 if(item.getType().equals("Article")) {
                     List<String> categoryIds = Collections.singletonList(item.getCategoryId().substring(1, item.getCategoryId().length() - 1));
                     intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, categoryIds.get(0).replace("\"",""));
-
-                    List<String> categoryNames = Collections.singletonList(item.getCategoryName().substring(1, item.getCategoryName().length() - 1));
-                    intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME, categoryNames.get(0).replace("\"",""));
                 }
                 else {
                     intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, item.getCategoryId());
-                    intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,item.getCategoryName());
+
                 }
+                intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,item.getCategoryName());
                 intent.putExtra(AppConfig.BUNDLE_VERSION,item.getVersion());
                 startActivity(intent);
 
@@ -214,6 +212,13 @@ public class SearchActivity extends BaseActivity {
                 else if(isFolderSelected && !isDocumentSelected && !isArticleSelected)
                     searchList = homeDatabase.homeDao().getAllCategories();
 
+                for(int i=0;i<searchList.size();i++){
+                    if(searchList.get(i).getType().equals("Article")){
+                        List<String> categoryIds = Collections.singletonList(searchList.get(i).getCategoryId().substring(1, searchList.get(i).getCategoryId().length() - 1));
+                        searchList.get(i).setCategoryName(homeDatabase.homeDao().getCategoryName(categoryIds.get(0).replace("\"","")));
+                    }
+                }
+
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
@@ -224,7 +229,7 @@ public class SearchActivity extends BaseActivity {
 
             @Override
             public void onComplete() {
-                setData();
+              setData();
             }
 
 
@@ -234,5 +239,6 @@ public class SearchActivity extends BaseActivity {
             }
         });
     }
+
 
 }

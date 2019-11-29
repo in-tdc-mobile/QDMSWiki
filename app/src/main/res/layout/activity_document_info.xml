@@ -100,11 +100,12 @@
                 android:background="@color/grey_200" />
 
             <LinearLayout
+                android:visibility="gone"
                 android:layout_marginLeft="@dimen/dimen_16dp"
                 android:layout_marginRight="@dimen/dimen_16dp"
                 android:layout_width="match_parent"
                 android:minWidth="@dimen/dimen_50dp"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/dimen_50dp"
                 android:orientation="horizontal"
                 android:weightSum="1">
 
