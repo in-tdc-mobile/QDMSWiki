@@ -96,7 +96,9 @@ public class NotificationActivity extends BaseActivity implements NotificationVi
         notificationAdapter.setRowClickListener(new NotificationAdapter.RowClickListener() {
             @Override
             public void onItemClicked(NotificationModel notificationModel) {
-                getReceiverList(notificationModel.getReceviers(),notificationModel);
+                if(notificationModel.getIsUnread() != null && notificationModel.getIsUnread())
+                    getReceiverList(notificationModel.getReceviers(),notificationModel);
+
                 if(notificationModel.getEventDescription()==0 || notificationModel.getEventDescription()==0.0){
                     notificationPresenter.getDocumentDetails(notificationModel.getEventId());
                 }
@@ -139,11 +141,11 @@ public class NotificationActivity extends BaseActivity implements NotificationVi
             @Override
             public void run() throws Exception {
                 for(int i=0;i<receviers.size();i++){
-                    homeDatabase.homeDao().updateReceiver(receviers.get(i).getRecevierId(),notificationModel.getId());
                     receviers.get(i).setUnread(false);
+                    homeDatabase.homeDao().updateNotification(notificationModel.getId(),0);
                 }
-                //notificationModel.updateNotification(notificationModel.getId());
                 notificationModel.setReceviers(receviers);
+
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {

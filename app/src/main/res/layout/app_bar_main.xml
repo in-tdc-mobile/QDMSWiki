@@ -124,7 +124,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-    <com.github.lzyzsd.circleprogress.DonutProgress
+    <com.mariapps.qdmswiki.utils.DonutProgress
         android:id="@+id/donut_progress"
         app:donut_circle_starting_degree="-90"
         app:donut_progress="0"

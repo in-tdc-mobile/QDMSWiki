@@ -111,6 +111,10 @@ public class DocumentViewFragment extends BaseFragment {
     private String imageFolderPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/QDMSWiki/Images/";
     private ProgressDialog progressDialog;
 
+    String docNum;
+    String docDate;
+    String docVersion;
+
     @Override
     protected void setUpPresenter() {
     }
@@ -366,7 +370,50 @@ public class DocumentViewFragment extends BaseFragment {
                 webView.post(new Runnable() {
                     @Override
                     public void run() {
-                        webView.loadUrl("javascript:setArticleDataFromViewController('" + articleModel.getDocumentData() + "','" + articleModel.getId() + "')");
+                        webView.loadUrl("javascript:setArticleDataFromViewController('" + articleModel.getDocumentData() + "','" + articleModel.getId() + "');$(`.article-table`).removeClass(`hide-state`); $(`.article-table>tbody>tr`).removeClass(`hide-article`);$(`span.toggle-article`).addClass(`opentoggle`)");
+
+                    }
+                });
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void loadFooter() {
+
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+
+                if (type.equals("Document")) {
+                    docNum = documentModel.getDocumentNumber();
+                    docDate = DateUtils.getFormattedDateinDDMMYYYY(documentModel.getDate());
+                    docVersion = documentModel.getVersion();
+                } else {
+                    docNum = String.valueOf(articleModel.getArticleNumber());
+                    docDate = DateUtils.getFormattedDateinDDMMYYYY(articleModel.getDate());
+                    docVersion = String.valueOf(articleModel.getVersion());
+                }
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                webView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        webView.loadUrl("javascript:setFooterDataAfterRender($('#tableDragger'),'" + docNum + "','" + docDate + "','" + docVersion+"')");
+
                     }
                 });
             }
@@ -629,6 +676,11 @@ public class DocumentViewFragment extends BaseFragment {
         @JavascriptInterface
         public void getFileAttachment(String fileId) {
             openFileAttachment(fileId);
+        }
+
+        @JavascriptInterface
+        public void getFooterData() {
+            loadFooter();
         }
 
         @JavascriptInterface

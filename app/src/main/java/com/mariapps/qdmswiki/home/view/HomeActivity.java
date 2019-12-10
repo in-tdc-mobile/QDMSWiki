@@ -39,7 +39,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.lzyzsd.circleprogress.DonutProgress;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -76,6 +75,7 @@ import com.mariapps.qdmswiki.usersettings.UserInfoModel;
 import com.mariapps.qdmswiki.usersettings.UserSettingsCategoryModel;
 import com.mariapps.qdmswiki.usersettings.UserSettingsModel;
 import com.mariapps.qdmswiki.usersettings.UserSettingsTagModel;
+import com.mariapps.qdmswiki.utils.DonutProgress;
 import com.mariapps.qdmswiki.utils.ScreenUtils;
 import com.mariapps.qdmswiki.utils.ShowCasePreferenceUtil;
 import com.tonyodev.fetch2.Download;
@@ -201,9 +201,10 @@ public class HomeActivity extends BaseActivity implements HomeView {
         sessionManager = new SessionManager(HomeActivity.this);
         homeDatabase = HomeDatabase.getInstance(HomeActivity.this);
         progressDialog = new ProgressDialog(HomeActivity.this);
-        //sessionManager.setKeyLastUpdatedFileNaame("20191126122635");//"20191121092627"
+        //sessionManager.setKeyLastUpdatedFileName("20191203");//"20191121092627"
         homePresenter.getDownloadUrl(new DownloadFilesRequestModel(sessionManager.getKeyLastUpdatedFileName()));
-        //beginDownload("https://qdmswiki2k19.blob.core.windows.net/update/20191114153246.zip","20191114153246.zip");
+        //
+        // ("https://qdmswiki2k19.blob.core.windows.net/update/20191114153246.zip","20191114153246.zip");
 
         setSupportActionBar(toolbar);
         mainVP.setCurrentItem(0);
@@ -1066,9 +1067,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
                         appendLog("Session User Info Id " + sessionManager.getUserInfoId() + " : Receiver id " + receiverList.get(j).getRecevierId());
                         if (receiverList.get(j).getRecevierId().equals(sessionManager.getUserInfoId())) {
                             appendLog("Extracting notifications");
+                            notificationList.get(i).setIsUnread(receiverList.get(j).getUnread());
                             homePresenter.deleteNotification(notificationList.get(i));
-                            receiverList.get(j).setNotificationId(notificationList.get(i).getId());
-                            homePresenter.deleteReceivers(notificationList.get(i).getId(),receiverList.get(j));
                             break;
                         }
                     } catch (Exception e) {
@@ -1156,6 +1156,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
+                homeDatabase.homeDao().deleteRecommendedDocuments();
                 documentList = homeDatabase.homeDao().getDocuments();
             }
         }).observeOn(AndroidSchedulers.mainThread())
@@ -1315,6 +1316,11 @@ public class HomeActivity extends BaseActivity implements HomeView {
     }
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setNotificationCount();
+    }
 }
 
 

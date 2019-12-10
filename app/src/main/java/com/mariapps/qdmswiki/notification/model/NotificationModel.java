@@ -91,6 +91,9 @@ public class NotificationModel implements Parcelable {
     @SerializedName("SenderName")
     private String senderName;
 
+    @SerializedName("IsUnread")
+    private Boolean isUnread;
+
     public NotificationModel(Long uId, String id, String appId, String senderId, List<ReceiverModel> receviers, String message, String sendTime, Integer contentDataType, Integer deliveryType, Integer messageType, Boolean isCritical, Boolean isServiceMessage, String requestURL, String eventId, Boolean isvisible, Boolean isReplicated, Double eventDescription) {
         this.uId = uId;
         this.id = id;
@@ -109,6 +112,7 @@ public class NotificationModel implements Parcelable {
         this.isvisible = isvisible;
         this.isReplicated = isReplicated;
         this.eventDescription = eventDescription;
+        this.isUnread = isUnread;
     }
 
     public Long getuId() {
@@ -255,6 +259,14 @@ public class NotificationModel implements Parcelable {
         this.senderName = senderName;
     }
 
+    public Boolean getIsUnread() {
+        return isUnread;
+    }
+
+    public void setIsUnread(Boolean unread) {
+        isUnread = unread;
+    }
+
     protected NotificationModel(Parcel in) {
         if (in.readByte() == 0) {
             uId = null;
@@ -277,6 +289,7 @@ public class NotificationModel implements Parcelable {
         isReplicated = in.readByte() != 0;
         eventDescription = in.readDouble();
         senderName = in.readString();
+        isUnread = in.readByte() != 0;
     }
 
     @Override
@@ -310,6 +323,7 @@ public class NotificationModel implements Parcelable {
         dest.writeInt(isReplicated ? 1 : 0);
         dest.writeDouble(eventDescription);
         dest.writeString(senderName);
+        dest.writeInt(isUnread ? 1 : 0);
     }
 
     public static final Creator<NotificationModel> CREATOR = new Creator<NotificationModel>() {

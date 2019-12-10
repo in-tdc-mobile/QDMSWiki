@@ -51,12 +51,13 @@
                      if(typeof androidAppProxy !== "undefined"){
                          $('#tableDetails tbody').html(``+androidAppProxy.getDocumentData()+``);
                          $(`.article-table`).attr(`data-visible`, false);
-                         $(`.article-table:first`).attr(`data-visible`, true);
+                         $(`.article-table:first`).attr(`data-visible`, false);
                          afterRenderDocView();
                         $(`.article-table`).removeClass(`hide-state`);$(`.article-table>tbody>tr`).removeClass(`hide-article`);$(`span.toggle-article`).addClass(`opentoggle`)
                     } else {
                         alert("Running outside Android app");
                     }
+                    androidAppProxy.getFooterData();
 
     });
 

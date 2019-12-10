@@ -234,7 +234,7 @@ public class DocumentInfoViewActivity extends BaseActivity implements HomeView {
         locationTV.setText(location);
         documentNumberTV.setText(documentModel.getDocumentNumber());
         documentVersionTV.setText("V "+documentModel.getVersion());
-        publishedOnTV.setText(DateUtils.getFormattedDate(documentModel.getDate()));
+        publishedOnTV.setText(DateUtils.getFormattedDateinDateTime(documentModel.getDate()));
         approvedByTV.setText(documentModel.getApprovedName());
 
         tagList = documentModel.getTags();

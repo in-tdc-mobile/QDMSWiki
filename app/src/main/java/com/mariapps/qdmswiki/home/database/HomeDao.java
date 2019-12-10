@@ -117,6 +117,9 @@ public interface HomeDao {
     @Query("DELETE FROM NotificationEntity WHERE Id=:id")
     void deleteNotification(String id);
 
+    @Query("DELETE FROM DocumentEntity WHERE isRecommended = 'YES'")
+    void deleteRecommendedDocuments();
+
     @Query("SELECT document.Id as id, " +
             " 'Document' as type, " +
             " document.DocumentName as name, " +
@@ -293,6 +296,8 @@ public interface HomeDao {
 
     @Query("SELECT document.Id, " +
             " document.DocumentName, " +
+            " document.DocumentNumber, " +
+            " document.Version, " +
             " document.DocumentData, " +
             " document.Date" +
             " FROM DocumentEntity as document " +
@@ -327,6 +332,8 @@ public interface HomeDao {
 
     @Query("SELECT article.Id, " +
             " article.ArticleName, " +
+            " article.ArticleNumber, " +
+            " article.Version, " +
             " article.DocumentData, " +
             " article.Date" +
             " FROM ArticleEntity as article " +
@@ -534,12 +541,8 @@ public interface HomeDao {
     @Query( " UPDATE DocumentEntity SET isRecommended = 'YES' WHERE Id =:documentId")
     void updateIsRecommended(String documentId);
 
-    @Query("UPDATE ReceiverEntity SET IsUnread = 0 WHERE ReceiverId =:receiverID AND NotificationId = :nottificationId")
-    void updateReceiver(String receiverID,String nottificationId);
-
-//    @Query("UPDATE NotificationEntity SET Receviers = receiverEntity.receivers "+
-//    " WHERE (SELECT Receviers from ReceiverEntity )")
-//    void updateNotification(String nottificationId);
+    @Query("UPDATE NotificationEntity SET IsUnread = :unread where Id = :id")
+    void updateNotification(String id, int unread);
 
     @Query("SELECT CategoryName FROM CategoryEntity WHERE Id =:id")
     String getCategoryName(String id);
@@ -557,7 +560,7 @@ public interface HomeDao {
             " WHERE (NotificationEntity.EventDescription = 0 "+
             " OR NotificationEntity.EventDescription = 0.0 " +
             " OR NotificationEntity.EventDescription = 1.0 " +
-            " OR NotificationEntity.EventDescription = 1) ")
+            " OR NotificationEntity.EventDescription = 1) AND IsUnread = 1")
     List<NotificationModel> getNotificationCount();
 
     @Query("SELECT DISTINCT notification.Id, "+
@@ -565,6 +568,7 @@ public interface HomeDao {
             " notification.Message, " +
             " notification.SendTime, " +
             " notification.Receviers, " +
+            " notification.IsUnread, " +
             " notification.EventId, " +
             " userInfo.Name as senderName "+
             " FROM NotificationEntity as notification " +

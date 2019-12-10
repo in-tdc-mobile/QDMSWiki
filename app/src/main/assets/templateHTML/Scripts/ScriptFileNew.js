@@ -487,6 +487,21 @@ function gotoElement(id) {
     
 }
 
+function setFooterDataAfterRender(htmlObject, artNum,artdate,artversion){
+    if (artNum != "" && artNum != undefined)
+        htmlObject.find("#footer #docNum").text(artNum);
+
+
+
+    if (artversion != "" && artversion != undefined)
+        htmlObject.find("#footer #DocV").text(artversion);
+
+    if (artversion != undefined)
+        htmlObject.find("#footer .revision").html(artversion);
+    if (artdate != "" && artdate != undefined)
+        htmlObject.find("#footer #docDate").text(artdate);
+
+}
 
 function SetDocMode(mode) {
     viewMode = mode;

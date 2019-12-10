@@ -59,12 +59,12 @@ public class NotificationAdapter extends CustomRecyclerView.Adapter<Notification
         }
         holder.statusTV.setText("Last updated by " + " : ");
         for(int i=0;i<notificationModel.getReceviers().size();i++){
-            if(notificationModel.getReceviers().get(i).getRecevierId().equals(sessionManager.getUserInfoId()) && notificationModel.getReceviers().get(i).getUnread()) {
+            if(notificationModel.getIsUnread()) {
                 holder.linNotification.setBackgroundColor(mContext.getResources().getColor(R.color.grey_200));
                 holder.imgStatus.setVisibility(View.VISIBLE);
 
             }
-            else if(notificationModel.getReceviers().get(i).getRecevierId().equals(sessionManager.getUserInfoId()) && !notificationModel.getReceviers().get(i).getUnread()){
+            else if(!notificationModel.getIsUnread()){
                 holder.linNotification.setBackgroundColor(mContext.getResources().getColor(R.color.white));
                 holder.imgStatus.setVisibility(View.GONE);
             }
