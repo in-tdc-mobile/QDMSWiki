@@ -28,6 +28,24 @@ public class DateUtils {
         return  formattedDate;
     }
 
+    public static String getFormattedDateInLocal(String inputDate){
+        String formattedDate = null;
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss aa");
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date date = null;
+        try {
+            date = df.parse(inputDate);
+            outputFormat.setTimeZone(TimeZone.getDefault());
+            formattedDate = outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return  formattedDate;
+    }
+
     public static String getFormattedDateinDDMMYYYY(String inputDate){
         String formattedDate = null;
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");

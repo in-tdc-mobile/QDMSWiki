@@ -370,7 +370,8 @@ public class DocumentViewFragment extends BaseFragment {
                 webView.post(new Runnable() {
                     @Override
                     public void run() {
-                        webView.loadUrl("javascript:setArticleDataFromViewController('" + articleModel.getDocumentData() + "','" + articleModel.getId() + "');$(`.article-table`).removeClass(`hide-state`); $(`.article-table>tbody>tr`).removeClass(`hide-article`);$(`span.toggle-article`).addClass(`opentoggle`)");
+                        webView.loadUrl("javascript:setArticleDataFromViewController('" + articleModel.getDocumentData() + "','" + articleModel.getId() + "')");
+                        //webView.loadUrl("javascript:setArticleDataFromViewController('" + articleModel.getDocumentData() + "','" + articleModel.getId() + "');$(`.article-table`).removeClass(`hide-state`); $(`.article-table>tbody>tr`).removeClass(`hide-article`);$(`span.toggle-article`).addClass(`opentoggle`)");
 
                     }
                 });

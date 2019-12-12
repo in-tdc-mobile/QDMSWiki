@@ -47,17 +47,20 @@
 <script type='text/javascript'>
     $(document).ready(function() {
                      $("body").removeClass();
-                     RenderDocView();
+                      RenderDocView();
                      if(typeof androidAppProxy !== "undefined"){
                          $('#tableDetails tbody').html(``+androidAppProxy.getDocumentData()+``);
                          $(`.article-table`).attr(`data-visible`, false);
-                         $(`.article-table:first`).attr(`data-visible`, false);
+                         $(`.article-table:first`).attr(`data-visible`, true);
+                         ArticleData($(`.article-table:first`));
                          afterRenderDocView();
-                        $(`.article-table`).removeClass(`hide-state`);$(`.article-table>tbody>tr`).removeClass(`hide-article`);$(`span.toggle-article`).addClass(`opentoggle`)
+                         $(`.article-table`).removeClass(`hide-state`);$(`.article-table>tbody>tr`).removeClass(`hide-article`);$(`span.toggle-article`).addClass(`opentoggle`)
+                         androidAppProxy.getFooterData();
+
                     } else {
                         alert("Running outside Android app");
                     }
-                    androidAppProxy.getFooterData();
+
 
     });
 
