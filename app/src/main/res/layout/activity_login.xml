@@ -5,29 +5,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/ic_landing_bg"
+    android:fillViewport="true"
     tools:context=".login.view.LoginActivity">
 
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="1">
 
 
         <LinearLayout
             android:id="@+id/linSplash"
-            android:layout_marginTop="@dimen/dimen_100dp"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dimen_150dp">
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:weightSum="1">
 
             <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/splashIV"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/dimen_200dp"
+                android:layout_height="match_parent"
                 android:layout_centerHorizontal="true"
-                app:srcCompat="@drawable/ic_qdms_logo"/>
+                android:layout_weight="1"
+                android:minHeight="@dimen/dimen_150dp"
+                app:srcCompat="@drawable/ic_qdms_logo" />
 
         </LinearLayout>
-
 
 
         <LinearLayout
@@ -98,10 +103,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dimen_10dp"
+                android:theme="@style/TextInputEtTheme"
                 app:passwordToggleDrawable="@drawable/drawable_pasword_selector"
                 app:passwordToggleEnabled="true"
-                app:passwordToggleTint="@color/searchType"
-                android:theme="@style/TextInputEtTheme">
+                app:passwordToggleTint="@color/searchType">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/passwordET"
@@ -137,10 +142,10 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/drawable_rounded_corner"
                     android:text="@string/str_login"
-                    android:textStyle="normal"
                     android:textAllCaps="true"
                     android:textColor="@color/black"
                     android:textSize="@dimen/primary_text_size"
+                    android:textStyle="normal"
 
                     />
 
@@ -166,9 +171,10 @@
             android:layout_below="@+id/loginLL"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/dimen_50dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/dimen_16dp"
             app:srcCompat="@drawable/ic_mariapps_logo" />
 
 
-    </RelativeLayout>
+    </LinearLayout>
 </ScrollView>
