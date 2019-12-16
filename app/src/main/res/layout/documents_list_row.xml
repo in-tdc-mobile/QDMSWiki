@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/rowLL"
@@ -21,64 +21,86 @@
         android:src="@drawable/drawable_round" />
 
 
+
     <LinearLayout
-        android:layout_weight="0.20"
-        android:layout_marginLeft="@dimen/dimen_10dp"
+        android:layout_weight="0.80"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
+        android:gravity="end"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        android:id="@+id/linHeading">
 
         <com.mariapps.qdmswiki.custom.CustomTextView
             android:id="@+id/tvHeadingText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.10"
+            android:layout_weight="1"
             android:textColor="@color/black"
             android:textSize="@dimen/primary_text_size"
-            app:fontface="@string/string_lato_semi_bold" />
+            app:fontface="@string/string_lato_semi_bold"
+            android:layout_marginRight="@dimen/dimen_16dp"/>
+
+        <com.mariapps.qdmswiki.custom.CustomTextView
+            android:background="@drawable/drawable_version_type"
+            android:id="@+id/tvVersion"
+            android:layout_width="wrap_content"
+            android:minWidth="@dimen/dimen_40dp"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:textColor="@color/searchType"
+            android:textSize="@dimen/ter_text_size"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linHeading"
+        android:layout_weight="0.20"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:layout_marginTop="@dimen/dimen_5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_5dp"
             android:orientation="horizontal">
 
             <com.mariapps.qdmswiki.custom.CustomTextView
-                android:text="Category : "
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:fontface="@string/string_lato_regular"
-                android:textSize="@dimen/sec_text_size"/>
+                android:text="Category : "
+                android:textSize="@dimen/sec_text_size"
+                app:fontface="@string/string_lato_regular" />
 
             <com.mariapps.qdmswiki.custom.CustomTextView
                 android:id="@+id/tvCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:fontface="@string/string_lato_regular"
-                android:textSize="@dimen/sec_text_size"/>
+                android:textSize="@dimen/sec_text_size"
+                app:fontface="@string/string_lato_regular" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_marginTop="@dimen/dimen_5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_5dp"
             android:orientation="horizontal">
 
             <com.mariapps.qdmswiki.custom.CustomTextView
                 android:id="@+id/tvNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:fontface="@string/string_lato_regular"
-                android:textSize="@dimen/sec_text_size"/>
+                android:textSize="@dimen/sec_text_size"
+                app:fontface="@string/string_lato_regular" />
 
             <com.mariapps.qdmswiki.custom.CustomTextView
                 android:id="@+id/tvDocNum"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:fontface="@string/string_lato_regular"
-                android:textSize="@dimen/sec_text_size"/>
+                android:textSize="@dimen/sec_text_size"
+                app:fontface="@string/string_lato_regular" />
 
         </LinearLayout>
 
@@ -95,11 +117,11 @@
                 android:textSize="@dimen/sec_text_size" />
 
             <!--<com.mariapps.qdmswiki.custom.CustomTextView-->
-                <!--android:id="@+id/tvTime"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginLeft="@dimen/dimen_20dp"-->
-                <!--android:textSize="@dimen/medium_text_size" />-->
+            <!--android:id="@+id/tvTime"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginLeft="@dimen/dimen_20dp"-->
+            <!--android:textSize="@dimen/medium_text_size" />-->
 
         </LinearLayout>
 
@@ -120,24 +142,7 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_weight="0.80"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="end"
-        android:orientation="vertical">
 
-        <com.mariapps.qdmswiki.custom.CustomTextView
-            android:background="@drawable/drawable_version_type"
-            android:id="@+id/tvVersion"
-            android:minWidth="@dimen/dimen_40dp"
-            android:layout_width="wrap_content"
-            android:gravity="center"
-            android:layout_height="wrap_content"
-            android:textColor="@color/searchType"
-            android:textSize="@dimen/ter_text_size" />
 
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>
 

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
@@ -125,7 +126,7 @@ public class ArticlesAdapter extends CustomRecyclerView.Adapter<ArticlesAdapter.
 
     static class ArticlesVH extends CustomRecyclerView.ViewHolder {
         @BindView(R.id.rowLL)
-        LinearLayout rowLL;
+        RelativeLayout rowLL;
         @BindView(R.id.tvHeadingText)
         CustomTextView tvHeadingText;
         @BindView(R.id.tvCategory)

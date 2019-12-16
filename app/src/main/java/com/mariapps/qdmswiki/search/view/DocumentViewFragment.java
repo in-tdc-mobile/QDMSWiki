@@ -66,6 +66,7 @@ import java.lang.reflect.Method;
 import java.security.spec.ECField;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -99,6 +100,7 @@ public class DocumentViewFragment extends BaseFragment {
     private String id;
     private String documentData;
     private String version;
+    HashMap<String, ArticleModel> articleMap=new HashMap<String, ArticleModel>();
     private ArticleModel articleModel;
     private HomeDatabase homeDatabase;
     private RecentlyViewedModel recentlyViewedModel;
@@ -116,6 +118,7 @@ public class DocumentViewFragment extends BaseFragment {
     String docNum;
     String docDate;
     String docVersion;
+
 
     @Override
     protected void setUpPresenter() {
@@ -367,6 +370,7 @@ public class DocumentViewFragment extends BaseFragment {
                 articleData = articleData.replace("src=\"/WikiPALApp/Uploads/Image/", "src= \"file://"+imageFolderPath);
                 articleData = articleData.replace("\n", "");
                 articleModel.setDocumentData(articleData);
+                articleMap.put(id,articleModel);
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
@@ -380,7 +384,7 @@ public class DocumentViewFragment extends BaseFragment {
                 webView.post(new Runnable() {
                     @Override
                     public void run() {
-                        webView.loadUrl("javascript:setArticleDataFromViewController('" + articleModel.getDocumentData() + "','" + articleModel.getId() + "')");
+                        webView.loadUrl("javascript:setArticleDataFromViewController('" + articleModel.getId() + "');");
                         //webView.loadUrl("javascript:setArticleDataFromViewController('" + articleModel.getDocumentData() + "','" + articleModel.getId() + "');$(`.article-table`).removeClass(`hide-state`); $(`.article-table>tbody>tr`).removeClass(`hide-article`);$(`span.toggle-article`).addClass(`opentoggle`)");
 
                     }
@@ -706,7 +710,11 @@ public class DocumentViewFragment extends BaseFragment {
             Toast.makeText(getActivity(), "ALERT " + message, Toast.LENGTH_LONG).show();
         }
 
+        @JavascriptInterface
+        public String getArticleData(String id) {
+            return (articleMap.get(id)).getDocumentData();
 
+        }
     }
 
     public void getBookmarkEntries(String documentId, BookmarkEntryModel bookmarkEntryModel) {

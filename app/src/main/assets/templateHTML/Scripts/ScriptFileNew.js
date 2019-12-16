@@ -167,9 +167,9 @@ function ArticleData(control) {
 }
 //For iOS Render Article Method
 
-function setArticleDataFromViewController(data,id){
+function setArticleDataFromViewController(id){
 try{
-    androidAppProxy.showToast("ArticleData retrivel " + data + " ID "+ id);
+    var data =androidAppProxy.getArticleData(id);
     var curArticleObj = $("#" + id);
     if (data != null) {
         curArticleObj.find(">tbody>tr").remove(); // remove old article data

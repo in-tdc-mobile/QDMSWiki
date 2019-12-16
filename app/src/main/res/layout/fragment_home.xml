@@ -52,40 +52,41 @@
                 </LinearLayout>
 
                 <RelativeLayout
-                    android:padding="@dimen/dimen_10dp"
                     android:id="@+id/relLL"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/overViewLL"
                     android:layout_marginTop="@dimen/dimen_5dp"
-                    android:layout_marginBottom="@dimen/dimen_5dp">
+                    android:layout_marginBottom="@dimen/dimen_5dp"
+                    android:paddingLeft="@dimen/dimen_16dp"
+                    android:paddingRight="@dimen/dimen_16dp">
 
                     <LinearLayout
                         android:id="@+id/linLayout"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:background="@color/white">
+                        android:background="@color/white"
+                        android:orientation="vertical">
 
                         <android.support.design.widget.TabLayout
+                            android:id="@+id/slidingTabs"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
                             android:background="@color/colorPrimary"
                             app:tabGravity="fill"
                             app:tabIndicatorColor="@color/searchType"
-                            app:tabSelectedTextColor="@color/searchType"
-                            app:tabTextColor="@color/black"
                             app:tabIndicatorHeight="@dimen/dimen_3dp"
-                            android:id="@+id/slidingTabs"
-                            app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
                             app:tabMaxWidth="0dp"
-                            android:layout_gravity="center"
-                            app:tabMode="fixed"/>
+                            app:tabMode="fixed"
+                            app:tabSelectedTextColor="@color/searchType"
+                            app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"
+                            app:tabTextColor="@color/black" />
 
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:background="@color/grey_200"/>
+                            android:background="@color/grey_200" />
 
                         <com.mariapps.qdmswiki.custom.CustomViewPager
                             android:id="@+id/viewPager"
