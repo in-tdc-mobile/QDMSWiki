@@ -1,5 +1,6 @@
 package com.mariapps.qdmswiki.search.view;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -90,6 +91,12 @@ public class FolderFragment extends BaseFragment{
         setSearchTypeData();
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
     }
 
     private void setSearchTypeData() {

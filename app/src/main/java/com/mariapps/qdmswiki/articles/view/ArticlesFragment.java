@@ -1,6 +1,7 @@
 package com.mariapps.qdmswiki.articles.view;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -192,6 +193,7 @@ public class ArticlesFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
         if (!getUserVisibleHint()) {
             return;
         }

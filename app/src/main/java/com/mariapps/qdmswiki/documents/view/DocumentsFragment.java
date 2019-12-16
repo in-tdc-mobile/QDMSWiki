@@ -1,6 +1,7 @@
 package com.mariapps.qdmswiki.documents.view;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -156,6 +157,7 @@ public class DocumentsFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
         if (!getUserVisibleHint()) {
             return;
         }

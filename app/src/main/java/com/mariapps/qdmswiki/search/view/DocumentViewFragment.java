@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -62,6 +63,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.security.spec.ECField;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -262,6 +264,13 @@ public class DocumentViewFragment extends BaseFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+    }
+
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE && resultCode == RESULT_CODE) {
@@ -270,42 +279,43 @@ public class DocumentViewFragment extends BaseFragment {
     }
 
     public void loadDocument() {
-        Completable.fromAction(new Action() {
-            @Override
-            public void run() throws Exception {
 
-                if (type.equals("Document")) {
-                    documentModel = homeDatabase.homeDao().getDocumentData(id);
-                    documentData = documentModel.getDocumentData();
-                } else {
-                    List<TagModel> taglist = new ArrayList<>();
-                    documentModel = new DocumentModel("", "", "", "", "", "", taglist);
-                    articleModel = homeDatabase.homeDao().getArticleData(id);
-                    documentData = articleModel.getDocumentData();
+            Completable.fromAction(new Action() {
+                @Override
+                public void run() {
+                    if (type.equals("Document")) {
+                        documentModel = homeDatabase.homeDao().getDocumentData(id);
+                        documentData = documentModel.getDocumentData();
+                    } else {
+                        List<TagModel> taglist = new ArrayList<>();
+                        documentModel = new DocumentModel("", "", "", "", "", "", taglist);
+                        articleModel = homeDatabase.homeDao().getArticleData(id);
+                        documentData = articleModel.getDocumentData();
+                    }
+                    documentData = documentData.replace("<script src=\"/WikiPALApp/Scripts/TemplateSettings/toc-template-settings.js\"></script>", "<script src=\"./Scripts/toc-template-settings.js.download\"></script>");
+                    documentData = documentData.replace("src=\"/WikiPALApp/Uploads/Image/", "src= \"file://" + imageFolderPath);
+                    documentData = documentData.replace("\n", "");
+                    documentModel.setDocumentData(documentData);
                 }
-                documentData = documentData.replace("<script src=\"/WikiPALApp/Scripts/TemplateSettings/toc-template-settings.js\"></script>", "<script src=\"./Scripts/toc-template-settings.js.download\"></script>");
-                documentData = documentData.replace("src=\"/WikiPALApp/Uploads/Image/","src= \"file://"+imageFolderPath);
-                documentData = documentData.replace("\n", "");
-                documentModel.setDocumentData(documentData);
-            }
-        }).observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
-            @Override
-            public void onSubscribe(Disposable d) {
+            }).observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+                @Override
+                public void onSubscribe(Disposable d) {
 
-            }
+                }
 
-            @Override
-            public void onComplete() {
-                setHTMLContent();
-            }
+                @Override
+                public void onComplete() {
+                    setHTMLContent();
+                }
 
 
-            @Override
-            public void onError(Throwable e) {
-                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
+                @Override
+                public void onError(Throwable e) {
+                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+
     }
 
     private void setHTMLContent() {
@@ -339,7 +349,7 @@ public class DocumentViewFragment extends BaseFragment {
 
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                Toast.makeText(getActivity(), "Your Internet Connection May not be active Or " + error.getDescription(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(), "Your Internet Connection May not be active Or " + error.getDescription(), Toast.LENGTH_LONG).show();
             }
         });
 
