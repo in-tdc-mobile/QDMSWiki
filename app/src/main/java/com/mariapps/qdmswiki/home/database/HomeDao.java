@@ -298,7 +298,6 @@ public interface HomeDao {
             " document.DocumentName, " +
             " document.DocumentNumber, " +
             " document.Version, " +
-            " document.DocumentData, " +
             " document.Date" +
             " FROM DocumentEntity as document " +
             " WHERE document.Id=:documentId")
@@ -564,7 +563,7 @@ public interface HomeDao {
     List<NotificationModel> getNotificationCount();
 
     @Query("SELECT DISTINCT notification.Id, "+
-            " notification.EventDescription, " +
+            " notification.EventDescription, "+
             " notification.Message, " +
             " notification.SendTime, " +
             " notification.Receviers, " +

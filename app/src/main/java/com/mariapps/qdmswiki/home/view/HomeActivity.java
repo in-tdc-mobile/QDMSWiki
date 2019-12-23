@@ -1,6 +1,9 @@
 package com.mariapps.qdmswiki.home.view;
 
+import android.app.ActivityManager;
 import android.app.ProgressDialog;
+import android.arch.lifecycle.Observer;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -45,6 +49,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.mariapps.qdmswiki.AppConfig;
+import com.mariapps.qdmswiki.ArticleModelObj;
+import com.mariapps.qdmswiki.DocumentModelObj;
+import com.mariapps.qdmswiki.DownloadService;
+import com.mariapps.qdmswiki.ObjectBox;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.SessionManager;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
@@ -68,7 +76,6 @@ import com.mariapps.qdmswiki.notification.model.ReceiverModel;
 import com.mariapps.qdmswiki.notification.view.NotificationActivity;
 import com.mariapps.qdmswiki.search.model.SearchModel;
 import com.mariapps.qdmswiki.search.view.FolderStructureActivity;
-import com.mariapps.qdmswiki.search.view.SearchActivity;
 import com.mariapps.qdmswiki.serviceclasses.APIException;
 import com.mariapps.qdmswiki.settings.view.SettingsActivity;
 import com.mariapps.qdmswiki.usersettings.UserInfoModel;
@@ -91,7 +98,6 @@ import com.tonyodev.fetch2core.DownloadBlock;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -102,10 +108,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.channels.FileChannel;
-import java.security.spec.ECField;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -113,6 +117,7 @@ import java.util.zip.ZipInputStream;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.objectbox.Box;
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -152,7 +157,6 @@ public class HomeActivity extends BaseActivity implements HomeView {
     CustomTextView notificationsBadgeTextView;
     @BindView(R.id.donut_progress)
     DonutProgress donut_progress;
-
     private ActionBarDrawerToggle mDrawerToggle;
     private HomePresenter homePresenter;
     private HomeDatabase homeDatabase;
@@ -168,7 +172,6 @@ public class HomeActivity extends BaseActivity implements HomeView {
     private Handler progressBarHandler = new Handler();
     private FetchListener fetchListener;
     private String zippedFileName;
-
     private DocumentModel documentModel;
     List<SearchModel> childList = new ArrayList<>();
     List<DocumentModel> parentFolderList = new ArrayList<>();
@@ -190,13 +193,22 @@ public class HomeActivity extends BaseActivity implements HomeView {
     private String log;
     private String folderId;
     private String folderName;
+    private String url = "";
+
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
+        ObjectBox.init(this);
+      /*  Box<DocumentModelObj> box = ObjectBox.get().boxFor(DocumentModelObj.class);
+      // box.removeAll();
+        Box<ArticleModelObj> abox = ObjectBox.get().boxFor(ArticleModelObj.class);
+      // abox.removeAll();
+        Log.e("sizeofdocumentsdocbox",box.getAll().size()+"");
+        Log.e("sizeofdocumentsabox",abox.getAll().size()+"");*/
+        // Log.e("sizeofdocuments",box.getAll().get(1).documentName);
         context = this;
         sessionManager = new SessionManager(HomeActivity.this);
         homeDatabase = HomeDatabase.getInstance(HomeActivity.this);
@@ -205,18 +217,76 @@ public class HomeActivity extends BaseActivity implements HomeView {
         homePresenter.getDownloadUrl(new DownloadFilesRequestModel(sessionManager.getKeyLastUpdatedFileName()));
         //
         // ("https://qdmswiki2k19.blob.core.windows.net/update/20191114153246.zip","20191114153246.zip");
-
         setSupportActionBar(toolbar);
         mainVP.setCurrentItem(0);
-
         getParentFolders();
         initViewpager();
         initBottomNavigation();
         setNotificationCount();
+
+
+        if (isMyServiceRunning(DownloadService.class)) {
+            progressLayout.setVisibility(View.VISIBLE);
+        } else {
+            progressLayout.setVisibility(View.GONE);
+        }
+        AppConfig.getDwnldcmplted().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                progressLayout.setVisibility(View.GONE);
+                HomeActivity.Decompress decompress = new HomeActivity.Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zippedFileName, Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
+                decompress.execute();
+            }
+        });
+        AppConfig.getDwnldstarted().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                appendLog("Downloading url " + url);
+                progressLayout.setVisibility(View.VISIBLE);
+                linLayout.setAlpha(0.15f);
+                relLayout.setAlpha(0.15f);
+            }
+        });
+
+        AppConfig.getDwnlderror().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                //    appendLog("Error while Downloading " + error.getHttpResponse());
+            }
+        });
+
+        AppConfig.getDwnldprgress().observe(this, new Observer<Integer>() {
+            @Override
+            public void onChanged(@Nullable Integer s) {
+                Log.e("serviceprogress", s + "");
+                donut_progress.setProgress(Math.round(s));
+            }
+        });
+        //  Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + "20191218.zip", Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
+        //decompress.execute();
+       // ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
+       // readAndInsertJsonData.execute();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.e("onStop", "stopped");
     }
 
     private void getParentFolders() {
         homePresenter.getParentFolders();
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @OnClick({R.id.userImageIV, R.id.notificationIV})
@@ -250,16 +320,12 @@ public class HomeActivity extends BaseActivity implements HomeView {
     }
 
     private void initNavDrawer() {
-
         ViewGroup.LayoutParams layoutParams = navFL.getLayoutParams();
         layoutParams.width = (ScreenUtils.getScreenWidth(this) * 3) / 4;
         navFL.setLayoutParams(layoutParams);
-
-
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         mDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
                 toolbar, R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close) {
@@ -273,7 +339,6 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 super.onDrawerSlide(drawerView, slideOffset);
             }
         };
-
         mDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -282,11 +347,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 else
                     drawerLayout.openDrawer((int) Gravity.START);
             }
-
         });
-
         drawerLayout.addDrawerListener(mDrawerToggle);
-
         mDrawerToggle.setDrawerIndicatorEnabled(false);
         mDrawerToggle.setHomeAsUpIndicator(R.drawable.ic_menu);
         mDrawerToggle.syncState();
@@ -311,26 +373,21 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 return false;
             }
         });
-
         bottom_navigation.setItemIconTintList(null);
         bottom_navigation.getMenu().clear();
         Menu menu = bottom_navigation.getMenu();
         menu.add(Menu.NONE, 0, Menu.NONE, "HOME")
                 .setIcon(R.drawable.drawable_home_selecter);
-
         menu.add(Menu.NONE, 1, Menu.NONE, "DOCUMENTS")
                 .setIcon(R.drawable.drawable_document_selector);
-
         menu.add(Menu.NONE, 2, Menu.NONE, "ARTICLES")
                 .setIcon(R.drawable.drawable_article_selector);
-
         //setBadgeCount();
     }
 
     private void setBadgeCount() {
         BottomNavigationMenuView menuView = (BottomNavigationMenuView) bottom_navigation.getChildAt(0);
         BottomNavigationItemView itemView = (BottomNavigationItemView) menuView.getChildAt(1);
-
         View notificationBadge = LayoutInflater.from(this).inflate(R.layout.notification_badge, menuView, false);
         TextView textView = notificationBadge.findViewById(R.id.notificationsBadgeTextView);
         textView.setText("15");
@@ -348,6 +405,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
 //        String url = homePresenter.getDownloadUrl();
 //        beginDownload(url);
     }
+
 
     @Override
     protected void isNetworkAvailable(boolean isConnected) {
@@ -408,7 +466,6 @@ public class HomeActivity extends BaseActivity implements HomeView {
     }
 
     public Fragment findFragmentById(String key) {
-
         switch (key) {
             case AppConfig.FRAG_NAV_DRAWER:
                 navigationDrawerFragment = new NavigationDrawerFragment();
@@ -422,7 +479,6 @@ public class HomeActivity extends BaseActivity implements HomeView {
 
                     }
                 });
-
                 navigationDrawerFragment.setArguments(bundlenavDrawer);
                 return navigationDrawerFragment;
             case AppConfig.FRAG_NAV_DETAILS_DRAWER:
@@ -432,22 +488,21 @@ public class HomeActivity extends BaseActivity implements HomeView {
                     public void onItemClicked(SearchModel searchModel) {
                         //documentModel = docModel;
                         if (searchModel.getType().equals("Category"))
-                            homePresenter.getChildFoldersList("%"+searchModel.getCategoryId()+"%");
-                        else{
+                            homePresenter.getChildFoldersList("%" + searchModel.getCategoryId() + "%");
+                        else {
                             Intent intent = new Intent(HomeActivity.this, FolderStructureActivity.class);
-                            intent.putExtra(AppConfig.BUNDLE_PAGE,"Home");
-                            intent.putExtra(AppConfig.BUNDLE_TYPE,searchModel.getType());
-                            intent.putExtra(AppConfig.BUNDLE_NAME,searchModel.getName());
-                            intent.putExtra(AppConfig.BUNDLE_ID,searchModel.getId());
-                            if(searchModel.getType().equals("Article")) {
+                            intent.putExtra(AppConfig.BUNDLE_PAGE, "Home");
+                            intent.putExtra(AppConfig.BUNDLE_TYPE, searchModel.getType());
+                            intent.putExtra(AppConfig.BUNDLE_NAME, searchModel.getName());
+                            intent.putExtra(AppConfig.BUNDLE_ID, searchModel.getId());
+                            if (searchModel.getType().equals("Article")) {
                                 List<String> categoryIds = Collections.singletonList(searchModel.getCategoryId().substring(1, searchModel.getCategoryId().length() - 1));
-                                intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, categoryIds.get(0).replace("\"",""));
-                            }
-                            else {
+                                intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, categoryIds.get(0).replace("\"", ""));
+                            } else {
                                 intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, searchModel.getCategoryId());
-                                intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME,searchModel.getCategoryName());
+                                intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME, searchModel.getCategoryName());
                             }
-                            intent.putExtra(AppConfig.BUNDLE_VERSION,searchModel.getVersion());
+                            intent.putExtra(AppConfig.BUNDLE_VERSION, searchModel.getVersion());
                             startActivity(intent);
                         }
                     }
@@ -466,111 +521,26 @@ public class HomeActivity extends BaseActivity implements HomeView {
     }
 
     public void beginDownload(String url, String zipFileName) {
-        appendLog("Downloading url " + url);
+        this.url = url;
         zippedFileName = zipFileName;
-        progressLayout.setVisibility(View.VISIBLE);
-
-        linLayout.setAlpha(0.15f);
-        relLayout.setAlpha(0.15f);
-
-
-        FetchConfiguration fetchConfiguration = new FetchConfiguration.Builder(this)
-                .enableRetryOnNetworkGain(true)
-                .build();
-
-        fetch = Fetch.Impl.getInstance(fetchConfiguration);
-
-        final Request request = new Request(url, Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zipFileName);
-        request.setPriority(Priority.HIGH);
-        request.setNetworkType(NetworkType.ALL);
-        request.addHeader("clientKey", "SD78DF93_3947&MVNGHE1WONG");
-
-        fetch.enqueue(request, updatedRequest -> {
-
-        }, error -> {
-            //An error occurred enqueuing the request.
-        });
-
-        fetchListener = new FetchListener() {
-            @Override
-            public void onWaitingNetwork(@NotNull Download download) {
-                fetch.resume(downloadID);
-            }
-
-            @Override
-            public void onStarted(@NotNull Download download, @NotNull List<? extends DownloadBlock> list, int i) {
-                if (request.getId() == download.getId()) {
-                    downloadID = download.getId();
+        Intent intent = new Intent(context, DownloadService.class);
+        intent.putExtra("url", url);
+        intent.putExtra("filename", zipFileName);
+        if(!url.equals("")&&!zipFileName.equals("")){
+            if(!isMyServiceRunning(DownloadService.class)){
+                Log.e("service","notrunning");
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(intent);
+                } else {
+                    context.startService(new Intent(context, DownloadService.class));
                 }
             }
-
-            @Override
-            public void onProgress(@NotNull Download download, long l, long l1) {
-                int progress = download.getProgress();
-                donut_progress.setProgress(Math.round(progress));
+            else {
+                Log.e("service","isrunning");
             }
-
-
-            @Override
-            public void onError(@NotNull Download download, @NotNull Error error, @org.jetbrains.annotations.Nullable Throwable throwable) {
-                appendLog("Error while Downloading " + error.getHttpResponse());
-                Toast.makeText(HomeActivity.this, error.getHttpResponse().toString(), Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onDownloadBlockUpdated(@NotNull Download download, @NotNull DownloadBlock downloadBlock, int i) {
-
-            }
-
-            @Override
-            public void onAdded(@NotNull Download download) {
-
-            }
-
-            @Override
-            public void onQueued(@NotNull Download download, boolean waitingOnNetwork) {
-                if (request.getId() == download.getId()) {
-                    //showDownloadInList(download);
-                }
-            }
-
-            @Override
-            public void onCompleted(@NotNull Download download) {
-                //Toast.makeText(HomeActivity.this, "Download Completed", Toast.LENGTH_SHORT).show();
-                appendLog("Downloading " + url + " completed");
-                progressLayout.setVisibility(View.GONE);
-                Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zipFileName, Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
-                decompress.execute();
-            }
-
-            @Override
-            public void onPaused(@NotNull Download download) {
-            }
-
-            @Override
-            public void onResumed(@NotNull Download download) {
-            }
-
-            @Override
-            public void onCancelled(@NotNull Download download) {
-
-            }
-
-            @Override
-            public void onRemoved(@NotNull Download download) {
-
-            }
-
-            @Override
-            public void onDeleted(@NotNull Download download) {
-
-            }
-        };
-
-        fetch.addListener(fetchListener);
-
-
+        }
     }
+
 
     private class Decompress extends AsyncTask<Void, Integer, String> {
 
@@ -723,7 +693,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
 
     @Override
     public void onInsertCategoryDetailsSuccess() {
-        getParentFolders();
+
     }
 
     @Override
@@ -795,15 +765,43 @@ public class HomeActivity extends BaseActivity implements HomeView {
         if (downloadFilesResponseModel.getDownloadEntityList() != null) {
             downloadEntityLists = downloadFilesResponseModel.getDownloadEntityList();
             appendLog("DownloadEntityList size =" + downloadEntityLists.size());
-
             if (downloadFilesResponseModel != null && downloadEntityLists.size() > 0) {
                 beginDownload(downloadEntityLists.get(urlNum).getDownloadLink(), downloadEntityLists.get(urlNum).getFileName());
                 urlNum = urlNum + 1;
+                //added lines new
             }
         }
-
     }
 
+
+    /*public void beginDownloadwithdwnldmgr(String url,String zippedFileName){
+        Log.e("filename and size",zippedFileName);
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+        request.setDescription("Downloading Files");
+        request.setTitle("QDMS");
+request.setAllowedNetworkTypes(
+               DownloadManager.Request.NETWORK_WIFI
+                      | DownloadManager.Request.NETWORK_MOBILE)
+            .setAllowedOverRoaming(false).setTitle("QDMS")
+              .setDestinationInExternalPublicDir("/QDMSWiki/", zippedFileName);
+        DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+        manager.enqueue(request);
+        registerReceiver(onDownloadComplete,new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+
+    }*/
+
+
+    /* private BroadcastReceiver onDownloadComplete = new BroadcastReceiver() {
+         @Override
+         public void onReceive(Context context, Intent intent) {
+             //Fetching the download id received with the broadcast
+             long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+             //Checking if the received broadcast is for our enqueued download by matching download id
+             if (downloadID == id) {
+                 Toast.makeText(HomeActivity.this, "Download Completed", Toast.LENGTH_SHORT).show();
+             }
+         }
+     };*/
     public void appendLog(String text) {
         File logFile = new File("sdcard/QDMSWiki/qdms_log_file.txt");
         if (!logFile.exists()) {
@@ -851,11 +849,14 @@ public class HomeActivity extends BaseActivity implements HomeView {
         }
     }
 
+
     public class ReadAndInsertJsonData extends AsyncTask<String, Integer, String> {
 
         JSONObject jsonObject;
 
         public ReadAndInsertJsonData() {
+
+
         }
 
         @Override
@@ -878,7 +879,6 @@ public class HomeActivity extends BaseActivity implements HomeView {
             try {
                 File folder = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"); //This is just to cast to a File type since you pass it as a String
                 File[] filesInFolder = folder.listFiles(); // This returns all the folders and files in your path
-
                 for (File file : filesInFolder) { //For each of the entries do:
                     if (file.isDirectory()) {
                         appendLog("Extracting directory " + file.getName());
@@ -895,18 +895,14 @@ public class HomeActivity extends BaseActivity implements HomeView {
                             JsonArray jsonArray = data.getAsJsonArray("Documents");
                             documentList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<DocumentModel>>() {
                             }.getType());
-
                             for (int i = 0; i < documentList.size(); i++) {
                                 homePresenter.deleteDocument(documentList.get(i));
                             }
-
                             for (int i = 0; i < documentList.size(); i++) {
                                 documentList.get(i).setIsRecommended("NO");
                                 List<TagModel> tagList = documentList.get(i).getTags();
                                 homePresenter.insertTags(tagList);
                             }
-
-
                         } else if (file.getName().contains("art")) { //check that it's not a dir
                             appendLog("Extracting article " + file.getName());
                             JsonArray jsonArray = data.getAsJsonArray("Articles");
@@ -915,7 +911,6 @@ public class HomeActivity extends BaseActivity implements HomeView {
                             for (int i = 0; i < articleList.size(); i++) {
                                 homePresenter.deleteArticles(articleList.get(i));
                             }
-
                         } else if (file.getName().contains("file")) { //check that it's not a dir
                             appendLog("Extracting file " + file.getName());
                             JsonArray jsonArray = data.getAsJsonArray("fileChunks");
@@ -925,19 +920,14 @@ public class HomeActivity extends BaseActivity implements HomeView {
                             for (int i = 0; i < fileList.size(); i++) {
                                 homePresenter.deleteFile(fileList.get(i));
                             }
-
                         } else if (file.getName().contains("image")) { //check that it's not a dir
                             appendLog("Extracting image " + file.getName());
                             JsonArray jsonArray = data.getAsJsonArray("Images");
                             imageList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ImageModel>>() {
                             }.getType());
-
-
                             for (int i = 0; i < imageList.size(); i++) {
                                 homePresenter.deleteImage(imageList.get(i));
                             }
-
-
                             for (int i = 0; i < imageList.size(); i++) {
                                 try {
                                     if (imageList.get(i).getImageStream() != null && !imageList.get(i).getImageStream().isEmpty())
@@ -952,77 +942,74 @@ public class HomeActivity extends BaseActivity implements HomeView {
                                 }
 
                             }
-
-                        } else {
-                            if (file.getName().contains("category")) {
-                                appendLog("Extracting category " + file.getName());
-                                JsonArray jsonArray = data.getAsJsonArray("Categories");
-                                categoryList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<CategoryModel>>() {
-                                }.getType());
-                                for (int i = 0; i < categoryList.size(); i++) {
-                                    homePresenter.deleteCategory(categoryList.get(i));
+                        } else if (file.getName().contains("category")) {
+                            appendLog("Extracting category " + file.getName());
+                            JsonArray jsonArray = data.getAsJsonArray("Categories");
+                            categoryList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<CategoryModel>>() {
+                            }.getType());
+                            for (int i = 0; i < categoryList.size(); i++) {
+                                homePresenter.deleteCategory(categoryList.get(i));
+                            }
+                        } else if (file.getName().contains("bookmarks")) {
+                            appendLog("Extracting bookmark " + file.getName());
+                            JsonArray jsonArray = data.getAsJsonArray("Bookmarks");
+                            bookmarkList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<BookmarkModel>>() {
+                            }.getType());
+                            //homePresenter.deleteBookmarks(bookmarkList);
+                            for (int i = 0; i < bookmarkList.size(); i++) {
+                                homePresenter.deleteBookmark(bookmarkList.get(i));
+                                List<BookmarkEntryModel> bookmarkEntryList = bookmarkList.get(i).getBookmarkEntries();
+                                for (int j = 0; j < bookmarkEntryList.size(); j++) {
+                                    bookmarkEntryList.get(j).setDocumentId(bookmarkList.get(i).getDocumentId());
                                 }
-                            } else if (file.getName().contains("bookmarks")) {
-                                appendLog("Extracting bookmark " + file.getName());
-                                JsonArray jsonArray = data.getAsJsonArray("Bookmarks");
-                                bookmarkList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<BookmarkModel>>() {
-                                }.getType());
-                                //homePresenter.deleteBookmarks(bookmarkList);
-                                for (int i = 0; i < bookmarkList.size(); i++) {
-                                    homePresenter.deleteBookmark(bookmarkList.get(i));
-                                    List<BookmarkEntryModel> bookmarkEntryList = bookmarkList.get(i).getBookmarkEntries();
-                                    for (int j = 0; j < bookmarkEntryList.size(); j++) {
-                                        bookmarkEntryList.get(j).setDocumentId(bookmarkList.get(i).getDocumentId());
-                                    }
-                                    homePresenter.insertBookmarkEntries(bookmarkEntryList);
+                                homePresenter.insertBookmarkEntries(bookmarkEntryList);
+                            }
+                        } else if (file.getName().contains("notifications")) {
+                            JsonArray jsonArray = data.getAsJsonArray("Notifications");
+                            notificationList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<NotificationModel>>() {
+                            }.getType());
+                        } else if (file.getName().contains("userInfo")) {
+                            appendLog("Extracting user info " + file.getName());
+                            JsonArray jsonArray = data.getAsJsonArray("UserInfo");
+                            userInfoList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<UserInfoModel>>() {
+                            }.getType());
+
+                            for (int i = 0; i < userInfoList.size(); i++) {
+                                appendLog("User Id " + sessionManager.getUserId() + " : User Info Id " + userInfoList.get(i).getUserId());
+                                if (String.valueOf(userInfoList.get(i).getUserId()).equals(sessionManager.getUserId())) {
+                                    sessionManager.setUserInfoId(userInfoList.get(i).getId());
+                                    break;
                                 }
-                            } else if (file.getName().contains("notifications")) {
-                                JsonArray jsonArray = data.getAsJsonArray("Notifications");
-                                notificationList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<NotificationModel>>() {
-                                }.getType());
-                            } else if (file.getName().contains("userInfo")) {
-                                appendLog("Extracting user info " + file.getName());
-                                JsonArray jsonArray = data.getAsJsonArray("UserInfo");
-                                userInfoList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<UserInfoModel>>() {
-                                }.getType());
+                            }
 
-                                for (int i = 0; i < userInfoList.size(); i++) {
-                                    appendLog("User Id " + sessionManager.getUserId() + " : User Info Id " + userInfoList.get(i).getUserId());
-                                    if (String.valueOf(userInfoList.get(i).getUserId()).equals(sessionManager.getUserId())) {
-                                        sessionManager.setUserInfoId(userInfoList.get(i).getId());
-                                        break;
-                                    }
+                            for (int i = 0; i < userInfoList.size(); i++) {
+                                homePresenter.insertUserInfo(userInfoList.get(i));
+                                if (!(String.valueOf(userInfoList.get(i).getUserId()).equals(sessionManager.getUserId()))) {
+                                    userInfoList.get(i).setImageName("");
+                                } else {
+                                    userInfoList.get(i).setImageName(userInfoList.get(i).getImageName());
                                 }
-
-                                for (int i = 0; i < userInfoList.size(); i++) {
-                                    homePresenter.insertUserInfo(userInfoList.get(i));
-                                    if (!(String.valueOf(userInfoList.get(i).getUserId()).equals(sessionManager.getUserId()))) {
-                                        userInfoList.get(i).setImageName("");
-                                    } else {
-                                        userInfoList.get(i).setImageName(userInfoList.get(i).getImageName());
-                                    }
-                                }
+                            }
 
 
-                            } else if (file.getName().contains("userSet")) {
-                                JsonArray jsonArray = data.getAsJsonArray("UserSettings");
-                                userSettingsList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<UserSettingsModel>>() {
-                                }.getType());
+                        } else if (file.getName().contains("userSet")) {
+                            JsonArray jsonArray = data.getAsJsonArray("UserSettings");
+                            userSettingsList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<UserSettingsModel>>() {
+                            }.getType());
 
-                            } else if (file.getName().contains("forms")) {
-                                appendLog("Extracting form " + file.getName());
-                                JsonArray jsonArray = data.getAsJsonArray("Forms");
-                                formsList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FormsModel>>() {
-                                }.getType());
-                                for (int i = 0; i < formsList.size(); i++) {
-                                    homePresenter.deleteForm(formsList.get(i));
+                        } else if (file.getName().contains("forms")) {
+                            appendLog("Extracting form " + file.getName());
+                            JsonArray jsonArray = data.getAsJsonArray("Forms");
+                            formsList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FormsModel>>() {
+                            }.getType());
+                            for (int i = 0; i < formsList.size(); i++) {
+                                homePresenter.deleteForm(formsList.get(i));
 
-                                }
                             }
                         }
                     }
-
                 }
+
 
                 return "Success";
 
@@ -1045,7 +1032,6 @@ public class HomeActivity extends BaseActivity implements HomeView {
 
         @Override
         protected void onPostExecute(String result) {
-
             super.onPostExecute(result);
             for (int i = 0; i < userSettingsList.size(); i++) {
                 try {
@@ -1059,7 +1045,6 @@ public class HomeActivity extends BaseActivity implements HomeView {
                     continue;
                 }
             }
-
             for (int i = 0; i < notificationList.size(); i++) {
                 List<ReceiverModel> receiverList = notificationList.get(i).getReceviers();
                 for (int j = 0; j < receiverList.size(); j++) {
@@ -1076,27 +1061,26 @@ public class HomeActivity extends BaseActivity implements HomeView {
                     }
                 }
             }
-
             //mainViewPager.updateRecentlyList(new ArrayList<>());
             setNotificationCount();
-
+            getParentFolders();
             File file = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zippedFileName);
             if (file.exists()) {
                 file.delete();
             }
-
             File extractedFiles = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
             if (extractedFiles.exists()) {
                 extractedFiles.delete();
             }
-
-            fetch.removeListener(fetchListener);
-
-
+            //fetch.removeListener(fetchListener);
             if (urlNum == downloadEntityLists.size()) {
                 setRecommendedList();
                 appendLog("Finished downloading all base/updated versions");
-                sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum - 1).getFileName());
+                try {
+                    sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum - 1).getFileName());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 progressDialog.dismiss();
                 mainVP.post(new Runnable() {
 
@@ -1116,9 +1100,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 beginDownload(downloadEntityLists.get(urlNum).getDownloadLink(), downloadEntityLists.get(urlNum).getFileName());
                 urlNum = urlNum + 1;
             }
-
         }
-
     }
 
     public void decodeFile(String strFile, String filename) {
@@ -1149,7 +1131,6 @@ public class HomeActivity extends BaseActivity implements HomeView {
             mydir.mkdirs();
         }
     }
-
 
     public void setRecommendedList() {
 
@@ -1206,7 +1187,6 @@ public class HomeActivity extends BaseActivity implements HomeView {
             }
 
 
-
             @Override
             public void onError(Throwable e) {
 
@@ -1247,7 +1227,6 @@ public class HomeActivity extends BaseActivity implements HomeView {
         });
 
     }
-
 
     public void getArticleList() {
 

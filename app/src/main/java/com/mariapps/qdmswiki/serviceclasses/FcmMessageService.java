@@ -105,7 +105,7 @@ public class FcmMessageService extends FirebaseMessagingService {
         int importance = NotificationManager.IMPORTANCE_HIGH;
         NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance);
         notificationChannel.setShowBadge(true);
-        notificationChannel.setName("LiveFleet");
+        notificationChannel.setName("QDMS");
         notificationChannel.setDescription(msg);
         notificationChannel.enableVibration(true);
         notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});

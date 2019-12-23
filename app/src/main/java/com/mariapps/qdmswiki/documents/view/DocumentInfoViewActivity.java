@@ -9,6 +9,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
@@ -75,6 +76,10 @@ public class DocumentInfoViewActivity extends BaseActivity implements HomeView {
     CustomRecyclerView usersRV;
     @BindView(R.id.arrowIV)
     AppCompatImageView arrowIV;
+   /* CustomTextView docnum;
+    @BindView(R.id.docnum)
+    CustomTextView docver;
+    @BindView(R.id.docver)*/
 
     private HomePresenter homePresenter;
     private List<TagModel> tagList = new ArrayList<>();
@@ -83,6 +88,8 @@ public class DocumentInfoViewActivity extends BaseActivity implements HomeView {
     private String id;
     private String folderId;
     private String location;
+    private String type;
+    TextView docnum,docver;
     List<String> allParents = new ArrayList<>();
 
     @Override
@@ -100,24 +107,24 @@ public class DocumentInfoViewActivity extends BaseActivity implements HomeView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_document_info);
         ButterKnife.bind(this);
+        docnum = findViewById(R.id.docnum);
+        docver = findViewById(R.id.docver);
 
         try{
             Bundle bundle = getIntent().getExtras();
             id = bundle.getString(AppConfig.BUNDLE_ID);
             folderId = bundle.getString(AppConfig.BUNDLE_FOLDER_ID);
             folderName = bundle.getString(AppConfig.BUNDLE_FOLDER_NAME);
+            type=bundle.getString("type");
         }
         catch (Exception e){}
-
         tagsRV.setLayoutManager(new LinearLayoutManager(this, LinearLayout.HORIZONTAL, false));
         tagsRV.setHasFixedSize(true);
-
         usersRV.setHasFixedSize(true);
         usersRV.setLayoutManager(new LinearLayoutManager(this));
         usersRV.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         headingTV.setText(getResources().getString(R.string.string_document_details));
         nameTV.setText(folderName);
-
         getLocationDetails(folderId);
         setUserList();
 
@@ -231,6 +238,11 @@ public class DocumentInfoViewActivity extends BaseActivity implements HomeView {
     @Override
     public void onGetDocumentInfoSuccess(DocumentModel documentModel) {
         titleTV.setText("Document Details");
+       if(type.equals("Article")){
+           docver.setText("Article Version");
+           docnum.setText("Article Number");
+           titleTV.setText("Article Details");
+       }
         locationTV.setText(location);
         documentNumberTV.setText(documentModel.getDocumentNumber());
         documentVersionTV.setText("V "+documentModel.getVersion());

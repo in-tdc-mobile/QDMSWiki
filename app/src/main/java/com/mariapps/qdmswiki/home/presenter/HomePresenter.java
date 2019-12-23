@@ -1,7 +1,15 @@
 package com.mariapps.qdmswiki.home.presenter;
 
 import android.content.Context;
+import android.os.AsyncTask;
+import android.util.Log;
 
+import com.mariapps.qdmswiki.ArticleModelObj;
+import com.mariapps.qdmswiki.ArticleModelObj_;
+import com.mariapps.qdmswiki.DocumentModelObj;
+import com.mariapps.qdmswiki.DocumentModelObj_;
+import com.mariapps.qdmswiki.ObjectBox;
+import com.mariapps.qdmswiki.TagModelObj;
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkEntryModel;
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkModel;
 import com.mariapps.qdmswiki.home.database.HomeDatabase;
@@ -32,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import io.objectbox.Box;
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -40,7 +49,6 @@ import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
 
 public class HomePresenter {
-
     private HomeView homeView;
     private HomeDatabase homeDatabase;
     private ServiceController serviceController;
@@ -52,6 +60,8 @@ public class HomePresenter {
     CategoryModel categoryModel;
     DocumentModel documentModel;
     String categoryName;
+    Box<ArticleModelObj> abox;
+    Box<DocumentModelObj> dbox;
 
     public HomePresenter(Context context, HomeView homeView) {
         this.homeView = homeView;
@@ -63,6 +73,7 @@ public class HomePresenter {
         //url = "https://qdmswiki2019.blob.core.windows.net/baseversions/20191015.zip";//new 700 mb
         //url = "https://qdmswiki2019.blob.core.windows.net/sqldata/09102019072523.zip";//90 mb
         url = "https://qdmswiki2019.blob.core.windows.net/updateversions/20191022100905.zip";//18 mb
+
     }
 
     public void getDownloadUrl(DownloadFilesRequestModel downloadFilesRequestModel) {
@@ -94,6 +105,17 @@ public class HomePresenter {
             public void run() throws Exception {
                 if (documentModel != null) {
                     homeDatabase.homeDao().deleteDocument(documentModel.getId());
+                    AsyncTask.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                dbox.query().equal(DocumentModelObj_.id,documentModel.getId()).build().remove();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
                 }
             }
         }).observeOn(AndroidSchedulers.mainThread())
@@ -107,8 +129,6 @@ public class HomePresenter {
             public void onComplete() {
                 insertDocuments(documentModel);
             }
-
-
             @Override
             public void onError(Throwable e) {
 
@@ -118,15 +138,24 @@ public class HomePresenter {
 
 
     public void insertDocuments(final DocumentModel documentModel) {
+        if(dbox==null){
+            dbox = ObjectBox.get().boxFor(DocumentModelObj.class);
+        }
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
                 if (documentModel != null) {
                     homeDatabase.homeDao().insertDocument(documentModel);
+                    AsyncTask.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            dbox.put(new DocumentModelObj(documentModel.id,documentModel.documentName,documentModel.documentData));
+                        }
+                    });
                 }
             }
         }).observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+                .subscribeOn(Schedulers.newThread()).subscribe(new CompletableObserver() {
             @Override
             public void onSubscribe(Disposable d) {
 
@@ -140,7 +169,7 @@ public class HomePresenter {
 
             @Override
             public void onError(Throwable e) {
-
+            Log.e("errorininsert",e.getLocalizedMessage());
             }
         });
     }
@@ -177,6 +206,17 @@ public class HomePresenter {
             @Override
             public void run() throws Exception {
                 homeDatabase.homeDao().deleteArticle(articleModel.getId());
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            abox.query().equal(ArticleModelObj_.id,documentModel.getId()).build().remove();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
@@ -199,15 +239,24 @@ public class HomePresenter {
     }
 
     public void insertArticles(final ArticleModel articleModel) {
+        if(abox==null){
+            abox = ObjectBox.get().boxFor(ArticleModelObj.class);
+        }
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
                 if (articleModel != null) {
                     homeDatabase.homeDao().insertArticle(articleModel);
+                    AsyncTask.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                           abox.put(new ArticleModelObj(articleModel.getId(),articleModel.getArticleName(),articleModel.documentData));
+                        }
+                    });
                 }
             }
         }).observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+                .subscribeOn(Schedulers.newThread()).subscribe(new CompletableObserver() {
             @Override
             public void onSubscribe(Disposable d) {
 

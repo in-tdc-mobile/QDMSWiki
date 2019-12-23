@@ -9,7 +9,6 @@ import android.content.SharedPreferences.Editor;
  * Created by rio.issac on 5/7/2015.
  */
 public class SessionManager {
-
     private static final String PREF_NAME = "QDMSwiki";
     private static final String KEY_IS_LOGGEDIN = "keyisloggedin";
     private static final String KEY_ID = "keyid";

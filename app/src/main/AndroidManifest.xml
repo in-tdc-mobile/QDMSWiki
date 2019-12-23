@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
         android:allowBackup="false"
@@ -19,6 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
         <activity
+            android:alwaysRetainTaskState="true"
             android:name=".splash.view.SplashScreenActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme"
@@ -41,6 +43,7 @@
             android:screenOrientation="user"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
+            android:alwaysRetainTaskState="true"
             android:name=".home.view.HomeActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:windowSoftInputMode="stateHidden|adjustResize" />
@@ -100,6 +103,7 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+        <service android:name=".DownloadService" android:enabled="true" android:stopWithTask="true"></service>
     </application>
 
 

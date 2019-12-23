@@ -39,7 +39,6 @@ public class DocumentModel implements Parcelable {
     @SerializedName("DocumentNumber")
     public String documentNumber;
 
-    @ColumnInfo(name = "DocumentData")
     @SerializedName("DocumentData")
     public String documentData;
 
@@ -84,12 +83,12 @@ public class DocumentModel implements Parcelable {
     @SerializedName("ApprovedName")
     private String approvedName;
 
-    public DocumentModel(String id, String categoryId, String documentCode, String documentName, String documentData, String version,List<TagModel> tags) {
+    public DocumentModel(String id, String categoryId, String documentCode, String documentName/*, String documentData,*/, String version,List<TagModel> tags) {
         this.id = id;
         this.categoryId = categoryId;
         this.documentCode = documentCode;
         this.documentName = documentName;
-        this.documentData = documentData;
+     //   this.documentData = documentData;
         this.version = version;
         this.tags = tags;
     }
@@ -272,7 +271,7 @@ public class DocumentModel implements Parcelable {
         documentCode = in.readString();
         documentName = in.readString();
         documentNumber = in.readString();
-        documentData = in.readString();
+       // documentData = in.readString();
         toolTip = in.readString();
         version = in.readString();
         tags = in.createTypedArrayList(TagModel.CREATOR);
@@ -299,7 +298,7 @@ public class DocumentModel implements Parcelable {
         dest.writeString(documentCode);
         dest.writeString(documentName);
         dest.writeString(documentNumber);
-        dest.writeString(documentData);
+       // dest.writeString(documentData);
         dest.writeString(toolTip);
         dest.writeString(version);
         dest.writeTypedList(tags);

@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,6 +73,7 @@ public class DocumentsFragment extends BaseFragment {
         homeDatabase = HomeDatabase.getInstance(getActivity());
 
         getDocumentList();
+        Log.e("DocumentsFragment",documentsList.size()+"");
         return view;
     }
 
@@ -82,7 +84,6 @@ public class DocumentsFragment extends BaseFragment {
             noDataRL.setVisibility(View.GONE);
             documentsAdapter = new DocumentsAdapter(getActivity(), documentsList, "DOCUMENTS");
             rvDocuments.setAdapter(documentsAdapter);
-
             documentsAdapter.setRowClickListener(new DocumentsAdapter.RowClickListener() {
                 @Override
                 public void onItemClicked(DocumentModel documentModel) {
@@ -95,7 +96,6 @@ public class DocumentsFragment extends BaseFragment {
                     intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, documentModel.getCategoryId());
                     intent.putExtra(AppConfig.BUNDLE_VERSION, documentModel.getVersion());
                     startActivity(intent);
-
                 }
             });
         } else {
@@ -110,6 +110,7 @@ public class DocumentsFragment extends BaseFragment {
             @Override
             public void run() throws Exception {
                 documentsList = homeDatabase.homeDao().getDocuments();
+                Log.e("doclist",documentsList.size()+"");
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
@@ -127,6 +128,7 @@ public class DocumentsFragment extends BaseFragment {
             @Override
             public void onError(Throwable e) {
                 loadingSpinner.setVisibility(View.GONE);
+                Log.e("doclistThrowable",e.getLocalizedMessage());
             }
         });
     }

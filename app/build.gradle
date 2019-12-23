@@ -80,6 +80,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:11.4.0'
 
     implementation 'com.tonyodev.fetch2:fetch2:3.0.10'
+    implementation "android.arch.lifecycle:livedata:1.1.1"
 }
 
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'io.objectbox'

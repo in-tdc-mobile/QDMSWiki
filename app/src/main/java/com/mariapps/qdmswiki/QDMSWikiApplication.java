@@ -1,6 +1,7 @@
 package com.mariapps.qdmswiki;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -15,6 +16,7 @@ import android.os.Bundle;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.View;
 import com.mariapps.qdmswiki.serviceclasses.QDMSWikiNetworkService;
 import com.mariapps.qdmswiki.utils.QDMSWikiNetworkReceiver;
@@ -105,7 +107,10 @@ public class QDMSWikiApplication extends MultiDexApplication implements Applicat
     public void onActivityStopped(Activity activity) {
         isActivityChangingConfigurations = activity.isChangingConfigurations();
         if (--activityReferences == 0 && !isActivityChangingConfigurations) {
+
+
         }
+
     }
 
     @Override
@@ -115,8 +120,9 @@ public class QDMSWikiApplication extends MultiDexApplication implements Applicat
 
     @Override
     public void onActivityDestroyed(Activity activity) {
-
     }
+
+
 
     private static class Loader {
         static final QDMSWikiNetworkService FACTORY_SINGLETON = new QDMSWikiNetworkService();

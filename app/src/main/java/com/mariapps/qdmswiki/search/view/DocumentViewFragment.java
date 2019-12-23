@@ -5,9 +5,12 @@ import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -38,8 +41,14 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.mariapps.qdmswiki.AppConfig;
+import com.mariapps.qdmswiki.ArticleModelObj;
+import com.mariapps.qdmswiki.ArticleModelObj_;
 import com.mariapps.qdmswiki.BuildConfig;
+import com.mariapps.qdmswiki.DocumentModelObj;
+import com.mariapps.qdmswiki.DocumentModelObj_;
+import com.mariapps.qdmswiki.ObjectBox;
 import com.mariapps.qdmswiki.R;
+import com.mariapps.qdmswiki.TagModelObj;
 import com.mariapps.qdmswiki.baseclasses.BaseFragment;
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkEntryModel;
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkModel;
@@ -70,6 +79,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.objectbox.Box;
+import io.objectbox.Property;
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -112,10 +123,11 @@ public class DocumentViewFragment extends BaseFragment {
     private FormsModel formsModel;
     private String imageFolderPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/QDMSWiki/Images/";
     private ProgressDialog progressDialog;
-
     String docNum;
     String docDate;
     String docVersion;
+    Box<DocumentModelObj> dbox;
+    Box<ArticleModelObj> abox;
 
 
     @Override
@@ -127,7 +139,6 @@ public class DocumentViewFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_document_view, container, false);
         ButterKnife.bind(this, view);
-
         try {
             Bundle args = getArguments();
             id = args.getString(AppConfig.BUNDLE_ID, "");
@@ -137,6 +148,8 @@ public class DocumentViewFragment extends BaseFragment {
             folderName = args.getString(AppConfig.BUNDLE_FOLDER_NAME, "");
             version = args.getString(AppConfig.BUNDLE_VERSION, "");
             progressDialog = new ProgressDialog(getActivity());
+            dbox = ObjectBox.get().boxFor(DocumentModelObj.class);
+            abox = ObjectBox.get().boxFor(ArticleModelObj.class);
 
             if (type.equals("Document")) {
                 recentlyViewedModel = new RecentlyViewedModel(id, name, folderId, folderName, version, DateUtils.getCurrentDate());
@@ -214,7 +227,6 @@ public class DocumentViewFragment extends BaseFragment {
                 PopupWindow popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
                 popupWindow.showAtLocation(popupView, Gravity.BOTTOM, 0, 50);
                 popupWindow.setOutsideTouchable(false);
-
                 View container = (View) popupWindow.getContentView().getParent();
                 WindowManager wm = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
                 WindowManager.LayoutParams p = (WindowManager.LayoutParams) container.getLayoutParams();
@@ -246,6 +258,7 @@ public class DocumentViewFragment extends BaseFragment {
                         intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME, folderName);
                         intent.putExtra(AppConfig.BUNDLE_ID, id);
                         intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, folderId);
+                        intent.putExtra("type",type);
                         startActivity(intent);
                     }
                 });
@@ -273,11 +286,54 @@ public class DocumentViewFragment extends BaseFragment {
     }
 
     public void loadDocument() {
-        Completable.fromAction(new Action() {
+
+
+        new AsyncTask<String,Void,String>(){
+
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog.show();
+            }
+
+            @Override
+            protected String doInBackground(String... strings) {
+                if (type.equals("Document")) {
+                    Log.e("idofdocument",id);
+                    try {
+                        documentModel = homeDatabase.homeDao().getDocumentData(id);
+                        Log.e("sizeofdocinbox",dbox.getAll().size()+"");
+                        documentData = dbox.query().equal(DocumentModelObj_.id,id).build().find().get(0).documentData;
+                    } catch (Exception e) {
+                        Log.e("documentDatacatchid",dbox.getAll().size()+"");
+                    }
+                } else {
+                    List<TagModel> taglist = new ArrayList<>();
+                    documentModel = new DocumentModel("", "", "", "",  "",taglist);
+                    articleModel = homeDatabase.homeDao().getArticleData(id);
+                    documentData = abox.query().equal(ArticleModelObj_.id,id).build().find().get(0).documentData;
+                }
+                documentData = documentData.replace("<script src=\"/WikiPALApp/Scripts/TemplateSettings/toc-template-settings.js\"></script>", "<script src=\"./Scripts/toc-template-settings.js.download\"></script>");
+                documentData = documentData.replace("src=\"/WikiPALApp/Uploads/Image/","src= \"file://"+imageFolderPath);
+                documentData = documentData.replace("\n", "");
+                documentModel.setDocumentData(documentData);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                setHTMLContent();
+                progressDialog.dismiss();
+                super.onPostExecute(s);
+            }
+        }.execute();
+       /* Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-
                 if (type.equals("Document")) {
+                    Log.e("idofdocument",id);
+                    homeDatabase.beginTransaction();
                     documentModel = homeDatabase.homeDao().getDocumentData(id);
                     documentData = documentModel.getDocumentData();
                 } else {
@@ -285,6 +341,7 @@ public class DocumentViewFragment extends BaseFragment {
                     documentModel = new DocumentModel("", "", "", "", "", "", taglist);
                     articleModel = homeDatabase.homeDao().getArticleData(id);
                     documentData = articleModel.getDocumentData();
+                    Log.e("documentdata",documentData);
                 }
                 documentData = documentData.replace("<script src=\"/WikiPALApp/Scripts/TemplateSettings/toc-template-settings.js\"></script>", "<script src=\"./Scripts/toc-template-settings.js.download\"></script>");
                 documentData = documentData.replace("src=\"/WikiPALApp/Uploads/Image/","src= \"file://"+imageFolderPath);
@@ -295,20 +352,17 @@ public class DocumentViewFragment extends BaseFragment {
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
             @Override
             public void onSubscribe(Disposable d) {
-
             }
-
             @Override
             public void onComplete() {
                 setHTMLContent();
             }
-
-
             @Override
             public void onError(Throwable e) {
+                Log.e("documentcatch",e.getLocalizedMessage());
                 Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
             }
-        });
+        });*/
     }
 
     private void setHTMLContent() {
@@ -317,9 +371,7 @@ public class DocumentViewFragment extends BaseFragment {
         webView.getSettings().setBuiltInZoomControls(true);
         webView.setWebContentsDebuggingEnabled(true);
         webView.addJavascriptInterface(new AppJavaScriptProxy(getActivity()), "androidAppProxy");
-
         webView.setWebViewClient(new WebViewClient() {
-
 //            public void onLoadResource(WebView view, String url) {
 //                // Check to see if there is a progress dialog
 //                if (progressDialog == null) {
@@ -333,10 +385,16 @@ public class DocumentViewFragment extends BaseFragment {
 //                }
 //            }
 
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+            }
+
+
             public void onPageFinished(WebView view, String url) {
                 // Page is done loading;
                 // hide the progress dialog and show the webview
-
                 webView.setEnabled(true);
             }
 
@@ -354,8 +412,9 @@ public class DocumentViewFragment extends BaseFragment {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
+                Log.e("artcileid",id);
                 articleModel = ((ArticleModel) homeDatabase.homeDao().getArticleData(id));
-                String articleData = articleModel.getDocumentData();
+                String articleData =documentData = abox.query().equal(ArticleModelObj_.id,id).build().find().get(0).documentData;;
                 articleData = articleData.replace("<script src=\"/WikiPALApp/Scripts/TemplateSettings/toc-template-settings.js\"></script>", "<script src=\"./Scripts/toc-template-settings.js.download\"></script>");
                 articleData = articleData.replace("src=\"/WikiPALApp/Uploads/Image/", "src= \"file://"+imageFolderPath);
                 articleData = articleData.replace("\n", "");
@@ -366,7 +425,6 @@ public class DocumentViewFragment extends BaseFragment {
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
             @Override
             public void onSubscribe(Disposable d) {
-
             }
 
             @Override
@@ -374,23 +432,23 @@ public class DocumentViewFragment extends BaseFragment {
                 webView.post(new Runnable() {
                     @Override
                     public void run() {
-                        webView.loadUrl("javascript:setArticleDataFromViewController('" + articleModel.getId() + "');");
+                        try {
+                            webView.loadUrl("javascript:setArticleDataFromViewController('" + articleModel.getId() + "');");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         //webView.loadUrl("javascript:setArticleDataFromViewController('" + articleModel.getDocumentData() + "','" + articleModel.getId() + "');$(`.article-table`).removeClass(`hide-state`); $(`.article-table>tbody>tr`).removeClass(`hide-article`);$(`span.toggle-article`).addClass(`opentoggle`)");
-
                     }
                 });
             }
-
-
             @Override
             public void onError(Throwable e) {
-
+                Log.e("artcileiderror",e.getLocalizedMessage());
             }
         });
     }
 
     public void loadFooter() {
-
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
@@ -418,12 +476,9 @@ public class DocumentViewFragment extends BaseFragment {
                     @Override
                     public void run() {
                         webView.loadUrl("javascript:setFooterDataAfterRender($('#tableDragger'),'" + docNum + "','" + docDate + "','" + docVersion+"')");
-
                     }
                 });
             }
-
-
             @Override
             public void onError(Throwable e) {
 
@@ -465,7 +520,7 @@ public class DocumentViewFragment extends BaseFragment {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-                documentModel = new DocumentModel("", "", "", "", "", "", new ArrayList<TagModel>());
+                documentModel = new DocumentModel("", "", "", "", "", new ArrayList<TagModel>());
                 documentModel = ((DocumentModel) homeDatabase.homeDao().getDocumentDetails(id));
             }
         }).observeOn(AndroidSchedulers.mainThread())
@@ -512,9 +567,7 @@ public class DocumentViewFragment extends BaseFragment {
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
             @Override
             public void onSubscribe(Disposable d) {
-
             }
-
             @Override
             public void onComplete() {
                 webView.post(new Runnable() {
@@ -532,8 +585,6 @@ public class DocumentViewFragment extends BaseFragment {
                     }
                 });
             }
-
-
             @Override
             public void onError(Throwable e) {
 
@@ -600,10 +651,8 @@ public class DocumentViewFragment extends BaseFragment {
         if (!FilePath.equals("")) {
             try {
                 Uri uri = FileProvider.getUriForFile(getActivity(), BuildConfig.APPLICATION_ID + ".provider", new File(FilePath));
-
                 String type = FilePath.substring(FilePath.lastIndexOf('.'));
                 String extension = MimeTypeMap.getFileExtensionFromUrl(type);
-
                     type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.toLowerCase());
                 Intent i = new Intent();
                 i.setAction(Intent.ACTION_VIEW);
@@ -618,9 +667,7 @@ public class DocumentViewFragment extends BaseFragment {
                 Toast.makeText(getActivity(), "No handler for this type of file.", Toast.LENGTH_LONG).show();
             }
         }
-
     }
-
 
     public void insertRecentlyViewedDocument(RecentlyViewedModel recentlyViewedModel) {
         Completable.fromAction(new Action() {
@@ -725,6 +772,7 @@ public class DocumentViewFragment extends BaseFragment {
 
             @Override
             public void onComplete() {
+                showCustomToast("Bookmark Saved",Toast.LENGTH_SHORT);
 
             }
 

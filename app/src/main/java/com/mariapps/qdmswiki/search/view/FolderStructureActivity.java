@@ -62,7 +62,6 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_folder_structure);
-
         if (getIntent() != null && getIntent().getExtras() != null) {
             page = getIntent().getExtras().getString(AppConfig.BUNDLE_PAGE);
             type = getIntent().getExtras().getString(AppConfig.BUNDLE_TYPE);
@@ -121,7 +120,6 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
         breadCrumbRV.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         breadCrumbAdapter = new BreadCrumbAdapter(breadCrumbItems, this);
         breadCrumbAdapter.setBreadCrumbListener(new BreadCrumbAdapter.BreadCrumbListener() {
-
             @Override
             public void onClick(int count, BreadCrumbItem breadCrumbItem) {
                 popUptoPosition(count);
@@ -134,7 +132,6 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
                 replaceFragments(folderFragment,breadCrumbItem.getId(),breadCrumbItem.getHeading());
             }
         });
-
         breadCrumbRV.setAdapter(breadCrumbAdapter);
     }
 

@@ -42,7 +42,6 @@ public class ArticleModel implements Parcelable {
     @SerializedName("ArticleNumber")
     private Integer articleNumber;
 
-    @ColumnInfo(name = "DocumentData")
     @SerializedName("DocumentData")
     public String documentData;
 
@@ -244,7 +243,7 @@ public class ArticleModel implements Parcelable {
 //        draftId = in.readString();
         articleName = in.readString();
         articleNumber = in.readInt();
-        documentData = in.readString();
+     //   documentData = in.readString();
         categoryIds = in.readArrayList(ArticleModel.class.getClassLoader());
         tags = in.createTypedArrayList(TagModel.CREATOR);
         version = in.readDouble();
@@ -264,7 +263,7 @@ public class ArticleModel implements Parcelable {
 //        dest.writeString(draftId);
         dest.writeString(articleName);
         dest.writeInt(articleNumber);
-        dest.writeString(documentData);
+       // dest.writeString(documentData);
         dest.writeList(categoryIds);
         dest.writeTypedList(tags);
         dest.writeDouble(version);

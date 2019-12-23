@@ -40,7 +40,6 @@ public class SplashScreenActivity extends BaseActivity {
         sessionManager = new SessionManager(getApplicationContext());
         setContentView(R.layout.activity_splash);
         setTheme(R.style.AppTheme);
-
         new CountDownTimer(2000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
