@@ -66,9 +66,38 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "3:1691400925765699081",
+      "lastPropertyId": "4:6631482051916392411",
+      "name": "ArticleModelObj",
+      "properties": [
+        {
+          "id": "1:1381008158735033241",
+          "name": "uId",
+          "type": 6,
+          "flags": 3
+        },
+        {
+          "id": "2:4036060783486162364",
+          "name": "id",
+          "type": 9
+        },
+        {
+          "id": "3:1360585994863052315",
+          "name": "articleName",
+          "type": 9
+        },
+        {
+          "id": "4:6631482051916392411",
+          "name": "documentData",
+          "type": 9
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "2:184710905347147231",
+  "lastEntityId": "3:1691400925765699081",
   "lastIndexId": "0:0",
   "lastRelationId": "1:856708942718897631",
   "lastSequenceId": "0:0",
