@@ -49,4 +49,8 @@ public interface HomeView {
 //    void onGetCategoryNameSuccess(String categoryName);
 //    void onGetCategoryNameError();
 
+    void onGetArticleInfoSuccess(ArticleModel articleModel);
+    void onGetArticleInfoError();
+
+
 }

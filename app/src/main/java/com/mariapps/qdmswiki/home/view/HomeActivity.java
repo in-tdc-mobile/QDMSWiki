@@ -829,6 +829,16 @@ request.setAllowedNetworkTypes(
 
     }
 
+    @Override
+    public void onGetArticleInfoSuccess(ArticleModel articleModel) {
+
+    }
+
+    @Override
+    public void onGetArticleInfoError() {
+
+    }
+
     public static void copyFile(File sourceFile, File destFile) throws IOException {
         if (destFile.exists())
             return;

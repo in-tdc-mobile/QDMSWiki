@@ -20,6 +20,7 @@ import com.mariapps.qdmswiki.documents.adapter.TagsAdapter;
 import com.mariapps.qdmswiki.documents.adapter.UserAdapter;
 import com.mariapps.qdmswiki.documents.model.DocumentInfoModel;
 import com.mariapps.qdmswiki.documents.model.UserModel;
+import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.CategoryModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
 import com.mariapps.qdmswiki.home.model.DownloadFilesResponseModel;
@@ -123,7 +124,7 @@ public class DocumentInfoViewActivity extends BaseActivity implements HomeView {
         usersRV.setHasFixedSize(true);
         usersRV.setLayoutManager(new LinearLayoutManager(this));
         usersRV.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        headingTV.setText(getResources().getString(R.string.string_document_details));
+
         nameTV.setText(folderName);
         getLocationDetails(folderId);
         setUserList();
@@ -135,6 +136,13 @@ public class DocumentInfoViewActivity extends BaseActivity implements HomeView {
 
     private void setDocumentDetails() {
         homePresenter.getDocumentInfo(id);
+
+        UserAdapter userAdapter = new UserAdapter(this,usersList);
+        usersRV.setAdapter(userAdapter);
+    }
+
+    private void setArticleDetails() {
+        homePresenter.getArticleInfo(id);
 
         UserAdapter userAdapter = new UserAdapter(this,usersList);
         usersRV.setAdapter(userAdapter);
@@ -212,7 +220,11 @@ public class DocumentInfoViewActivity extends BaseActivity implements HomeView {
                 else
                     location = "/"+allParents.get(i);
             }
-            setDocumentDetails();
+
+            if(type.equals("Document"))
+                setDocumentDetails();
+            else
+                setArticleDetails();
         }
         else {
             allParents.add(categoryModel.getName());
@@ -237,16 +249,12 @@ public class DocumentInfoViewActivity extends BaseActivity implements HomeView {
 
     @Override
     public void onGetDocumentInfoSuccess(DocumentModel documentModel) {
-        titleTV.setText("Document Details");
-       if(type.equals("Article")){
-           docver.setText("Article Version");
-           docnum.setText("Article Number");
-           titleTV.setText("Article Details");
-       }
+        headingTV.setText(getResources().getString(R.string.string_document_details));
+        titleTV.setText(getResources().getString(R.string.string_document_details));
         locationTV.setText(location);
         documentNumberTV.setText(documentModel.getDocumentNumber());
         documentVersionTV.setText("V "+documentModel.getVersion());
-        publishedOnTV.setText(DateUtils.getFormattedDateInLocal(documentModel.getDate()));
+        publishedOnTV.setText(DateUtils.getFormattedDate(documentModel.getDate()));
         approvedByTV.setText(documentModel.getApprovedName());
 
         tagList = documentModel.getTags();
@@ -306,6 +314,29 @@ public class DocumentInfoViewActivity extends BaseActivity implements HomeView {
 
     @Override
     public void onGetDownloadFilesError() {
+
+    }
+
+    @Override
+    public void onGetArticleInfoSuccess(ArticleModel articleModel) {
+        headingTV.setText(getResources().getString(R.string.string_article_details));
+        titleTV.setText(getResources().getString(R.string.string_article_details));
+        docver.setText("Article Version");
+        docnum.setText("Article Number");
+
+        locationTV.setText(location);
+        documentNumberTV.setText(String.valueOf(articleModel.getArticleNumber()));
+        documentVersionTV.setText("V "+ String.valueOf(articleModel.getVersion()));
+        publishedOnTV.setText(DateUtils.getFormattedDate(articleModel.getDate()));
+        approvedByTV.setText("");
+
+        tagList = articleModel.getTags();
+        TagsAdapter tagsAdapter = new TagsAdapter(this,tagList);
+        tagsRV.setAdapter(tagsAdapter);
+    }
+
+    @Override
+    public void onGetArticleInfoError() {
 
     }
 
