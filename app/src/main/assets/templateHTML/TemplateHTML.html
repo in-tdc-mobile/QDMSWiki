@@ -53,7 +53,7 @@
                          $(`.article-table`).attr(`data-visible`, false);
                          $(`.article-table:first`).attr(`data-visible`, true);
                          ArticleData($(`.article-table:first`));
-                         afterRenderDocView();
+                         afterRenderDocView(false);
                          $(`.article-table`).removeClass(`hide-state`);$(`.article-table>tbody>tr`).removeClass(`hide-article`);$(`span.toggle-article`).addClass(`opentoggle`)
                          androidAppProxy.getFooterData();
 

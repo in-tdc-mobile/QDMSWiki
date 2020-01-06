@@ -4,7 +4,7 @@ var tableSettingsStart = function () {
 }
 
 var tableSettingsGetpos = function (o, i) {
-    var o = $(o); // get position of current cell
+    var o = $(o); // get position of current cell               
     msel[0][i] = o.parent().index(); // set row
     msel[1][i] = o.index(); // set column
     return msel;
@@ -78,7 +78,7 @@ $(document).ready(function () {
 
     $(".btnApplyTableDimensions").off();
     $(".btnApplyTableDimensions").click(function (e) {
-
+       
         var trCount = 1, tdCount = 0;
         var tbl = $(e.target.closest(".templateSettings")).find(".tbl-Settings");
         var targetTable = $(e.target.closest(".templateSettings").closest("td")).find("#resizeTable");
@@ -102,7 +102,7 @@ $(document).ready(function () {
             var thead = $("<thead/>");
             var trhead = $("<tr/>");
             for (var i = 0; i < tdCount; i++) {
-
+                
                 var existdata = targetTable.find("thead> tr ").find("th:eq(" + i + ")>div").html()
                 if (existdata != undefined)
                 {
@@ -120,7 +120,7 @@ $(document).ready(function () {
                     //th.append($("<div class='ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se' style='z-index: 90;'></div>"));
                     trhead.append(th);
                 }
-
+                
             }
             thead.append(trhead);
 
@@ -139,8 +139,8 @@ $(document).ready(function () {
                         var td = $("<td style=\"width: 50px;\" contenteditable=\"true\"></td>");
                         tr.append(td);
                     }
-
-
+                
+                   
                 }
                 tbody.append(tr);
             }
@@ -419,7 +419,7 @@ $(document).ready(function () {
 
     $(".btnApplyCellPaddingSettings").off();
     $(".btnApplyCellPaddingSettings").click(function (e) {
-
+      
         var settings = $(e.target.closest(".templateSettings"));
         var targetTable = $(e.target.closest(".templateSettings").closest("td")).find("#resizeTable");
 
@@ -467,11 +467,11 @@ $(document).ready(function () {
                 else if (SideVal=="2") {
                     targetTable.find("tbody>tr:eq('" + j + "')").find("td:eq('" + k + "')").css("padding-right", Pxval + "px");
                 }
-
+                 
             }
         }
         $(".popup-close").trigger('click');
-
+       
 
 
     });
@@ -601,7 +601,7 @@ $(document).ready(function () {
 
     });
     $('.toColumn').change(function () {
-
+      
         if (parseInt($('.fromColumn').val()) != 0 && parseInt($('.toColumn').val()) != 0 && parseInt($('.fromColumn').val()) > parseInt($('.toColumn').val()))
             $('.toColumn').addClass('errorinput');
         else

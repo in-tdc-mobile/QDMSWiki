@@ -261,7 +261,6 @@ try{
 // Article data  Manipulate  from ArticleData function
 
 function SetArticleBody(documentData, tbody) {
-    
     var toggleIcon = "<span class=\"toggle-article\"><i class=\"fa fa-caret-right\"></i></span>";
     var Rootclonetbody = tbody.clone();
     Rootclonetbody.html(documentData);

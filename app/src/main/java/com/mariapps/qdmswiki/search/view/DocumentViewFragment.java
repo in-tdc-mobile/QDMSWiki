@@ -28,8 +28,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
 import android.webkit.MimeTypeMap;
+import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -150,7 +152,6 @@ public class DocumentViewFragment extends BaseFragment {
             progressDialog = new ProgressDialog(getActivity());
             dbox = ObjectBox.get().boxFor(DocumentModelObj.class);
             abox = ObjectBox.get().boxFor(ArticleModelObj.class);
-
             if (type.equals("Document")) {
                 recentlyViewedModel = new RecentlyViewedModel(id, name, folderId, folderName, version, DateUtils.getCurrentDate());
                 insertRecentlyViewedDocument(recentlyViewedModel);
@@ -219,7 +220,6 @@ public class DocumentViewFragment extends BaseFragment {
 
 
     @OnClick({R.id.showMenuFab})
-
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.showMenuFab:
@@ -286,17 +286,12 @@ public class DocumentViewFragment extends BaseFragment {
     }
 
     public void loadDocument() {
-
-
         new AsyncTask<String,Void,String>(){
-
-
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
                 progressDialog.show();
             }
-
             @Override
             protected String doInBackground(String... strings) {
                 if (type.equals("Document")) {
@@ -316,11 +311,12 @@ public class DocumentViewFragment extends BaseFragment {
                 }
                 documentData = documentData.replace("<script src=\"/WikiPALApp/Scripts/TemplateSettings/toc-template-settings.js\"></script>", "<script src=\"./Scripts/toc-template-settings.js.download\"></script>");
                 documentData = documentData.replace("src=\"/WikiPALApp/Uploads/Image/","src= \"file://"+imageFolderPath);
+                documentData = documentData.replace("src=\"/WikiPALApp/Scripts/TemplateSettings/","src= \"file:///android_asset/templateHTML/Scripts/");
+                documentData = documentData.replace("href=\"/WikiPALApp/Content/TemplateSettings/","href= \"file:///android_asset/templateHTML/Scripts/");
                 documentData = documentData.replace("\n", "");
                 documentModel.setDocumentData(documentData);
                 return null;
             }
-
             @Override
             protected void onPostExecute(String s) {
                 setHTMLContent();
@@ -369,6 +365,10 @@ public class DocumentViewFragment extends BaseFragment {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setDisplayZoomControls(false);
         webView.getSettings().setBuiltInZoomControls(true);
+        webView.getSettings().setAllowFileAccess(true);
+        webView.getSettings().setUseWideViewPort(true);
+        webView.getSettings().setLoadWithOverviewMode(true);
+        webView.getSettings().setBuiltInZoomControls(true);
         webView.setWebContentsDebuggingEnabled(true);
         webView.addJavascriptInterface(new AppJavaScriptProxy(getActivity()), "androidAppProxy");
         webView.setWebViewClient(new WebViewClient() {
@@ -398,12 +398,14 @@ public class DocumentViewFragment extends BaseFragment {
                 webView.setEnabled(true);
             }
 
+
+
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-              //  Toast.makeText(getActivity(), "Your Internet Connection May not be active Or " + error.getDescription(), Toast.LENGTH_LONG).show();
+                Log.e("onReceivedError",error.getDescription()+" "+error.getErrorCode());
+               Toast.makeText(getActivity(), "Your Internet Connection May not be active Or " + error.getDescription(), Toast.LENGTH_LONG).show();
             }
         });
-
         webView.loadUrl("file:///android_asset/templateHTML/TemplateHTML.html");
 //        webView.loadDataWithBaseURL("", data, "text/html", "UTF-8", "");
     }
@@ -417,6 +419,8 @@ public class DocumentViewFragment extends BaseFragment {
                 String articleData =documentData = abox.query().equal(ArticleModelObj_.id,id).build().find().get(0).documentData;;
                 articleData = articleData.replace("<script src=\"/WikiPALApp/Scripts/TemplateSettings/toc-template-settings.js\"></script>", "<script src=\"./Scripts/toc-template-settings.js.download\"></script>");
                 articleData = articleData.replace("src=\"/WikiPALApp/Uploads/Image/", "src= \"file://"+imageFolderPath);
+                articleData = articleData.replace("src=\"/WikiPALApp/Scripts/TemplateSettings/","src= \"file:///android_asset/templateHTML/Scripts/");
+                articleData = articleData.replace("href=\"/WikiPALApp/Content/TemplateSettings/","href= \"file:///android_asset/templateHTML/Scripts/");
                 articleData = articleData.replace("\n", "");
                 articleModel.setDocumentData(articleData);
                 articleMap.put(id,articleModel);
@@ -426,7 +430,6 @@ public class DocumentViewFragment extends BaseFragment {
             @Override
             public void onSubscribe(Disposable d) {
             }
-
             @Override
             public void onComplete() {
                 webView.post(new Runnable() {
@@ -446,13 +449,22 @@ public class DocumentViewFragment extends BaseFragment {
                 Log.e("artcileiderror",e.getLocalizedMessage());
             }
         });
+
+        /*webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+                Log.e("MyApplicationQDMSa", consoleMessage.message() + " -- From line "
+                        + consoleMessage.lineNumber() + " of "
+                        + consoleMessage.sourceId());
+                return true;
+            }
+        });*/
     }
 
     public void loadFooter() {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-
                 if (type.equals("Document")) {
                     docNum = documentModel.getDocumentNumber();
                     docDate = DateUtils.getFormattedDateinDDMMYYYY(documentModel.getDate());
@@ -467,7 +479,6 @@ public class DocumentViewFragment extends BaseFragment {
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
             @Override
             public void onSubscribe(Disposable d) {
-
             }
 
             @Override
