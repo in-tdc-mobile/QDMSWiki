@@ -172,6 +172,8 @@ public class ArticlesFragment extends BaseFragment {
                 intent.putExtra(AppConfig.BUNDLE_VERSION,articleModel.getVersion());
                 if(articleModel.getCategoryIds().size() > 0)
                     intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, articleModel.getCategoryIds().get(0));
+                if(articleModel.getCategoryIds().size() > 0)
+                    intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME, articleModel.getCategoryNames().get(0));
                 startActivity(intent);
 
             }

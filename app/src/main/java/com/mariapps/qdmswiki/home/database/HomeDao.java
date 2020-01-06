@@ -537,6 +537,17 @@ public interface HomeDao {
             " WHERE document.Id=:documentId")
     DocumentModel getDocumentInfo(String documentId);
 
+    @Query(" SELECT article.ArticleNumber, " +
+            " article.Version, "+
+            " article.Date," +
+            " article.tags," +
+            " userInfo.Name as approvedName " +
+            " FROM ArticleEntity as article " +
+            " LEFT JOIN UserInfoEntity as userinfo "+
+            " ON article.ApprovedBy = userinfo.Id "+
+            " WHERE article.Id=:articleId")
+    ArticleModel getArticleInfo(String articleId);
+
     @Query( " UPDATE DocumentEntity SET isRecommended = 'YES' WHERE Id =:documentId")
     void updateIsRecommended(String documentId);
 

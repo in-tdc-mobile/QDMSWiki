@@ -59,6 +59,7 @@ public class HomePresenter {
     UserInfoModel userInfoModel;
     CategoryModel categoryModel;
     DocumentModel documentModel;
+    ArticleModel articleModel;
     String categoryName;
     Box<ArticleModelObj> abox;
     Box<DocumentModelObj> dbox;
@@ -789,7 +790,7 @@ public class HomePresenter {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-                childList = homeDatabase.homeDao().getAllDocumentsArticlesAndFoldersInsideFolder(parentId);
+                childList = homeDatabase.homeDao().getAllDocumentsInsideFolder(parentId);
                 for(int i=0;i<childList.size();i++){
                     if(childList.get(i).getType().equals("Article")){
                         List<String> categoryIds = Collections.singletonList(childList.get(i).getCategoryId().substring(1, childList.get(i).getCategoryId().length() - 1));
@@ -916,6 +917,33 @@ public class HomePresenter {
             @Override
             public void onComplete() {
                 homeView.onGetDocumentInfoSuccess(documentModel);
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void getArticleInfo(String articleId) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                articleModel = homeDatabase.homeDao().getArticleInfo(articleId);
+
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                homeView.onGetArticleInfoSuccess(articleModel);
             }
 
 
