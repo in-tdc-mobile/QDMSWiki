@@ -526,10 +526,19 @@ public interface HomeDao {
             " WHERE bookmark.DocumentId=:documentId")
     List<BookmarkEntryModel> getBookmarkEntries(String documentId);
 
+
+    @Query(" SELECT bookmark.DocumentId, " +
+            " bookmark.BookmarkId, " +
+            " bookmark.BookmarkTitle, "+
+            " bookmark.DocumentId "+
+            " FROM BookMarkEntryEntity as bookmark ")
+    List<BookmarkEntryModel> getBookmarkEntriesall();
+
     @Query(" SELECT document.DocumentNumber, " +
             " document.Version, "+
             " document.Date," +
             " document.tags," +
+            "document.categoryId,"+
             " userInfo.Name as approvedName " +
             " FROM DocumentEntity as document " +
             " LEFT JOIN UserInfoEntity as userinfo "+
@@ -559,6 +568,10 @@ public interface HomeDao {
 
     @Query( " SELECT * FROM CategoryEntity WHERE Id=:parentId AND CategoryName != 'Entire QDMS'")
     CategoryModel getCategoryDetailsOfSelectedDocument(String parentId);
+
+    @Query( " SELECT * FROM CategoryEntity")
+    List<CategoryModel> getCategoryDetailsOfSelectedDocumentlist();
+
 
     @Query("SELECT * FROM TagEntity")
     List<TagModel> getTags();

@@ -23,6 +23,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +35,7 @@ import android.webkit.MimeTypeMap;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
@@ -107,6 +109,8 @@ public class DocumentViewFragment extends BaseFragment {
     private String folderId;
     private String name;
     private String type;
+    private String bookmarkid;
+    private String bookmarkall;
     private DocumentModel documentModel;
     private String id;
     private String documentData;
@@ -130,6 +134,9 @@ public class DocumentViewFragment extends BaseFragment {
     String docVersion;
     Box<DocumentModelObj> dbox;
     Box<ArticleModelObj> abox;
+    AsyncTask loaddoc;
+
+
 
 
     @Override
@@ -149,6 +156,8 @@ public class DocumentViewFragment extends BaseFragment {
             folderId = args.getString(AppConfig.BUNDLE_FOLDER_ID, "");
             folderName = args.getString(AppConfig.BUNDLE_FOLDER_NAME, "");
             version = args.getString(AppConfig.BUNDLE_VERSION, "");
+            bookmarkall = args.getString(AppConfig.BOOKMARK_ALL,"");
+            bookmarkid = args.getString(AppConfig.BOOKMARK_ID,"");
             progressDialog = new ProgressDialog(getActivity());
             dbox = ObjectBox.get().boxFor(DocumentModelObj.class);
             abox = ObjectBox.get().boxFor(ArticleModelObj.class);
@@ -156,7 +165,6 @@ public class DocumentViewFragment extends BaseFragment {
                 recentlyViewedModel = new RecentlyViewedModel(id, name, folderId, folderName, version, DateUtils.getCurrentDate());
                 insertRecentlyViewedDocument(recentlyViewedModel);
             }
-
         } catch (Exception e) {
         }
 
@@ -200,21 +208,16 @@ public class DocumentViewFragment extends BaseFragment {
         searchET.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
-
             @Override
             public void afterTextChanged(Editable s) {
                 webView.findAllAsync(s.toString());
             }
         });
         loadDocument();
-
         return view;
     }
 
@@ -233,20 +236,15 @@ public class DocumentViewFragment extends BaseFragment {
                 p.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
                 p.dimAmount = 0.5f;
                 wm.updateViewLayout(container, p);
-
                 FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) popupView.getLayoutParams();
-
                 // Set TextView layout margin 25 pixels to all side
                 // Left Top Right Bottom Margin
                 lp.setMargins(50, 25, 50, 0);
-
                 // Apply the updated layout parameters to TextView
                 popupView.setLayoutParams(lp);
-
                 LinearLayout linInfo = popupView.findViewById(R.id.linInfo);
                 LinearLayout linBookmark = popupView.findViewById(R.id.linBookmark);
                 LinearLayout linDownload = popupView.findViewById(R.id.linDownload);
-
                 if(type.equals("Article"))
                     linBookmark.setVisibility(View.GONE);
                 else
@@ -272,7 +270,6 @@ public class DocumentViewFragment extends BaseFragment {
                         startActivityForResult(intent, REQUEST_CODE);
                     }
                 });
-
                 break;
         }
     }
@@ -286,7 +283,7 @@ public class DocumentViewFragment extends BaseFragment {
     }
 
     public void loadDocument() {
-        new AsyncTask<String,Void,String>(){
+     loaddoc=   new AsyncTask<String,Void,String>(){
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
@@ -301,7 +298,7 @@ public class DocumentViewFragment extends BaseFragment {
                         Log.e("sizeofdocinbox",dbox.getAll().size()+"");
                         documentData = dbox.query().equal(DocumentModelObj_.id,id).build().find().get(0).documentData;
                     } catch (Exception e) {
-                        Log.e("documentDatacatchid",dbox.getAll().size()+"");
+//                        Log.e("documentDatacatchid",dbox.getAll().size()+"");
                     }
                 } else {
                     List<TagModel> taglist = new ArrayList<>();
@@ -368,7 +365,6 @@ public class DocumentViewFragment extends BaseFragment {
         webView.getSettings().setAllowFileAccess(true);
         webView.getSettings().setUseWideViewPort(true);
         webView.getSettings().setLoadWithOverviewMode(true);
-        webView.getSettings().setBuiltInZoomControls(true);
         webView.setWebContentsDebuggingEnabled(true);
         webView.addJavascriptInterface(new AppJavaScriptProxy(getActivity()), "androidAppProxy");
         webView.setWebViewClient(new WebViewClient() {
@@ -392,29 +388,47 @@ public class DocumentViewFragment extends BaseFragment {
             }
 
 
+
+
+
             public void onPageFinished(WebView view, String url) {
                 // Page is done loading;
                 // hide the progress dialog and show the webview
                 webView.setEnabled(true);
+                if(bookmarkall.equals("yes")){
+                    Log.e("onPageFinished","bookmark");
+                    gotoBookmark(bookmarkid);
+                }
+                else{
+                    Log.e("onPageFinished","bookmarkelse");
+                }
             }
-
-
-
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 Log.e("onReceivedError",error.getDescription()+" "+error.getErrorCode());
-               Toast.makeText(getActivity(), "Your Internet Connection May not be active Or " + error.getDescription(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "Your Internet Connection May not be active Or " + error.getDescription(), Toast.LENGTH_LONG).show();
             }
         });
+/*
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+                Log.e("MyApplicationQDMSa", consoleMessage.message() + " -- From line "
+                        + consoleMessage.lineNumber() + " of "
+                        + consoleMessage.sourceId());
+                return true;
+            }
+        });*/
+       // webView.loadDataWithBaseURL("file:///android_asset/templateHTML/TemplateHTML.html", "<style>img{display: inline;height: auto;max-width: 100%;}</style>", "text/html", "UTF-8", null);
         webView.loadUrl("file:///android_asset/templateHTML/TemplateHTML.html");
 //        webView.loadDataWithBaseURL("", data, "text/html", "UTF-8", "");
     }
+
 
     public void loadArticle(String id) {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-                Log.e("artcileid",id);
                 articleModel = ((ArticleModel) homeDatabase.homeDao().getArticleData(id));
                 String articleData =documentData = abox.query().equal(ArticleModelObj_.id,id).build().find().get(0).documentData;;
                 articleData = articleData.replace("<script src=\"/WikiPALApp/Scripts/TemplateSettings/toc-template-settings.js\"></script>", "<script src=\"./Scripts/toc-template-settings.js.download\"></script>");
@@ -437,6 +451,7 @@ public class DocumentViewFragment extends BaseFragment {
                     public void run() {
                         try {
                             webView.loadUrl("javascript:setArticleDataFromViewController('" + articleModel.getId() + "');");
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -446,7 +461,7 @@ public class DocumentViewFragment extends BaseFragment {
             }
             @Override
             public void onError(Throwable e) {
-                Log.e("artcileiderror",e.getLocalizedMessage());
+                Log.e("artcileiderror",e.getLocalizedMessage()+"   "+articleModel.getId());
             }
         });
 
@@ -492,7 +507,6 @@ public class DocumentViewFragment extends BaseFragment {
             }
             @Override
             public void onError(Throwable e) {
-
             }
         });
     }
@@ -504,6 +518,7 @@ public class DocumentViewFragment extends BaseFragment {
                 webView.post(new Runnable() {
                     @Override
                     public void run() {
+                        Log.e("gotoBookmark",id);
                         webView.loadUrl("javascript:gotoElement('" + id + "')");
                     }
                 });
@@ -538,9 +553,7 @@ public class DocumentViewFragment extends BaseFragment {
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
             @Override
             public void onSubscribe(Disposable d) {
-
             }
-
             @Override
             public void onComplete() {
                 webView.post(new Runnable() {
@@ -558,8 +571,6 @@ public class DocumentViewFragment extends BaseFragment {
                     }
                 });
             }
-
-
             @Override
             public void onError(Throwable e) {
 
@@ -727,6 +738,11 @@ public class DocumentViewFragment extends BaseFragment {
         }
 
         @JavascriptInterface
+        public void logdata(String id) {
+         Log.e("errorofromjs",id);
+        }
+
+        @JavascriptInterface
         public void getDocumentAttachment(String fileId) {
             openDocumentAttachment(fileId);
         }
@@ -803,5 +819,14 @@ public class DocumentViewFragment extends BaseFragment {
             this.data = data;
             this.name = name;
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(loaddoc!=null&&loaddoc.getStatus()== AsyncTask.Status.RUNNING){
+          loaddoc.cancel(true);
+        }
+        webView.onPause();
     }
 }

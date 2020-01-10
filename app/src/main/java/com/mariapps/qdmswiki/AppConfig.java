@@ -20,6 +20,8 @@ public class AppConfig {
     public static final String BUNDLE_FOLDER_NAME= "foldername";
     public static final String BUNDLE_FOLDER_ID= "folderid";
     public static final String BUNDLE_VERSION = "version";
+    public static final String BOOKMARK_ALL = "bookmark";
+    public static final String BOOKMARK_ID = "";
     public static final String BUNDLE_NAV_DETAILS_OBJECT = "bundlenavdetailsobject";
     public static final String BUNDLE_NAV_DETAILS_LIST = "bundlenavdetailslist";
 

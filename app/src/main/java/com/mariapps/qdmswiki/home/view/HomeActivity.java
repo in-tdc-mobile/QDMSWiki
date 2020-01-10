@@ -201,7 +201,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        ObjectBox.init(this);
+        ObjectBox.init(getApplicationContext());
       /*  Box<DocumentModelObj> box = ObjectBox.get().boxFor(DocumentModelObj.class);
       // box.removeAll();
         Box<ArticleModelObj> abox = ObjectBox.get().boxFor(ArticleModelObj.class);
@@ -215,7 +215,6 @@ public class HomeActivity extends BaseActivity implements HomeView {
         progressDialog = new ProgressDialog(HomeActivity.this);
         //sessionManager.setKeyLastUpdatedFileName("20191203");//"20191121092627"
         homePresenter.getDownloadUrl(new DownloadFilesRequestModel(sessionManager.getKeyLastUpdatedFileName()));
-        //
         // ("https://qdmswiki2k19.blob.core.windows.net/update/20191114153246.zip","20191114153246.zip");
         setSupportActionBar(toolbar);
         mainVP.setCurrentItem(0);
@@ -230,13 +229,10 @@ public class HomeActivity extends BaseActivity implements HomeView {
         } else {
             progressLayout.setVisibility(View.GONE);
         }
-        AppConfig.getDwnldcmplted().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(String s) {
-                progressLayout.setVisibility(View.GONE);
-                HomeActivity.Decompress decompress = new HomeActivity.Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zippedFileName, Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
-                decompress.execute();
-            }
+        AppConfig.getDwnldcmplted().observe(this, s -> {
+            progressLayout.setVisibility(View.GONE);
+            Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zippedFileName, Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
+            decompress.execute();
         });
         AppConfig.getDwnldstarted().observe(this, new Observer<String>() {
             @Override
@@ -264,8 +260,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
         });
        // Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + "20191218.zip", Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
       // decompress.execute();
-      // ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
-      //  readAndInsertJsonData.execute();
+       //ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
+       //readAndInsertJsonData.execute();
 
     }
 
@@ -339,14 +335,11 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 super.onDrawerSlide(drawerView, slideOffset);
             }
         };
-        mDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (drawerLayout.isDrawerOpen(GravityCompat.START))
-                    drawerLayout.closeDrawer(GravityCompat.START);
-                else
-                    drawerLayout.openDrawer((int) Gravity.START);
-            }
+        mDrawerToggle.setToolbarNavigationClickListener(view -> {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START))
+                drawerLayout.closeDrawer(GravityCompat.START);
+            else
+                drawerLayout.openDrawer((int) Gravity.START);
         });
         drawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.setDrawerIndicatorEnabled(false);
@@ -442,7 +435,6 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 newPosition = newPos;
                 bottom_navigation.setSelectedItemId(newPosition);
                 currentPosition = newPosition;
-
             }
 
             @Override

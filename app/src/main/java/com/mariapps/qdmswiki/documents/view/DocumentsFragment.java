@@ -67,12 +67,10 @@ public class DocumentsFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_documents, container, false);
         ButterKnife.bind(this, view);
         fragmentManager = getFragmentManager();
-
         rvDocuments.setHasFixedSize(true);
         rvDocuments.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvDocuments.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
         homeDatabase = HomeDatabase.getInstance(getActivity());
-
         getDocumentList();
         Log.e("DocumentsFragment",documentsList.size()+"");
         return view;
@@ -111,7 +109,8 @@ public class DocumentsFragment extends BaseFragment {
             @Override
             public void run() throws Exception {
                 documentsList = homeDatabase.homeDao().getDocuments();
-                Log.e("doclist",documentsList.size()+"");
+
+
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {

@@ -30,7 +30,7 @@ function RenderDocView() {
     // var url = $("#hfdUrlPath").val() + '/document/ViewDoc?id=' + id;
 
       // remove Temp tr on article toggle
-    $("#tableDragger").find(".article-table>tbody>tr.temp-tr.hide-article").remove();
+    try{$("#tableDragger").find(".article-table>tbody>tr.temp-tr.hide-article").remove();
     $('.toggle-article').each(function () {
           var ID = $(this).closest("tr.draggable-item").find(".article-table").attr("id");
           $("#" + ID).find('tr:not(.temp-tr)').remove();
@@ -38,15 +38,15 @@ function RenderDocView() {
           });
 
     $(".viewdoc").scroll(function () {
-                         
+                        androidAppProxy.logdata("scroll function called")
                          //ArticleData($("#5a3baaa73b76de674c38a711"), false, false, "5a3cdc043b6a9e83988dfd2b");
                          var viewRangeStart = $(this).offset().top;
                          var viewRangeEnd = viewRangeStart + $(this).height();
                          var eleTop = $(this).offset().top;
                          var eleBottom = eleTop + $(this).height();
-                         
-                         
-                         
+
+
+
                          $(this).find(".article-table[data-visible='false']").filter(function () {
                             alert("scroll ArticleData retrivel ");
                              var viewRangeStart1 = $(this).offset().top;
@@ -67,16 +67,22 @@ function RenderDocView() {
 
                              if ($(this).attr("data-visible") == "false") {
                              $(this).attr("data-visible", true);
+                             androidAppProxy.logdata("article data called now")
                              ArticleData($(this));
-
+                             }
+                             else{
+                             //new else
+                            androidAppProxy.logdata("article data not called")
                              }
                              }
                              else{
                              alert("other");
+                             androidAppProxy.logdata("article data not called")
                              }
-
                              });
-                         });
+                         });}catch{
+                         androidAppProxy.logdata("articledatacatch  "+e.message)
+                         }
     
 
 }
@@ -84,21 +90,21 @@ function RenderDocView() {
 
 function afterRenderDocView(isArticle = false){
     
-    
+   try{
     $("#tableDragger").find(".article-table>tbody>tr.temp-tr.hide-article").remove();
-    
-    
+
+
     if (isArticle == false ){
          $("#tableDragger tr.draggable-item").children("td").find(".bookmark-settings:first").html(CommonFunc.Bookmark._bookmarkSettings());
          $("#tableWrapper").find(".bookmark-settings").show();
     }
 
 
-    
+
     $("#tableWrapper").find('table').removeClass('NewDataArt');
     SetDocMode("view");
     $(".toggle-article").click(function () {
-                               
+
                                ToggleExpand($(this).closest("tr.draggable-item"), $(this).closest("tr.draggable-item").attr("toc-title"));
                                //                               $(this).closest("tr.draggable-item").find(".article-table").attr("data-visible", true);
                                //                               $(this).toggleClass('opentoggle');
@@ -109,7 +115,7 @@ function afterRenderDocView(isArticle = false){
                                //                               var id = $(this).closest("tr.draggable-item").find(".article-table").attr("id")
                                //                               ArticleData($(this).closest("tr.draggable-item").find(".article-table"), false, false, id)
                                //                               }
-                               
+
                                });
     $("#tableWrapper").on("click", '.add-bookmark', function (event) {
                           var bookmarkTitle = "";
@@ -139,7 +145,8 @@ function afterRenderDocView(isArticle = false){
                           bookmarkTitle = $(image).attr("src");
                           }
                           CommonFunc.Bookmark._addBookmark(bookmarkId, bookmarkTitle);
-                          });
+                          });}catch{
+                          }
     
     
 }
@@ -159,8 +166,10 @@ function ArticleData(control) {
             "name":""
         }
         androidAppProxy.getArtcileData(Id);
+        androidAppProxy.logdata("article loading");
     }
     catch (e) {
+androidAppProxy.logdata("article loading error"+e.message);
          alert("ArticleData retrivel error " );
     }
     
@@ -175,7 +184,7 @@ try{
         curArticleObj.find(">tbody>tr").remove(); // remove old article data
         
         // SetArticleBody("1111111", curArticleObj.find(">tbody"));
-        SetArticleBody(data, curArticleObj.find(">tbody"));
+        try{SetArticleBody(data, curArticleObj.find(">tbody"));}catch{}
         
         //SetArticleBody(result.DocumentData, curArticleObj.find(">tbody"));  //NEED TO UNCOMMENT
         
@@ -261,56 +270,71 @@ try{
 // Article data  Manipulate  from ArticleData function
 
 function SetArticleBody(documentData, tbody) {
-    var toggleIcon = "<span class=\"toggle-article\"><i class=\"fa fa-caret-right\"></i></span>";
+    try {var toggleIcon = "<span class=\"toggle-article\"><i class=\"fa fa-caret-right\"></i></span>";
     var Rootclonetbody = tbody.clone();
     Rootclonetbody.html(documentData);
-    
+
     //var tempcontent = tbody.html(documentData).clone();
     if (Rootclonetbody.find(".comment-display").next().length > 0) {
         if (Rootclonetbody.find(".comment-display").next()[0].nodeName == "SCRIPT") {
             Rootclonetbody.find(".comment-display").each(function () {
-                                                         
+
                                                          $(this).next().html("");
                                                          })
         }
     }
-    
+
     Rootclonetbody.find(".comment-display").removeAttr("onclick");
     Rootclonetbody.find('.comment-display').addClass("commenttiphide")
     Rootclonetbody.find(".commentbox-Done").hide();
     Rootclonetbody.find(".commentbox-close").hide();
     Rootclonetbody.find(".headerTemplate").hide();
     Rootclonetbody.find(".footerTemplate").hide();
-    
+
     tbody.html($(Rootclonetbody).html())
     $(Rootclonetbody).html("");
-    
+
     tbody.closest("tr.draggable-item").find("td:first").css("position", "relative");  // applicable if any css modification
-    
+
     tbody.closest(".article-table").addClass("NewDataArt");
     tbody.closest(".article-table").attr("data-visible", true);
+     tbody.closest(".article-table").find("tr.temp-tr").remove();
     $(tbody).find('grammarly-btn').remove() // Remove Gramamer tab from browser Extension
     tbody.closest(".article-table").removeClass("islockarticle")
 
-    
+
     if (!tbody.closest("tr.draggable-item").find(".toggle-article").hasClass('opentoggle')) {
         tbody.closest("tr.draggable-item").find(".toggle-article").toggleClass('opentoggle');
     }
+            androidAppProxy.logdata("set article body");
+    }
+
+
+    catch{
+            androidAppProxy.logdata("set article body");
+    }
+
+    ///new log
+
 }
 
 
 function ArticleExpand(control) {
-    var columnType = control.find(".article-table>tbody>tr:first").attr("data-column");
+    try{var columnType = control.find(".article-table>tbody>tr:first").attr("data-column");
     control.find(".article-table").removeClass("hide-state");
     control.find(".article-table>tbody>tr").removeClass("hide-article");
     if (columnType != "column-SubHeaderBSM-layout" && columnType != "column-ContentHeader-BSM" && columnType != "column-subheader1Layout-layout")
         control.find(".article-table").find("tr.temp-tr").remove();
+        ///new log
+        androidAppProxy.logdata("article expand called");}catch{
+
+        }
     
 }
 
 function docSetBodyFont()
 {
-    if ($("#DocumentType").val() == "1") {
+    try{if ($("#DocumentType").val() == "1") {
         $("#tableDragger").find(".textDragger").each(function () {
                                                      $(this).find("table.draggable-item").addClass("guidlisce");
                                                      $(this).find("table.draggable-item").removeClass("Procedure");
@@ -368,18 +392,21 @@ function docSetBodyFont()
                                                     $(this).addClass("Procedure");
                                                     $(this).removeClass("guidlisce");
                                                     });
+    }}catch{
     }
 }
 
 function ToggleExpand(control, articleName) {
-    var columnType = control.find(".article-table>tbody>tr:first").attr("data-column");
-    
+    try{var columnType = control.find(".article-table>tbody>tr:first").attr("data-column");
+
     control
     .each(function () {
           control.find('.toggle-article', this)
           .unbind().click(function () {
                           $(this).toggleClass('opentoggle');
                           try {
+                          ///new log
+                                      console.log("toggle article function");
                           //remove unwanted p tag
                           if ($(this).closest("tr.draggable-item").find(".article-table > tbody").find('tr:first')[0] != null && $(this).closest("tr.draggable-item").find(".article-table > tbody").find('tr:first')[0].previousElementSibling != null) {
                           if ($(this).closest("tr.draggable-item").find(".article-table > tbody").find('tr:first')[0].previousElementSibling.nodeName == "P") {
@@ -389,25 +416,26 @@ function ToggleExpand(control, articleName) {
                           }
                           catch (err)
                           {
+                           androidAppProxy.logdata("article expand function called"+err.message);
                           console.log(err.message);
                           }
-                          
+
                           if (!$(this).closest("tr.draggable-item").find(".article-table").hasClass("hide-state")) {
                           var text = control.find(".article-table").find(">tbody>tr:first").find(":header:first").text();
                           text = $(this).closest("tr.draggable-item").attr("toc-title") || text;
-                          
+
                           $(this).closest("tr.draggable-item").find(".article-table").addClass("hide-state");
                           $(this).closest("tr.draggable-item").find(".article-table>tbody>tr").addClass("hide-article");
-                          
+
                           if (columnType != "column-SubHeaderBSM-layout" && columnType != "column-ContentHeader-BSM" && columnType != "column-subheader1Layout-layout") {
                           $(this).closest("tr.draggable-item").find(".article-table>tbody>tr:first").before("<tr class=\"temp-tr\"><td><h2>" + text + "</h2></td></tr>");
                           }
-                          
+
                           else {
                           $(this).closest("tr.draggable-item").attr("toc-title", control.find(".article-table>tbody>tr:first").text().trim());
                           $(this).closest("tr.draggable-item").find(".article-table>tbody>tr:first").removeClass("hide-article");
                           }
-                          
+
                           }
                           else {
                           $(this).closest("tr.draggable-item").find(".article-table").removeClass("hide-state");
@@ -416,7 +444,10 @@ function ToggleExpand(control, articleName) {
                           $(this).closest("tr.draggable-item").find(".article-table").find("tr.temp-tr").remove();
                           }
                           });
-          });
+                           androidAppProxy.logdata("article expand function called end");
+          });}
+          catch{
+          }
 }
 
 // Download file from DOcument view
@@ -474,20 +505,23 @@ function downloadFileObject(fileId) {
 // goto  Bookmark
 function gotoElement(id) {
     
-    $(".viewdoc").scrollTop(0);
+    try{$(".viewdoc").scrollTop(0);
     $(".viewdoc").animate({
                           scrollTop: $("#" + id).offset().top - 300
                           }, 0);
-    
+
     if ($("#" + id).find(".article-table[data-visible='false']").length) {
         $("#" + id).find(".article-table[data-visible='false']").attr("data-visible", true);
         // ArticleData($("#" + id).find(".article-table"));
+    }
+    }
+    catch{
     }
     
 }
 
 function setFooterDataAfterRender(htmlObject, artNum,artdate,artversion){
-    if (artNum != "" && artNum != undefined)
+    try{if (artNum != "" && artNum != undefined)
         htmlObject.find("#footer #docNum").text(artNum);
 
 
@@ -498,12 +532,14 @@ function setFooterDataAfterRender(htmlObject, artNum,artdate,artversion){
     if (artversion != undefined)
         htmlObject.find("#footer .revision").html(artversion);
     if (artdate != "" && artdate != undefined)
-        htmlObject.find("#footer #docDate").text(artdate);
+        htmlObject.find("#footer #docDate").text(artdate);}
+        catch{
+        }
 
 }
 
 function SetDocMode(mode) {
-    viewMode = mode;
+    try{viewMode = mode;
     if (mode == "view") {
         $("body").addClass("show-historyTabStrip show-bookmarkTabStrip").removeClass(" expand-doc-history hide-toolbox");
         $(".drg-rmv-settings").remove();
@@ -526,19 +562,26 @@ function SetDocMode(mode) {
     else if (mode == "edit") {
         $("body").addClass("show-historyTabStrip show-bookmarkTabStrip").removeClass("docInfo-panel-close hide-toolbox expand-doc-history");
         $("#draggableContainer").removeClass("view-mode-container");
+    }}
+    catch{
     }
 
 }
 
 
     function RenderLinkDocView(fileId) {
-        androidAppProxy.getDocumentAttachment(fileId);
+        try{androidAppProxy.getDocumentAttachment(fileId);}
+        catch{
+        }
     }
     function RenderLinkArticleView(fileId) {
-         androidAppProxy.getArticleAttachment(fileId);
+
+         try{androidAppProxy.getArticleAttachment(fileId);}
+         catch{
+         }
     }
     function downloadFileObject(fileId) {
-           androidAppProxy.getFileAttachment(fileId);
+           try{androidAppProxy.getFileAttachment(fileId);}catch{}
          //window.webkit.messageHandlers.showAttachedItems.postMessage(fileId);
       }
 

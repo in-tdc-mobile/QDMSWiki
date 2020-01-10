@@ -73,23 +73,19 @@ public class BookmarkActivity extends BaseActivity implements BookmarkView{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bookmark);
         ButterKnife.bind(this);
-
         try{
             Bundle bundle = getIntent().getExtras();
             documentId = bundle.getString(AppConfig.BUNDLE_ID);
             folderName = bundle.getString(AppConfig.BUNDLE_FOLDER_NAME);
         }
         catch (Exception e){}
-
         bookmarksRV.setHasFixedSize(true);
         bookmarksRV.setLayoutManager(new LinearLayoutManager(this));
         bookmarksRV.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         nameTV.setText(folderName);
-
         homeDatabase = HomeDatabase.getInstance(BookmarkActivity.this);
         initView();
         bookmarkPresenter.getBookMarkEntryList(documentId);
-
     }
 
     private void initRecyclerView(List<BookmarkEntryModel> bookmarkEntryModels) {

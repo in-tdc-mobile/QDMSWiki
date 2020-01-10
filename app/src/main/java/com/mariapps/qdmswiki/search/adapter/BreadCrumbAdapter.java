@@ -24,9 +24,6 @@ import butterknife.ButterKnife;
  * Created by elby.samson on 30,January,2019
  */
 public class BreadCrumbAdapter extends RecyclerView.Adapter<BreadCrumbAdapter.BreadCrumbVH> {
-
-
-
     private List<BreadCrumbItem> breadCrumbList;
     private Context context;
     private BreadCrumbListener breadCrumbListener;
@@ -67,6 +64,7 @@ public class BreadCrumbAdapter extends RecyclerView.Adapter<BreadCrumbAdapter.Br
 
 
     }
+
 
     @Override
     public int getItemCount() {

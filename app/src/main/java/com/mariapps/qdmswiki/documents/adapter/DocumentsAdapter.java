@@ -47,9 +47,7 @@ public class DocumentsAdapter extends CustomRecyclerView.Adapter<DocumentsAdapte
 
     @Override
     public void onBindViewHolder(@NonNull final DocumentsVH holder, int i) {
-
         DocumentModel documentsModel = filterdDocumentsList.get(holder.getAdapterPosition());
-
         holder.tvHeadingText.setText(documentsModel.getDocumentName());
         holder.tvCategory.setText(documentsModel.getCategoryName());
         holder.tvNumber.setText("Document Number : "+documentsModel.getDocumentNumber());
@@ -59,8 +57,8 @@ public class DocumentsAdapter extends CustomRecyclerView.Adapter<DocumentsAdapte
         holder.rvDepartments.setLayoutManager(new LinearLayoutManager(mContext, LinearLayout.HORIZONTAL, false));
         holder.rvDepartments.setHasFixedSize(true);
 
-        TagsAdapter tagsAdapter = new TagsAdapter(mContext,documentsModel.getTags());
-        holder.rvDepartments.setAdapter(tagsAdapter);
+        //TagsAdapter tagsAdapter = new TagsAdapter(mContext,documentsModel.getTags());
+       // holder.rvDepartments.setAdapter(tagsAdapter);
 
         holder.rowLL.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,7 +127,6 @@ public class DocumentsAdapter extends CustomRecyclerView.Adapter<DocumentsAdapte
         CustomTextView tvVersion;
         @BindView(R.id.rvDepartments)
         CustomRecyclerView rvDepartments;
-
         public DocumentsVH(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);

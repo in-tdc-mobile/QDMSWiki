@@ -47,12 +47,21 @@
 <script type='text/javascript'>
     $(document).ready(function() {
                      $("body").removeClass();
-                      RenderDocView();
+
                      if(typeof androidAppProxy !== "undefined"){
-                         $('#tableDetails tbody').html(``+androidAppProxy.getDocumentData()+``);
+                      RenderDocView();
+                      $(".article-table").find("tr.temp-tr").remove();
+                       androidAppProxy.logdata("zero");
+                         try{$('#tableDetails tbody').html(``+androidAppProxy.getDocumentData()+``);}catch(error){
+                         androidAppProxy.logdata("this is eror"+error.message);
+                         }
+                         androidAppProxy.logdata("one");
                          $(`.article-table`).attr(`data-visible`, false);
+                         androidAppProxy.logdata("two");
                          $(`.article-table:first`).attr(`data-visible`, true);
-                         ArticleData($(`.article-table:first`));
+                         androidAppProxy.logdata("three");
+                          ArticleData($(`.article-table:first`));
+                         androidAppProxy.logdata("after render doc called here");
                          afterRenderDocView(false);
                          $(`.article-table`).removeClass(`hide-state`);$(`.article-table>tbody>tr`).removeClass(`hide-article`);$(`span.toggle-article`).addClass(`opentoggle`)
                          androidAppProxy.getFooterData();

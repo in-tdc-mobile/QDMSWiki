@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:allowBackup="false"
@@ -19,9 +19,10 @@
         android:roundIcon="@drawable/app_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".bookmarks.view.BookMarkActivityAll"></activity>
         <activity
-            android:alwaysRetainTaskState="true"
             android:name=".splash.view.SplashScreenActivity"
+            android:alwaysRetainTaskState="true"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme"
             android:windowSoftInputMode="stateHidden|adjustResize">
@@ -31,27 +32,25 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".login.view.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme"
-            android:windowSoftInputMode="adjustPan"></activity>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".walkthrough.view.WalkthroughActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="user"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:alwaysRetainTaskState="true"
             android:name=".home.view.HomeActivity"
+            android:alwaysRetainTaskState="true"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".search.view.SearchActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:windowSoftInputMode="stateHidden|adjustResize" />
-
         <activity
             android:name=".settings.view.SettingsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -80,6 +79,7 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/FolderStructureTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -89,6 +89,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths" />
         </provider>
+
         <service android:name=".serviceclasses.FcmMessageService">
             <intent-filter>
                 <action
@@ -97,14 +98,15 @@
                     android:exported="true" />
             </intent-filter>
         </service>
-
         <service android:name=".serviceclasses.MyFirebaseInstanceIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".DownloadService" android:enabled="true" android:stopWithTask="true"></service>
+        <service
+            android:name=".DownloadService"
+            android:enabled="true"
+            android:stopWithTask="true" />
     </application>
-
 
 </manifest>

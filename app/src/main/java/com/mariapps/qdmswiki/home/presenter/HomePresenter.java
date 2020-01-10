@@ -80,13 +80,11 @@ public class HomePresenter {
     public void getDownloadUrl(DownloadFilesRequestModel downloadFilesRequestModel) {
         serviceController.getUrls(downloadFilesRequestModel)
                 .subscribe(new SimpleObserver<DownloadFilesResponseModel>() {
-
                     @Override
                     public void onNext(DownloadFilesResponseModel downloadFilesResponseModel) {
                         super.onNext(downloadFilesResponseModel);
                         homeView.onGetDownloadFilesSuccess(downloadFilesResponseModel);
                     }
-
                     @Override
                     public void onNetworkFailure() {
                         super.onNetworkFailure();
@@ -116,23 +114,19 @@ public class HomePresenter {
                             }
                         }
                     });
-
                 }
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
             @Override
             public void onSubscribe(Disposable d) {
-
             }
-
             @Override
             public void onComplete() {
                 insertDocuments(documentModel);
             }
             @Override
             public void onError(Throwable e) {
-
             }
         });
     }
@@ -251,6 +245,7 @@ public class HomePresenter {
                     AsyncTask.execute(new Runnable() {
                         @Override
                         public void run() {
+                            Log.e("insertedarticelids",articleModel.getId());
                            abox.put(new ArticleModelObj(articleModel.getId(),articleModel.getArticleName(),articleModel.documentData));
                         }
                     });

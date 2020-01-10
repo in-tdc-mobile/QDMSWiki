@@ -73,6 +73,7 @@ public class QDMSWikiApplication extends MultiDexApplication implements Applicat
         qdmsWikiNetworkReceiver = new QDMSWikiNetworkReceiver();
         final IntentFilter intentFilter = new IntentFilter("YourAction");
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, intentFilter);
+      //  ObjectBox.init(this);
     }
 
     @Override

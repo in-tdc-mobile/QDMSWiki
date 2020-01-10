@@ -30,6 +30,13 @@ public class BookmarkEntryModel implements Parcelable {
     @SerializedName("BookmarkTitle")
     private String bookmarkTitle;
 
+
+
+
+
+
+
+
     public String getBookmarkId() {
         return bookmarkId;
     }

@@ -19,6 +19,8 @@ import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.SessionManager;
 import com.mariapps.qdmswiki.applicationinfo.view.ApplicationInfoActivity;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
+import com.mariapps.qdmswiki.bookmarks.view.BookMarkActivityAll;
+import com.mariapps.qdmswiki.bookmarks.view.BookmarkActivity;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import com.mariapps.qdmswiki.home.model.DownloadFilesRequestModel;
@@ -71,11 +73,9 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
         setContentView(R.layout.activity_settings);
         ButterKnife.bind(this);
         sessionManager=new SessionManager(this);
-
         initView();
         initRecycler();
     }
-
     private void initRecycler() {
         listRV.setHasFixedSize(true);
         listRV.setLayoutManager(new LinearLayoutManager(this));
@@ -85,16 +85,19 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
             public void onSettingsClicked(int position) {
                 switch (position){
                     case 0:
-                        Intent intent = new Intent(SettingsActivity.this, ApplicationInfoActivity.class);
+                        Intent intent = new Intent(SettingsActivity.this, BookMarkActivityAll.class);
                         startActivity(intent);
                         break;
                     case 1:
-                        settingsPresenter.getDownloadUrl(new DownloadFilesRequestModel(sessionManager.getKeyLastUpdatedFileName()));
+                        Intent intent1 = new Intent(SettingsActivity.this, ApplicationInfoActivity.class);
+                        startActivity(intent1);
                         break;
                     case 2:
+                        settingsPresenter.getDownloadUrl(new DownloadFilesRequestModel(sessionManager.getKeyLastUpdatedFileName()));
+                        break;
+                    case 3:
                         createAlert();
                         break;
-
                 }
             }
         });
@@ -166,7 +169,7 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
         settingsItems.clear();
 //        settingsItems.add(new SettingsItem(R.drawable.ic_settings_inactive,"Settings",R.color.black));
 ////        settingsItems.add(new SettingsItem(R.drawable.ic_help,"Help",R.color.black));
-
+        settingsItems.add(new SettingsItem(R.drawable.ic_bookmark_color,"BookMarks",R.color.black));
         settingsItems.add(new SettingsItem(R.drawable.ic_app_info,"App Info",R.color.black));
         settingsItems.add(new SettingsItem(R.drawable.ic_check_update,"Check for QDMS data updates",R.color.black));
         settingsItems.add(new SettingsItem(R.drawable.ic_logout,"Logout",R.color.red_900));

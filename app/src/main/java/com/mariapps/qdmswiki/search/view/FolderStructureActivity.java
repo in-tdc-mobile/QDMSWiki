@@ -56,6 +56,8 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
     private String id;
     private String categoryId;
     private String version;
+    private String bookmarkid="";
+    private String bookmarkall="";
     List<BreadCrumbItem> breadCrumbItems = new ArrayList<>();
     List<BreadCrumbItem> allParents = new ArrayList<>();
 
@@ -71,14 +73,14 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
             id = getIntent().getExtras().getString(AppConfig.BUNDLE_ID);
             categoryId = getIntent().getExtras().getString(AppConfig.BUNDLE_FOLDER_ID);
             version = getIntent().getExtras().getString(AppConfig.BUNDLE_VERSION);
+            bookmarkall = getIntent().getExtras().getString(AppConfig.BOOKMARK_ALL);
+            bookmarkid = getIntent().getExtras().getString(AppConfig.BOOKMARK_ID);
             headingTV.setText(name);
         }
-
         if(page.equals("DocumentView"))
             linLayout.setVisibility(View.GONE);
         else
             linLayout.setVisibility(View.VISIBLE);
-
         if (type.equals("Document") || type.equals("Article")) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             DocumentViewFragment documentViewFragment = new DocumentViewFragment();
@@ -89,12 +91,17 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
             args.putString(AppConfig.BUNDLE_FOLDER_ID, categoryId);
             args.putString(AppConfig.BUNDLE_FOLDER_NAME, folderName);
             args.putString(AppConfig.BUNDLE_VERSION, version);
+            if(bookmarkall!=null){
+                if(!bookmarkall.equals("")){
+                    args.putString(AppConfig.BOOKMARK_ALL,"yes");
+                    args.putString(AppConfig.BOOKMARK_ID,bookmarkid);
+                }
+            }
             documentViewFragment.setArguments(args);
             ft.replace(R.id.frameLayout, documentViewFragment);
             ft.commit();
             if(!page.equals("DocumentView"))
                 getBreadCrumbDetails(categoryId);
-
         } else {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             FolderFragment folderFragment = new FolderFragment();
@@ -108,9 +115,7 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
             if(!page.equals("DocumentView"))
                 initBreadCrumb(name, categoryId);
         }
-
     }
-
     public void getBreadCrumbDetails(String categoryId) {
         homePresenter.getCategoryDetailsOfSelectedDocument(categoryId);
     }
@@ -141,7 +146,6 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
         breadCrumbRV.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         breadCrumbAdapter = new BreadCrumbAdapter(initBreadCrumbList(folderName, id), this);
         breadCrumbAdapter.setBreadCrumbListener(new BreadCrumbAdapter.BreadCrumbListener() {
-
             @Override
             public void onClick(int count, BreadCrumbItem breadCrumbItem) {
                 popUptoPosition(count);
@@ -154,7 +158,6 @@ public class FolderStructureActivity extends BaseActivity implements HomeView{
                 replaceFragments(folderFragment,breadCrumbItem.getId(),breadCrumbItem.getHeading());
             }
         });
-
         breadCrumbRV.setAdapter(breadCrumbAdapter);
     }
 
