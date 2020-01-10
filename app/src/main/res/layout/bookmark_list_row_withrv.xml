@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rowLL"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:weightSum="1"
+    android:layout_marginBottom="8dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:weightSum="1"
+        android:layout_marginRight="@dimen/dimen_16dp"
+        android:layout_marginLeft="@dimen/dimen_16dp"
+        android:orientation="horizontal">
+        <com.mariapps.qdmswiki.custom.CustomTextView
+            android:layout_marginRight="@dimen/dimen_16dp"
+            android:layout_weight="0.99"
+            android:id="@+id/bookmarkTV"
+            android:singleLine="true"
+            app:fontface="@string/string_lato_semi_bold"
+            android:textSize="@dimen/primary_text_size"
+            android:textColor="@color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_marginLeft="@dimen/dimen_16dp"
+            android:id="@+id/deleteIV"
+            app:srcCompat="@drawable/ic_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/breadCrumbRV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>
