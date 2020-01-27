@@ -22,6 +22,59 @@
     url('file:///android_asset/fonts/OpenSans-Light.ttf') format('truetype');}
 
 
+
+
+.thumb-img{
+    display: block;
+    overflow-y: hidden;
+    overflow-x: auto;
+    width: 92vw !important;
+}
+
+#header .insertMeidum div div:nth-child(2) {
+    width: 70px !important;
+}
+
+#resizeTable{overflow: hidden;}
+
+.insertMeidum{overflow: auto; overflow-y: hidden;}
+
+
+.toc-table .toc-text-td {
+    width: 96% !important;
+}
+
+
+.trpgridview table {
+    table-layout: auto !important;
+}
+/*.flow-chart-editor {
+    display: none;
+}*/
+.chart-info {
+    border: 1px solid #b9b9b9;
+    padding: 10px;
+}
+
+
+
+
+.toc-table .toc-page-td {
+    float: right !important;
+    width: 17px !important;
+    text-indent: -11px;
+}
+.checklist > td {
+    overflow:auto;
+}
+.jobdimensiongridview, .jobdetailsgridview {
+    overflow: auto;
+}
+.jobdimensiongridview table, .jobdetailsgridview table {
+    white-space: nowrap;
+    width: auto;
+}
+
 html, body {
     min-height: 100%;
     font-family: 'Open Sans', sans-serif !important;
@@ -12807,9 +12860,9 @@ div#allowedlocation ul li .radio {
 }
 /*End*/
 /*Flow-chart*/
-.flow-svg {
+/*.flow-svg {
     display: none !important;
-}
+}*/
 .flowchart-container {
     width: 100%;
     height: calc(100vh - 290px);
@@ -13381,3 +13434,10 @@ div#allowedlocation ul li .radio {
     height: 46px !important;
 }
 
+.add-bookmark.selected  {
+    background-color: #3e9e42 !important;
+}
+
+.icon-btn.add-bookmark {
+    opacity: 1 !important;
+}

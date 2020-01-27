@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkEntryModel;
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkModel;
@@ -15,7 +14,6 @@ import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
 import java.util.ArrayList;
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -40,10 +38,8 @@ public class BookmarkAdapter extends CustomRecyclerView.Adapter<BookmarkAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull final BookmarkAdapter.BookmarkVH holder, int i) {
-
         BookmarkEntryModel bookmarkEntryModel = bookmarkEntryList.get(i);
         holder.bookmarkTV.setText(bookmarkEntryModel.getBookmarkTitle());
-
         holder.rowLL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,7 +80,7 @@ public class BookmarkAdapter extends CustomRecyclerView.Adapter<BookmarkAdapter.
     }
 
     public interface RowClickListener {
-        void onItemClicked(BookmarkEntryModel bookmarkEntryModel) ;
+        void onItemClicked(BookmarkEntryModel bookmarkEntryModel);
     }
 
     public void setDeleteClickListener(BookmarkAdapter.DeleteClickListener deleteClickListener) {
@@ -92,7 +88,7 @@ public class BookmarkAdapter extends CustomRecyclerView.Adapter<BookmarkAdapter.
     }
 
     public interface DeleteClickListener {
-        void onDeleteClicked(BookmarkEntryModel bookmarkEntryModel, int position) ;
+        void onDeleteClicked(BookmarkEntryModel bookmarkEntryModel, int position);
     }
 }
 

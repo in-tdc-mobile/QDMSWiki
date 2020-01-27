@@ -44,6 +44,7 @@ import io.objectbox.Box;
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
@@ -63,6 +64,7 @@ public class HomePresenter {
     String categoryName;
     Box<ArticleModelObj> abox;
     Box<DocumentModelObj> dbox;
+   // CompositeDisposable maindisposable;
 
     public HomePresenter(Context context, HomeView homeView) {
         this.homeView = homeView;
@@ -104,7 +106,13 @@ public class HomePresenter {
             public void run() throws Exception {
                 if (documentModel != null) {
                     homeDatabase.homeDao().deleteDocument(documentModel.getId());
-                    AsyncTask.execute(new Runnable() {
+                    try {
+                        dbox.query().equal(DocumentModelObj_.id,documentModel.getId()).build().remove();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    //  dbox.query().equal(DocumentModelObj_.id,documentModel.getId()).build().remove();
+                   /* AsyncTask.execute(new Runnable() {
                         @Override
                         public void run() {
                             try {
@@ -113,20 +121,23 @@ public class HomePresenter {
                                 e.printStackTrace();
                             }
                         }
-                    });
+                    });*/
                 }
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
             @Override
             public void onSubscribe(Disposable d) {
+              //  maindisposable.add(d);
             }
             @Override
             public void onComplete() {
+                Log.e("onCompletedocdelete",documentModel.documentName+"  "+documentModel.id);
                 insertDocuments(documentModel);
             }
             @Override
             public void onError(Throwable e) {
+                Log.e("docdeleteerror",e.getLocalizedMessage());
             }
         });
     }
@@ -141,33 +152,42 @@ public class HomePresenter {
             public void run() throws Exception {
                 if (documentModel != null) {
                     homeDatabase.homeDao().insertDocument(documentModel);
-                    AsyncTask.execute(new Runnable() {
+                    try {
+                        dbox.put(new DocumentModelObj(documentModel.id,documentModel.documentName,documentModel.documentData));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                   /* AsyncTask.execute(new Runnable() {
                         @Override
                         public void run() {
                             dbox.put(new DocumentModelObj(documentModel.id,documentModel.documentName,documentModel.documentData));
                         }
-                    });
+                    });*/
                 }
             }
         }).observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.newThread()).subscribe(new CompletableObserver() {
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
             @Override
             public void onSubscribe(Disposable d) {
-
+               // maindisposable.add(d);
             }
 
             @Override
             public void onComplete() {
-
+               // maindisposable.clear();
+                Log.e("onCompletedocinsert",documentModel.documentName+"  "+documentModel.id);
             }
-
-
             @Override
             public void onError(Throwable e) {
+               // maindisposable.clear();
             Log.e("errorininsert",e.getLocalizedMessage());
             }
         });
     }
+
+
+
+
 
     public void insertTags(final List<TagModel> tagList) {
         Completable.fromAction(new Action() {
@@ -201,7 +221,12 @@ public class HomePresenter {
             @Override
             public void run() throws Exception {
                 homeDatabase.homeDao().deleteArticle(articleModel.getId());
-                AsyncTask.execute(new Runnable() {
+                try {
+                    abox.query().equal(ArticleModelObj_.id,articleModel.getId()).build().remove();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                /*AsyncTask.execute(new Runnable() {
                     @Override
                     public void run() {
                         try {
@@ -210,24 +235,27 @@ public class HomePresenter {
                             e.printStackTrace();
                         }
                     }
-                });
+                });*/
 
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
             @Override
             public void onSubscribe(Disposable d) {
+               // maindisposable.add(d);
 
             }
 
             @Override
             public void onComplete() {
+                Log.e("onCompletearticeldelete",articleModel.getArticleName()+"  "+articleModel.getId());
                 insertArticles(articleModel);
             }
 
 
             @Override
             public void onError(Throwable e) {
+                Log.e("onCompletearticeldelerr",e.getLocalizedMessage());
 
             }
         });
@@ -242,30 +270,37 @@ public class HomePresenter {
             public void run() throws Exception {
                 if (articleModel != null) {
                     homeDatabase.homeDao().insertArticle(articleModel);
-                    AsyncTask.execute(new Runnable() {
+                    try {
+                        abox.put(new ArticleModelObj(articleModel.getId(),articleModel.getArticleName(),articleModel.documentData));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                   /* AsyncTask.execute(new Runnable() {
                         @Override
                         public void run() {
                             Log.e("insertedarticelids",articleModel.getId());
                            abox.put(new ArticleModelObj(articleModel.getId(),articleModel.getArticleName(),articleModel.documentData));
                         }
-                    });
+                    });*/
                 }
             }
         }).observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.newThread()).subscribe(new CompletableObserver() {
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
             @Override
             public void onSubscribe(Disposable d) {
+            //    maindisposable.add(d);
 
             }
 
             @Override
             public void onComplete() {
+              //  maindisposable.clear();
+                Log.e("onCompletearticelinsert",articleModel.getArticleName()+"  "+articleModel.getId());
             }
-
-
             @Override
             public void onError(Throwable e) {
-
+            //    maindisposable.clear();
+                Log.e("articleerrorininsert",e.getLocalizedMessage());
             }
         });
     }
@@ -486,38 +521,50 @@ public class HomePresenter {
         });
     }
 
-    public void deleteBookmarkEntries() {
-
+    public void deleteBookmarkEntries(BookmarkEntryModel bookmarkEntryModel) {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-                homeDatabase.homeDao().deleteBookmarkEntryEntity();
+                homeDatabase.homeDao().deleteBookmarkEntrybyid(bookmarkEntryModel.getBookmarkId());
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
             @Override
             public void onSubscribe(Disposable d) {
-
             }
-
             @Override
             public void onComplete(){
+                insertBookmarkEntries(bookmarkEntryModel);
             }
-
-
             @Override
             public void onError(Throwable e) {
-
             }
         });
     }
 
-    public void insertBookmarkEntries(final List<BookmarkEntryModel> bookmarkEntryModels) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void insertBookmarkEntries(BookmarkEntryModel bookmarkEntryModel) {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-                if (bookmarkEntryModels != null) {
-                    homeDatabase.homeDao().insertBookmarkEntries(bookmarkEntryModels);
+                if (bookmarkEntryModel != null) {
+                    homeDatabase.homeDao().insertBookmarkEntriessingle(bookmarkEntryModel);
                 }
             }
         }).observeOn(AndroidSchedulers.mainThread())
@@ -529,6 +576,7 @@ public class HomePresenter {
 
             @Override
             public void onComplete() {
+
             }
 
 
@@ -846,17 +894,16 @@ public class HomePresenter {
             @Override
             public void run() throws Exception {
                 categoryModel = homeDatabase.homeDao().getCategoryDetailsOfSelectedDocument(folderId);
-
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
             @Override
             public void onSubscribe(Disposable d) {
-
             }
 
             @Override
-            public void onComplete() {
+            public void onComplete()
+            {
                 homeView.onGetCategoryDetailsSuccess(categoryModel);
             }
 

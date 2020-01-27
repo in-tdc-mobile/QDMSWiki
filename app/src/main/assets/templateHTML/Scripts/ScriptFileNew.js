@@ -38,15 +38,12 @@ function RenderDocView() {
           });
 
     $(".viewdoc").scroll(function () {
-                        androidAppProxy.logdata("scroll function called")
+                    //    androidAppProxy.logdata("scroll function called")
                          //ArticleData($("#5a3baaa73b76de674c38a711"), false, false, "5a3cdc043b6a9e83988dfd2b");
                          var viewRangeStart = $(this).offset().top;
                          var viewRangeEnd = viewRangeStart + $(this).height();
                          var eleTop = $(this).offset().top;
                          var eleBottom = eleTop + $(this).height();
-
-
-
                          $(this).find(".article-table[data-visible='false']").filter(function () {
                             alert("scroll ArticleData retrivel ");
                              var viewRangeStart1 = $(this).offset().top;
@@ -64,39 +61,38 @@ function RenderDocView() {
                              //                                                                                     console.log(eleBottom)
 
                              if ((eleBottom <= viewRangeEnd1) && (eleTop >= viewRangeStart1)) {
-
                              if ($(this).attr("data-visible") == "false") {
                              $(this).attr("data-visible", true);
-                             androidAppProxy.logdata("article data called now")
+                            // androidAppProxy.logdata("article data called now")
                              ArticleData($(this));
                              }
                              else{
                              //new else
-                            androidAppProxy.logdata("article data not called")
+                          //  androidAppProxy.logdata("article data not called")
                              }
                              }
                              else{
                              alert("other");
-                             androidAppProxy.logdata("article data not called")
+                          //   androidAppProxy.logdata("article data not called")
                              }
                              });
                          });}catch{
-                         androidAppProxy.logdata("articledatacatch  "+e.message)
+                        // androidAppProxy.logdata("articledatacatch  "+e.message)
                          }
-    
-
 }
 
 
 function afterRenderDocView(isArticle = false){
-    
    try{
     $("#tableDragger").find(".article-table>tbody>tr.temp-tr.hide-article").remove();
-
-
     if (isArticle == false ){
-         $("#tableDragger tr.draggable-item").children("td").find(".bookmark-settings:first").html(CommonFunc.Bookmark._bookmarkSettings());
-         $("#tableWrapper").find(".bookmark-settings").show();
+    try{
+    $("#tableDragger tr.draggable-item").children("td").find(".bookmark-settings:first").html(CommonFunc.Bookmark._bookmarkSettings());
+            $("#tableWrapper").find(".bookmark-settings").show();
+    }
+    catch(e){
+    androidAppProxy.logdata("newbooklog"+e.message);
+    }
     }
 
 
@@ -104,7 +100,6 @@ function afterRenderDocView(isArticle = false){
     $("#tableWrapper").find('table').removeClass('NewDataArt');
     SetDocMode("view");
     $(".toggle-article").click(function () {
-
                                ToggleExpand($(this).closest("tr.draggable-item"), $(this).closest("tr.draggable-item").attr("toc-title"));
                                //                               $(this).closest("tr.draggable-item").find(".article-table").attr("data-visible", true);
                                //                               $(this).toggleClass('opentoggle');
@@ -145,19 +140,13 @@ function afterRenderDocView(isArticle = false){
                           bookmarkTitle = $(image).attr("src");
                           }
                           CommonFunc.Bookmark._addBookmark(bookmarkId, bookmarkTitle);
-                          });}catch{
+                          });}catch(e){
+                          androidAppProxy.logdata("newbooklog"+e.message);
                           }
-    
-    
 }
-
-// Article Render on scroll
-
 function ArticleData(control) {
-    
     try {
         var Id = control.attr("id");
-        
         $('.tableDetails-wrapper').find("#" + Id).find('tr').remove();
         $('.tableDetails-wrapper').find("#" + Id).find('tbody').html("");
         var obj = {
@@ -165,15 +154,43 @@ function ArticleData(control) {
             "data":"",
             "name":""
         }
-        androidAppProxy.getArtcileData(Id);
-        androidAppProxy.logdata("article loading");
+       // androidAppProxy.getArtcileData(Id);
+       // androidAppProxy.logdata("article loading");
     }
     catch (e) {
 androidAppProxy.logdata("article loading error"+e.message);
          alert("ArticleData retrivel error " );
     }
-    
 }
+function highlightbookmarks(ids) {
+    androidAppProxy.logdata("highlightbookmarksfunction called");
+    try {
+      $(ids).find(".add-bookmark").addClass("selected");
+    }
+    catch (e) {
+        androidAppProxy.logdata("highlightbookmarks  error"+e.message);
+    }
+
+
+}
+
+
+
+function removehighlightedbookmarks(ids) {
+    androidAppProxy.logdata("removehighlightedbookmarks called");
+    try {
+      $(ids).find(".add-bookmark").removeClass("selected");
+    }
+    catch (e) {
+        androidAppProxy.logdata("highlightbookmarks  error"+e.message);
+    }
+
+
+}
+
+
+
+
 //For iOS Render Article Method
 
 function setArticleDataFromViewController(id){
@@ -182,15 +199,11 @@ try{
     var curArticleObj = $("#" + id);
     if (data != null) {
         curArticleObj.find(">tbody>tr").remove(); // remove old article data
-        
         // SetArticleBody("1111111", curArticleObj.find(">tbody"));
         try{SetArticleBody(data, curArticleObj.find(">tbody"));}catch{}
-        
         //SetArticleBody(result.DocumentData, curArticleObj.find(">tbody"));  //NEED TO UNCOMMENT
-        
         ToggleExpand(curArticleObj.closest("tr.draggable-item"), "article");
         ArticleExpand(curArticleObj.closest("tr.draggable-item"))
-        
         curArticleObj.find(".drg-rmv").html("");
         curArticleObj.find(".drg-rmv-settings").html("");
         curArticleObj.find(".drg-rmv-toc").html("");
@@ -251,8 +264,6 @@ try{
                                       $("#tableDragger").find(".ul-alpha-box").removeClass("guidlisce");
                                       $("#tableDragger").find(".ul-hyp-box").removeClass("guidlisce");
                                       }
-                   
-                   
                    docSetBodyFont();
                    });
         
@@ -278,44 +289,33 @@ function SetArticleBody(documentData, tbody) {
     if (Rootclonetbody.find(".comment-display").next().length > 0) {
         if (Rootclonetbody.find(".comment-display").next()[0].nodeName == "SCRIPT") {
             Rootclonetbody.find(".comment-display").each(function () {
-
                                                          $(this).next().html("");
                                                          })
         }
     }
-
     Rootclonetbody.find(".comment-display").removeAttr("onclick");
     Rootclonetbody.find('.comment-display').addClass("commenttiphide")
     Rootclonetbody.find(".commentbox-Done").hide();
     Rootclonetbody.find(".commentbox-close").hide();
     Rootclonetbody.find(".headerTemplate").hide();
     Rootclonetbody.find(".footerTemplate").hide();
-
     tbody.html($(Rootclonetbody).html())
     $(Rootclonetbody).html("");
-
     tbody.closest("tr.draggable-item").find("td:first").css("position", "relative");  // applicable if any css modification
-
     tbody.closest(".article-table").addClass("NewDataArt");
     tbody.closest(".article-table").attr("data-visible", true);
      tbody.closest(".article-table").find("tr.temp-tr").remove();
     $(tbody).find('grammarly-btn').remove() // Remove Gramamer tab from browser Extension
     tbody.closest(".article-table").removeClass("islockarticle")
-
-
     if (!tbody.closest("tr.draggable-item").find(".toggle-article").hasClass('opentoggle')) {
         tbody.closest("tr.draggable-item").find(".toggle-article").toggleClass('opentoggle');
     }
             androidAppProxy.logdata("set article body");
     }
-
-
     catch{
             androidAppProxy.logdata("set article body");
     }
-
     ///new log
-
 }
 
 
@@ -325,11 +325,25 @@ function ArticleExpand(control) {
     control.find(".article-table>tbody>tr").removeClass("hide-article");
     if (columnType != "column-SubHeaderBSM-layout" && columnType != "column-ContentHeader-BSM" && columnType != "column-subheader1Layout-layout")
         control.find(".article-table").find("tr.temp-tr").remove();
+        if ($("#tableDragger >tr.flowchartDragger").length > 0) // have flow chart control read diagram from json value.
+                        {
+                            debugger;
+                            $("#tableDragger >tr.flowchartDragger").each(function () {
+                                var TrID = $(this).find(".flow-chart-editor").attr("id");
+                                $(this).find(".flow-chart-editor").removeAttr("onfocusout");
+                                if (TrID != "") {
+                                    // initalize the GoJs Diagram objectas globaly.
+                                    _FlowchartViewPanel(TrID);
+                                    window['myDiagram_' + TrID].model = go.Model.fromJson(document.getElementById("mySavedModel_" + TrID).value);
+
+                                }
+
+
+                            });
+                           }
         ///new log
         androidAppProxy.logdata("article expand called");}catch{
-
         }
-    
 }
 
 function docSetBodyFont()
@@ -394,6 +408,143 @@ function docSetBodyFont()
                                                     });
     }}catch{
     }
+}
+function _FlowchartViewPanel(ID) {
+
+    var GoJs = go.GraphObject.make;  // for conciseness in defining templates
+    $(".flow-chart-editor").css("width", "auto");
+
+    var myDiagram_ID = GoJs(go.Diagram, ID, {
+
+        allowDrop: false,  // must be true to accept drops from the Palette
+        "draggingTool.dragsLink": false,
+        "draggingTool.isGridSnapEnabled": false,
+        "linkingTool.isUnconnectedLinkValid": false,
+        "relinkingTool.isUnconnectedLinkValid": false,
+        "undoManager.isEnabled": false,
+        initialContentAlignment: go.Spot.Center,
+    });
+    myDiagram_ID.position = new go.Point(0, 100);
+    // Define a function for creating a "port" that is normally transparent.
+    // The "name" is used as the GraphObject.portId, the "spot" is used to control how links connect
+    // and where the port is positioned on the node, and the boolean "output" and "input" arguments
+    // control whether the user can draw links from or to the port.
+
+    function nodeStyle() {
+        return [
+            // The Node.location comes from the "loc" property of the node data,
+            // converted by the Point.parse static method.
+            // If the Node.location is changed, it updates the "loc" property of the node data,
+            // converting back using the Point.stringify static method.
+            new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
+            {
+                // the Node.location is at the center of each node
+                locationSpot: go.Spot.Center
+            }
+        ];
+    }
+    function textStyle() {
+        return {
+            font: "bold 11pt Helvetica, Arial, sans-serif",
+            stroke: "whitesmoke"
+        }
+    }
+
+
+    myDiagram_ID.nodeTemplate =
+        GoJs(go.Node, "Spot",
+            { locationSpot: go.Spot.Center },
+            //{ movable: true},
+            new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
+            { selectable: false },
+            { resizable: false, resizeObjectName: "PANEL" },
+            { rotatable: false},
+            new go.Binding("angle").makeTwoWay(),
+            // the main object is a Panel that surrounds a TextBlock with a Shape
+            GoJs(go.Panel, "Auto",
+                { name: "PANEL" },
+                new go.Binding("desiredSize", "size", go.Size.parse).makeTwoWay(go.Size.stringify),
+                GoJs(go.Shape, "Rectangle",  // default figure
+                    {
+                        portId: "", // the default port: if no spot on link data, use closest side
+                        fromLinkable: false, toLinkable: false, cursor: "pointer",
+                        fill: "white",  // default color
+                        strokeWidth: 1
+                    },
+                    new go.Binding("figure"),
+                    new go.Binding("fill")),
+                GoJs(go.TextBlock,
+                    {
+                        font: "11pt Calibri",
+                        margin: 8,
+                        maxSize: new go.Size(160, NaN),
+                        wrap: go.TextBlock.WrapFit,
+                        editable: false
+                    },
+                    new go.Binding("text").makeTwoWay())
+            ),
+
+        );
+
+
+    myDiagram_ID.linkTemplate =
+        GoJs(go.Link,  // the whole link panel
+            { selectable: false },
+            { relinkableFrom: false, relinkableTo: false, reshapable: false },
+            {
+                routing: go.Link.AvoidsNodes,
+                curve: go.Link.JumpOver,
+                corner: 5,
+                toShortLength: 4
+            },
+            new go.Binding("points").makeTwoWay(),
+            GoJs(go.Shape,  // the link path shape
+                { isPanelMain: true, strokeWidth: 1 }),
+            GoJs(go.Shape,  // the arrowhead
+                { toArrow: "Standard", stroke: null }),
+            GoJs(go.Panel, "Auto",
+                new go.Binding("visible", "isSelected").ofObject(),
+                GoJs(go.Shape, "RoundedRectangle",  // the link shape
+                    { fill: "#F8F8F8", stroke: null }),
+                GoJs(go.TextBlock,
+                    {
+                        textAlign: "center",
+                        font: "10pt Calibri",
+                        stroke: "#919191",
+                        margin: 2,
+                        minSize: new go.Size(10, NaN),
+                        editable: false
+                    },
+                    new go.Binding("text").makeTwoWay())
+            )
+        );
+
+    myDiagram_ID.nodeTemplateMap.add("Comment",
+        GoJs(go.Node, "Auto", nodeStyle(),
+            { selectable: false },
+            { resizable: false, resizeObjectName: "PANEL" },
+            { rotatable: false },
+
+            new go.Binding("angle").makeTwoWay(),
+            GoJs(go.Shape, "Rectangle",
+                { fill: "white", strokeWidth: 0 }),
+            GoJs(go.TextBlock, textStyle(),
+                {
+                    margin: 5,
+                    maxSize: new go.Size(200, NaN),
+                    wrap: go.TextBlock.WrapFit,
+                    textAlign: "center",
+                    editable: false,
+                    font: "12pt Calibri",
+                    stroke: '#454545'
+                },
+                new go.Binding("text").makeTwoWay()),
+            // no ports, because no links are allowed to connect with a comment
+
+
+        ));
+
+    window['myDiagram_' + ID] = myDiagram_ID;
 }
 
 function ToggleExpand(control, articleName) {
@@ -503,21 +654,19 @@ function downloadFileObject(fileId) {
 }
 
 // goto  Bookmark
-function gotoElement(id) {
-    
+function gotoElement(id){
     try{$(".viewdoc").scrollTop(0);
     $(".viewdoc").animate({
                           scrollTop: $("#" + id).offset().top - 300
                           }, 0);
-
     if ($("#" + id).find(".article-table[data-visible='false']").length) {
         $("#" + id).find(".article-table[data-visible='false']").attr("data-visible", true);
         // ArticleData($("#" + id).find(".article-table"));
     }
     }
-    catch{
+    catch(e){
+    androidAppProxy.logdata("gotobokkmarkerror  "+e.message);
     }
-    
 }
 
 function setFooterDataAfterRender(htmlObject, artNum,artdate,artversion){
@@ -584,6 +733,8 @@ function SetDocMode(mode) {
            try{androidAppProxy.getFileAttachment(fileId);}catch{}
          //window.webkit.messageHandlers.showAttachedItems.postMessage(fileId);
       }
+
+
 
 
 

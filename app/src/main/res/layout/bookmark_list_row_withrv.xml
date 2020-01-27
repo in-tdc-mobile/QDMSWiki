@@ -27,6 +27,7 @@
             android:layout_height="wrap_content" />
 
         <android.support.v7.widget.AppCompatImageView
+            android:visibility="gone"
             android:layout_marginLeft="@dimen/dimen_16dp"
             android:id="@+id/deleteIV"
             app:srcCompat="@drawable/ic_delete"
@@ -35,10 +36,17 @@
 
     </LinearLayout>
 
-
+<ScrollView
+    android:fillViewport="true"
+    android:fadingEdgeLength="@dimen/dimen_150dp"
+    android:fadingEdge="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
     <android.support.v7.widget.RecyclerView
         android:id="@+id/breadCrumbRV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+</ScrollView>
+
 
 </LinearLayout>

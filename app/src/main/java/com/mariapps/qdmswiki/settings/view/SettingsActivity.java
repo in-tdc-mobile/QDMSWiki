@@ -1,5 +1,6 @@
 package com.mariapps.qdmswiki.settings.view;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -56,6 +57,7 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
     SettingsPresenter settingsPresenter;
     private List<SettingsItem> settingsItems=new ArrayList<>();
     SessionManager sessionManager;
+    ProgressDialog progressDialog;
 
     @Override
     protected void setUpPresenter() {
@@ -72,6 +74,8 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         ButterKnife.bind(this);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Checking for Updates");
         sessionManager=new SessionManager(this);
         initView();
         initRecycler();
@@ -93,7 +97,12 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
                         startActivity(intent1);
                         break;
                     case 2:
-                        settingsPresenter.getDownloadUrl(new DownloadFilesRequestModel(sessionManager.getKeyLastUpdatedFileName()));
+                        try {
+                            progressDialog.show();
+                            settingsPresenter.getDownloadUrl(new DownloadFilesRequestModel(sessionManager.getKeyLastUpdatedFileName(),sessionManager.getDeviceId(),sessionManager.getUserId()));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         break;
                     case 3:
                         createAlert();
@@ -105,30 +114,23 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
     }
 
     private void createAlert() {
-
         AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
-
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.custom_alert_dialog, null);
-
         // Set the custom layout as alert dialog view
         builder.setView(dialogView);
-
         // Get the custom alert dialog view widgets reference
         TextView txtTitle = (TextView) dialogView.findViewById(R.id.txtTitle);
         TextView txtMessage = (TextView) dialogView.findViewById(R.id.txtMessage);
         Button btn_positive = (Button) dialogView.findViewById(R.id.btnPositive);
         Button btn_negative = (Button) dialogView.findViewById(R.id.btnNegative);
-
         // Create the alert dialog
         final AlertDialog dialog = builder.create();
-
         txtTitle.setText("Logout");
         txtMessage.setText(R.string.proceedMsg);
         txtTitle.setTextSize(16);
         txtTitle.setTextColor(getResources().getColor(R.color.searchDocument));
         txtMessage.setTextColor(getResources().getColor(R.color.searchDocument));
-
         btn_negative.setText("NO");
         btn_positive.setText("YES");
 
@@ -193,6 +195,7 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
 
     @Override
     public void onGetDownloadFilesSuccess(DownloadFilesResponseModel downloadFilesResponseModel) {
+        progressDialog.dismiss();
         if(downloadFilesResponseModel.getDownloadEntityList() == null || downloadFilesResponseModel.getDownloadEntityList().size() == 0)
             Toast.makeText(SettingsActivity.this,"No updates available",Toast.LENGTH_LONG).show();
         else {

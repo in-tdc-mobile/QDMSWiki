@@ -49,15 +49,12 @@ public class NotificationPresenter {
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
             @Override
             public void onSubscribe(Disposable d) {
-
             }
 
             @Override
             public void onComplete() {
                 notificationView.onGetDocumentInfoSuccess(documentModel);
             }
-
-
             @Override
             public void onError(Throwable e) {
 
@@ -70,7 +67,6 @@ public class NotificationPresenter {
             @Override
             public void run() throws Exception {
                 articleModel = homeDatabase.homeDao().getArticleDetail(articleId);
-
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
@@ -78,16 +74,12 @@ public class NotificationPresenter {
             public void onSubscribe(Disposable d) {
 
             }
-
             @Override
             public void onComplete() {
                 notificationView.onGetArticleInfoSuccess(articleModel);
             }
-
-
             @Override
             public void onError(Throwable e) {
-
             }
         });
     }

@@ -28,6 +28,7 @@ public class SettingsPresenter {
                     @Override
                     public void onNext(DownloadFilesResponseModel downloadFilesResponseModel) {
                         super.onNext(downloadFilesResponseModel);
+
                         settingsView.onGetDownloadFilesSuccess(downloadFilesResponseModel);
                     }
 

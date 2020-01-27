@@ -9,7 +9,7 @@
 }
 
 @font-face { font-family: 'Arial'; src:  local('Arial'), url('file:///android_asset/fonts/Arial.ttf') format('truetype');}
-@font-face { font-family: 'Arial Narrow'; src:  local('Arial'), url('file:///android_asset/fonts/Arial.ttf') format('truetype');}
+@font-face { font-family: 'Arial Narrow'; src:  localadd-book('Arial'), url('file:///android_asset/fonts/Arial.ttf') format('truetype');}
 
 @font-face { font-family: 'OpenSans'; src:  url('file:///android_asset/fonts/OpenSans-Bold.ttf') format('truetype'),
     url('file:///android_asset/fonts/OpenSans-BoldItalic.ttf') format('truetype'),
@@ -1513,11 +1513,11 @@ aside .tooltip {
 
 /* for bookamrk */
 .icon-btn.add-bookmark {
-    right: 0;
+    right: 0 !important;
     z-index:9999;
     background-color: #4f9be4;
     height:auto;
-    width:30px;
+    width:20px;
 }
 /*.icon-btn.add-bookmark:hover {*/
 /*    background-color: #000;*/

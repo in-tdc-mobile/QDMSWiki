@@ -55,6 +55,9 @@ public interface HomeDao {
     void insertBookmarkEntries(List<BookmarkEntryModel> bookmarkEntryModel);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertBookmarkEntriessingle(BookmarkEntryModel bookmarkEntryModel);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertUserSettings(UserSettingsModel userSettingsModel);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -83,6 +86,12 @@ public interface HomeDao {
 
     @Query("DELETE FROM BookMarkEntryEntity WHERE BookmarkId=:bookmarkId AND DocumentId=:documentId")
     void deleteBookmarkEntry(String documentId,String bookmarkId);
+
+
+    @Query("DELETE FROM BookMarkEntryEntity WHERE BookmarkId=:bookmarkId")
+    void deleteBookmarkEntrybyid(String bookmarkId);
+
+
 
     @Query("DELETE FROM ReceiverEntity WHERE notificationId=:notificationId")
     void deleteReceiver(String notificationId);
@@ -533,6 +542,18 @@ public interface HomeDao {
             " bookmark.DocumentId "+
             " FROM BookMarkEntryEntity as bookmark ")
     List<BookmarkEntryModel> getBookmarkEntriesall();
+
+
+
+    @Query(" SELECT bookmark.DocumentId, " +
+            " bookmark.BookmarkId, " +
+            " bookmark.BookmarkTitle, "+
+            " bookmark.DocumentId "+
+            " FROM BookMarkEntryEntity as bookmark "+
+            " WHERE bookmark.BookmarkId=:bookid")
+    List<BookmarkEntryModel> checkBookmarkEntriesall(String bookid);
+
+
 
     @Query(" SELECT document.DocumentNumber, " +
             " document.Version, "+

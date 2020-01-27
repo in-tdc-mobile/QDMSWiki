@@ -1,6 +1,7 @@
 package com.mariapps.qdmswiki.bookmark.presenter;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkEntryModel;
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkModel;
@@ -41,18 +42,14 @@ public class BookmarkPresenter {
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
             @Override
             public void onSubscribe(Disposable d) {
-
             }
-
             @Override
             public void onComplete() {
                 bookmarkView.onBookMarkEntryListSuccess(bookmarkEntryModels);
             }
-
-
             @Override
             public void onError(Throwable e) {
-
+                Log.e("frombookmarkremoved",e.getLocalizedMessage());
             }
         });
     }

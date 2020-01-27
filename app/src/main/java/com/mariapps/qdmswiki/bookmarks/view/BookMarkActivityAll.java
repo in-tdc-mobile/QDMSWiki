@@ -1,19 +1,28 @@
 package com.mariapps.qdmswiki.bookmarks.view;
 
 import android.app.ProgressDialog;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
+import com.mariapps.qdmswiki.baseclasses.BaseActivity;
+import com.mariapps.qdmswiki.bookmark.presenter.BookmarkPresenter;
 import com.mariapps.qdmswiki.bookmarks.adapter.BookmarkAdapter;
 import com.mariapps.qdmswiki.bookmarks.adapter.BookmarkAdapterAll;
+import com.mariapps.qdmswiki.bookmarks.adapter.BookmarkAdapterAllFaded;
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkEntryModel;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
@@ -46,13 +55,15 @@ import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
+import io.reactivex.functions.BooleanSupplier;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.mariapps.qdmswiki.search.view.DocumentViewFragment.BOOKMARKID;
 
-public  class BookMarkActivityAll extends AppCompatActivity implements View.OnClickListener {
+public class BookMarkActivityAll extends AppCompatActivity implements View.OnClickListener, BookmarkView {
     RecyclerView recyclerView;
-    BookmarkAdapterAll adapterAll;
+   // BookmarkAdapterAll adapterAll;
+    BookmarkAdapterAllFaded adapterAll;
     LinearLayoutManager layoutManager;
     List<BookmarkEntryModel> list = new ArrayList<>();
     ProgressDialog progressDialog;
@@ -61,7 +72,7 @@ public  class BookMarkActivityAll extends AppCompatActivity implements View.OnCl
     CustomTextView nameTV;
     CustomTextView titleTV;
     ImageView backbtn;
-    DocumentModel documentModel=null,documentModelbm;
+    DocumentModel documentModel = null, documentModelbm;
     private HomePresenter homePresenter;
     private BreadCrumbAdapter breadCrumbAdapter;
     public static final String BOOKMARKID = "BOOKMARK_ID";
@@ -72,18 +83,25 @@ public  class BookMarkActivityAll extends AppCompatActivity implements View.OnCl
     List<String> categorylist = new ArrayList<>();
     List<CategoryModel> categoryModelList = new ArrayList<>();
     CategoryModel categoryModel;
-    int count =0;
-    String catid="";
+    String catid = "";
     String cid = "";
     List<String> heading = new ArrayList<>();
     List<String> headinglist = new ArrayList<>();
-    HashMap<String,String> headlist= new HashMap<>();
+    HashMap<String, String> headlist = new HashMap<>();
+    private int deletePosition;
+    BottomSheetFragment sheetFragment = new BottomSheetFragment();
+    BookmarkPresenter bookmarkPresenter;
+    BookmarkEntryModel model;
+    MutableLiveData<Integer> mutableLiveData = new MutableLiveData<>();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_mark_all);
-        recyclerView=findViewById(R.id.bookmarkallrv);
+        bookmarkPresenter = new BookmarkPresenter(this, this);
+        recyclerView = findViewById(R.id.bookmarkallrv);
         headingTV = findViewById(R.id.headingTV);
         homeTV = findViewById(R.id.homeTV);
         backbtn = findViewById(R.id.backBtn);
@@ -91,24 +109,68 @@ public  class BookMarkActivityAll extends AppCompatActivity implements View.OnCl
         titleTV = findViewById(R.id.titleTV);
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
-        adapterAll = new BookmarkAdapterAll(this,list,allbreadcrumblist);
+        progressDialog.setMessage("loading");
+        adapterAll = new BookmarkAdapterAllFaded(this, list, allbreadcrumblist);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(adapterAll);
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         initView();
         getBookMarkEntryList();
-        adapterAll.setRowClickListener(bookmarkEntryModel ->{
-            if(bookmarkEntryModel!=null)
-            getdocdet(bookmarkEntryModel.getDocumentId(),bookmarkEntryModel.getBookmarkId());
-                });
+        adapterAll.setRowClickListener(bookmarkEntryModel -> {
+            if (bookmarkEntryModel != null)
+                getdocdet(bookmarkEntryModel.getDocumentId(), bookmarkEntryModel.getBookmarkId());
+        });
+
+     /*   adapterAll.setRowLongClickListener(new BookmarkAdapterAll.RowLongClickListner() {
+            @Override
+            public void onItemClicked(BookmarkEntryModel bookmarkEntryModel, int position) {
+                model = bookmarkEntryModel;
+                deletePosition = position;
+                sheetFragment.show(getSupportFragmentManager(), "bottomsheet");
+            }
+        });*/
+        adapterAll.setRowLongClickListener(new BookmarkAdapterAllFaded.RowLongClickListner() {
+            @Override
+            public void onItemClicked(BookmarkEntryModel bookmarkEntryModel, int position) {
+                model = bookmarkEntryModel;
+                deletePosition = position;
+                sheetFragment.show(getSupportFragmentManager(), "bottomsheet");
+            }
+        });
+
+        sheetFragment.setbuttonclickedlistner(new BottomSheetFragment.buttonclicked() {
+            @Override
+            public void clickedbuttons(int pos) {
+                if (pos == 1) {
+                    bookmarkPresenter.deleteBookmark(model.getDocumentId(), model.getBookmarkId());
+                    sheetFragment.dismiss();
+                    getBookMarkEntryList();
+                    Toast.makeText(BookMarkActivityAll.this, "Bookmark Removed", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    sheetFragment.dismiss();
+                }
+            }
+        });
         backbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onBackPressed();
             }
         });
+        mutableLiveData.observe(this, new Observer<Integer>() {
+            @Override
+            public void onChanged(@Nullable Integer integer) {
+                integer++;
+                getallnew(integer);
+                if (integer == list.size()) {
+                    progressDialog.dismiss();
+                    Log.e("sizeofallbreadcrumb",allbreadcrumblist.size()+"");
+                    recyclerView.setAdapter(adapterAll);
+                }
+            }
+        });
     }
-
 
 
     public void getBookMarkEntryList() {
@@ -116,8 +178,7 @@ public  class BookMarkActivityAll extends AppCompatActivity implements View.OnCl
             @Override
             public void run() throws Exception {
                 list.clear();
-                list.addAll( HomeDatabase.getInstance(getApplicationContext()).homeDao().getBookmarkEntriesall());
-
+                list.addAll(HomeDatabase.getInstance(getApplicationContext()).homeDao().getBookmarkEntriesall());
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
@@ -128,153 +189,32 @@ public  class BookMarkActivityAll extends AppCompatActivity implements View.OnCl
 
             @Override
             public void onComplete() {
-                Log.e("getBookMarkEntryList",list.size()+"");
-                getdocdetcomlete();
+                progressDialog.dismiss();
+                Log.e("getBookMarkEntryList", list.size() + "");
+                getallnew(0);
                 //adapterAll.notifyDataSetChanged();
-               // progressDialog.dismiss();
-
+                // progressDialog.dismiss();
             }
             @Override
             public void onError(Throwable e) {
                 progressDialog.dismiss();
-              // adapterAll.notifyDataSetChanged();
-                Log.e("getBookMarkEntryList",e.getLocalizedMessage());
-            }
-        });
-
-
-    }
-
-    public void getdocdetcomlete(){
-        Completable.fromAction(new Action() {
-            @Override
-            public void run() throws Exception {
-                for (int i = 0; i < list.size(); i++) {
-                    try {
-                        categorylist.add(HomeDatabase.getInstance(getApplicationContext()).homeDao().getDocumentDetails(list.get(i).getDocumentId()).categoryId);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
-            @Override
-            public void onSubscribe(Disposable d) {
-                progressDialog.show();
-            }
-            @Override
-            public void onComplete() {
-           // getcatedetailscomlete();
-                createbreadcrumb();
-            }
-            @Override
-            public void onError(Throwable e) {
-                Log.e("errorx",e.getLocalizedMessage());
-                progressDialog.dismiss();
+                // adapterAll.notifyDataSetChanged();
+                Log.e("getBookMarkEntryList", e.getLocalizedMessage());
             }
         });
     }
 
-
-
-
-
-
-
-
-    public void createbreadcrumb(){
-
-      /*  for (int i = 0; i < categorylist.size(); i++) {
-            getCategoryDetailsOfSelectedDocument(categorylist.get(i));
-        }
-
-        progressDialog.dismiss();*/
-
-
-        Completable.fromAction(new Action() {
-            @Override
-            public void run() throws Exception {
-                categoryModelList = HomeDatabase.getInstance(getApplicationContext()).homeDao().getCategoryDetailsOfSelectedDocumentlist();
-                Log.e("thisissize",categoryModelList.size()+"");
-            }
-        }).observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
-            @Override
-            public void onSubscribe(Disposable d) {
-               // progressDialog.show();
-            }
-            //59e8704d3b76db5b78458f9b
-            @Override
-            public void onComplete() {
-                for (int i = 0; i < categorylist.size(); i++) {
-                    createlist(categorylist.get(i));
-                }
-                //createlist("59e8704d3b76db5b78458f9b");
-                heading.size();
-                headinglist.size();
-            }
-            @Override
-            public void onError(Throwable e) {
-                progressDialog.dismiss();
-            }
-        });
-    }
-
-   /* public void createlist(String cid){
-        List<String> heading = new ArrayList<>();
-        List<String> headinglist = new ArrayList<>();
-        HashMap<String,String> headlist= new HashMap<>();
-        String headingall="";
-        for (int i = 0; i < categorylist.size(); i++) {
-            cid = categorylist.get(i);
-            for (int i1 = 0; i1 < categoryModelList.size(); i1++) {
-                CategoryModel cm = categoryModelList.get(i1);
-                if (cid.equals(cm.getParent())) {
-                    if (!heading.contains(cm.getName())) {
-                        heading.add(cm.getName());
-                      //  cid = cm.getParent();
-                    }
-                }
-            }
-            for (int i1 = 0; i1 < heading.size(); i1++) {
-              headingall = headingall+"/"+heading.get(i1);
-            }
-            headinglist.add(headingall);
-            headingall="";
-        }
-    }*/
-
-
-    public void createlist(String cid){
-        String headingall="";
-        for (int i1 = 0; i1 < categoryModelList.size(); i1++) {
-            CategoryModel cm = categoryModelList.get(i1);
-            if (cid.equals(cm.getId())) {
-                if (!heading.contains(cm.getName())) {
-                    heading.add(cm.getName());
-                    cid = cm.getParent();
-                    for (int i2 = 0; i2 < heading.size(); i2++) {
-                        headingall = headingall+"/"+heading.get(i2);
-                    }
-                    if(!headinglist.contains(headingall)){
-                        headinglist.add(headingall);
-                    }
-                    headingall="";
-                }
-            }
-        }
+    public void getallnew(int count) {
+        if (list.size() > count)
+            getdocdet(list.get(count).getDocumentId(), count);
     }
 
 
-
-
-
-    public void getdocdet(String docid,String bookid) {
+    public void getdocdet(String docid, String bookid) {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-           documentModel= HomeDatabase.getInstance(getApplicationContext()).homeDao().getDocumentData(docid)  ;
+                documentModel = HomeDatabase.getInstance(getApplicationContext()).homeDao().getDocumentData(docid);
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
@@ -286,8 +226,8 @@ public  class BookMarkActivityAll extends AppCompatActivity implements View.OnCl
             @Override
             public void onComplete() {
                 progressDialog.dismiss();
-                Log.e("getBookMarkEntryList",docid);
-                if(documentModel!=null){
+                Log.e("getBookMarkEntryList", docid);
+                if (documentModel != null) {
                     Intent intent = new Intent(BookMarkActivityAll.this, FolderStructureActivity.class);
                     intent.putExtra(AppConfig.BUNDLE_PAGE, "Document");
                     intent.putExtra(AppConfig.BUNDLE_TYPE, "Document");
@@ -297,20 +237,19 @@ public  class BookMarkActivityAll extends AppCompatActivity implements View.OnCl
                     intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, documentModel.getCategoryId());
                     intent.putExtra(AppConfig.BUNDLE_VERSION, documentModel.getVersion());
                     intent.putExtra(AppConfig.BOOKMARK_ID, bookid);
-                    intent.putExtra(AppConfig.BOOKMARK_ALL,"yes");
-                  //  setResult(DocumentViewFragment.RESULT_CODE, intent);
+                    intent.putExtra(AppConfig.BOOKMARK_ALL, "yes");
+                    //  setResult(DocumentViewFragment.RESULT_CODE, intent);
                     startActivity(intent);
                 }
-
             }
             @Override
             public void onError(Throwable e) {
                 progressDialog.dismiss();
-                Log.e("getBookMarkEntryList",e.getLocalizedMessage());
-
+                Log.e("getBookMarkEntryList", e.getLocalizedMessage());
             }
         });
     }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -332,11 +271,12 @@ public  class BookMarkActivityAll extends AppCompatActivity implements View.OnCl
         //titleTV.setText(getString(R.string.string_bookmarks));
     }
 
-    public void getCategoryDetailsOfSelectedDocument(String folderId) {
+    public void getCategoryDetailsOfSelectedDocument(String folderId, int count) {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
                 categoryModel = HomeDatabase.getInstance(getApplicationContext()).homeDao().getCategoryDetailsOfSelectedDocument(folderId);
+
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
@@ -346,68 +286,82 @@ public  class BookMarkActivityAll extends AppCompatActivity implements View.OnCl
 
             @Override
             public void onComplete() {
-           List<BreadCrumbItem>  crumbs = new ArrayList<>();
+                List<BreadCrumbItem> crumbs = new ArrayList<>();
                 if (categoryModel == null) {
                     for (int i = allParents.size() - 1; i >= 0; i--) {
                         crumbs.add(allParents.get(i));
                     }
                     allbreadcrumblist.add(crumbs);
-                   /* try {
-                        Log.e("breadcrimgsize",breadCrumbItems.size()+"");
-                        if(breadCrumbItems.size()>0){
-                            for (int i = 0; i < breadCrumbItems.size(); i++) {
-                                Log.e("breadcrimgsizeitems",breadCrumbItems.get(i).getHeading()+"");
-                            }
-
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }*/
                     allParents.clear();
+                    mutableLiveData.postValue(count);
                 } else {
                     allParents.add(new BreadCrumbItem(categoryModel.getName(), categoryModel.getId()));
-                    getCategoryDetailsOfSelectedDocument(categoryModel.getParent());
+                    getCategoryDetailsOfSelectedDocument(categoryModel.getParent(), count);
                 }
-
-                Log.e("sizeofallcrumbs",allbreadcrumblist.size()+"");
+                Log.e("sizeofallcrumbs", allbreadcrumblist.size() + "");
             }
+
             @Override
             public void onError(Throwable e) {
-
+                mutableLiveData.postValue(count);
             }
         });
     }
 
 
-    public void getdocdet(String docid) {
+    public void getdocdet(String docid, int count) {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
                 documentModelbm = HomeDatabase.getInstance(getApplicationContext()).homeDao().getDocumentDetails(docid);
+
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
             @Override
             public void onSubscribe(Disposable d) {
-
             }
 
             @Override
             public void onComplete() {
                 if (documentModelbm != null) {
-                    Log.e("documentModel", documentModelbm.categoryId + "  " + documentModelbm.documentNumber);
-                    getCategoryDetailsOfSelectedDocument(documentModelbm.categoryId);
+                    Log.e("documentModelnotnull", docid + "  " + count);
+                    getCategoryDetailsOfSelectedDocument(documentModelbm.categoryId, count);
+                } else {
+                    allbreadcrumblist.add(null);
+                    Log.e("documentModelnull", docid + "  " + count);
+                    mutableLiveData.postValue(count);
                 }
-
             }
 
             @Override
             public void onError(Throwable e) {
-                Log.e("getBookMarkEntryList", e.getLocalizedMessage());
+                allbreadcrumblist.add(null);
+                mutableLiveData.postValue(count);
+                Log.e("getBookMarkEntryListerr", e.getLocalizedMessage());
 
             }
         });
     }
 
 
+    @Override
+    public void onBookMarkEntryListSuccess(List<BookmarkEntryModel> bookmarkEntryModels) {
+
+    }
+
+    @Override
+    public void onBookMarkEntryListError() {
+
+    }
+
+    @Override
+    public void onBookmarkDeleteSucess() {
+
+    }
+
+    @Override
+    public void onBookmarkDeleteError() {
+
+    }
 }

@@ -52,6 +52,7 @@ public class BookmarkAdapterAll extends CustomRecyclerView.Adapter<BookmarkAdapt
 
     private Context mContext;
     private BookmarkAdapterAll.RowClickListener rowClickListener;
+    private BookmarkAdapterAll.RowLongClickListner rowLongClickListener;
     private BookmarkAdapterAll.DeleteClickListener deleteClickListener;
     private List<BookmarkEntryModel> bookmarkEntryList;
     //private BreadCrumbBookmarkAdapter breadCrumbAdapter;
@@ -88,25 +89,24 @@ public class BookmarkAdapterAll extends CustomRecyclerView.Adapter<BookmarkAdapt
                 rowClickListener.onItemClicked(bookmarkEntryList.get(holder.getAdapterPosition()));
             }
         });
+        holder.rowLL.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                rowLongClickListener.onItemClicked(bookmarkEntryList.get(holder.getAdapterPosition()),holder.getAdapterPosition());
+                return true;
+            }
+        });
         holder.deleteIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 deleteClickListener.onDeleteClicked(bookmarkEntryList.get(holder.getAdapterPosition()), i);
             }
         });
-
         try {
-
             initrv(holder.breadCrumbRV,breadCrumbItemsall.get(holder.getAdapterPosition()));
-          /*  Log.e("breadCrumbItemsall",breadCrumbItemsall.size()+"");
-
-            if(breadCrumbItemsall.size()>0)
-                Log.e("breadCrumbItemssmall",breadCrumbItemsall.size()+"");
-            initrv(holder.breadCrumbRV,breadCrumbItemsall.get(holder.getAdapterPosition()));*/
         } catch (Exception e) {
             e.printStackTrace();
         }
-       // getdocdet(bookmarkEntryModel.getDocumentId(), holder.breadCrumbRV);
     }
 
 
@@ -140,8 +140,16 @@ public class BookmarkAdapterAll extends CustomRecyclerView.Adapter<BookmarkAdapt
         this.rowClickListener = rowClickListener;
     }
 
+    public void setRowLongClickListener(BookmarkAdapterAll.RowLongClickListner rowClickListener) {
+        this.rowLongClickListener = rowClickListener;
+    }
+
     public interface RowClickListener {
         void onItemClicked(BookmarkEntryModel bookmarkEntryModel);
+    }
+
+    public interface RowLongClickListner {
+        void onItemClicked(BookmarkEntryModel bookmarkEntryModel,int position);
     }
 
     public void setDeleteClickListener(BookmarkAdapterAll.DeleteClickListener deleteClickListener) {
@@ -195,7 +203,6 @@ public class BookmarkAdapterAll extends CustomRecyclerView.Adapter<BookmarkAdapt
         breadCrumbRV.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false));
         BreadCrumbBookmarkAdapter  breadCrumbAdapter = new BreadCrumbBookmarkAdapter(breadCrumbItemslist, mContext);
         breadCrumbRV.setAdapter(breadCrumbAdapter);
-        breadCrumbAdapter.notifyDataSetChanged();
     }
 
     @Override

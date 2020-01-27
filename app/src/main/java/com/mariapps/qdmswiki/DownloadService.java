@@ -54,8 +54,9 @@ public class DownloadService extends Service {
         Log.e("onHandleIntent","started");
         url = intent.getStringExtra("url");
         filename = intent.getStringExtra("filename");
-        Intent pintent = new Intent(this, HomeActivity.class);
-        contentIntent = PendingIntent.getActivity(this, 1, pintent, PendingIntent.FLAG_UPDATE_CURRENT);
+       // Intent pintent = new Intent(this, HomeActivity.class);
+       // contentIntent = PendingIntent.getActivity(this, 1, pintent, PendingIntent.FLAG_UPDATE_CURRENT);
+        if(url!=null)
         beginDownload(url,filename);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             initChannels(this,"Downloading Files", "QDMS");
@@ -66,7 +67,7 @@ public class DownloadService extends Service {
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
             mBuilder.setSmallIcon(R.drawable.app_icon)
                     .setContentTitle("QDMS")
-                    .setContentIntent(contentIntent)
+                   // .setContentIntent(contentIntent)
                     .setContentText("Downloading Files");
             notificationManager.notify(1, mBuilder.build());
             startForeground(1,mBuilder.build());

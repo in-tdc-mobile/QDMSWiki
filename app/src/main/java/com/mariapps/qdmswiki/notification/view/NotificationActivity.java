@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Toast;
 
 import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
@@ -53,18 +54,18 @@ public class NotificationActivity extends BaseActivity implements NotificationVi
     private List<ReceiverModel> receiverList = new ArrayList<>();
     private HomeDatabase homeDatabase;
     private NotificationPresenter notificationPresenter;
+    private NotificationModel model = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
-
         rvNotifications.setHasFixedSize(true);
         rvNotifications.setLayoutManager(new LinearLayoutManager(this));
         rvNotifications.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         homeDatabase = HomeDatabase.getInstance(NotificationActivity.this);
-
         initView();
+        initRecycler();
         getNotificationList();
     }
 
@@ -96,9 +97,10 @@ public class NotificationActivity extends BaseActivity implements NotificationVi
         notificationAdapter.setRowClickListener(new NotificationAdapter.RowClickListener() {
             @Override
             public void onItemClicked(NotificationModel notificationModel) {
+                model=notificationModel;
                 if(notificationModel.getIsUnread() != null && notificationModel.getIsUnread())
-                    getReceiverList(notificationModel.getReceviers(),notificationModel);
-
+                    //getReceiverList(notificationModel.getReceviers(),notificationModel);
+                    deleteNotification(notificationModel);
                 if(notificationModel.getEventDescription()==0 || notificationModel.getEventDescription()==0.0){
                     notificationPresenter.getDocumentDetails(notificationModel.getEventId());
                 }
@@ -110,11 +112,16 @@ public class NotificationActivity extends BaseActivity implements NotificationVi
         rvNotifications.setAdapter(notificationAdapter);
     }
 
-    public void getNotificationList() {
+
+
+
+
+
+    public void deleteNotification(NotificationModel notificationModel) {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-                notificationList = homeDatabase.homeDao().getNotifications();
+                homeDatabase.homeDao().deleteNotification(notificationModel.getId());
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
@@ -125,10 +132,69 @@ public class NotificationActivity extends BaseActivity implements NotificationVi
 
             @Override
             public void onComplete() {
-                initRecycler();
+                notificationModel.setIsUnread(false);
+                insertNotification(notificationModel);
             }
 
 
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    public void insertNotification(final NotificationModel notificationModel) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                if (notificationModel != null) {
+                    homeDatabase.homeDao().insertNotification(notificationModel);
+                }
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+             getNotificationList();
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+
+    public void getNotificationList() {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                notificationList.clear();
+                notificationList.addAll(homeDatabase.homeDao().getNotifications());
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+            }
+            @Override
+            public void onComplete() {
+                notificationAdapter.notifyDataSetChanged();
+            }
             @Override
             public void onError(Throwable e) {
 
@@ -156,7 +222,7 @@ public class NotificationActivity extends BaseActivity implements NotificationVi
 
             @Override
             public void onComplete() {
-                initRecycler();
+
             }
 
 
@@ -170,14 +236,20 @@ public class NotificationActivity extends BaseActivity implements NotificationVi
 
     @Override
     public void onGetDocumentInfoSuccess(DocumentModel documentModel)   {
-        Intent intent = new Intent(NotificationActivity.this, FolderStructureActivity.class);
-        intent.putExtra(AppConfig.BUNDLE_PAGE,"Document");
-        intent.putExtra(AppConfig.BUNDLE_TYPE, "Document");
-        intent.putExtra(AppConfig.BUNDLE_NAME, documentModel.getDocumentName());
-        intent.putExtra(AppConfig.BUNDLE_ID, documentModel.getId());
-        intent.putExtra(AppConfig.BUNDLE_VERSION,documentModel.getVersion());
-        intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, documentModel.getCategoryId());
-        startActivity(intent);
+        try {
+            model.setIsUnread(false);
+            deleteNotification(model);
+            Intent intent = new Intent(NotificationActivity.this, FolderStructureActivity.class);
+            intent.putExtra(AppConfig.BUNDLE_PAGE,"Document");
+            intent.putExtra(AppConfig.BUNDLE_TYPE, "Document");
+            intent.putExtra(AppConfig.BUNDLE_NAME, documentModel.getDocumentName());
+            intent.putExtra(AppConfig.BUNDLE_ID, documentModel.getId());
+            intent.putExtra(AppConfig.BUNDLE_VERSION,documentModel.getVersion());
+            intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, documentModel.getCategoryId());
+            startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(this, "Document not found", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -187,15 +259,21 @@ public class NotificationActivity extends BaseActivity implements NotificationVi
 
     @Override
     public void onGetArticleInfoSuccess(ArticleModel articleModel) {
-        Intent intent = new Intent(NotificationActivity.this, FolderStructureActivity.class);
-        intent.putExtra(AppConfig.BUNDLE_PAGE,"Article");
-        intent.putExtra(AppConfig.BUNDLE_TYPE, "Article");
-        intent.putExtra(AppConfig.BUNDLE_NAME, articleModel.getArticleName());
-        intent.putExtra(AppConfig.BUNDLE_ID, articleModel.getId());
-        intent.putExtra(AppConfig.BUNDLE_VERSION,articleModel.getVersion());
-        if(articleModel.getCategoryIds().size() > 0)
-            intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, articleModel.getCategoryIds().get(0));
-        startActivity(intent);
+        try {
+            model.setIsUnread(false);
+            deleteNotification(model);
+            Intent intent = new Intent(NotificationActivity.this, FolderStructureActivity.class);
+            intent.putExtra(AppConfig.BUNDLE_PAGE,"Article");
+            intent.putExtra(AppConfig.BUNDLE_TYPE, "Article");
+            intent.putExtra(AppConfig.BUNDLE_NAME, articleModel.getArticleName());
+            intent.putExtra(AppConfig.BUNDLE_ID, articleModel.getId());
+            intent.putExtra(AppConfig.BUNDLE_VERSION,articleModel.getVersion());
+            if(articleModel.getCategoryIds().size() > 0)
+                intent.putExtra(AppConfig.BUNDLE_FOLDER_ID, articleModel.getCategoryIds().get(0));
+            startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(this, "Article not found", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

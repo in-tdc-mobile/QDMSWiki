@@ -1,9 +1,11 @@
 package com.mariapps.qdmswiki.search.view;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -104,7 +106,6 @@ public class DocumentViewFragment extends BaseFragment {
     FloatingActionButton showMenuFab;
     @BindView(R.id.webView)
     WebView webView;
-
     private String folderName;
     private String folderId;
     private String name;
@@ -135,6 +136,9 @@ public class DocumentViewFragment extends BaseFragment {
     Box<DocumentModelObj> dbox;
     Box<ArticleModelObj> abox;
     AsyncTask loaddoc;
+    List<BookmarkEntryModel> bookmarkidlist = new ArrayList<>();
+    String bookmarkstring="";
+    List<BookmarkEntryModel> checkmodel = new ArrayList<>();
 
 
 
@@ -159,6 +163,7 @@ public class DocumentViewFragment extends BaseFragment {
             bookmarkall = args.getString(AppConfig.BOOKMARK_ALL,"");
             bookmarkid = args.getString(AppConfig.BOOKMARK_ID,"");
             progressDialog = new ProgressDialog(getActivity());
+            progressDialog.setMessage("loading");
             dbox = ObjectBox.get().boxFor(DocumentModelObj.class);
             abox = ObjectBox.get().boxFor(ArticleModelObj.class);
             if (type.equals("Document")) {
@@ -184,7 +189,6 @@ public class DocumentViewFragment extends BaseFragment {
                     webView.findNext(true);
                 }
             }
-
         });
 
         btnUp.setOnClickListener(new View.OnClickListener() {
@@ -202,9 +206,7 @@ public class DocumentViewFragment extends BaseFragment {
                     webView.findNext(false);
                 }
             }
-
         });
-
         searchET.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -217,11 +219,42 @@ public class DocumentViewFragment extends BaseFragment {
                 webView.findAllAsync(s.toString());
             }
         });
-        loadDocument();
+       highlightbookmark();
         return view;
     }
 
+    public void highlightbookmark(){
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+             bookmarkidlist = HomeDatabase.getInstance(getActivity().getApplicationContext()).homeDao().getBookmarkEntries(id);
+             Log.e("bookmarkidlist",bookmarkidlist.size()+"");
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+            }
+            @Override
+            public void onComplete() {
+                if(bookmarkidlist.size()>0){
+                    for (int i = 0; i < bookmarkidlist.size(); i++) {
+                        String id = "#"+bookmarkidlist.get(i).getBookmarkId();
+                        bookmarkstring = bookmarkstring+","+id;
+                    }
+                    bookmarkstring= bookmarkstring.substring(1);
+                    Log.e("thisisbookmarkid111",bookmarkstring);
+                }
+                loadDocument();
+            }
+            @Override
+            public void onError(Throwable e) {
+                loadDocument();
+                Log.e("artcileiderror",e.getLocalizedMessage()+"   "+articleModel.getId());
+            }
+        });
 
+    }
     @OnClick({R.id.showMenuFab})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -260,7 +293,6 @@ public class DocumentViewFragment extends BaseFragment {
                         startActivity(intent);
                     }
                 });
-
                 linBookmark.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -295,7 +327,6 @@ public class DocumentViewFragment extends BaseFragment {
                     Log.e("idofdocument",id);
                     try {
                         documentModel = homeDatabase.homeDao().getDocumentData(id);
-                        Log.e("sizeofdocinbox",dbox.getAll().size()+"");
                         documentData = dbox.query().equal(DocumentModelObj_.id,id).build().find().get(0).documentData;
                     } catch (Exception e) {
 //                        Log.e("documentDatacatchid",dbox.getAll().size()+"");
@@ -306,10 +337,12 @@ public class DocumentViewFragment extends BaseFragment {
                     articleModel = homeDatabase.homeDao().getArticleData(id);
                     documentData = abox.query().equal(ArticleModelObj_.id,id).build().find().get(0).documentData;
                 }
-                documentData = documentData.replace("<script src=\"/WikiPALApp/Scripts/TemplateSettings/toc-template-settings.js\"></script>", "<script src=\"./Scripts/toc-template-settings.js.download\"></script>");
-                documentData = documentData.replace("src=\"/WikiPALApp/Uploads/Image/","src= \"file://"+imageFolderPath);
-                documentData = documentData.replace("src=\"/WikiPALApp/Scripts/TemplateSettings/","src= \"file:///android_asset/templateHTML/Scripts/");
-                documentData = documentData.replace("href=\"/WikiPALApp/Content/TemplateSettings/","href= \"file:///android_asset/templateHTML/Scripts/");
+                if(documentData!=null){
+                    documentData = documentData.replace("<script src=\"/WikiPALApp/Scripts/TemplateSettings/toc-template-settings.js\"></script>", "<script src=\"./Scripts/toc-template-settings.js.download\"></script>");
+                    documentData = documentData.replace("src=\"/WikiPALApp/Uploads/Image/","src= \"file://"+imageFolderPath);
+                    documentData = documentData.replace("src=\"/WikiPALApp/Scripts/TemplateSettings/","src= \"file:///android_asset/templateHTML/Scripts/");
+                    documentData = documentData.replace("href=\"/WikiPALApp/Content/TemplateSettings/","href= \"file:///android_asset/templateHTML/Scripts/");
+                }
                 documentData = documentData.replace("\n", "");
                 documentModel.setDocumentData(documentData);
                 return null;
@@ -321,41 +354,6 @@ public class DocumentViewFragment extends BaseFragment {
                 super.onPostExecute(s);
             }
         }.execute();
-       /* Completable.fromAction(new Action() {
-            @Override
-            public void run() throws Exception {
-                if (type.equals("Document")) {
-                    Log.e("idofdocument",id);
-                    homeDatabase.beginTransaction();
-                    documentModel = homeDatabase.homeDao().getDocumentData(id);
-                    documentData = documentModel.getDocumentData();
-                } else {
-                    List<TagModel> taglist = new ArrayList<>();
-                    documentModel = new DocumentModel("", "", "", "", "", "", taglist);
-                    articleModel = homeDatabase.homeDao().getArticleData(id);
-                    documentData = articleModel.getDocumentData();
-                    Log.e("documentdata",documentData);
-                }
-                documentData = documentData.replace("<script src=\"/WikiPALApp/Scripts/TemplateSettings/toc-template-settings.js\"></script>", "<script src=\"./Scripts/toc-template-settings.js.download\"></script>");
-                documentData = documentData.replace("src=\"/WikiPALApp/Uploads/Image/","src= \"file://"+imageFolderPath);
-                documentData = documentData.replace("\n", "");
-                documentModel.setDocumentData(documentData);
-            }
-        }).observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
-            @Override
-            public void onSubscribe(Disposable d) {
-            }
-            @Override
-            public void onComplete() {
-                setHTMLContent();
-            }
-            @Override
-            public void onError(Throwable e) {
-                Log.e("documentcatch",e.getLocalizedMessage());
-                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });*/
     }
 
     private void setHTMLContent() {
@@ -380,17 +378,10 @@ public class DocumentViewFragment extends BaseFragment {
 //                    webView.setEnabled(false);
 //                }
 //            }
-
-
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
             }
-
-
-
-
-
             public void onPageFinished(WebView view, String url) {
                 // Page is done loading;
                 // hide the progress dialog and show the webview
@@ -402,11 +393,13 @@ public class DocumentViewFragment extends BaseFragment {
                 else{
                     Log.e("onPageFinished","bookmarkelse");
                 }
+                webView.loadUrl("javascript:highlightbookmarks('"+bookmarkstring +"');");
+
             }
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 Log.e("onReceivedError",error.getDescription()+" "+error.getErrorCode());
-                Toast.makeText(getActivity(), "Your Internet Connection May not be active Or " + error.getDescription(), Toast.LENGTH_LONG).show();
+              //  Toast.makeText(getActivity(), "Your Internet Connection May not be active Or " + error.getDescription(), Toast.LENGTH_LONG).show();
             }
         });
 /*
@@ -443,6 +436,7 @@ public class DocumentViewFragment extends BaseFragment {
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
             @Override
             public void onSubscribe(Disposable d) {
+
             }
             @Override
             public void onComplete() {
@@ -451,6 +445,15 @@ public class DocumentViewFragment extends BaseFragment {
                     public void run() {
                         try {
                             webView.loadUrl("javascript:setArticleDataFromViewController('" + articleModel.getId() + "');");
+                            if(bookmarkall.equals("yes")){
+                                Log.e("onPageFinished","bookmark");
+                                gotoBookmark(bookmarkid);
+                            }
+                            else{
+                                Log.e("onPageFinished","bookmarkelse");
+                            }
+                           // webView.loadUrl("javascript:highlightbookmarks('"+bookmarkstring +"');");
+                          //  webView.loadUrl("javascript:highlightbookmarks();");
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -573,7 +576,6 @@ public class DocumentViewFragment extends BaseFragment {
             }
             @Override
             public void onError(Throwable e) {
-
             }
         });
     }
@@ -642,7 +644,6 @@ public class DocumentViewFragment extends BaseFragment {
             }
         });
     }
-
     public void decodeFile(String strFile, String filename, String fileExtention) {
         String fullpath = "";
         try {
@@ -652,7 +653,6 @@ public class DocumentViewFragment extends BaseFragment {
             if (!mydir.exists()) {
                 mydir.mkdirs();
             }
-
             if(fileExtention.equals(".jfif")){
                 filename = filename+".jpeg";
             }
@@ -666,9 +666,7 @@ public class DocumentViewFragment extends BaseFragment {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
-
     public void FileOpen(String FilePath, String fileExtention) {
         if (!FilePath.equals("")) {
             try {
@@ -690,7 +688,6 @@ public class DocumentViewFragment extends BaseFragment {
             }
         }
     }
-
     public void insertRecentlyViewedDocument(RecentlyViewedModel recentlyViewedModel) {
         Completable.fromAction(new Action() {
             @Override
@@ -717,7 +714,6 @@ public class DocumentViewFragment extends BaseFragment {
             }
         });
     }
-
     public class AppJavaScriptProxy {
 
         private Activity activity = null;
@@ -766,7 +762,7 @@ public class DocumentViewFragment extends BaseFragment {
         public void saveBookmark(String bookmarkEntity) {
             String[] bookmarkEntityArray = bookmarkEntity.split("##");
             BookmarkEntryModel bookmarkEntryModel = new BookmarkEntryModel(id,bookmarkEntityArray[0],bookmarkEntityArray[1]);
-            getBookmarkEntries(id,bookmarkEntryModel);
+            checkbookmark(id,bookmarkEntryModel);
         }
 
         @JavascriptInterface
@@ -777,9 +773,60 @@ public class DocumentViewFragment extends BaseFragment {
         @JavascriptInterface
         public String getArticleData(String id) {
             return (articleMap.get(id)).getDocumentData();
-
         }
     }
+    public void checkbookmark(String documentId, BookmarkEntryModel bookmarkEntryModel) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                checkmodel.addAll(HomeDatabase.getInstance(getActivity().getApplicationContext()).homeDao().checkBookmarkEntriesall(bookmarkEntryModel.getBookmarkId()));
+                Log.e("querycheck",checkmodel.size()+"  "+checkmodel.size());
+
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+           //     progressDialog.show();
+            }
+            @Override
+            public void onComplete() {
+             //   progressDialog.dismiss();
+                if(checkmodel.size()==0){
+                    getBookmarkEntries( documentId,  bookmarkEntryModel);
+                }
+                else {
+                    AlertDialog.Builder bu = new AlertDialog.Builder(getActivity());
+                    bu.setTitle("Bookmark");
+                    bu.setMessage("Do you want to remove the bookmark?");
+                    bu.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            deleteBookmarkEntries(documentId,bookmarkEntryModel);
+                        }
+                    });
+                    bu.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                       dialogInterface.dismiss();
+                        }
+                    });
+                    bu.show();
+                }
+                checkmodel.clear();
+                //adapterAll.notifyDataSetChanged();
+                // progressDialog.dismiss();
+            }
+            @Override
+            public void onError(Throwable e) {
+                progressDialog.dismiss();
+                // adapterAll.notifyDataSetChanged();
+                Log.e("getBookMarkEntryList", e.getLocalizedMessage());
+            }
+        });
+    }
+
+
 
     public void getBookmarkEntries(String documentId, BookmarkEntryModel bookmarkEntryModel) {
         Completable.fromAction(new Action() {
@@ -799,8 +846,39 @@ public class DocumentViewFragment extends BaseFragment {
 
             @Override
             public void onComplete() {
+                webView.loadUrl("javascript:highlightbookmarks('"+"#"+bookmarkEntryModel.getBookmarkId() +"');");
                 showCustomToast("Bookmark Saved",Toast.LENGTH_SHORT);
+            }
 
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    public void deleteBookmarkEntries(String documentId, BookmarkEntryModel bookmarkEntryModel) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                if (documentId != null) {
+                    homeDatabase.homeDao().deleteBookmarkEntry(bookmarkEntryModel.getDocumentId(),bookmarkEntryModel.getBookmarkId());
+
+                }
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                String bookid = "#"+bookmarkEntryModel.getBookmarkId();
+                webView.loadUrl("javascript:removehighlightedbookmarks('"+bookid+"');");
+                showCustomToast("Bookmark Removed",Toast.LENGTH_SHORT);
             }
 
 
@@ -827,6 +905,7 @@ public class DocumentViewFragment extends BaseFragment {
         if(loaddoc!=null&&loaddoc.getStatus()== AsyncTask.Status.RUNNING){
           loaddoc.cancel(true);
         }
+        progressDialog.cancel();
         webView.onPause();
     }
 }
