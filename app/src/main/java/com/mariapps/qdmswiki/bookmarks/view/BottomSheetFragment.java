@@ -68,8 +68,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
                             break;
                         }
                     }
- 
-                    Toast.makeText(getContext(), "Bottom Sheet State Changed to: " + state, Toast.LENGTH_SHORT).show();
+
                 }
  
                 @Override
