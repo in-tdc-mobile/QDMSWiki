@@ -1,8 +1,10 @@
 package com.mariapps.qdmswiki.home.database;
 
+import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkEntryModel;
@@ -27,7 +29,7 @@ import com.mariapps.qdmswiki.usersettings.UserSettingsTagModel;
 @Database(entities = {DocumentModel.class, ArticleModel.class, CategoryModel.class, TagModel.class, NotificationModel.class,
         ReceiverModel.class, BookmarkModel.class, BookmarkEntryModel.class, UserSettingsModel.class,
         UserSettingsTagModel.class, UserSettingsCategoryModel.class, UserInfoModel.class, RecentlyViewedModel.class,
-        FileListModel.class, FormsModel.class, ImageModel.class}, version = 1,exportSchema = false)
+        FileListModel.class, FormsModel.class, ImageModel.class}, version = 2,exportSchema = false)
 public abstract class HomeDatabase extends RoomDatabase {
 
     private static volatile HomeDatabase INSTANCE;
@@ -40,6 +42,7 @@ public abstract class HomeDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context,
                             HomeDatabase.class, "HomeDb.db")
+                            .addMigrations(MIGRATION_1_2)
                             .build();
                 }
             }
@@ -47,4 +50,27 @@ public abstract class HomeDatabase extends RoomDatabase {
         return INSTANCE;
 
     }
+
+    static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE DocumentModel "
+                    + " ADD COLUMN OfficeIds TEXT ");
+
+            database.execSQL("ALTER TABLE DocumentModel "
+                    + " ADD COLUMN VesselIds TEXT ");
+
+            database.execSQL("ALTER TABLE DocumentModel "
+                    + " ADD COLUMN PassengersVesselIds TEXT ");
+
+            database.execSQL("ALTER TABLE ArticleModel "
+                    + " ADD COLUMN ArticleToOfficeIds TEXT ");
+
+            database.execSQL("ALTER TABLE DocumentModel "
+                    + " ADD COLUMN ArticleToVesselIds TEXT ");
+
+            database.execSQL("ALTER TABLE DocumentModel "
+                    + " ADD COLUMN ArticleToPassengersVesselIds TEXT ");
+        }
+    };
 }

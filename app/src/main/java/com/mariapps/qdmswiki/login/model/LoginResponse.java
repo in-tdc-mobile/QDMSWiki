@@ -88,6 +88,10 @@ public  class LoginResponse {
         @SerializedName("DefaultCompanyName")
         private String defaultCompanyName;
 
+        @ColumnInfo(name = "IsSeafarerLogin")
+        @SerializedName("IsSeafarerLogin")
+        private String isSeafarerLogin;
+
         public String getUserId() {
             return userId;
         }
@@ -175,7 +179,17 @@ public  class LoginResponse {
         public void setDefaultCompanyName(String defaultCompanyName) {
             this.defaultCompanyName = defaultCompanyName;
         }
+
+        public String getIsSeafarerLogin() {
+            return isSeafarerLogin;
+        }
+
+        public void setIsSeafarerLogin(String seafarerLogin) {
+            isSeafarerLogin = seafarerLogin;
+        }
     }
+
+
 
 
 

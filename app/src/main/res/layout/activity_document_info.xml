@@ -34,6 +34,37 @@
                 android:weightSum="1">
 
                 <com.mariapps.qdmswiki.custom.CustomTextView
+                    android:id="@+id/docname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.50"
+                    android:text="@string/string_document_number"
+                    android:textColor="@color/application_item"
+                    android:textSize="@dimen/sec_text_size" />
+
+                <com.mariapps.qdmswiki.custom.CustomTextView
+                    android:id="@+id/documentNameTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|left"
+                    android:layout_weight="0.50"
+                    app:fontface="@string/string_lato_semi_bold"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sec_text_size"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dimen_50dp"
+                android:layout_marginLeft="@dimen/dimen_16dp"
+                android:layout_marginRight="@dimen/dimen_16dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <com.mariapps.qdmswiki.custom.CustomTextView
                     android:id="@+id/docnum"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -253,6 +284,7 @@
                 android:background="@color/grey_200" />
 
             <LinearLayout
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dimen_50dp"
                 android:layout_marginLeft="@dimen/dimen_16dp"

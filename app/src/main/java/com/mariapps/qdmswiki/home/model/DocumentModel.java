@@ -83,6 +83,18 @@ public class DocumentModel implements Parcelable {
     @SerializedName("ApprovedName")
     private String approvedName;
 
+    @ColumnInfo(name = "OfficeIds")
+    @SerializedName("OfficeIds")
+    public List<String> officeIds;
+
+    @ColumnInfo(name = "VesselIds")
+    @SerializedName("VesselIds")
+    public List<String> vesselIds;
+
+    @ColumnInfo(name = "PassengersVesselIds")
+    @SerializedName("PassengersVesselIds")
+    public List<String> passengersVesselIds;
+
     public DocumentModel(String id, String categoryId, String documentCode, String documentName/*, String documentData,*/, String version,List<TagModel> tags) {
         this.id = id;
         this.categoryId = categoryId;
@@ -255,6 +267,31 @@ public class DocumentModel implements Parcelable {
         this.approvedName = approvedName;
     }
 
+
+    public List<String> getOfficeIds() {
+        return officeIds;
+    }
+
+    public void setOfficeIds(List<String> officeIds) {
+        this.officeIds = officeIds;
+    }
+
+    public List<String> getVesselIds() {
+        return vesselIds;
+    }
+
+    public void setVesselIds(List<String> vesselIds) {
+        this.vesselIds = vesselIds;
+    }
+
+    public List<String> getPassengersVesselIds() {
+        return passengersVesselIds;
+    }
+
+    public void setPassengersVesselIds(List<String> passengersVesselIds) {
+        this.passengersVesselIds = passengersVesselIds;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -283,6 +320,9 @@ public class DocumentModel implements Parcelable {
         isRecommended = in.readString();
         catId = in.readString();
         approvedName = in.readString();
+        officeIds = in.readArrayList(ArticleModel.class.getClassLoader());
+        vesselIds = in.readArrayList(ArticleModel.class.getClassLoader());
+        passengersVesselIds = in.readArrayList(ArticleModel.class.getClassLoader());
     }
 
     @Override
@@ -310,6 +350,9 @@ public class DocumentModel implements Parcelable {
         dest.writeString(isRecommended);
         dest.writeString(catId);
         dest.writeString(approvedName);
+        dest.writeList(officeIds);
+        dest.writeList(vesselIds);
+        dest.writeList(passengersVesselIds);
     }
 
     public static final Creator<DocumentModel> CREATOR = new Creator<DocumentModel>() {

@@ -174,7 +174,10 @@ public class LoginActivity extends BaseActivity implements LoginView{
             if (loginResponse.getCommonEntity() != null) {
                 if (loginResponse.getCommonEntity().getTransactionstatus() != null && loginResponse.getCommonEntity().getTransactionstatus().equals("Y")) {
                     sessionManager.setLoggedin(true);
+                    sessionManager.setUserName(loginResponse.getLoginQdms().getName());
                     sessionManager.setUserId(loginResponse.getLoginQdms().getUserId());
+                    sessionManager.setKeyIsSeafarerLogin(loginResponse.getLoginQdms().getIsSeafarerLogin());
+
 
                     if (sessionManager.isFirstTimeLaunch()) {
                         Intent intent = new Intent(LoginActivity.this, WalkthroughActivity.class);

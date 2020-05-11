@@ -105,6 +105,20 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
                         }
                         break;
                     case 3:
+                        String mailBody = " Comments : " + "\n\n\n" +
+                                " Name : " + sessionManager.getUserName() + "\n" +
+                                " OS   : Android Version " + android.os.Build.VERSION.RELEASE + "\n" +
+                                " App Version : " + BuildConfig.VERSION_NAME + "\n" +
+                                " App Name : " +  getResources().getString(R.string.app_name) + "\n" +
+                                " Device : " + android.os.Build.MODEL + "\n";
+                        Intent sendIntent = new Intent(Intent.ACTION_SEND);
+                        sendIntent.setType("text/plain");
+                        sendIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"support@mariapps.com"});
+                        sendIntent.putExtra(Intent.EXTRA_SUBJECT, "QDMWiki Android support [UserID: " +sessionManager.getUserId()+"]");
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, mailBody);
+                        startActivity(Intent.createChooser(sendIntent, "Send Email"));
+                        break;
+                    case 4:
                         createAlert();
                         break;
                 }
@@ -174,6 +188,7 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
         settingsItems.add(new SettingsItem(R.drawable.ic_bookmark_color,"BookMarks",R.color.black));
         settingsItems.add(new SettingsItem(R.drawable.ic_app_info,"App Info",R.color.black));
         settingsItems.add(new SettingsItem(R.drawable.ic_check_update,"Check for QDMS data updates",R.color.black));
+        settingsItems.add(new SettingsItem(R.drawable.app_support,"App Support",R.color.black));
         settingsItems.add(new SettingsItem(R.drawable.ic_logout,"Logout",R.color.red_900));
         return settingsItems;
     }

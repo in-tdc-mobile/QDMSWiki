@@ -319,6 +319,7 @@ public interface HomeDao {
             " document.Version," +
             " document.tags," +
             " document.Date," +
+            " document.Version," +
             " category.CategoryName as categoryName " +
             " FROM DocumentEntity as document " +
             " LEFT JOIN CategoryEntity as category" +
@@ -555,7 +556,8 @@ public interface HomeDao {
 
 
 
-    @Query(" SELECT document.DocumentNumber, " +
+    @Query(" SELECT  document.DocumentName, " +
+            " document.DocumentNumber, " +
             " document.Version, "+
             " document.Date," +
             " document.tags," +
@@ -567,7 +569,8 @@ public interface HomeDao {
             " WHERE document.Id=:documentId")
     DocumentModel getDocumentInfo(String documentId);
 
-    @Query(" SELECT article.ArticleNumber, " +
+    @Query(" SELECT  article.ArticleName, " +
+            " article.ArticleNumber, " +
             " article.Version, "+
             " article.Date," +
             " article.tags," +

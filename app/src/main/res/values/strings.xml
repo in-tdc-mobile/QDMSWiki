@@ -52,6 +52,7 @@
     //Document view
     <string name="string_document_details">Document Details</string>
     <string name="string_document_number">Document Number</string>
+    <string name="string_document_name">Document Name</string>
     <string name="string_document_version">Document Version</string>
     <string name="string_location">Location</string>
     <string name="string_published_on">Published on</string>
@@ -76,12 +77,14 @@
     <string name="skip">Skip</string>
     <string name="start">Got it</string>
 
-    <string name="walkthrough_slide1_title">Slide 1</string>
-    <string name="walkthrough_slide1_desc">Slide 1 desc</string>
-    <string name="walkthrough_slide2_title">Slide 2</string>
-    <string name="walkthrough_slide2_desc">Slide 2 desc</string>
-    <string name="walkthrough_slide3_title">Slide 3</string>
-    <string name="walkthrough_slide3_desc">Slide 3 desc</string>
-    <string name="walkthrough_slide4_title">Slide 4</string>
-    <string name="walkthrough_slide4_desc">Slide 4 desc</string>
+    <string name="walkthrough_slide1_title">Dashboard</string>
+    <string name="walkthrough_slide1_desc">Information on Recommended/Recently viewed documents along with search functionality.</string>
+    <string name="walkthrough_slide2_title">Navigation Menu</string>
+    <string name="walkthrough_slide2_desc">Easily navigate to the document/article you want to view.</string>
+    <string name="walkthrough_slide3_title">Search</string>
+    <string name="walkthrough_slide3_desc">Searching any Category/Document/Article is made easily including combination search.</string>
+    <string name="walkthrough_slide4_title">Document View</string>
+    <string name="walkthrough_slide4_desc">View of the document with the provision to search any text within it and easily navigate through it.</string>
+    <string name="walkthrough_slide5_title">Document Details</string>
+    <string name="walkthrough_slide5_desc">Get additional information on the document and saved bookmarks relating to it on a single click.</string>
 </resources>

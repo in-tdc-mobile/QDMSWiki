@@ -68,13 +68,13 @@ public class WalkthroughActivity extends BaseActivity {
 
         setContentView(R.layout.activity_walk_through);
         sessionManager = new SessionManager(WalkthroughActivity.this);
-        sessionManager.setFirstTimeLaunch(true);
+        sessionManager.setFirstTimeLaunch(false);
         // layouts of all welcome sliders
         // add few more layouts if you want
         layouts = new int[]{
                 R.layout.walkthrough_slide_one,
-                R.layout.walkthrough_slide_three,
                 R.layout.walkthrough_slide_two,
+                R.layout.walkthrough_slide_three,
                 R.layout.walkthrough_slide_four,
                 R.layout.walkthrough_slide_five};
 

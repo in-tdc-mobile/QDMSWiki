@@ -82,6 +82,11 @@ public class ArticleModel implements Parcelable {
     @SerializedName("ArticleToVesselIds")
     private List<String> articleToVesselIds = null;
 
+    @ColumnInfo(name = "ArticleToPassengersVesselIds")
+    @SerializedName("ArticleToPassengersVesselIds")
+    private List<String> articleToPassengersVesselIds = null;
+
+
     public ArticleModel(String id, String articleName, String documentData, List<String> categoryIds) {
         this.id = id;
 //        this.appId = appId;
@@ -224,6 +229,14 @@ public class ArticleModel implements Parcelable {
         this.articleToVesselIds = articleToVesselIds;
     }
 
+    public List<String> getArticleToPassengersVesselIds() {
+        return articleToPassengersVesselIds;
+    }
+
+    public void setArticleToPassengersVesselIds(List<String> articleToPassengersVesselIds) {
+        this.articleToPassengersVesselIds = articleToPassengersVesselIds;
+    }
+
     public List<String> getCategoryNames() {
         return categoryNames;
     }
@@ -252,6 +265,7 @@ public class ArticleModel implements Parcelable {
         date = in.readString();
         articleToOfficeIds = in.readArrayList(ArticleModel.class.getClassLoader());
         articleToVesselIds = in.readArrayList(ArticleModel.class.getClassLoader());
+        articleToPassengersVesselIds = in.readArrayList(ArticleModel.class.getClassLoader());
         categoryNames = in.readArrayList(ArticleModel.class.getClassLoader());
         //isActive = in.readByte() != 0;
     }
@@ -272,6 +286,7 @@ public class ArticleModel implements Parcelable {
         dest.writeString(date);
         dest.writeList(articleToOfficeIds);
         dest.writeList(articleToVesselIds);
+        dest.writeList(articleToPassengersVesselIds);
         dest.writeList(categoryNames);
         //dest.writeByte((byte) (isActive ? 1 : 0));
     }

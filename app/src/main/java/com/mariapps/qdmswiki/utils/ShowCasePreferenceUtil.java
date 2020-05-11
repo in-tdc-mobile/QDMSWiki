@@ -10,7 +10,10 @@ public class ShowCasePreferenceUtil {
 
     private static final String PREF_NAME = "qdmswikishowcaseview";
     public static final String SEARCH = "search";
-
+    public static final String INLINE_SEARCH = "inlinesearch";
+    public static final String MORE = "more";
+    public static final String MENU = "menu";
+    public static final String RECOMMENDED = "recommended";
 
     SharedPreferences pref;
     SharedPreferences.Editor editor;

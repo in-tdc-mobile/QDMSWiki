@@ -214,7 +214,7 @@ public class BookMarkActivityAll extends AppCompatActivity implements View.OnCli
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-                documentModel = HomeDatabase.getInstance(getApplicationContext()).homeDao().getDocumentData(docid);
+                documentModel = HomeDatabase.getInstance(getApplicationContext()).homeDao().getDocumentDetails(docid);
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {

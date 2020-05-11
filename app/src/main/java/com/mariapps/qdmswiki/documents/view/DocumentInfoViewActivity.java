@@ -53,6 +53,8 @@ public class DocumentInfoViewActivity extends BaseActivity implements HomeView {
     CustomTextView nameTV;
     @BindView(R.id.titleTV)
     CustomTextView titleTV;
+    @BindView(R.id.documentNameTV)
+    CustomTextView documentNameTV;
     @BindView(R.id.documentNumberTV)
     CustomTextView documentNumberTV;
     @BindView(R.id.documentVersionTV)
@@ -77,10 +79,13 @@ public class DocumentInfoViewActivity extends BaseActivity implements HomeView {
     CustomRecyclerView usersRV;
     @BindView(R.id.arrowIV)
     AppCompatImageView arrowIV;
-   /* CustomTextView docnum;
+    @BindView(R.id.docname)
+    CustomTextView docname;
     @BindView(R.id.docnum)
+    CustomTextView docnum;
+    @BindView(R.id.docver)
     CustomTextView docver;
-    @BindView(R.id.docver)*/
+
 
     private HomePresenter homePresenter;
     private List<TagModel> tagList = new ArrayList<>();
@@ -90,7 +95,6 @@ public class DocumentInfoViewActivity extends BaseActivity implements HomeView {
     private String folderId;
     private String location;
     private String type;
-    TextView docnum,docver;
     List<String> allParents = new ArrayList<>();
 
     @Override
@@ -252,6 +256,7 @@ public class DocumentInfoViewActivity extends BaseActivity implements HomeView {
         headingTV.setText(getResources().getString(R.string.string_document_details));
         titleTV.setText(getResources().getString(R.string.string_document_details));
         locationTV.setText(location);
+        documentNameTV.setText(documentModel.getDocumentName());
         documentNumberTV.setText(documentModel.getDocumentNumber());
         documentVersionTV.setText("V "+documentModel.getVersion());
         publishedOnTV.setText(DateUtils.getFormattedDate(documentModel.getDate()));
@@ -323,8 +328,9 @@ public class DocumentInfoViewActivity extends BaseActivity implements HomeView {
         titleTV.setText(getResources().getString(R.string.string_article_details));
         docver.setText("Article Version");
         docnum.setText("Article Number");
-
+        docname.setText("Article Name");
         locationTV.setText(location);
+        documentNameTV.setText(articleModel.getArticleName());
         documentNumberTV.setText(String.valueOf(articleModel.getArticleNumber()));
         documentVersionTV.setText("V "+ String.valueOf(articleModel.getVersion()));
         publishedOnTV.setText(DateUtils.getFormattedDate(articleModel.getDate()));

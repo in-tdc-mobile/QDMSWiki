@@ -12901,6 +12901,12 @@ div#allowedlocation ul li .radio {
 .search-list-item {
     position:relative;
 }
+
+.flowchartDragger {
+    overflow: auto !important;
+    display: block;
+}
+
 .search-list-item.show-search .search-form {
     position:absolute;
     top:50px;

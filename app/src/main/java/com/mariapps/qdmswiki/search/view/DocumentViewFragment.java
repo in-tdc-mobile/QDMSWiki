@@ -1,5 +1,6 @@
 package com.mariapps.qdmswiki.search.view;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -8,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -28,6 +30,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -54,6 +57,7 @@ import com.mariapps.qdmswiki.DocumentModelObj;
 import com.mariapps.qdmswiki.DocumentModelObj_;
 import com.mariapps.qdmswiki.ObjectBox;
 import com.mariapps.qdmswiki.R;
+import com.mariapps.qdmswiki.SessionManager;
 import com.mariapps.qdmswiki.TagModelObj;
 import com.mariapps.qdmswiki.baseclasses.BaseFragment;
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkEntryModel;
@@ -61,6 +65,8 @@ import com.mariapps.qdmswiki.bookmarks.model.BookmarkModel;
 import com.mariapps.qdmswiki.bookmarks.view.BookmarkActivity;
 import com.mariapps.qdmswiki.custom.CustomEditText;
 import com.mariapps.qdmswiki.custom.CustomTextView;
+import com.mariapps.qdmswiki.custom.taptargetview.TapTarget;
+import com.mariapps.qdmswiki.custom.taptargetview.TapTargetView;
 import com.mariapps.qdmswiki.documents.view.DocumentInfoViewActivity;
 import com.mariapps.qdmswiki.home.database.HomeDao;
 import com.mariapps.qdmswiki.home.database.HomeDatabase;
@@ -72,6 +78,7 @@ import com.mariapps.qdmswiki.home.model.TagModel;
 import com.mariapps.qdmswiki.home.presenter.HomePresenter;
 import com.mariapps.qdmswiki.home.view.HomeActivity;
 import com.mariapps.qdmswiki.utils.DateUtils;
+import com.mariapps.qdmswiki.utils.ShowCasePreferenceUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -106,6 +113,7 @@ public class DocumentViewFragment extends BaseFragment {
     FloatingActionButton showMenuFab;
     @BindView(R.id.webView)
     WebView webView;
+
     private String folderName;
     private String folderId;
     private String name;
@@ -139,9 +147,10 @@ public class DocumentViewFragment extends BaseFragment {
     List<BookmarkEntryModel> bookmarkidlist = new ArrayList<>();
     String bookmarkstring="";
     List<BookmarkEntryModel> checkmodel = new ArrayList<>();
-
-
-
+    ShowCasePreferenceUtil util;
+    SessionManager sessionManager;
+    private  LinearLayout linBookmark;
+    private boolean isMoreShowCaseShown = false;
 
     @Override
     protected void setUpPresenter() {
@@ -152,6 +161,8 @@ public class DocumentViewFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_document_view, container, false);
         ButterKnife.bind(this, view);
+
+        AppCompatImageView transparentView = getActivity().findViewById(R.id.transparentView);
         try {
             Bundle args = getArguments();
             id = args.getString(AppConfig.BUNDLE_ID, "");
@@ -174,6 +185,10 @@ public class DocumentViewFragment extends BaseFragment {
         }
 
         homeDatabase = HomeDatabase.getInstance(getActivity());
+        sessionManager = new SessionManager(getActivity());
+
+        util = new ShowCasePreferenceUtil(getActivity());
+
         btnDown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -219,9 +234,98 @@ public class DocumentViewFragment extends BaseFragment {
                 webView.findAllAsync(s.toString());
             }
         });
+
        highlightbookmark();
+
+        if (!sessionManager.getIsDocumentViewShown()) {
+            sessionManager.setDocumentViewShown(true);
+            transparentView.setVisibility(View.VISIBLE);
+        }
+
+
+        transparentView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                transparentView.setVisibility(View.GONE);
+                util.setShowCaseName("");
+                if (!sessionManager.getIsDocumentSearchShown()) {
+                    sessionManager.setDocumentSearchShown(true);
+                    try {
+                        setShowCase(util);
+                    } catch (Exception e) {
+                    }
+                }
+                return false;
+            }
+        });
+
         return view;
     }
+
+    private void setShowCase(ShowCasePreferenceUtil util){
+     util.setShowCaseName(ShowCasePreferenceUtil.INLINE_SEARCH);
+        TapTargetView.showFor(getActivity(),
+                TapTarget.forView(searchET, "Document inline search is possible here", "")
+            // All options below are optional
+            .outerCircleColor(R.color.searchHint)
+                        .outerCircleAlpha(0.90f)
+                        .targetCircleColor(R.color.white)
+                        .titleTextSize(18)
+                        .titleTextColor(R.color.white)
+                        .descriptionTextSize(10)
+                        .descriptionTextColor(R.color.white)
+                        .textColor(R.color.white)
+                        .textTypeface(Typeface.SANS_SERIF)
+                        .drawShadow(true)
+                        .cancelable(true)
+                        .tintTarget(true)
+                        .transparentTarget(true)
+                        .targetRadius(40),
+                new TapTargetView.Listener() {
+        @Override
+        public void onTargetDismissed(TapTargetView view, boolean userInitiated) {
+            super.onTargetDismissed(view, userInitiated);
+            iniShowCase();
+        }
+    });
+}
+
+    public void iniShowCase() {
+        if (!util.getShowCasePref(ShowCasePreferenceUtil.MORE).equals(ShowCasePreferenceUtil.MORE) && !sessionManager.getIsDocumentInfoShown()) {
+            sessionManager.setDocumentInfoShown(true);
+            initMoreShowCase(util);
+        }
+    }
+
+
+    @SuppressLint("ResourceType")
+    public void initMoreShowCase(ShowCasePreferenceUtil util) {
+        util.setShowCaseName(ShowCasePreferenceUtil.MORE);
+        TapTargetView.showFor(getActivity(),
+                TapTarget.forView(showMenuFab, "Click here for additional info", "")
+                        // All options below are optional
+                        .outerCircleColor(R.color.searchHint)
+                        .outerCircleAlpha(0.90f)
+                        .targetCircleColor(R.color.white)
+                        .titleTextSize(18)
+                        .titleTextColor(R.color.white)
+                        .descriptionTextSize(10)
+                        .descriptionTextColor(R.color.white)
+                        .textColor(R.color.white)
+                        .textTypeface(Typeface.SANS_SERIF)
+                        .drawShadow(true)
+                        .cancelable(true)
+                        .tintTarget(true)
+                        .transparentTarget(true)
+                        .targetRadius(40),
+                new TapTargetView.Listener() {
+                    @Override
+                    public void onTargetDismissed(TapTargetView view, boolean userInitiated) {
+                        super.onTargetDismissed(view, userInitiated);
+                    }
+                });
+    }
+
 
     public void highlightbookmark(){
         Completable.fromAction(new Action() {
@@ -276,15 +380,18 @@ public class DocumentViewFragment extends BaseFragment {
                 // Apply the updated layout parameters to TextView
                 popupView.setLayoutParams(lp);
                 LinearLayout linInfo = popupView.findViewById(R.id.linInfo);
-                LinearLayout linBookmark = popupView.findViewById(R.id.linBookmark);
+                linBookmark = popupView.findViewById(R.id.linBookmark);
+
                 LinearLayout linDownload = popupView.findViewById(R.id.linDownload);
                 if(type.equals("Article"))
                     linBookmark.setVisibility(View.GONE);
-                else
+                else {
                     linBookmark.setVisibility(View.VISIBLE);
+                }
                 linInfo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        popupWindow.dismiss();
                         Intent intent = new Intent(getActivity(), DocumentInfoViewActivity.class);
                         intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME, folderName);
                         intent.putExtra(AppConfig.BUNDLE_ID, id);
@@ -296,12 +403,14 @@ public class DocumentViewFragment extends BaseFragment {
                 linBookmark.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        popupWindow.dismiss();
                         Intent intent = new Intent(getActivity(), BookmarkActivity.class);
                         intent.putExtra(AppConfig.BUNDLE_FOLDER_NAME, folderName);
                         intent.putExtra(AppConfig.BUNDLE_ID, id);
                         startActivityForResult(intent, REQUEST_CODE);
                     }
                 });
+
                 break;
         }
     }
@@ -906,6 +1015,6 @@ public class DocumentViewFragment extends BaseFragment {
           loaddoc.cancel(true);
         }
         progressDialog.cancel();
-        webView.onPause();
+       // webView.onPause();
     }
 }

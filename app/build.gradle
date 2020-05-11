@@ -6,10 +6,11 @@ android {
         applicationId "com.mariapps.qdmswiki"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 4
-        versionName "1.0.0"
+        versionCode 5
+        versionName "1.0.1"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.debug
     }
     buildTypes {
         release {

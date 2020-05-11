@@ -19,8 +19,16 @@ public class SessionManager {
     private static final String KEY_USER_ID = "keyuserid";
     private static final String KEY_USER_INFO_ID = "keyuserinfoid";
     private static final String KEY_LOGIN_NAME = "keyloginname";
+    private static final String KEY_IS_SEAFARER_LOGIN = "isSeafarerLogin";
     private static final String KEY_LAST_UPDATED_FILE_NAME = "keylastupdatedfilename";
     private static final String IS_FIRST_TIME_LAUNCH = "IsFirstTimeLaunch";
+
+    private static final String IS_DASHBOARD_SEARCH_SHOWN = "IsDashboardSearchShown";
+    private static final String IS_DASHBOARD_MENU_SHOWN = "IsDashboardMenuShown";
+    private static final String IS_DASHBOARD_TAB_SHOWN = "IsDashboardTabShown";
+    private static final String IS_DOCUMENT_VIEW_SHOWN = "IsDocumentViewShown";
+    private static final String IS_DOCUMENT_SEARCH_SHOWN = "IsDocumentSearchShown";
+    private static final String IS_DOCUMENT_INFO_SHOWN = "IsDocumentInfoShown";
 
     // Shared Preferences
     SharedPreferences pref;
@@ -117,6 +125,36 @@ public class SessionManager {
         editor.commit();
     }
 
+    public void setDashboardSearchShown(boolean isDashboardSearchShown) {
+        editor.putBoolean(IS_DASHBOARD_SEARCH_SHOWN, isDashboardSearchShown);
+        editor.commit();
+    }
+
+    public void setDashboardMenuShown(boolean isDashboardMenuShown) {
+        editor.putBoolean(IS_DASHBOARD_MENU_SHOWN, isDashboardMenuShown);
+        editor.commit();
+    }
+
+    public void setDashboardTabShown(boolean isDashboardTabShown) {
+        editor.putBoolean(IS_DASHBOARD_TAB_SHOWN, isDashboardTabShown);
+        editor.commit();
+    }
+
+    public void setDocumentViewShown(boolean isDocumentViewShown) {
+        editor.putBoolean(IS_DOCUMENT_VIEW_SHOWN, isDocumentViewShown);
+        editor.commit();
+    }
+
+    public void setDocumentSearchShown(boolean isDocumentSearchShown) {
+        editor.putBoolean(IS_DOCUMENT_SEARCH_SHOWN, isDocumentSearchShown);
+        editor.commit();
+    }
+
+    public void setDocumentInfoShown(boolean isDocumentInfoShown) {
+        editor.putBoolean(IS_DOCUMENT_INFO_SHOWN, isDocumentInfoShown);
+        editor.commit();
+    }
+
 
     public String getKeyLastUpdatedFileName() {
         return pref.getString(KEY_LAST_UPDATED_FILE_NAME, "");
@@ -127,8 +165,41 @@ public class SessionManager {
         editor.commit();
     }
 
+    public String getKeyIsSeafarerLogin() {
+        return pref.getString(KEY_IS_SEAFARER_LOGIN, "");
+    }
+
+    public void setKeyIsSeafarerLogin(String isSeafarerLogin) {
+        editor.putString(KEY_IS_SEAFARER_LOGIN, isSeafarerLogin);
+        editor.commit();
+    }
+
     public boolean isFirstTimeLaunch() {
         return pref.getBoolean(IS_FIRST_TIME_LAUNCH, true);
+    }
+
+    public boolean getIsDashboardSearchShown() {
+        return pref.getBoolean(IS_DOCUMENT_SEARCH_SHOWN, false);
+    }
+
+    public boolean getIsDashboardMenuShown() {
+        return pref.getBoolean(IS_DASHBOARD_MENU_SHOWN, false);
+    }
+
+    public boolean getIsDashboardTabShown() {
+        return pref.getBoolean(IS_DASHBOARD_TAB_SHOWN, false);
+    }
+
+    public boolean getIsDocumentViewShown() {
+        return pref.getBoolean(IS_DOCUMENT_VIEW_SHOWN, false);
+    }
+
+    public boolean getIsDocumentSearchShown() {
+        return pref.getBoolean(IS_DOCUMENT_SEARCH_SHOWN, false);
+    }
+
+    public boolean getIsDocumentInfoShown() {
+        return pref.getBoolean(IS_DOCUMENT_INFO_SHOWN, false);
     }
 
     public void setLoginParams(boolean isLoggedIn, String id, String fcmtoken, String apitoken, String name, String loginName) {

@@ -119,6 +119,9 @@ public class MainViewPager extends FragmentPagerAdapter {
         homeFragment.initShowCase(util);
     }
 
+    public void initRecommendedShowcase(ShowCasePreferenceUtil util) {
+        homeFragment.initRecommendedShowcase(util);
+    }
 
     public interface MainVPListener {
         void onInitDashBoard();

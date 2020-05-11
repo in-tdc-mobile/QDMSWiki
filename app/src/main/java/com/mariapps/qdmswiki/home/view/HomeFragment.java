@@ -4,8 +4,10 @@ import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -20,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.mariapps.qdmswiki.R;
+import com.mariapps.qdmswiki.SessionManager;
 import com.mariapps.qdmswiki.baseclasses.BaseFragment;
 import com.mariapps.qdmswiki.custom.CustomEditText;
 import com.mariapps.qdmswiki.custom.CustomProgressBar;
@@ -74,6 +77,8 @@ public class HomeFragment extends BaseFragment {
     private HomeDatabase homeDatabase;
     private ShowCasePreferenceUtil util;
     private ClickListener clickListener;
+    private SessionManager sessionManager;
+    private boolean isMenuShowCaseShown = false;
 
     @Override
     protected void setUpPresenter() {
@@ -90,12 +95,14 @@ public class HomeFragment extends BaseFragment {
         util = new ShowCasePreferenceUtil(getActivity());
         fragmentManager = getFragmentManager();
         homeDatabase = HomeDatabase.getInstance(getActivity());
+        sessionManager = new SessionManager(getActivity());
 
         searchET.setFocusable(false);
         searchET.clearFocus();
 
         setupViewPager();
         slidingTabs.setupWithViewPager(viewPager);
+
         return view;
     }
 
@@ -165,7 +172,36 @@ public class HomeFragment extends BaseFragment {
     public void initShowCase(ShowCasePreferenceUtil util) {
         util.setShowCaseName(ShowCasePreferenceUtil.SEARCH);
         TapTargetView.showFor(getActivity(),
-                TapTarget.forView(searchET, "Search here for documents/articles/folders", "")
+                TapTarget.forView(searchET, "Search here for categories/documents/articles", "")
+                        // All options below are optional
+                        .outerCircleColor(R.color.searchHint)
+                        .outerCircleAlpha(0.90f)
+                        .targetCircleColor(R.color.white)
+                        .titleTextSize(18)
+                        .titleTextColor(R.color.white)
+                        .descriptionTextSize(10)
+                        .descriptionTextColor(R.color.white)
+                        .textColor(R.color.white)
+                        .textTypeface(Typeface.SANS_SERIF)
+                        .drawShadow(true)
+                        .cancelable(true)
+                        .tintTarget(true)
+                        .transparentTarget(true)
+                        .targetRadius(40),
+                new TapTargetView.Listener() {
+                    @Override
+                    public void onTargetDismissed(TapTargetView view, boolean userInitiated) {
+                        super.onTargetDismissed(view, userInitiated);
+                        iniShowCase();
+                    }
+                });
+    }
+
+    @SuppressLint("ResourceType")
+    public void initRecommendedShowcase(ShowCasePreferenceUtil util) {
+        util.setShowCaseName(ShowCasePreferenceUtil.RECOMMENDED);
+        TapTargetView.showFor(getActivity(),
+                TapTarget.forView(slidingTabs, "Recommended/recently viewed documents are listed here", "")
                         // All options below are optional
                         .outerCircleColor(R.color.searchHint)
                         .outerCircleAlpha(0.90f)
@@ -187,6 +223,13 @@ public class HomeFragment extends BaseFragment {
                         super.onTargetDismissed(view, userInitiated);
                     }
                 });
+    }
+
+    public void iniShowCase() {
+        if (!util.getShowCasePref(ShowCasePreferenceUtil.MENU).equals(ShowCasePreferenceUtil.MENU) && !sessionManager.getIsDashboardMenuShown()) {
+            sessionManager.setDashboardMenuShown(true);
+            ((HomeActivity) getActivity()).iniMenuShowCase(util);
+        }
     }
 
     public interface ClickListener {
