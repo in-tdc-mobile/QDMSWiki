@@ -139,13 +139,13 @@
         android:layout_gravity="center" />
 
     <com.mariapps.qdmswiki.custom.CustomTextView
+        android:id="@+id/txtDownload"
         android:layout_marginTop="@dimen/dimen_10dp"
         android:textSize="@dimen/primary_text_size"
         android:layout_gravity="center"
         android:textColor="@color/searchType"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Downloading..."/>
+        android:layout_height="wrap_content"/>
 
     </LinearLayout>
 

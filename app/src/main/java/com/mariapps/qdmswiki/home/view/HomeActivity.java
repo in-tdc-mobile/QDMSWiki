@@ -88,6 +88,7 @@ import com.mariapps.qdmswiki.usersettings.UserInfoModel;
 import com.mariapps.qdmswiki.usersettings.UserSettingsCategoryModel;
 import com.mariapps.qdmswiki.usersettings.UserSettingsModel;
 import com.mariapps.qdmswiki.usersettings.UserSettingsTagModel;
+import com.mariapps.qdmswiki.utils.DateUtils;
 import com.mariapps.qdmswiki.utils.DonutProgress;
 import com.mariapps.qdmswiki.utils.ScreenUtils;
 import com.mariapps.qdmswiki.utils.ShowCasePreferenceUtil;
@@ -163,6 +164,9 @@ public class HomeActivity extends BaseActivity implements HomeView {
     CustomTextView notificationsBadgeTextView;
     @BindView(R.id.donut_progress)
     DonutProgress donut_progress;
+    @BindView(R.id.txtDownload)
+    CustomTextView txtDownload;
+
     private ActionBarDrawerToggle mDrawerToggle;
     private HomePresenter homePresenter;
     private HomeDatabase homeDatabase;
@@ -246,7 +250,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         AppConfig.getDwnldstarted().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
-                //appendLog("Downloading url " + url);
+                appendLog("Downloading url " + url);
                 progressLayout.setVisibility(View.VISIBLE);
                 linLayout.setAlpha(0.15f);
                 relLayout.setAlpha(0.15f);
@@ -255,7 +259,6 @@ public class HomeActivity extends BaseActivity implements HomeView {
         AppConfig.getDwnlderror().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
-                //    appendLog("Error while Downloading " + error.getHttpResponse());
             }
         });
         AppConfig.getDwnldprgress().observe(this, new Observer<Integer>() {
@@ -263,6 +266,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
             public void onChanged(@Nullable Integer s) {
                 Log.e("serviceprogress", s + "");
                 donut_progress.setProgress(Math.round(s));
+                txtDownload.setText("Downloading "+ urlNum + " of "+downloadEntityLists.size());
             }
         });
         //Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + "2020120.zip", Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
@@ -558,8 +562,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            //appendLog("Unzipping " + zipFilePath);
-            progressDialog.setMessage("Unzipping file...");
+            appendLog("Unzipping " + zipFilePath);
+            progressDialog.setMessage("Processing...");
             progressDialog.setCancelable(false);
             progressDialog.show();
         }
@@ -595,7 +599,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 zipIn.close();
                 fis.close();
             } catch (Exception e) {
-               // appendLog("Unzipping error " + e.getMessage());
+                appendLog("Unzipping error " + e.getMessage());
                 return "Error";
             } finally {
                 if (zip != null) {
@@ -605,7 +609,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
                     }
                 }
             }
-            //appendLog("Unzipping success");
+            appendLog("Unzipping success");
             return "Success";
         }
 
@@ -764,10 +768,12 @@ public class HomeActivity extends BaseActivity implements HomeView {
 
     @Override
     public void onGetDownloadFilesSuccess(DownloadFilesResponseModel downloadFilesResponseModel) {
+        downloadEntityLists = new ArrayList<>();
         if (downloadFilesResponseModel.getDownloadEntityList() != null) {
             downloadEntityLists = downloadFilesResponseModel.getDownloadEntityList();
-            //appendLog("DownloadEntityList size =" + downloadEntityLists.size());
+            appendLog("DownloadEntityList size =" + downloadEntityLists.size());
             if (downloadFilesResponseModel != null && downloadEntityLists.size() > 0) {
+
                 beginDownload(downloadEntityLists.get(urlNum).getDownloadLink(), downloadEntityLists.get(urlNum).getFileName());
                 urlNum = urlNum + 1;
                 //added lines new
@@ -817,7 +823,7 @@ request.setAllowedNetworkTypes(
         try {
             //BufferedWriter for performance, true to set append to file flag
             BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
-            buf.append(text);
+            buf.append(text + " :  " +DateUtils.getCurrentDate());
             buf.newLine();
             buf.close();
         } catch (IOException e) {
@@ -880,8 +886,8 @@ request.setAllowedNetworkTypes(
                 linLayout.setAlpha(1.0f);
                 relLayout.setAlpha(1.0f);
             }
-            //appendLog("Extracting files...");
-            progressDialog.setMessage("Extracting files...");
+            appendLog("Extracting files...");
+            progressDialog.setMessage("Processing...");
             progressDialog.setCancelable(false);
             progressDialog.show();
         }
@@ -903,7 +909,7 @@ request.setAllowedNetworkTypes(
                         JsonParser parser = new JsonParser();
                         JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles/" + file.getName()));//path to the JSON file.
                         if (file.getName().contains("docs5")) {
-                            //appendLog("Extracting document " + file.getName());
+                            appendLog("Extracting document " + file.getName());
                             jsonArray = data.getAsJsonArray("Documents");
                             documentList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<DocumentModel>>() {
                             }.getType());
@@ -971,8 +977,8 @@ request.setAllowedNetworkTypes(
                 linLayout.setAlpha(1.0f);
                 relLayout.setAlpha(1.0f);
             }
-            //appendLog("Extracting files...");
-            progressDialog.setMessage("Extracting files...");
+            appendLog("Extracting files...");
+            progressDialog.setMessage("Processing...");
             progressDialog.setCancelable(false);
             progressDialog.show();
         }
@@ -984,10 +990,10 @@ request.setAllowedNetworkTypes(
                 File[] filesInFolder = folder.listFiles(); // This returns all the folders and files in your path
                 for (File file : filesInFolder) { //For each of the entries do:
                     if (file.isDirectory()) {
-                            //appendLog("Extracting directory " + file.getName());
+                            appendLog("Extracting directory " + file.getName());
                             File[] filesInsideFolder = file.listFiles();
                             for (File eachFile : filesInsideFolder) {
-                                //appendLog("Copying " + eachFile.getName() + " to image folder");
+                                appendLog("Copying " + eachFile.getName() + " to image folder");
                                 copyFile(new File(eachFile.getAbsolutePath()), new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/Images/" + eachFile.getName()));
                             }
 
@@ -996,7 +1002,7 @@ request.setAllowedNetworkTypes(
                         JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles/" + file.getName()));//path to the JSON file.
                         if (file.getName().contains("docs")) {
                             try {
-                               // appendLog("Extracting document " + file.getName());
+                                appendLog("Extracting document " + file.getName());
                                 jsonArray = data.getAsJsonArray("Documents");
                                 documentList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<DocumentModel>>() {
                                 }.getType());
@@ -1024,7 +1030,7 @@ request.setAllowedNetworkTypes(
                             }
                         } else if (file.getName().contains("art")) { //check that it's not a dir
                             try {
-                                //appendLog("Extracting article " + file.getName());
+                                appendLog("Extracting article " + file.getName());
                                 jsonArray = data.getAsJsonArray("Articles");
                                 articleList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ArticleModel>>() {
                                 }.getType());
@@ -1044,7 +1050,7 @@ request.setAllowedNetworkTypes(
                             }
                         } else if (file.getName().contains("file")) { //check that it's not a dir
                             try {
-                                //appendLog("Extracting file " + file.getName());
+                                appendLog("Extracting file " + file.getName());
                                 jsonArray = data.getAsJsonArray("fileChunks");
                                 fileList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FileListModel>>() {
                                 }.getType());
@@ -1109,7 +1115,7 @@ request.setAllowedNetworkTypes(
             }
             //appendLog("Extracting files...");
             //  progressDialog = new ProgressDialog(HomeActivity.this);
-            progressDialog.setMessage("Extracting files...");
+            progressDialog.setMessage("Processing...");
             progressDialog.setCancelable(false);
             progressDialog.show();
         }
@@ -1121,18 +1127,18 @@ request.setAllowedNetworkTypes(
                 File[] filesInFolder = folder.listFiles(); // This returns all the folders and files in your path
                 for (File file : filesInFolder) { //For each of the entries do:
                     if (file.isDirectory()) {
-                        //appendLog("Extracting directory " + file.getName());
-                        /*File[] filesInsideFolder = file.listFiles();
+                        appendLog("Extracting directory " + file.getName());
+                        File[] filesInsideFolder = file.listFiles();
                         for (File eachFile : filesInsideFolder) {
                             appendLog("Copying " + eachFile.getName() + " to image folder");
                             copyFile(new File(eachFile.getAbsolutePath()), new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/Images/" + eachFile.getName()));
-                        }*/
+                        }
                     } else {
 
                         JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles/" + file.getName()));//path to the JSON file.
                         if (file.getName().contains("image")) { //check that it's not a dir
                             try {
-                                //appendLog("Extracting image " + file.getName());
+                                appendLog("Extracting image " + file.getName());
                                 jsonArray = data.getAsJsonArray("Images");
                                 imageList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ImageModel>>() {
                                 }.getType());
@@ -1158,7 +1164,7 @@ request.setAllowedNetworkTypes(
                             }
                         } else if (file.getName().contains("category")) {
                             try {
-                                //appendLog("Extracting category " + file.getName());
+                                appendLog("Extracting category " + file.getName());
                                 jsonArray = data.getAsJsonArray("Categories");
                                 categoryList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<CategoryModel>>() {
                                 }.getType());
@@ -1170,7 +1176,7 @@ request.setAllowedNetworkTypes(
                             }
                         } else if (file.getName().contains("bookmarks")) {
                             try {
-                                //appendLog("Extracting bookmark " + file.getName());
+                                appendLog("Extracting bookmark " + file.getName());
                                 jsonArray = data.getAsJsonArray("Bookmarks");
                                 bookmarkList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<BookmarkModel>>() {
                                 }.getType());
@@ -1199,12 +1205,12 @@ request.setAllowedNetworkTypes(
                             }
                         } else if (file.getName().contains("userInfo")) {
                             try {
-                                //appendLog("Extracting user info " + file.getName());
+                                appendLog("Extracting user info " + file.getName());
                                 jsonArray = data.getAsJsonArray("UserInfo");
                                 userInfoList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<UserInfoModel>>() {
                                 }.getType());
                                 for (int i = 0; i < userInfoList.size(); i++) {
-                                    //appendLog("User Id " + sessionManager.getUserId() + " : User Info Id " + userInfoList.get(i).getUserId());
+                                    appendLog("User Id " + sessionManager.getUserId() + " : User Info Id " + userInfoList.get(i).getUserId());
                                     if (String.valueOf(userInfoList.get(i).getUserId()).equals(sessionManager.getUserId())) {
                                         sessionManager.setUserInfoId(userInfoList.get(i).getId());
                                         break;
@@ -1232,7 +1238,7 @@ request.setAllowedNetworkTypes(
 
                         } else if (file.getName().contains("forms")) {
                             try {
-                               // appendLog("Extracting form " + file.getName());
+                                appendLog("Extracting form " + file.getName());
                                 jsonArray = data.getAsJsonArray("Forms");
                                 formsList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FormsModel>>() {
                                 }.getType());
@@ -1268,9 +1274,9 @@ request.setAllowedNetworkTypes(
             super.onPostExecute(result);
             for (int i = 0; i < userSettingsList.size(); i++) {
                 try {
-                    //appendLog("Session User Info Id " + sessionManager.getUserInfoId() + ": User settings user id " + userSettingsList.get(i).getUserID());
+                    appendLog("Session User Info Id " + sessionManager.getUserInfoId() + ": User settings user id " + userSettingsList.get(i).getUserID());
                     if (userSettingsList.get(i).getUserID().equals(sessionManager.getUserInfoId())) {
-                       // appendLog("Extracting user settings");
+                        appendLog("Extracting user settings");
                         homePresenter.deleteUserSettings(userSettingsList.get(i));
                         break;
                     }
@@ -1282,9 +1288,9 @@ request.setAllowedNetworkTypes(
                 List<ReceiverModel> receiverList = notificationList.get(i).getReceviers();
                 for (int j = 0; j < receiverList.size(); j++) {
                     try {
-                        //appendLog("Session User Info Id " + sessionManager.getUserInfoId() + " : Receiver id " + receiverList.get(j).getRecevierId());
+                        appendLog("Session User Info Id " + sessionManager.getUserInfoId() + " : Receiver id " + receiverList.get(j).getRecevierId());
                         if (receiverList.get(j).getRecevierId().equals(sessionManager.getUserInfoId())) {
-                           // appendLog("Extracting notifications");
+                            appendLog("Extracting notifications");
                             notificationList.get(i).setIsUnread(receiverList.get(j).getUnread());
                             homePresenter.deleteNotification(notificationList.get(i));
                             break;
@@ -1305,34 +1311,16 @@ request.setAllowedNetworkTypes(
             if (extractedFiles.exists()) {
                 extractedFiles.delete();
             }
-            //fetch.removeListener(fetchListener);
 
-//       if(count==0){
-//            Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + "2020120112626.zip", Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
-//            decompress.execute();
-//            count++;
-//        }
-//        else {
-//            progressDialog.dismiss();
-//            setRecommendedList();
-//            appendLog("Finished downloading all base/updated versions");
-//            try {
-//              //  sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum - 1).getFileName());
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-
-        //}a
+            try {
+                sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum - 1).getFileName());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             if (urlNum == downloadEntityLists.size()) {
                 progressDialog.dismiss();
                 setRecommendedList();
-                //appendLog("Finished downloading all base/updated versions");
-                try {
-                    sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum - 1).getFileName());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
+                appendLog("Finished downloading all base/updated versions");
                 mainVP.post(new Runnable() {
                     @Override
                     public void run() {
