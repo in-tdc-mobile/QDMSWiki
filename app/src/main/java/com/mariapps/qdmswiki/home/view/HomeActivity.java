@@ -1026,6 +1026,7 @@ request.setAllowedNetworkTypes(
                                 }
 
                             } catch (JsonSyntaxException e) {
+                                appendLog("Doc json syntax exception : "+e.getMessage());
                                 e.printStackTrace();
                             }
                         } else if (file.getName().contains("art")) { //check that it's not a dir
@@ -1046,6 +1047,7 @@ request.setAllowedNetworkTypes(
                                     }
                                 }
                             } catch (JsonSyntaxException e) {
+                                appendLog("Article json syntax exception : "+e.getMessage());
                                 e.printStackTrace();
                             }
                         } else if (file.getName().contains("file")) { //check that it's not a dir
@@ -1059,6 +1061,7 @@ request.setAllowedNetworkTypes(
                                     homePresenter.deleteFile(fileList.get(i));
                                 }
                             } catch (JsonSyntaxException e) {
+                                appendLog("File json syntax exception : "+e.getMessage());
                                 e.printStackTrace();
                             }
                         }
@@ -1068,9 +1071,11 @@ request.setAllowedNetworkTypes(
                 return "Success";
 
             } catch (OutOfMemoryError e) {
+                appendLog("Out of memory : "+e.getMessage());
                 progressDialog.dismiss();
                 return "Error";
             } catch (Exception e) {
+                appendLog("Exception : "+e.getMessage());
                 progressDialog.dismiss();
                 return "Error";
             }
@@ -1160,6 +1165,7 @@ request.setAllowedNetworkTypes(
                                 }
 
                             } catch (JsonSyntaxException e) {
+                                appendLog("Image json syntax exception : "+e.getMessage());
                                 e.printStackTrace();
                             }
                         } else if (file.getName().contains("category")) {
@@ -1172,6 +1178,7 @@ request.setAllowedNetworkTypes(
                                     homePresenter.deleteCategory(categoryList.get(i));
                                 }
                             } catch (JsonSyntaxException e) {
+                                appendLog("Category json syntax exception : "+e.getMessage());
                                 e.printStackTrace();
                             }
                         } else if (file.getName().contains("bookmarks")) {
@@ -1193,6 +1200,7 @@ request.setAllowedNetworkTypes(
                                     //homePresenter.insertBookmarkEntries(bookmarkEntryList);
                                 }
                             } catch (JsonSyntaxException e) {
+                                appendLog("Bookmark json syntax exception : "+e.getMessage());
                                 e.printStackTrace();
                             }
                         } else if (file.getName().contains("notifications")) {
@@ -1201,6 +1209,7 @@ request.setAllowedNetworkTypes(
                                 notificationList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<NotificationModel>>() {
                                 }.getType());
                             } catch (JsonSyntaxException e) {
+                                appendLog("Notification json syntax exception : "+e.getMessage());
                                 e.printStackTrace();
                             }
                         } else if (file.getName().contains("userInfo")) {
@@ -1225,6 +1234,7 @@ request.setAllowedNetworkTypes(
                                     }
                                 }
                             } catch (JsonSyntaxException e) {
+                                appendLog("USer Info json syntax exception : "+e.getMessage());
                                 e.printStackTrace();
                             }
                         } else if (file.getName().contains("userSet")) {
@@ -1233,6 +1243,7 @@ request.setAllowedNetworkTypes(
                                 userSettingsList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<UserSettingsModel>>() {
                                 }.getType());
                             } catch (JsonSyntaxException e) {
+                                appendLog("User settings json syntax exception : "+e.getMessage());
                                 e.printStackTrace();
                             }
 
@@ -1247,6 +1258,7 @@ request.setAllowedNetworkTypes(
 
                                 }
                             } catch (JsonSyntaxException e) {
+                                appendLog("Forms json syntax exception : "+e.getMessage());
                                 e.printStackTrace();
                             }
                         }
@@ -1254,9 +1266,11 @@ request.setAllowedNetworkTypes(
                 }
                 return "Success";
             } catch (OutOfMemoryError e) {
+                appendLog("Out of memory : "+e.getMessage());
                 progressDialog.dismiss();
                 return "Error";
             } catch (Exception e) {
+                appendLog("Exception : "+e.getMessage());
                 progressDialog.dismiss();
                 return "Error";
             }

@@ -63,6 +63,7 @@
                          androidAppProxy.logdata("after render doc called here");
                          afterRenderDocView(false);
                          $(`.article-table`).removeClass(`hide-state`);$(`.article-table>tbody>tr`).removeClass(`hide-article`);$(`span.toggle-article`).addClass(`opentoggle`)
+                         $(`#tableDragger`).find(`.article-table`).attr(`data-visible`, false); $(`.viewdoc`).scroll();
                          androidAppProxy.getFooterData();
                     } else {
                         alert("Running outside Android app");
