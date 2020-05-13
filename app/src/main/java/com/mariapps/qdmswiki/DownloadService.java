@@ -113,6 +113,10 @@ public class DownloadService extends Service {
             //An error occurred enqueuing the request.
         });
         FetchListener     fetchListener = new FetchListener() {
+
+
+
+
             @Override
             public void onWaitingNetwork(@NotNull Download download) {
                 fetch.resume(downloadID);
@@ -154,6 +158,8 @@ public class DownloadService extends Service {
                 }
             }
 
+
+
             @Override
             public void onCompleted(@NotNull Download download) {
                 //Toast.makeText(HomeActivity.this, "Download Completed", Toast.LENGTH_SHORT).show();
@@ -167,10 +173,12 @@ public class DownloadService extends Service {
 
             @Override
             public void onPaused(@NotNull Download download) {
+                fetch.pause(download.getId());
             }
 
             @Override
             public void onResumed(@NotNull Download download) {
+                fetch.resumeAll();
             }
 
             @Override

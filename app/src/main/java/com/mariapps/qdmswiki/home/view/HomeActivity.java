@@ -271,8 +271,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
         });
         //Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + "2020120.zip", Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
         //decompress.execute();
-       // ReadAndInsertJsonData readAndInsertJsonDatatest = new ReadAndInsertJsonData();
-       // readAndInsertJsonDatatest.execute();
+       // ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
+       // readAndInsertJsonData.execute();
         //setup();
 
     }
@@ -534,7 +534,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         Intent intent = new Intent(context, DownloadService.class);
         intent.putExtra("url", url);
         intent.putExtra("filename", zipFileName);
-        if (!url.equals("") && !zipFileName.equals("")) {
+       /* if (!url.equals("") && !zipFileName.equals("")) {
             if (!isMyServiceRunning(DownloadService.class)) {
                 Log.e("service", "notrunning");
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -545,7 +545,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
             } else {
                 Log.e("service", "isrunning");
             }
-        }
+        }*/
     }
 
 

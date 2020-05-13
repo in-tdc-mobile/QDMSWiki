@@ -839,6 +839,7 @@ public class DocumentViewFragment extends BaseFragment {
 
         @JavascriptInterface
         public void getArtcileData(String id) {
+
             loadArticle(id);
         }
 

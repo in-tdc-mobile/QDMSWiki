@@ -63,7 +63,7 @@ function RenderDocView() {
                              if ((eleBottom <= viewRangeEnd1) && (eleTop >= viewRangeStart1)) {
                              if ($(this).attr("data-visible") == "false") {
                              $(this).attr("data-visible", true);
-                            // androidAppProxy.logdata("article data called now")
+                             androidAppProxy.logdata("article data called now")
                              ArticleData($(this));
                              }
                              else{
@@ -154,8 +154,8 @@ function ArticleData(control) {
             "data":"",
             "name":""
         }
-       // androidAppProxy.getArtcileData(Id);
-       // androidAppProxy.logdata("article loading");
+        androidAppProxy.getArtcileData(Id);
+        androidAppProxy.logdata("article loading>>    "+Id);
     }
     catch (e) {
 androidAppProxy.logdata("article loading error"+e.message);
