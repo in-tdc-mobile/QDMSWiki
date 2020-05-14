@@ -154,8 +154,8 @@ function ArticleData(control) {
             "data":"",
             "name":""
         }
-       // androidAppProxy.getArtcileData(Id);
-       // androidAppProxy.logdata("article loading");
+        androidAppProxy.getArtcileData(Id);
+        androidAppProxy.logdata("article loading");
     }
     catch (e) {
 androidAppProxy.logdata("article loading error"+e.message);
