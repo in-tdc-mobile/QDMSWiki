@@ -4,6 +4,7 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Transaction;
 import android.media.Image;
 
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkEntryModel;
@@ -29,6 +30,7 @@ import java.util.List;
 
 @Dao
 public interface HomeDao {
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertDocument(DocumentModel documentModel);

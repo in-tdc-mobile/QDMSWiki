@@ -38,14 +38,12 @@ public abstract class HomeDatabase extends RoomDatabase {
 
     public static HomeDatabase getInstance(Context context) {
         if (INSTANCE == null) {
-            synchronized (HomeDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context,
                             HomeDatabase.class, "HomeDb.db")
                             .addMigrations(MIGRATION_1_2)
                             .build();
                 }
-            }
         }
         return INSTANCE;
 

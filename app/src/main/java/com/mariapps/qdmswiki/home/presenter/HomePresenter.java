@@ -1,7 +1,10 @@
 package com.mariapps.qdmswiki.home.presenter;
 
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.mariapps.qdmswiki.ArticleModelObj;
@@ -64,6 +67,10 @@ public class HomePresenter {
     String categoryName;
     Box<ArticleModelObj> abox;
     Box<DocumentModelObj> dbox;
+    MutableLiveData<Integer> artCount=new MutableLiveData<>();
+    MutableLiveData<Integer> docCount=new MutableLiveData<>();
+    int docIndex=0;
+    int artIndex=0;
    // CompositeDisposable maindisposable;
 
     public HomePresenter(Context context, HomeView homeView) {
@@ -100,16 +107,63 @@ public class HomePresenter {
                 });
     }
 
-    public void deleteDocument(final DocumentModel documentModel) {
+    public void deleteDocument(final DocumentModel documentModel,Integer count) {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
                 if (documentModel != null) {
-                    homeDatabase.homeDao().deleteDocument(documentModel.getId());
                     try {
-                        dbox.query().equal(DocumentModelObj_.id,documentModel.getId()).build().remove();
+                                    Log.e("theiddoc",documentModel.getId());
+                                    homeDatabase.homeDao().deleteDocument(documentModel.getId());
+
+
                     } catch (Exception e) {
-                        e.printStackTrace();
+
+                        Log.e("doctryerror",e.getLocalizedMessage()+"   "+documentModel.getDocumentName()+"    "+documentModel.getId());
+                    }
+                }
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+              //  maindisposable.add(d);
+            }
+            @Override
+            public void onComplete() {
+                if(dbox==null){
+                    dbox = ObjectBox.get().boxFor(DocumentModelObj.class);
+                }
+                dbox.query().equal(DocumentModelObj_.id,documentModel.getId()).build().remove();
+                Log.e("onCompletedocdelete",documentModel.documentName+"  "+documentModel.id);
+                insertDocuments(documentModel);
+            }
+            @Override
+            public void onError(Throwable e) {
+                docIndex++;
+                docCount.postValue(count+1);
+                Log.e("docdeleteerror",e.getLocalizedMessage());
+            }
+        });
+    }
+
+    public void deleteDocumentSingle(final DocumentModel documentModel) {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                if(dbox==null){
+                    dbox = ObjectBox.get().boxFor(DocumentModelObj.class);
+                }
+                if (documentModel != null) {
+                    try {
+                                Log.e("theiddoc",documentModel.getId());
+                                homeDatabase.homeDao().deleteDocument(documentModel.getId());
+
+
+                    } catch (Exception e) {
+
+                        Log.e("doctryerror",e.getLocalizedMessage()+"   "+documentModel.getDocumentName()+"    "+documentModel.getId());
                     }
                     //  dbox.query().equal(DocumentModelObj_.id,documentModel.getId()).build().remove();
                    /* AsyncTask.execute(new Runnable() {
@@ -125,23 +179,28 @@ public class HomePresenter {
                 }
             }
         }).observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
-            @Override
-            public void onSubscribe(Disposable d) {
-              //  maindisposable.add(d);
-            }
-            @Override
-            public void onComplete() {
-                Log.e("onCompletedocdelete",documentModel.documentName+"  "+documentModel.id);
-                insertDocuments(documentModel);
-            }
-            @Override
-            public void onError(Throwable e) {
-                Log.e("docdeleteerror",e.getLocalizedMessage());
-            }
-        });
+                .subscribeOn(Schedulers.io())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        //  maindisposable.add(d);
+                    }
+                    @Override
+                    public void onComplete() {
+                        try {
+                            dbox.query().equal(DocumentModelObj_.id,documentModel.getId()).build().remove();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        Log.e("onCompletedocdelete",documentModel.documentName+"  "+documentModel.id);
+                        insertDocumentsSingle(documentModel);
+                    }
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("docdeleteerror",e.getLocalizedMessage());
+                    }
+                });
     }
-
 
     public void insertDocuments(final DocumentModel documentModel) {
         if(dbox==null){
@@ -151,8 +210,8 @@ public class HomePresenter {
             @Override
             public void run() throws Exception {
                 if (documentModel != null) {
-                    homeDatabase.homeDao().insertDocument(documentModel);
                     try {
+                        homeDatabase.homeDao().insertDocument(documentModel);
                         dbox.put(new DocumentModelObj(documentModel.id,documentModel.documentName,documentModel.documentData));
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -174,20 +233,67 @@ public class HomePresenter {
 
             @Override
             public void onComplete() {
+                docIndex++;
+                docCount.postValue(docIndex);
                // maindisposable.clear();
                 Log.e("onCompletedocinsert",documentModel.documentName+"  "+documentModel.id);
             }
             @Override
             public void onError(Throwable e) {
+                docIndex++;
+                docCount.postValue(docIndex);
                // maindisposable.clear();
             Log.e("errorininsert",e.getLocalizedMessage());
             }
         });
     }
 
+    public void insertDocumentsSingle(final DocumentModel documentModel) {
+        if(dbox==null){
+            dbox = ObjectBox.get().boxFor(DocumentModelObj.class);
+        }
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                if (documentModel != null) {
+                    try {
+                        homeDatabase.homeDao().insertDocument(documentModel);
+                       // dbox.put(new DocumentModelObj(documentModel.id,documentModel.documentName,documentModel.documentData));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                   /* AsyncTask.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            dbox.put(new DocumentModelObj(documentModel.id,documentModel.documentName,documentModel.documentData));
+                        }
+                    });*/
+                }
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                // maindisposable.add(d);
+            }
 
-
-
+            @Override
+            public void onComplete() {
+                try {
+                    dbox.put(new DocumentModelObj(documentModel.id,documentModel.documentName,documentModel.documentData));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                // maindisposable.clear();
+                Log.e("onCompletedocinsert",documentModel.documentName+"  "+documentModel.id);
+            }
+            @Override
+            public void onError(Throwable e) {
+                // maindisposable.clear();
+                Log.e("errorininsert",e.getLocalizedMessage());
+            }
+        });
+    }
 
     public void insertTags(final List<TagModel> tagList) {
         Completable.fromAction(new Action() {
@@ -216,15 +322,58 @@ public class HomePresenter {
         });
     }
 
-    public void deleteArticles(ArticleModel articleModel) {
+    public void deleteArticlesBylist(List<ArticleModel> articleModelList){
+        if(articleModelList.size()>0){
+            artCount.observeForever(new Observer<Integer>() {
+                @Override
+                public void onChanged(@Nullable Integer integer) {
+                    if(integer<=articleModelList.size()-1){
+                        deleteArticles(articleModelList.get(integer),integer);
+                    }
+                    else {
+                    artIndex=0;
+                    }
+                }
+            });
+            if(artIndex==0){
+                deleteArticles(articleModelList.get(0),0);
+            }
+        }
+    }
+
+    public void deleteDocumentssBylist(List<DocumentModel> documentModelList){
+        if(documentModelList.size()>0){
+            artCount.observeForever(new Observer<Integer>() {
+                @Override
+                public void onChanged(@Nullable Integer integer) {
+                    if(integer<=documentModelList.size()-1){
+                        deleteDocument(documentModelList.get(integer),integer);
+                    }
+                    else {
+                    docIndex=0;
+                    }
+                }
+            });
+            if(docIndex==0){
+                deleteDocument(documentModelList.get(0),0);
+            }
+        }
+    }
+
+    public void deleteArticles(ArticleModel articleModel,Integer count) {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-                homeDatabase.homeDao().deleteArticle(articleModel.getId());
                 try {
-                    abox.query().equal(ArticleModelObj_.id,articleModel.getId()).build().remove();
+                    if(articleModel!=null){
+                        homeDatabase.homeDao().deleteArticle(articleModel.getId());
+                        Log.e("theid",articleModel.getId());
+                    }
+
+
                 } catch (Exception e) {
-                    e.printStackTrace();
+
+                    Log.e("artdeletetryerror",e.getLocalizedMessage());
                 }
                 /*AsyncTask.execute(new Runnable() {
                     @Override
@@ -248,8 +397,74 @@ public class HomePresenter {
 
             @Override
             public void onComplete() {
+                if(abox==null){
+                    abox = ObjectBox.get().boxFor(ArticleModelObj.class);
+                }
+                abox.query().equal(ArticleModelObj_.id,articleModel.getId()).build().remove();
                 Log.e("onCompletearticeldelete",articleModel.getArticleName()+"  "+articleModel.getId());
                 insertArticles(articleModel);
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+                artIndex++;
+                artCount.postValue(artIndex);
+                Log.e("onCompletearticeldelerr",e.getLocalizedMessage()+"  count"+count+1);
+
+            }
+        });
+    }
+
+    public void deleteArticlessingle(ArticleModel articleModel) {
+        if(abox==null){
+            abox = ObjectBox.get().boxFor(ArticleModelObj.class);
+        }
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                try {
+                    if(articleModel!=null){
+                        homeDatabase.homeDao().deleteArticle(articleModel.getId());
+                            Log.e("theid",articleModel.getId());
+                    }
+
+
+                } catch (Exception e) {
+
+                    Log.e("artdeletetryerror",e.getLocalizedMessage());
+                }
+                /*AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            abox.query().equal(ArticleModelObj_.id,documentModel.getId()).build().remove();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });*/
+
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                // maindisposable.add(d);
+
+            }
+
+            @Override
+            public void onComplete() {
+                try {
+                    abox.query().equal(ArticleModelObj_.id,articleModel.getId()).build().remove();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+                Log.e("onCplartdeletesingle",articleModel.getArticleName()+"  "+articleModel.getId());
+                insertArticlessingle(articleModel);
             }
 
 
@@ -294,12 +509,60 @@ public class HomePresenter {
 
             @Override
             public void onComplete() {
+                artIndex++;
+                artCount.postValue(artIndex);
               //  maindisposable.clear();
                 Log.e("onCompletearticelinsert",articleModel.getArticleName()+"  "+articleModel.getId());
             }
             @Override
             public void onError(Throwable e) {
             //    maindisposable.clear();
+                artIndex++;
+                artCount.postValue(artIndex);
+                Log.e("articleerrorininsert",e.getLocalizedMessage());
+            }
+        });
+    }
+
+    public void insertArticlessingle(final ArticleModel articleModel) {
+        if(abox==null){
+            abox = ObjectBox.get().boxFor(ArticleModelObj.class);
+        }
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                if (articleModel != null) {
+                    homeDatabase.homeDao().insertArticle(articleModel);
+                   /* AsyncTask.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.e("insertedarticelids",articleModel.getId());
+                           abox.put(new ArticleModelObj(articleModel.getId(),articleModel.getArticleName(),articleModel.documentData));
+                        }
+                    });*/
+                }
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                //    maindisposable.add(d);
+
+            }
+
+            @Override
+            public void onComplete() {
+                try {
+                    abox.put(new ArticleModelObj(articleModel.getId(),articleModel.getArticleName(),articleModel.documentData));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                //  maindisposable.clear();
+                Log.e("onCompletearticelinsert",articleModel.getArticleName()+"  "+articleModel.getId());
+            }
+            @Override
+            public void onError(Throwable e) {
+                //    maindisposable.clear();
                 Log.e("articleerrorininsert",e.getLocalizedMessage());
             }
         });
@@ -1038,13 +1301,14 @@ public class HomePresenter {
 
             @Override
             public void onComplete() {
+                Log.e("onfiledelete","completed    "+fileListModel.getId());
                 insertFileListModel(fileListModel);
             }
 
 
             @Override
             public void onError(Throwable e) {
-
+                Log.e("onfiledelete","error     "+fileListModel.getId());
             }
         });
     }
@@ -1066,13 +1330,14 @@ public class HomePresenter {
 
             @Override
             public void onComplete() {
+                Log.e("onfileinsert","completed        "+fileListModel.getId());
                 homeView.onInsertFileListSuccess();
             }
 
 
             @Override
             public void onError(Throwable e) {
-
+                Log.e("onfileinsert","error        "+fileListModel.getId());
             }
         });
     }
