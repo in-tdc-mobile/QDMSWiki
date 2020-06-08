@@ -212,7 +212,6 @@ public class HomePresenter {
                 if (documentModel != null) {
                     try {
                         homeDatabase.homeDao().insertDocument(documentModel);
-                        dbox.put(new DocumentModelObj(documentModel.id,documentModel.documentName,documentModel.documentData));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -235,6 +234,7 @@ public class HomePresenter {
             public void onComplete() {
                 docIndex++;
                 docCount.postValue(docIndex);
+                dbox.put(new DocumentModelObj(documentModel.id,documentModel.documentName,documentModel.documentData));
                // maindisposable.clear();
                 Log.e("onCompletedocinsert",documentModel.documentName+"  "+documentModel.id);
             }
@@ -361,6 +361,9 @@ public class HomePresenter {
     }
 
     public void deleteArticles(ArticleModel articleModel,Integer count) {
+        if(abox==null){
+            abox = ObjectBox.get().boxFor(ArticleModelObj.class);
+        }
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
@@ -397,10 +400,7 @@ public class HomePresenter {
 
             @Override
             public void onComplete() {
-                if(abox==null){
-                    abox = ObjectBox.get().boxFor(ArticleModelObj.class);
-                }
-                abox.query().equal(ArticleModelObj_.id,articleModel.getId()).build().remove();
+               abox.query().equal(ArticleModelObj_.id,articleModel.getId()).build().remove();
                 Log.e("onCompletearticeldelete",articleModel.getArticleName()+"  "+articleModel.getId());
                 insertArticles(articleModel);
             }

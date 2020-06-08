@@ -9,7 +9,7 @@ public class ObjectBox {
 
     public static void init(Context context) {
         if(boxStore==null){
-            boxStore = MyObjectBox.builder().maxReaders(300)
+            boxStore = MyObjectBox.builder().maxReaders(500).maxSizeInKByte(100000000)
                     .androidContext(context.getApplicationContext())
                     .build();
         }

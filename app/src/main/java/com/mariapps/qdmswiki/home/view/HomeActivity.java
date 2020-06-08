@@ -281,8 +281,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
         Log.e("allocated00", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
        // Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + "20200527080434.zip", Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
         //decompress.execute();
-       //ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
-       //readAndInsertJsonData.execute();
+       ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
+       readAndInsertJsonData.execute();
         //setup();
         //5a0c0ade3b6a9e5490d6e7d0
     }
@@ -544,7 +544,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         Intent intent = new Intent(context, DownloadService.class);
         intent.putExtra("url", url);
         intent.putExtra("filename", zipFileName);
-        if (!url.equals("") && !zipFileName.equals("")) {
+       /* if (!url.equals("") && !zipFileName.equals("")) {
             if (!isMyServiceRunning(DownloadService.class)) {
                 Log.e("service", "notrunning");
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -555,7 +555,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
             } else {
                 Log.e("service", "isrunning");
             }
-        }
+        }*/
     }
 
 
@@ -1058,13 +1058,15 @@ request.setAllowedNetworkTypes(
                                 if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
                                     for (int i = 0; i < documentList.size(); i++) {
                                         if (documentList.get(i).getVesselIds().size() > 0 || documentList.get(i).getPassengersVesselIds().size() > 0) {
-                                            homePresenter.deleteDocumentSingle(documentList.get(i));
+                                           homePresenter.deleteDocumentSingle(documentList.get(i));
                                             documentList.get(i).setIsRecommended("NO");
                                             List<TagModel> tagList = documentList.get(i).getTags();
                                             homePresenter.insertTags(tagList);
                                         } else
                                             continue;
                                     }
+                                    //homePresenter.deleteDocumentssBylist(documentList);
+
                                 } else {
                                     for (int i = 0; i < documentList.size(); i++) {
                                         documentList.get(i).setIsRecommended("NO");
@@ -1166,9 +1168,10 @@ request.setAllowedNetworkTypes(
                                         }
                                     }
                                 } else {
-                                    //  homePresenter.deleteArticlesBylist(articleList);
-                                    for (int i = 0; i < articleList.size(); i++) {
-                                        homePresenter.deleteArticlessingle(articleList.get(i));
+                                     // homePresenter.deleteArticlesBylist(articleList);
+//
+                                   for (int i = 0; i < articleList.size(); i++) {
+                                       homePresenter.deleteArticlessingle(articleList.get(i));
                                     }
                                 }
                             } catch (JsonSyntaxException e) {
