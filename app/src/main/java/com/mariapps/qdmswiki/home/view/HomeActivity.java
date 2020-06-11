@@ -925,9 +925,6 @@ request.setAllowedNetworkTypes(
                             }
 
                     } else {
-
-                        JsonParser parser = new JsonParser();
-                        JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles/" + file.getName()));//path to the JSON file.
               if (file.getName().contains("file")) {
                             try {
                                 ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
@@ -961,6 +958,8 @@ request.setAllowedNetworkTypes(
                                 }catch (Exception e){
                                     Log.e("catchedreader", ""+file.getName()+"   "+e.getLocalizedMessage());
                                     try {
+                                        JsonParser parser = new JsonParser();
+                                        JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles/" + file.getName()));//path to the JSON file.
                                         jsonArray = data.getAsJsonArray("fileChunks");
                                         fileList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FileListModel>>() {}.getType()));
                                     }catch (Exception e1){
@@ -1047,9 +1046,6 @@ request.setAllowedNetworkTypes(
                         }
 
                     } else {
-
-                        JsonParser parser = new JsonParser();
-                        JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles/" + file.getName()));//path to the JSON file.
                         if (file.getName().contains("docs")) {
                             try {
                                 appendLog("Extracting document " + file.getName());
@@ -1058,6 +1054,8 @@ request.setAllowedNetworkTypes(
                                  documentList.addAll(readJsonStreamfordoc(new FileInputStream(file)));
                                 }
                                 catch (Exception e){
+                                    JsonParser parser = new JsonParser();
+                                    JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles/" + file.getName()));//path to the JSON file.
                                     jsonArray = data.getAsJsonArray("Documents");
                                     documentList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<DocumentModel>>() {}.getType()));
                                 }
@@ -1158,9 +1156,6 @@ request.setAllowedNetworkTypes(
                         }
 
                     } else {
-
-                        JsonParser parser = new JsonParser();
-                        JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles/" + file.getName()));//path to the JSON file.
                         if (file.getName().contains("art")) { //check that it's not a dir
                             try {
                                 appendLog("Extracting article " + file.getName());
@@ -1169,6 +1164,8 @@ request.setAllowedNetworkTypes(
                                     articleList.addAll(readJsonStreamforarticle(new FileInputStream(file)));
                                 }
                                 catch (Exception e){
+                                    JsonParser parser = new JsonParser();
+                                    JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles/" + file.getName()));//path to the JSON file.
                                     jsonArray = data.getAsJsonArray("Articles");
                                     articleList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ArticleModel>>() {}.getType()));
                                 }
@@ -1276,7 +1273,7 @@ request.setAllowedNetworkTypes(
                                 }.getType());
 //                                for (int i = 0; i < imageList.size(); i++) {
 //                                    homePresenter.deleteImage(imageList.get(i));
-//                                }
+//
                                 for (int i = 0; i < imageList.size();i++) {
                                     try {
                                         if (imageList.get(i).getImageStream() != null && !imageList.get(i).getImageStream().isEmpty())
@@ -1509,8 +1506,6 @@ request.setAllowedNetworkTypes(
                     messages.add(message);
                 }
             }
-
-
         }
         reader.endArray();
         reader.close();
@@ -1531,26 +1526,11 @@ request.setAllowedNetworkTypes(
                     messages.add(message);
                 }
             }
-
-
         }
         reader.endArray();
         reader.close();
         return messages;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @Override
     public void onTrimMemory(int level) {
