@@ -56,6 +56,7 @@ import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.ArticleModelObj;
 import com.mariapps.qdmswiki.DocumentModelObj;
 import com.mariapps.qdmswiki.DownloadService;
+import com.mariapps.qdmswiki.FirstService;
 import com.mariapps.qdmswiki.ObjectBox;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.SessionManager;
@@ -90,6 +91,7 @@ import com.mariapps.qdmswiki.usersettings.UserSettingsModel;
 import com.mariapps.qdmswiki.usersettings.UserSettingsTagModel;
 import com.mariapps.qdmswiki.utils.DateUtils;
 import com.mariapps.qdmswiki.utils.DonutProgress;
+import com.mariapps.qdmswiki.utils.MessageEvent;
 import com.mariapps.qdmswiki.utils.ScreenUtils;
 import com.mariapps.qdmswiki.utils.ShowCasePreferenceUtil;
 import com.tonyodev.fetch2.Download;
@@ -102,6 +104,9 @@ import com.tonyodev.fetch2.Priority;
 import com.tonyodev.fetch2.Request;
 import com.tonyodev.fetch2core.DownloadBlock;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
@@ -295,7 +300,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
     @Override
     protected void onStop() {
         super.onStop();
-        Log.e("onStop", "stopped");
+        EventBus.getDefault().unregister(this);
     }
 
     private void getParentFolders() {
@@ -624,11 +629,38 @@ public class HomeActivity extends BaseActivity implements HomeView {
             super.onPostExecute(result);
             progressDialog.dismiss();
             if (result.equals("Success")) {
-                ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
-                readAndInsertJsonData.execute();
+                Intent intent = new Intent(context, FirstService.class);
+                    if (!isMyServiceRunning(FirstService.class)) {
+                        Log.e("service", "notrunning");
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            context.startForegroundService(intent);
+                        } else {
+                            context.startService(new Intent(context, FirstService.class));
+                        }
+                    } else {
+                        Log.e("service", "isrunning");
+                    }
             }
         }
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        try {
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+        }
+        catch (Exception e){
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
 
     /**
      * Extracts a zip entry (file entry)
