@@ -945,7 +945,6 @@ request.setAllowedNetworkTypes(
                                 Log.e("allocated", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
                                 Log.e("thefileis",file.getName());
                                 appendLog("Extracting file " + file.getName());
-                                jsonArray = data.getAsJsonArray("fileChunks");
                                 final Runtime runtime1 = Runtime.getRuntime();
                                 final long usedMemInM1B1=(runtime.totalMemory() - runtime.freeMemory()) / 1048576L;
                                 final long maxHeapSizeInMB1=runtime.maxMemory() / 1048576L;
@@ -962,6 +961,7 @@ request.setAllowedNetworkTypes(
                                 }catch (Exception e){
                                     Log.e("catchedreader", ""+file.getName()+"   "+e.getLocalizedMessage());
                                     try {
+                                        jsonArray = data.getAsJsonArray("fileChunks");
                                         fileList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FileListModel>>() {}.getType()));
                                     }catch (Exception e1){
                                         Log.e("catchegsonparser", ""+file.getName()+"   "+e.getLocalizedMessage());
