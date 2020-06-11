@@ -281,8 +281,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
         Log.e("allocated00", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
        // Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + "20200527080434.zip", Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
         //decompress.execute();
-       ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
-       readAndInsertJsonData.execute();
+//       ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
+//       readAndInsertJsonData.execute();
         //setup();
         //5a0c0ade3b6a9e5490d6e7d0
     }
@@ -544,7 +544,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         Intent intent = new Intent(context, DownloadService.class);
         intent.putExtra("url", url);
         intent.putExtra("filename", zipFileName);
-        /*if (!url.equals("") && !zipFileName.equals("")) {
+        if (!url.equals("") && !zipFileName.equals("")) {
             if (!isMyServiceRunning(DownloadService.class)) {
                 Log.e("service", "notrunning");
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -555,7 +555,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
             } else {
                 Log.e("service", "isrunning");
             }
-        }*/
+        }
     }
 
 
@@ -945,7 +945,6 @@ request.setAllowedNetworkTypes(
                                 Log.e("allocated", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
                                 Log.e("thefileis",file.getName());
                                 appendLog("Extracting file " + file.getName());
-                                jsonArray = data.getAsJsonArray("fileChunks");
                                 final Runtime runtime1 = Runtime.getRuntime();
                                 final long usedMemInM1B1=(runtime.totalMemory() - runtime.freeMemory()) / 1048576L;
                                 final long maxHeapSizeInMB1=runtime.maxMemory() / 1048576L;
@@ -962,6 +961,7 @@ request.setAllowedNetworkTypes(
                                 }catch (Exception e){
                                     Log.e("catchedreader", ""+file.getName()+"   "+e.getLocalizedMessage());
                                     try {
+                                        jsonArray = data.getAsJsonArray("fileChunks");
                                         fileList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FileListModel>>() {}.getType()));
                                     }catch (Exception e1){
                                         Log.e("catchegsonparser", ""+file.getName()+"   "+e.getLocalizedMessage());
