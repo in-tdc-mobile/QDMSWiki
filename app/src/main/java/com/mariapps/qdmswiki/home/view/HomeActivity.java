@@ -281,8 +281,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
         Log.e("allocated00", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
        // Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + "20200527080434.zip", Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
         //decompress.execute();
-       //ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
-       //readAndInsertJsonData.execute();
+//       ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
+//       readAndInsertJsonData.execute();
         //setup();
         //5a0c0ade3b6a9e5490d6e7d0
     }
