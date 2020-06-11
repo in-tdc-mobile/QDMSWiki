@@ -820,12 +820,16 @@ public class HomePresenter {
 
             @Override
             public void onComplete() {
+                if(dbox==null){
+                    dbox = ObjectBox.get().boxFor(DocumentModelObj.class);
+                }
                 List<DocumentModelObj> objList = new ArrayList<>();
                 for (int i = 0; i < documentModelList.size(); i++) {
                     DocumentModelObj obj=new DocumentModelObj(documentModelList.get(i).id,documentModelList.get(i).documentName,documentModelList.get(i).documentData);
                     objList.add(obj);
                 }
                 dbox.put(objList);
+                Log.e("doclistinsertionobj","inserted "+objList.size()+"   docsobjs");
                 Log.e("documentlistinsertion","inserted "+documentModelList.size()+"   docs");
 
             }
@@ -856,12 +860,16 @@ public class HomePresenter {
             @Override
             public void onComplete()
             {
+                if(abox==null){
+                    abox = ObjectBox.get().boxFor(ArticleModelObj.class);
+                }
                 List<ArticleModelObj> objList = new ArrayList<>();
                 for (int i = 0; i < articleModelList.size(); i++) {
                     ArticleModelObj obj=new ArticleModelObj(articleModelList.get(i).getId(),articleModelList.get(i).getArticleName(),articleModelList.get(i).documentData);
                    objList.add(obj);
                 }
                 abox.put(objList);
+                Log.e("artlistinsertionobj","inserted "+objList.size()+"   articlesobj");
                 Log.e("articlelistinsertion","inserted "+articleModelList.size()+"   articles");
             }
 
