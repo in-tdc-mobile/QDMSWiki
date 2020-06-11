@@ -1052,8 +1052,13 @@ request.setAllowedNetworkTypes(
                             try {
                                 appendLog("Extracting document " + file.getName());
                                 documentList.clear();
-                                jsonArray = data.getAsJsonArray("Documents");
-                                documentList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<DocumentModel>>() {}.getType()));
+                                try {
+                                 documentList.addAll(readJsonStreamfordoc(new FileInputStream(file)));
+                                }
+                                catch (Exception e){
+                                    jsonArray = data.getAsJsonArray("Documents");
+                                    documentList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<DocumentModel>>() {}.getType()));
+                                }
                                 //documentList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<DocumentModel>>() {}.getType());
                                 if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
                                     for (int i = 0; i < documentList.size(); i++) {
@@ -1158,8 +1163,13 @@ request.setAllowedNetworkTypes(
                             try {
                                 appendLog("Extracting article " + file.getName());
                                 articleList.clear();
-                                jsonArray = data.getAsJsonArray("Articles");
-                                articleList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ArticleModel>>() {}.getType()));
+                                try {
+                                    articleList.addAll(readJsonStreamforarticle(new FileInputStream(file)));
+                                }
+                                catch (Exception e){
+                                    jsonArray = data.getAsJsonArray("Articles");
+                                    articleList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ArticleModel>>() {}.getType()));
+                                }
                                 // articleList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ArticleModel>>() {}.getType());
                                 if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
                                     for (int i = 0; i < articleList.size(); i++) {
@@ -1470,6 +1480,50 @@ request.setAllowedNetworkTypes(
                 reader.beginArray();
                 while (reader.hasNext()){
                     FileListModel message = new Gson().fromJson(reader, FileListModel.class);
+                    messages.add(message);
+                }
+            }
+
+
+        }
+        reader.endArray();
+        reader.close();
+        return messages;
+    }
+
+
+    public List<DocumentModel> readJsonStreamfordoc(InputStream in) throws IOException {
+        JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
+        List<DocumentModel> messages = new ArrayList<DocumentModel>();
+        reader.beginObject();
+        while (reader.hasNext()) {
+            String name= reader.nextName();
+            if(name.equals("Documents")){
+                reader.beginArray();
+                while (reader.hasNext()){
+                    DocumentModel message = new Gson().fromJson(reader, DocumentModel.class);
+                    messages.add(message);
+                }
+            }
+
+
+        }
+        reader.endArray();
+        reader.close();
+        return messages;
+    }
+
+
+    public List<ArticleModel> readJsonStreamforarticle(InputStream in) throws IOException {
+        JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
+        List<ArticleModel> messages = new ArrayList<ArticleModel>();
+        reader.beginObject();
+        while (reader.hasNext()) {
+            String name= reader.nextName();
+            if(name.equals("Articles")){
+                reader.beginArray();
+                while (reader.hasNext()){
+                    ArticleModel message = new Gson().fromJson(reader, ArticleModel.class);
                     messages.add(message);
                 }
             }
