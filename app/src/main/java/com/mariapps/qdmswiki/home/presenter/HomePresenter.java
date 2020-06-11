@@ -115,10 +115,7 @@ public class HomePresenter {
                     try {
                                     Log.e("theiddoc",documentModel.getId());
                                     homeDatabase.homeDao().deleteDocument(documentModel.getId());
-
-
                     } catch (Exception e) {
-
                         Log.e("doctryerror",e.getLocalizedMessage()+"   "+documentModel.getDocumentName()+"    "+documentModel.getId());
                     }
                 }
@@ -808,6 +805,105 @@ public class HomePresenter {
 
 
 
+    public void insertdocbylist(List<DocumentModel> documentModelList){
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                homeDatabase.homeDao().insertDocumentbylist(documentModelList);
+            }
+
+            @Override
+            public void onComplete() {
+                List<DocumentModelObj> objList = new ArrayList<>();
+                for (int i = 0; i < documentModelList.size(); i++) {
+                    DocumentModelObj obj=new DocumentModelObj(documentModelList.get(i).id,documentModelList.get(i).documentName,documentModelList.get(i).documentData);
+                    objList.add(obj);
+                }
+                dbox.put(objList);
+                Log.e("documentlistinsertion","inserted "+documentModelList.size()+"   docs");
+
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+
+
+    public void insertarticlesbylist(List<ArticleModel> articleModelList){
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                homeDatabase.homeDao().insertArticlebylist(articleModelList);
+            }
+
+            @Override
+            public void onComplete()
+            {
+                List<ArticleModelObj> objList = new ArrayList<>();
+                for (int i = 0; i < articleModelList.size(); i++) {
+                    ArticleModelObj obj=new ArticleModelObj(articleModelList.get(i).getId(),articleModelList.get(i).getArticleName(),articleModelList.get(i).documentData);
+                   objList.add(obj);
+                }
+                abox.put(objList);
+                Log.e("articlelistinsertion","inserted "+articleModelList.size()+"   articles");
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+
+
+    public void insertfilesbylist(List<FileListModel> fileListModels){
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+            homeDatabase.homeDao().insertFileListModelbylist(fileListModels);
+            }
+
+            @Override
+            public void onComplete() {
+                Log.e("filelistinsertion","inserted "+fileListModels.size()+"   files");
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+
+
+
 
 
 
@@ -1341,8 +1437,6 @@ public class HomePresenter {
             }
         });
     }
-
-
     public void deleteForm(FormsModel formsModel) {
         Completable.fromAction(new Action() {
             @Override
@@ -1368,7 +1462,6 @@ public class HomePresenter {
             }
         });
     }
-
     public void insertForm(final FormsModel formsModel) {
         Completable.fromAction(new Action() {
             @Override
@@ -1396,8 +1489,6 @@ public class HomePresenter {
             }
         });
     }
-
-
     public void deleteImage(ImageModel imageModel) {
         Completable.fromAction(new Action() {
             @Override
@@ -1423,7 +1514,6 @@ public class HomePresenter {
             }
         });
     }
-
     public void insertImage(final ImageModel imageModel) {
         Completable.fromAction(new Action() {
             @Override
@@ -1451,6 +1541,9 @@ public class HomePresenter {
             }
         });
     }
+
+
+
 
 //    public void getCategoryName(String categoryId) {
 //        Completable.fromAction(new Action() {

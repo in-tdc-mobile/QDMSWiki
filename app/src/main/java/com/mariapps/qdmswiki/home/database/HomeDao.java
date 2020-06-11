@@ -39,6 +39,9 @@ public interface HomeDao {
     void insertArticle(ArticleModel articleModel);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertFileListModel(FileListModel fileListModel);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertTag(List<TagModel> tagModel);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -77,8 +80,6 @@ public interface HomeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertBookmarkEntry(BookmarkEntryModel bookmarkEntryModel);
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertFileListModel(FileListModel fileListModel);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertForm(FormsModel formsModel);
@@ -683,5 +684,15 @@ public interface HomeDao {
 
     @Query("DELETE FROM ImageEntity")
     void deleteImageListEntity();
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertDocumentbylist(List<DocumentModel> documentModel);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertArticlebylist(List<ArticleModel> articleModel);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertFileListModelbylist(List<FileListModel> fileListModel);
 }
 

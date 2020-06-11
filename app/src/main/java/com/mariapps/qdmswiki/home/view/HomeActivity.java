@@ -281,8 +281,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
         Log.e("allocated00", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
        // Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + "20200527080434.zip", Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
         //decompress.execute();
-//       ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
-//       readAndInsertJsonData.execute();
+      ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
+      readAndInsertJsonData.execute();
         //setup();
         //5a0c0ade3b6a9e5490d6e7d0
     }
@@ -544,7 +544,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         Intent intent = new Intent(context, DownloadService.class);
         intent.putExtra("url", url);
         intent.putExtra("filename", zipFileName);
-        if (!url.equals("") && !zipFileName.equals("")) {
+        /*if (!url.equals("") && !zipFileName.equals("")) {
             if (!isMyServiceRunning(DownloadService.class)) {
                 Log.e("service", "notrunning");
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -555,7 +555,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
             } else {
                 Log.e("service", "isrunning");
             }
-        }
+        }*/
     }
 
 
@@ -968,9 +968,11 @@ request.setAllowedNetworkTypes(
                                     }
                                 }
                                 Log.e("filelistsize",fileList.size()+"");
-                                for (int i = 0; i < fileList.size(); i++) {
+                                /*for (int i = 0; i < fileList.size(); i++) {
                                     homePresenter.deleteFile(fileList.get(i));
-                                }
+                                }*/
+
+                                homePresenter.insertfilesbylist(fileList);
 
                                 Log.e("allocatedafter3", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
                             } catch (JsonSyntaxException e) {
@@ -1063,24 +1065,24 @@ request.setAllowedNetworkTypes(
                                 if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
                                     for (int i = 0; i < documentList.size(); i++) {
                                         if (documentList.get(i).getVesselIds().size() > 0 || documentList.get(i).getPassengersVesselIds().size() > 0) {
-                                           homePresenter.deleteDocumentSingle(documentList.get(i));
+                                          // homePresenter.deleteDocumentSingle(documentList.get(i));
                                             documentList.get(i).setIsRecommended("NO");
                                             List<TagModel> tagList = documentList.get(i).getTags();
                                             homePresenter.insertTags(tagList);
                                         } else
                                             continue;
                                     }
-                                    //homePresenter.deleteDocumentssBylist(documentList);
+                                    homePresenter.insertdocbylist(documentList);
 
                                 } else {
                                     for (int i = 0; i < documentList.size(); i++) {
                                         documentList.get(i).setIsRecommended("NO");
-                                        homePresenter.deleteDocumentSingle(documentList.get(i));
+                                      //  homePresenter.deleteDocumentSingle(documentList.get(i));
                                         List<TagModel> tagList = documentList.get(i).getTags();
                                         homePresenter.insertTags(tagList);
                                     }
 
-                                    // homePresenter.deleteDocumentssBylist(documentList);
+                                    homePresenter.insertdocbylist(documentList);
                                 }
 
                             } catch (JsonSyntaxException e) {
@@ -1171,18 +1173,22 @@ request.setAllowedNetworkTypes(
                                     articleList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ArticleModel>>() {}.getType()));
                                 }
                                 // articleList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ArticleModel>>() {}.getType());
+                                List<ArticleModel> newlist = new ArrayList<>();
                                 if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
                                     for (int i = 0; i < articleList.size(); i++) {
                                         if (articleList.get(i).getArticleToVesselIds().size() > 0 || articleList.get(i).getArticleToPassengersVesselIds().size() > 0) {
-                                            homePresenter.deleteArticlessingle(articleList.get(i));
+                                            newlist.add(articleList.get(i));
+                                            //homePresenter.deleteArticlessingle(articleList.get(i));
                                         }
                                     }
+                                    homePresenter.insertarticlesbylist(newlist);
                                 } else {
                                      // homePresenter.deleteArticlesBylist(articleList);
 //
-                                   for (int i = 0; i < articleList.size(); i++) {
+                                  /* for (int i = 0; i < articleList.size(); i++) {
                                        homePresenter.deleteArticlessingle(articleList.get(i));
-                                    }
+                                    }*/
+                                    homePresenter.insertarticlesbylist(articleList);
                                 }
                             } catch (JsonSyntaxException e) {
                                 appendLog("Article json syntax exception : "+e.getMessage());
@@ -1483,8 +1489,6 @@ request.setAllowedNetworkTypes(
                     messages.add(message);
                 }
             }
-
-
         }
         reader.endArray();
         reader.close();
