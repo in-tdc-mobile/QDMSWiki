@@ -303,8 +303,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
         Log.e("allocated00", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
        // Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + "20200527080434.zip", Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
         //decompress.execute();
-     ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
-      readAndInsertJsonData.execute();
+    // ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
+      //readAndInsertJsonData.execute();
         //setup();
         //5a0c0ade3b6a9e5490d6e7d0
      /*Box<DocumentModelObj>   dbox = ObjectBox.get().boxFor(DocumentModelObj.class);
@@ -572,7 +572,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         Intent intent = new Intent(context, DownloadService.class);
         intent.putExtra("url", url);
         intent.putExtra("filename", zipFileName);
-        /*if(applog.getString("status","").equals("end")){
+        if(applog.getString("status","").equals("end")){
         if (!url.equals("") && !zipFileName.equals("")) {
             if (!isMyServiceRunning(DownloadService.class)) {
                 Log.e("service", "notrunning");
@@ -617,7 +617,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 }
 
             }
-        }*/
+        }
 
 
 
