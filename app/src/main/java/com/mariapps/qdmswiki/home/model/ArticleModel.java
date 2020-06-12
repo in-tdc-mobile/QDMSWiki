@@ -2,6 +2,7 @@ package com.mariapps.qdmswiki.home.model;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 import android.nfc.Tag;
@@ -14,6 +15,8 @@ import com.mariapps.qdmswiki.bookmarks.model.BookmarkEntryModel;
 import com.mariapps.qdmswiki.home.database.HomeTypeConverter;
 import java.util.ArrayList;
 import java.util.List;
+
+import kotlin.jvm.JvmOverloads;
 
 @Entity(tableName = "ArticleEntity")
 @TypeConverters(HomeTypeConverter.class)
@@ -42,6 +45,7 @@ public class ArticleModel implements Parcelable {
     @SerializedName("ArticleNumber")
     private Integer articleNumber;
 
+    @Ignore
     @SerializedName("DocumentData")
     public String documentData;
 
@@ -95,6 +99,9 @@ public class ArticleModel implements Parcelable {
         this.documentData = documentData;
         this.categoryIds = categoryIds;
 //        this.isActive = isActive;
+    }
+
+    public ArticleModel() {
     }
 
     public Long getuId() {

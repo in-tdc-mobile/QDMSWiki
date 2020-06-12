@@ -55,6 +55,10 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.mariapps.qdmswiki.AppConfig;
+import com.mariapps.qdmswiki.ArticleModelObj;
+import com.mariapps.qdmswiki.ArticleModelObj_;
+import com.mariapps.qdmswiki.DocumentModelObj;
+import com.mariapps.qdmswiki.DocumentModelObj_;
 import com.mariapps.qdmswiki.DownloadService;
 import com.mariapps.qdmswiki.ObjectBox;
 import com.mariapps.qdmswiki.R;
@@ -214,6 +218,14 @@ public class HomeActivity extends BaseActivity implements HomeView {
     ReadAndInsertJsonDataforarticles readAndInsertJsonDataforart=null;
     ReadAndInsertJsonData1 readAndInsertJsonData1=null;
 
+
+    Box<DocumentModelObj> dbox;
+    Box<ArticleModelObj> abox;
+
+    int doccount=0;
+    int artcount=0;
+    int filecount=0;
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -285,6 +297,12 @@ public class HomeActivity extends BaseActivity implements HomeView {
       readAndInsertJsonData.execute();
         //setup();
         //5a0c0ade3b6a9e5490d6e7d0
+     /*Box<DocumentModelObj>   dbox = ObjectBox.get().boxFor(DocumentModelObj.class);
+     Log.e("sizeofdb",dbox.getAll().size()+"");
+
+        for (int i = 0; i < dbox.getAll().size(); i++) {
+            Log.e("nameofdoc",dbox.getAll().get(i).documentData.length()+"");
+        }*/
     }
 
     public void initShowCase() {
@@ -934,22 +952,22 @@ request.setAllowedNetworkTypes(
                                 final long usedMemInMB=(runtime.totalMemory() - runtime.freeMemory()) / 1048576L;
                                 final long maxHeapSizeInMB=runtime.maxMemory() / 1048576L;
                                 final long availHeapSizeInMB = maxHeapSizeInMB - usedMemInMB;
-                                Log.e("usedMemInMB",usedMemInMB+"");
-                                Log.e("maxHeapSizeInMB",maxHeapSizeInMB+"");
-                                Log.e("availHeapSizeInMB",availHeapSizeInMB+"");
-                                Log.e("total", "" + Runtime.getRuntime().totalMemory());
-                                Log.e("heap", "" + Runtime.getRuntime().maxMemory());
-                                Log.e("allocated", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
-                                Log.e("thefileis",file.getName());
+                               // Log.e("usedMemInMB",usedMemInMB+"");
+                               // Log.e("maxHeapSizeInMB",maxHeapSizeInMB+"");
+                              //  Log.e("availHeapSizeInMB",availHeapSizeInMB+"");
+                               // Log.e("total", "" + Runtime.getRuntime().totalMemory());
+                               // Log.e("heap", "" + Runtime.getRuntime().maxMemory());
+                               // Log.e("allocated", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
+                              //  Log.e("thefileis",file.getName());
                                 appendLog("Extracting file " + file.getName());
                                 final Runtime runtime1 = Runtime.getRuntime();
                                 final long usedMemInM1B1=(runtime.totalMemory() - runtime.freeMemory()) / 1048576L;
                                 final long maxHeapSizeInMB1=runtime.maxMemory() / 1048576L;
                                 final long availHeapSizeInMB1 = maxHeapSizeInMB - usedMemInMB;
-                                Log.e("usedMemInMB1",usedMemInM1B1+"");
-                                Log.e("maxHeapSizeInMB1",maxHeapSizeInMB1+"");
-                                Log.e("availHeapSizeInMB1",availHeapSizeInMB1+"");
-                                Log.e("allocatedafter1", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
+                               // Log.e("usedMemInMB1",usedMemInM1B1+"");
+                               // Log.e("maxHeapSizeInMB1",maxHeapSizeInMB1+"");
+                               // Log.e("availHeapSizeInMB1",availHeapSizeInMB1+"");
+                               // Log.e("allocatedafter1", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
                                 fileList.clear();
                               //fileList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FileListModel>>() {}.getType()));
                                 try {
@@ -970,10 +988,10 @@ request.setAllowedNetworkTypes(
                                 /*for (int i = 0; i < fileList.size(); i++) {
                                     homePresenter.deleteFile(fileList.get(i));
                                 }*/
-
+                                filecount++;
                                 homePresenter.insertfilesbylist(fileList);
-
-                                Log.e("allocatedafter3", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
+                                Log.e("fileinsertion","list size is "+fileList.size()+"  count is "+filecount+"filenameis  "+fileList.get(0).getId());
+                               // Log.e("allocatedafter3", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
                             } catch (JsonSyntaxException e) {
                                 appendLog("File json syntax exception : "+e.getMessage());
                                 e.printStackTrace();
@@ -1063,18 +1081,36 @@ request.setAllowedNetworkTypes(
                                 if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
                                     for (int i = 0; i < documentList.size(); i++) {
                                         if (documentList.get(i).getVesselIds().size() > 0 || documentList.get(i).getPassengersVesselIds().size() > 0) {
-                                          // homePresenter.deleteDocumentSingle(documentList.get(i));
+                                            homeDatabase.homeDao().deleteDocument(documentList.get(i).getId());
+                                            try {
+                                                dbox.query().equal(DocumentModelObj_.id,documentList.get(i).getId()).build().remove();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                            homeDatabase.homeDao().insertDocument(documentList.get(i));
+                                            dbox.put(new DocumentModelObj(documentList.get(i).getId(),documentList.get(i).getDocumentName(),documentList.get(i).getDocumentData()));
+                                            // homePresenter.deleteDocumentSingle(documentList.get(i));
                                             documentList.get(i).setIsRecommended("NO");
                                             List<TagModel> tagList = documentList.get(i).getTags();
                                             homePresenter.insertTags(tagList);
                                         } else
                                             continue;
                                     }
-                                    homePresenter.insertdocbylist(documentList);
+                                    doccount++;
+                                  //  homePresenter.insertdocbylist(documentList);
+                                    Log.e("docinsertion","list size is "+documentList.size()+"  count is "+doccount+"docname is "+documentList.get(0).documentName);
 
                                 } else {
                                     for (int i = 0; i < documentList.size(); i++) {
                                         documentList.get(i).setIsRecommended("NO");
+                                        homeDatabase.homeDao().deleteDocument(documentList.get(i).getId());
+                                        try {
+                                            dbox.query().equal(DocumentModelObj_.id,documentList.get(i).getId()).build().remove();
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                        homeDatabase.homeDao().insertDocument(documentList.get(i));
+                                        dbox.put(new DocumentModelObj(documentList.get(i).getId(),documentList.get(i).getDocumentName(),documentList.get(i).getDocumentData()));
                                       //  homePresenter.deleteDocumentSingle(documentList.get(i));
                                         List<TagModel> tagList = documentList.get(i).getTags();
                                         homePresenter.insertTags(tagList);
@@ -1175,17 +1211,27 @@ request.setAllowedNetworkTypes(
                                     for (int i = 0; i < articleList.size(); i++) {
                                         if (articleList.get(i).getArticleToVesselIds().size() > 0 || articleList.get(i).getArticleToPassengersVesselIds().size() > 0) {
                                             newlist.add(articleList.get(i));
+                                            homeDatabase.homeDao().deleteArticle(articleList.get(i).getId());
+                                            try {
+                                                abox.query().equal(ArticleModelObj_.id,articleList.get(i).getId()).build().remove();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                            homeDatabase.homeDao().insertArticle(articleList.get(i));
+                                            abox.put(new ArticleModelObj(articleList.get(i).getId(),articleList.get(i).getArticleName(),articleList.get(i).documentData));
                                             //homePresenter.deleteArticlessingle(articleList.get(i));
                                         }
                                     }
-                                    homePresenter.insertarticlesbylist(newlist);
+                                    //homePresenter.insertarticlesbylist(newlist);
                                 } else {
                                      // homePresenter.deleteArticlesBylist(articleList);
 //
                                   /* for (int i = 0; i < articleList.size(); i++) {
                                        homePresenter.deleteArticlessingle(articleList.get(i));
                                     }*/
+                                    artcount++;
                                     homePresenter.insertarticlesbylist(articleList);
+                                    Log.e("artinsertion","list size is "+articleList.size()+"  count is "+artcount+" file name is"+articleList.get(0).getArticleName());
                                 }
                             } catch (JsonSyntaxException e) {
                                 appendLog("Article json syntax exception : "+e.getMessage());
@@ -1471,6 +1517,10 @@ request.setAllowedNetworkTypes(
             progressDialog.dismiss();
         }
     }
+
+
+
+
 
 
     public List<FileListModel> readJsonStream(InputStream in) throws IOException {

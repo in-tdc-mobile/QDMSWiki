@@ -369,10 +369,7 @@ public class HomePresenter {
                         homeDatabase.homeDao().deleteArticle(articleModel.getId());
                         Log.e("theid",articleModel.getId());
                     }
-
-
                 } catch (Exception e) {
-
                     Log.e("artdeletetryerror",e.getLocalizedMessage());
                 }
                 /*AsyncTask.execute(new Runnable() {

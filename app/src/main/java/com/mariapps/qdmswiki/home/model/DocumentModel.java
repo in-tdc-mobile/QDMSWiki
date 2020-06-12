@@ -2,6 +2,7 @@ package com.mariapps.qdmswiki.home.model;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 import android.os.Parcel;
@@ -39,6 +40,7 @@ public class DocumentModel implements Parcelable {
     @SerializedName("DocumentNumber")
     public String documentNumber;
 
+    @Ignore
     @SerializedName("DocumentData")
     public String documentData;
 
@@ -103,6 +105,9 @@ public class DocumentModel implements Parcelable {
      //   this.documentData = documentData;
         this.version = version;
         this.tags = tags;
+    }
+
+    public DocumentModel() {
     }
 
     public String getId() {
