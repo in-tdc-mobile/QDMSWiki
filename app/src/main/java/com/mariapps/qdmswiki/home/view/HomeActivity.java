@@ -236,6 +236,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
         setContentView(R.layout.activity_home);
         ObjectBox.init(getApplicationContext());
         applog=getSharedPreferences("qdms",0);
+        dbox=ObjectBox.get().boxFor(DocumentModelObj.class);
+        abox=ObjectBox.get().boxFor(ArticleModelObj.class);
       /*  Box<DocumentModelObj> box = ObjectBox.get().boxFor(DocumentModelObj.class);
       // box.removeAll();
         Box<ArticleModelObj> abox = ObjectBox.get().boxFor(ArticleModelObj.class);
@@ -271,6 +273,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         AppConfig.getDwnldcmplted().observe(this, s -> {
             progressLayout.setVisibility(View.GONE);
             Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zippedFileName, Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
+            //Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + "202006122.zip", Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
             decompress.execute();
         });
         AppConfig.getDwnldstarted().observe(this, new Observer<String>() {
@@ -300,7 +303,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         Log.e("allocated00", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
        // Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + "20200527080434.zip", Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
         //decompress.execute();
-      ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
+     ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
       readAndInsertJsonData.execute();
         //setup();
         //5a0c0ade3b6a9e5490d6e7d0
@@ -569,7 +572,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         Intent intent = new Intent(context, DownloadService.class);
         intent.putExtra("url", url);
         intent.putExtra("filename", zipFileName);
-        if(applog.getString("status","").equals("end")){
+        /*if(applog.getString("status","").equals("end")){
         if (!url.equals("") && !zipFileName.equals("")) {
             if (!isMyServiceRunning(DownloadService.class)) {
                 Log.e("service", "notrunning");
@@ -614,7 +617,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 }
 
             }
-        }
+        }*/
 
 
 
@@ -995,35 +998,11 @@ request.setAllowedNetworkTypes(
                     } else {
               if (file.getName().contains("file")) {
                             try {
-                                ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-                                ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
-                                activityManager.getMemoryInfo(mi);
-                                final Runtime runtime = Runtime.getRuntime();
-                                final long usedMemInMB=(runtime.totalMemory() - runtime.freeMemory()) / 1048576L;
-                                final long maxHeapSizeInMB=runtime.maxMemory() / 1048576L;
-                                final long availHeapSizeInMB = maxHeapSizeInMB - usedMemInMB;
-                               // Log.e("usedMemInMB",usedMemInMB+"");
-                               // Log.e("maxHeapSizeInMB",maxHeapSizeInMB+"");
-                              //  Log.e("availHeapSizeInMB",availHeapSizeInMB+"");
-                               // Log.e("total", "" + Runtime.getRuntime().totalMemory());
-                               // Log.e("heap", "" + Runtime.getRuntime().maxMemory());
-                               // Log.e("allocated", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
-                              //  Log.e("thefileis",file.getName());
-                                appendLog("Extracting file " + file.getName());
-                                final Runtime runtime1 = Runtime.getRuntime();
-                                final long usedMemInM1B1=(runtime.totalMemory() - runtime.freeMemory()) / 1048576L;
-                                final long maxHeapSizeInMB1=runtime.maxMemory() / 1048576L;
-                                final long availHeapSizeInMB1 = maxHeapSizeInMB - usedMemInMB;
-                               // Log.e("usedMemInMB1",usedMemInM1B1+"");
-                               // Log.e("maxHeapSizeInMB1",maxHeapSizeInMB1+"");
-                               // Log.e("availHeapSizeInMB1",availHeapSizeInMB1+"");
-                               // Log.e("allocatedafter1", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
                                 fileList.clear();
-                              //fileList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FileListModel>>() {}.getType()));
                                 try {
-                                    JsonParser parser = new JsonParser();
+                                    /*JsonParser parser = new JsonParser();
                                     JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles/" + file.getName()));//path to the JSON file.
-                                    jsonArray = data.getAsJsonArray("fileChunks");
+                                    jsonArray = data.getAsJsonArray("fileChunks");*/
                                     fileList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FileListModel>>() {}.getType()));
                                     //fileList.addAll(readJsonStream(new FileInputStream(file)));
                                     Log.e("allocatedafter2", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
@@ -1038,13 +1017,13 @@ request.setAllowedNetworkTypes(
                                         Log.e("catchegsonparser", ""+file.getName()+"   "+e.getLocalizedMessage());
                                     }
                                 }
-                                Log.e("filelistsize",fileList.size()+"");
-                                /*for (int i = 0; i < fileList.size(); i++) {
+                                //Log.e("filelistsize",fileList.size()+"");
+                               /* for (int i = 0; i < fileList.size(); i++) {
                                     homePresenter.deleteFile(fileList.get(i));
                                 }*/
                                 filecount++;
                                 homePresenter.insertfilesbylist(fileList);
-                                Log.e("fileinsertion","list size is "+fileList.size()+"  count is "+filecount+"filenameis  "+fileList.get(0).getId());
+                                //Log.e("fileinsertion","list size is "+fileList.size()+"  count is "+filecount+"filenameis  "+fileList.get(0).getId());
                                // Log.e("allocatedafter3", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
                             } catch (JsonSyntaxException e) {
                                 appendLog("File json syntax exception : "+e.getMessage());
@@ -1127,11 +1106,7 @@ request.setAllowedNetworkTypes(
                                 appendLog("Extracting document " + file.getName());
                                 documentList.clear();
                                 try {
-                                    JsonParser parser = new JsonParser();
-                                    JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles/" + file.getName()));//path to the JSON file.
-                                    jsonArray = data.getAsJsonArray("Documents");
-                                    documentList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<DocumentModel>>() {}.getType()));
-                                // documentList.addAll(readJsonStreamfordoc(new FileInputStream(file)));
+                                 documentList.addAll(readJsonStreamfordoc(new FileInputStream(file)));
                                 }
 
                                 catch (Exception e){
@@ -1142,43 +1117,33 @@ request.setAllowedNetworkTypes(
                                 }
                                 //documentList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<DocumentModel>>() {}.getType());
                                 if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
+                                    List<DocumentModelObj> objList = new ArrayList<>();
                                     for (int i = 0; i < documentList.size(); i++) {
                                         if (documentList.get(i).getVesselIds().size() > 0 || documentList.get(i).getPassengersVesselIds().size() > 0) {
-                                            /*homeDatabase.homeDao().deleteDocument(documentList.get(i).getId());
-                                            try {
-                                                dbox.query().equal(DocumentModelObj_.id,documentList.get(i).getId()).build().remove();
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                            homeDatabase.homeDao().insertDocument(documentList.get(i));
-                                            dbox.put(new DocumentModelObj(documentList.get(i).getId(),documentList.get(i).getDocumentName(),documentList.get(i).getDocumentData()));*/
-                                            // homePresenter.deleteDocumentSingle(documentList.get(i));
                                             documentList.get(i).setIsRecommended("NO");
                                             List<TagModel> tagList = documentList.get(i).getTags();
                                             homePresenter.insertTags(tagList);
-                                        } else
-                                            continue;
+                                            DocumentModelObj obj=new DocumentModelObj(documentList.get(i).id,documentList.get(i).documentName,documentList.get(i).documentData);
+                                            objList.add(obj);
+                                            //homePresenter.insertDocumentsSingle(documentList.get(i));
+                                        }
                                     }
                                     doccount++;
+                                    dbox.put(objList);
                                     homePresenter.insertdocbylist(documentList);
                                     Log.e("docinsertion","list size is "+documentList.size()+"  count is "+doccount+"docname is "+documentList.get(0).documentName);
 
                                 } else {
+                                    List<DocumentModelObj> objList = new ArrayList<>();
                                     for (int i = 0; i < documentList.size(); i++) {
                                         documentList.get(i).setIsRecommended("NO");
-                                      /*  homeDatabase.homeDao().deleteDocument(documentList.get(i).getId());
-                                        try {
-                                            dbox.query().equal(DocumentModelObj_.id,documentList.get(i).getId()).build().remove();
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                        homeDatabase.homeDao().insertDocument(documentList.get(i));
-                                        dbox.put(new DocumentModelObj(documentList.get(i).getId(),documentList.get(i).getDocumentName(),documentList.get(i).getDocumentData()));*/
-                                      //  homePresenter.deleteDocumentSingle(documentList.get(i));
                                         List<TagModel> tagList = documentList.get(i).getTags();
                                         homePresenter.insertTags(tagList);
+                                        DocumentModelObj obj=new DocumentModelObj(documentList.get(i).id,documentList.get(i).documentName,documentList.get(i).documentData);
+                                        objList.add(obj);
+                                        //homePresenter.insertDocumentsSingle(documentList.get(i));
                                     }
-
+                                    dbox.put(objList);
                                     homePresenter.insertdocbylist(documentList);
                                 }
 
@@ -1275,28 +1240,25 @@ request.setAllowedNetworkTypes(
                                 // articleList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ArticleModel>>() {}.getType());
                                 List<ArticleModel> newlist = new ArrayList<>();
                                 if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
+                                    List<ArticleModelObj> objList = new ArrayList<>();
                                     for (int i = 0; i < articleList.size(); i++) {
                                         if (articleList.get(i).getArticleToVesselIds().size() > 0 || articleList.get(i).getArticleToPassengersVesselIds().size() > 0) {
                                             newlist.add(articleList.get(i));
-                                           /* homeDatabase.homeDao().deleteArticle(articleList.get(i).getId());
-                                            try {
-                                                abox.query().equal(ArticleModelObj_.id,articleList.get(i).getId()).build().remove();
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                            homeDatabase.homeDao().insertArticle(articleList.get(i));
-                                            abox.put(new ArticleModelObj(articleList.get(i).getId(),articleList.get(i).getArticleName(),articleList.get(i).documentData));*/
+                                            ArticleModelObj obj=new ArticleModelObj(articleList.get(i).getId(),articleList.get(i).getArticleName(),articleList.get(i).documentData);
+                                            objList.add(obj);
                                             //homePresenter.deleteArticlessingle(articleList.get(i));
                                         }
                                     }
+                                    abox.put(objList);
                                     homePresenter.insertarticlesbylist(newlist);
                                 } else {
-                                     // homePresenter.deleteArticlesBylist(articleList);
-//
-                                  /* for (int i = 0; i < articleList.size(); i++) {
-                                       homePresenter.deleteArticlessingle(articleList.get(i));
-                                    }*/
                                     artcount++;
+                                    List<ArticleModelObj> objList = new ArrayList<>();
+                                    for (int i = 0; i < articleList.size(); i++) {
+                                        ArticleModelObj obj=new ArticleModelObj(articleList.get(i).getId(),articleList.get(i).getArticleName(),articleList.get(i).documentData);
+                                        objList.add(obj);
+                                    }
+                                    abox.put(objList);
                                     homePresenter.insertarticlesbylist(articleList);
                                     Log.e("artinsertion","list size is "+articleList.size()+"  count is "+artcount+" file name is"+articleList.get(0).getArticleName());
                                 }

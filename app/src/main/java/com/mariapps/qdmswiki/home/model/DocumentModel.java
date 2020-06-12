@@ -40,7 +40,7 @@ public class DocumentModel implements Parcelable {
     @SerializedName("DocumentNumber")
     public String documentNumber;
 
-
+    @Ignore
     @SerializedName("DocumentData")
     public String documentData;
 
@@ -371,5 +371,7 @@ public class DocumentModel implements Parcelable {
             return new DocumentModel[size];
         }
     };
+
+
 
 }

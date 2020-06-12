@@ -820,15 +820,14 @@ public class HomePresenter {
                 if(dbox==null){
                     dbox = ObjectBox.get().boxFor(DocumentModelObj.class);
                 }
-                List<DocumentModelObj> objList = new ArrayList<>();
+                /*List<DocumentModelObj> objList = new ArrayList<>();
                 for (int i = 0; i < documentModelList.size(); i++) {
                     DocumentModelObj obj=new DocumentModelObj(documentModelList.get(i).id,documentModelList.get(i).documentName,documentModelList.get(i).documentData);
                     objList.add(obj);
                 }
                 dbox.put(objList);
-                Log.e("doclistinsertionobj","inserted "+objList.size()+"   docsobjs");
+                Log.e("doclistinsertionobj","inserted "+objList.size()+"   docsobjs");*/
                 Log.e("documentlistinsertion","inserted "+documentModelList.size()+"   docs");
-
             }
 
 
