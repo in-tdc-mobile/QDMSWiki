@@ -14,8 +14,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.PersistableBundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -44,7 +42,6 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -53,12 +50,11 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.mariapps.qdmswiki.AppConfig;
-import com.mariapps.qdmswiki.ArticleModelObj;
-import com.mariapps.qdmswiki.DocumentModelObj;
 import com.mariapps.qdmswiki.DownloadService;
 import com.mariapps.qdmswiki.FirstService;
 import com.mariapps.qdmswiki.ObjectBox;
 import com.mariapps.qdmswiki.R;
+import com.mariapps.qdmswiki.SecondService;
 import com.mariapps.qdmswiki.SessionManager;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkEntryModel;
@@ -94,20 +90,12 @@ import com.mariapps.qdmswiki.utils.DonutProgress;
 import com.mariapps.qdmswiki.utils.MessageEvent;
 import com.mariapps.qdmswiki.utils.ScreenUtils;
 import com.mariapps.qdmswiki.utils.ShowCasePreferenceUtil;
-import com.tonyodev.fetch2.Download;
-import com.tonyodev.fetch2.Error;
 import com.tonyodev.fetch2.Fetch;
-import com.tonyodev.fetch2.FetchConfiguration;
 import com.tonyodev.fetch2.FetchListener;
-import com.tonyodev.fetch2.NetworkType;
-import com.tonyodev.fetch2.Priority;
-import com.tonyodev.fetch2.Request;
-import com.tonyodev.fetch2core.DownloadBlock;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
@@ -129,13 +117,11 @@ import java.util.zip.ZipInputStream;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import io.objectbox.Box;
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
-import io.reactivex.internal.operators.parallel.ParallelDoOnNextTry;
 import io.reactivex.schedulers.Schedulers;
 
 public class HomeActivity extends BaseActivity implements HomeView {
@@ -629,6 +615,17 @@ public class HomeActivity extends BaseActivity implements HomeView {
             super.onPostExecute(result);
             progressDialog.dismiss();
             if (result.equals("Success")) {
+                createImageFolder();
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                if (urlNum == downloadEntityLists.size()) {
+                    linLayout.setAlpha(1.0f);
+                    relLayout.setAlpha(1.0f);
+                }
+                appendLog("Extracting files...");
+                progressDialog.setMessage("Processing...");
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+
                 Intent intent = new Intent(context, FirstService.class);
                     if (!isMyServiceRunning(FirstService.class)) {
                         Log.e("service", "notrunning");
@@ -647,9 +644,58 @@ public class HomeActivity extends BaseActivity implements HomeView {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
         try {
-            if (progressDialog != null && progressDialog.isShowing()) {
-                progressDialog.dismiss();
+
+            if(event.getType().equals("FIRST")) {
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+
+                    if (isMyServiceRunning(FirstService.class)) {
+                        Intent firstService = new Intent(context, FirstService.class);
+                        stopService(firstService);
+                    }
+
+
+                    createImageFolder();
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    if (urlNum == downloadEntityLists.size()) {
+                        linLayout.setAlpha(1.0f);
+                        relLayout.setAlpha(1.0f);
+                    }
+                    appendLog("Extracting files...");
+                    progressDialog.setMessage("Processing...");
+                    progressDialog.setCancelable(false);
+                    progressDialog.show();
+
+                    Intent intent = new Intent(context, SecondService.class);
+                    if (!isMyServiceRunning(SecondService.class)) {
+                        Log.e("service", "notrunning");
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            context.startForegroundService(intent);
+                        } else {
+                            context.startService(new Intent(context, SecondService.class));
+                        }
+
+
+                    } else {
+                        Log.e("service", "isrunning");
+                    }
+
+                }
             }
+            else{
+
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+
+                    if (isMyServiceRunning(SecondService.class)) {
+                        Intent secondService = new Intent(context, SecondService.class);
+                        stopService(secondService);
+                    }
+                    afterSecondService();
+
+                }
+
+                }
         }
         catch (Exception e){
         }
@@ -900,488 +946,70 @@ request.setAllowedNetworkTypes(
     }
 
 
-
-
-    public class ReadAndInsertJsonDatatest extends AsyncTask<String, Integer, String> {
-        JSONObject jsonObject;
-        JsonArray jsonArray;
-
-        public ReadAndInsertJsonDatatest() {
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            createImageFolder();
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            if (urlNum == downloadEntityLists.size()) {
-                linLayout.setAlpha(1.0f);
-                relLayout.setAlpha(1.0f);
-            }
-            appendLog("Extracting files...");
-            progressDialog.setMessage("Processing...");
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
+    private void afterSecondService(){
+        for (int i = 0; i < userSettingsList.size(); i++) {
             try {
-                File folder = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"); //This is just to cast to a File type since you pass it as a String
-                File[] filesInFolder = folder.listFiles(); // This returns all the folders and files in your path
-                for (File file : filesInFolder) { //For each of the entries do:
-                    if (file.isDirectory()) {
-                        /*appendLog("Extracting directory " + file.getName());
-                        File[] filesInsideFolder = file.listFiles();
-                        for (File eachFile : filesInsideFolder) {
-                            appendLog("Copying " + eachFile.getName() + " to image folder");
-                            copyFile(new File(eachFile.getAbsolutePath()), new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/Images/" + eachFile.getName()));
-                        }*/
-                    } else {
-                        JsonParser parser = new JsonParser();
-                        JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles/" + file.getName()));//path to the JSON file.
-                        if (file.getName().contains("docs5")) {
-                            appendLog("Extracting document " + file.getName());
-                            jsonArray = data.getAsJsonArray("Documents");
-                            documentList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<DocumentModel>>() {
-                            }.getType());
-                            for (int i = 0; i < documentList.size(); i++) {
-                                if(documentList.get(i).id.equals("5b432e633b76db18b0509e3b")||
-                                        documentList.get(i).id.equals("a547ad83b6a9e7e08237998")||
-                                        documentList.get(i).id.equals("c6101d5b5b02a3fa9")){
-                                    Log.e("thisdocumentishere",documentList.get(i).id+" "+documentList.get(i).documentName);
-                                }
-                                homePresenter.deleteDocument(documentList.get(i));
-                            }
-                            for (int i = 0; i < documentList.size(); i++) {
-                                documentList.get(i).setIsRecommended("NO");
-                                List<TagModel> tagList = documentList.get(i).getTags();
-                                homePresenter.insertTags(tagList);
-                            }
-                        }
-                    }
+                appendLog("Session User Info Id " + sessionManager.getUserInfoId() + ": User settings user id " + userSettingsList.get(i).getUserID());
+                if (userSettingsList.get(i).getUserID().equals(sessionManager.getUserInfoId())) {
+                    appendLog("Extracting user settings");
+                    homePresenter.deleteUserSettings(userSettingsList.get(i));
+                    break;
                 }
-                return "Success";
-
-            } catch (OutOfMemoryError e) {
-                progressDialog.dismiss();
-                return "Error";
             } catch (Exception e) {
-                progressDialog.dismiss();
-                return "Error";
-            }
-
-        }
-
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            progressDialog.setProgress(values[0]);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            progressDialog.dismiss();
-        }
-    }
-
-
-
-
-
-
-
-    public class ReadAndInsertJsonData extends AsyncTask<String, Integer, String> {
-        JSONObject jsonObject;
-        JsonArray jsonArray;
-
-        public ReadAndInsertJsonData() {
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            createImageFolder();
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            if (urlNum == downloadEntityLists.size()) {
-                linLayout.setAlpha(1.0f);
-                relLayout.setAlpha(1.0f);
-            }
-            appendLog("Extracting files...");
-            progressDialog.setMessage("Processing...");
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            try {
-                File folder = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"); //This is just to cast to a File type since you pass it as a String
-                File[] filesInFolder = folder.listFiles(); // This returns all the folders and files in your path
-                for (File file : filesInFolder) { //For each of the entries do:
-                    if (file.isDirectory()) {
-                            appendLog("Extracting directory " + file.getName());
-                            File[] filesInsideFolder = file.listFiles();
-                            for (File eachFile : filesInsideFolder) {
-                                appendLog("Copying " + eachFile.getName() + " to image folder");
-                                copyFile(new File(eachFile.getAbsolutePath()), new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/Images/" + eachFile.getName()));
-                            }
-
-                    } else {
-                        JsonParser parser = new JsonParser();
-                        JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles/" + file.getName()));//path to the JSON file.
-                        if (file.getName().contains("docs")) {
-                            try {
-                                appendLog("Extracting document " + file.getName());
-                                jsonArray = data.getAsJsonArray("Documents");
-                                documentList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<DocumentModel>>() {
-                                }.getType());
-                                if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
-                                    for (int i = 0; i < documentList.size(); i++) {
-                                        if (documentList.get(i).getVesselIds().size() > 0 || documentList.get(i).getPassengersVesselIds().size() > 0) {
-                                            homePresenter.deleteDocument(documentList.get(i));
-                                            documentList.get(i).setIsRecommended("NO");
-                                            List<TagModel> tagList = documentList.get(i).getTags();
-                                            homePresenter.insertTags(tagList);
-                                        } else
-                                            continue;
-                                    }
-                                } else {
-                                    for (int i = 0; i < documentList.size(); i++) {
-                                        homePresenter.deleteDocument(documentList.get(i));
-                                        documentList.get(i).setIsRecommended("NO");
-                                        List<TagModel> tagList = documentList.get(i).getTags();
-                                        homePresenter.insertTags(tagList);
-                                    }
-                                }
-
-                            } catch (JsonSyntaxException e) {
-                                appendLog("Doc json syntax exception : "+e.getMessage());
-                                e.printStackTrace();
-                            }
-                        } else if (file.getName().contains("art")) { //check that it's not a dir
-                            try {
-                                appendLog("Extracting article " + file.getName());
-                                jsonArray = data.getAsJsonArray("Articles");
-                                articleList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ArticleModel>>() {
-                                }.getType());
-                                if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
-                                    for (int i = 0; i < articleList.size(); i++) {
-                                        if (articleList.get(i).getArticleToVesselIds().size() > 0 || articleList.get(i).getArticleToPassengersVesselIds().size() > 0) {
-                                            homePresenter.deleteArticles(articleList.get(i));
-                                        }
-                                    }
-                                } else {
-                                    for (int i = 0; i < articleList.size(); i++) {
-                                        homePresenter.deleteArticles(articleList.get(i));
-                                    }
-                                }
-                            } catch (JsonSyntaxException e) {
-                                appendLog("Article json syntax exception : "+e.getMessage());
-                                e.printStackTrace();
-                            }
-                        } else if (file.getName().contains("file")) { //check that it's not a dir
-                            try {
-                                appendLog("Extracting file " + file.getName());
-                                jsonArray = data.getAsJsonArray("fileChunks");
-                                fileList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FileListModel>>() {
-                                }.getType());
-
-                                for (int i = 0; i < fileList.size(); i++) {
-                                    homePresenter.deleteFile(fileList.get(i));
-                                }
-                            } catch (JsonSyntaxException e) {
-                                appendLog("File json syntax exception : "+e.getMessage());
-                                e.printStackTrace();
-                            }
-                        }
-
-                    }
-                }
-                return "Success";
-
-            } catch (OutOfMemoryError e) {
-                appendLog("Out of memory : "+e.getMessage());
-                progressDialog.dismiss();
-                return "Error";
-            } catch (Exception e) {
-                appendLog("Exception : "+e.getMessage());
-                progressDialog.dismiss();
-                return "Error";
-            }
-
-        }
-
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            progressDialog.setProgress(values[0]);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            progressDialog.dismiss();
-            ReadAndInsertJsonData1 readAndInsertJsonData1 = new ReadAndInsertJsonData1();
-            readAndInsertJsonData1.execute();
-
-        }
-    }
-
-    public class ReadAndInsertJsonData1 extends AsyncTask<String, Integer, String> {
-
-        JSONObject jsonObject;
-        JsonArray jsonArray;
-        JsonParser parser = new JsonParser();
-
-
-        public ReadAndInsertJsonData1() {
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            createImageFolder();
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            if (urlNum == downloadEntityLists.size()) {
-                linLayout.setAlpha(1.0f);
-                relLayout.setAlpha(1.0f);
-            }
-            //appendLog("Extracting files...");
-            //  progressDialog = new ProgressDialog(HomeActivity.this);
-            progressDialog.setMessage("Processing...");
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            try {
-                File folder = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"); //This is just to cast to a File type since you pass it as a String
-                File[] filesInFolder = folder.listFiles(); // This returns all the folders and files in your path
-                for (File file : filesInFolder) { //For each of the entries do:
-                    if (file.isDirectory()) {
-                        appendLog("Extracting directory " + file.getName());
-                        File[] filesInsideFolder = file.listFiles();
-                        for (File eachFile : filesInsideFolder) {
-                            appendLog("Copying " + eachFile.getName() + " to image folder");
-                            copyFile(new File(eachFile.getAbsolutePath()), new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/Images/" + eachFile.getName()));
-                        }
-                    } else {
-
-                        JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles/" + file.getName()));//path to the JSON file.
-                        if (file.getName().contains("image")) { //check that it's not a dir
-                            try {
-                                appendLog("Extracting image " + file.getName());
-                                jsonArray = data.getAsJsonArray("Images");
-                                imageList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ImageModel>>() {
-                                }.getType());
-//                                for (int i = 0; i < imageList.size(); i++) {
-//                                    homePresenter.deleteImage(imageList.get(i));
-//                                }
-                                for (int i = 0; i < imageList.size();i++) {
-                                    try {
-                                        if (imageList.get(i).getImageStream() != null && !imageList.get(i).getImageStream().isEmpty())
-                                            decodeFile(imageList.get(i).getImageStream(), imageList.get(i).getImageName());
-                                    } catch (Exception e) {
-                                        try {
-                                            if (imageList.get(i).getImageDataAsString() != null && !imageList.get(i).getImageDataAsString().isEmpty())
-                                                decodeFile(imageList.get(i).getImageDataAsString(), imageList.get(i).getImageName());
-                                        } catch (Exception e1) {
-                                            continue;
-                                        }
-                                    }
-                                }
-
-                            } catch (JsonSyntaxException e) {
-                                appendLog("Image json syntax exception : "+e.getMessage());
-                                e.printStackTrace();
-                            }
-                        } else if (file.getName().contains("category")) {
-                            try {
-                                appendLog("Extracting category " + file.getName());
-                                jsonArray = data.getAsJsonArray("Categories");
-                                categoryList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<CategoryModel>>() {
-                                }.getType());
-                                for (int i = 0; i < categoryList.size(); i++) {
-                                    homePresenter.deleteCategory(categoryList.get(i));
-                                }
-                            } catch (JsonSyntaxException e) {
-                                appendLog("Category json syntax exception : "+e.getMessage());
-                                e.printStackTrace();
-                            }
-                        } else if (file.getName().contains("bookmarks")) {
-                            try {
-                                appendLog("Extracting bookmark " + file.getName());
-                                jsonArray = data.getAsJsonArray("Bookmarks");
-                                bookmarkList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<BookmarkModel>>() {
-                                }.getType());
-                                //homePresenter.deleteBookmarks(bookmarkList);
-                                for (int i = 0; i < bookmarkList.size(); i++) {
-                                    homePresenter.deleteBookmark(bookmarkList.get(i));
-                                    List<BookmarkEntryModel> bookmarkEntryList = bookmarkList.get(i).getBookmarkEntries();
-                                    for (int j = 0; j < bookmarkEntryList.size(); j++) {
-                                        bookmarkEntryList.get(j).setDocumentId(bookmarkList.get(i).getDocumentId());
-                                    }
-                                    for (int i1 = 0; i1 < bookmarkEntryList.size(); i1++) {
-                                        homePresenter.deleteBookmarkEntries(bookmarkEntryList.get(i1));
-                                    }
-                                    //homePresenter.insertBookmarkEntries(bookmarkEntryList);
-                                }
-                            } catch (JsonSyntaxException e) {
-                                appendLog("Bookmark json syntax exception : "+e.getMessage());
-                                e.printStackTrace();
-                            }
-                        } else if (file.getName().contains("notifications")) {
-                            try {
-                                jsonArray = data.getAsJsonArray("Notifications");
-                                notificationList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<NotificationModel>>() {
-                                }.getType());
-                            } catch (JsonSyntaxException e) {
-                                appendLog("Notification json syntax exception : "+e.getMessage());
-                                e.printStackTrace();
-                            }
-                        } else if (file.getName().contains("userInfo")) {
-                            try {
-                                appendLog("Extracting user info " + file.getName());
-                                jsonArray = data.getAsJsonArray("UserInfo");
-                                userInfoList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<UserInfoModel>>() {
-                                }.getType());
-                                for (int i = 0; i < userInfoList.size(); i++) {
-                                    appendLog("User Id " + sessionManager.getUserId() + " : User Info Id " + userInfoList.get(i).getUserId());
-                                    if (String.valueOf(userInfoList.get(i).getUserId()).equals(sessionManager.getUserId())) {
-                                        sessionManager.setUserInfoId(userInfoList.get(i).getId());
-                                        break;
-                                    }
-                                }
-                                for (int i = 0; i < userInfoList.size(); i++) {
-                                    homePresenter.insertUserInfo(userInfoList.get(i));
-                                    if (!(String.valueOf(userInfoList.get(i).getUserId()).equals(sessionManager.getUserId()))) {
-                                        userInfoList.get(i).setImageName("");
-                                    } else {
-                                        userInfoList.get(i).setImageName(userInfoList.get(i).getImageName());
-                                    }
-                                }
-                            } catch (JsonSyntaxException e) {
-                                appendLog("USer Info json syntax exception : "+e.getMessage());
-                                e.printStackTrace();
-                            }
-                        } else if (file.getName().contains("userSet")) {
-                            try {
-                                jsonArray = data.getAsJsonArray("UserSettings");
-                                userSettingsList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<UserSettingsModel>>() {
-                                }.getType());
-                            } catch (JsonSyntaxException e) {
-                                appendLog("User settings json syntax exception : "+e.getMessage());
-                                e.printStackTrace();
-                            }
-
-                        } else if (file.getName().contains("forms")) {
-                            try {
-                                appendLog("Extracting form " + file.getName());
-                                jsonArray = data.getAsJsonArray("Forms");
-                                formsList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FormsModel>>() {
-                                }.getType());
-                                for (int i = 0; i < formsList.size(); i++) {
-                                    homePresenter.deleteForm(formsList.get(i));
-
-                                }
-                            } catch (JsonSyntaxException e) {
-                                appendLog("Forms json syntax exception : "+e.getMessage());
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                }
-                return "Success";
-            } catch (OutOfMemoryError e) {
-                appendLog("Out of memory : "+e.getMessage());
-                progressDialog.dismiss();
-                return "Error";
-            } catch (Exception e) {
-                appendLog("Exception : "+e.getMessage());
-                progressDialog.dismiss();
-                return "Error";
+                continue;
             }
         }
-
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            progressDialog.setProgress(values[0]);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            for (int i = 0; i < userSettingsList.size(); i++) {
+        for (int i = 0; i < notificationList.size(); i++) {
+            List<ReceiverModel> receiverList = notificationList.get(i).getReceviers();
+            for (int j = 0; j < receiverList.size(); j++) {
                 try {
-                    appendLog("Session User Info Id " + sessionManager.getUserInfoId() + ": User settings user id " + userSettingsList.get(i).getUserID());
-                    if (userSettingsList.get(i).getUserID().equals(sessionManager.getUserInfoId())) {
-                        appendLog("Extracting user settings");
-                        homePresenter.deleteUserSettings(userSettingsList.get(i));
+                    appendLog("Session User Info Id " + sessionManager.getUserInfoId() + " : Receiver id " + receiverList.get(j).getRecevierId());
+                    if (receiverList.get(j).getRecevierId().equals(sessionManager.getUserInfoId())) {
+                        appendLog("Extracting notifications");
+                        notificationList.get(i).setIsUnread(receiverList.get(j).getUnread());
+                        homePresenter.deleteNotification(notificationList.get(i));
                         break;
                     }
                 } catch (Exception e) {
-                    continue;
+
                 }
             }
-            for (int i = 0; i < notificationList.size(); i++) {
-                List<ReceiverModel> receiverList = notificationList.get(i).getReceviers();
-                for (int j = 0; j < receiverList.size(); j++) {
-                    try {
-                        appendLog("Session User Info Id " + sessionManager.getUserInfoId() + " : Receiver id " + receiverList.get(j).getRecevierId());
-                        if (receiverList.get(j).getRecevierId().equals(sessionManager.getUserInfoId())) {
-                            appendLog("Extracting notifications");
-                            notificationList.get(i).setIsUnread(receiverList.get(j).getUnread());
-                            homePresenter.deleteNotification(notificationList.get(i));
-                            break;
-                        }
-                    } catch (Exception e) {
-
-                    }
-                }
-            }
-            //mainViewPager.updateRecentlyList(new ArrayList<>());
-            setNotificationCount();
-            getParentFolders();
-            File file = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zippedFileName);
-            if (file.exists()) {
-                file.delete();
-            }
-            File extractedFiles = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
-            if (extractedFiles.exists()) {
-                extractedFiles.delete();
-            }
-
-            try {
-                sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum - 1).getFileName());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            if (urlNum == downloadEntityLists.size()) {
-                progressDialog.dismiss();
-                setRecommendedList();
-                appendLog("Finished downloading all base/updated versions");
-                mainVP.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mainVP.getCurrentItem() == 0 ) {
-                            initShowCase();
-                        }
-                    }
-                });
-
-            } else if (urlNum < downloadEntityLists.size()) {
-                beginDownload(downloadEntityLists.get(urlNum).getDownloadLink(), downloadEntityLists.get(urlNum).getFileName());
-                urlNum = urlNum + 1;
-            }
-            progressDialog.dismiss();
         }
+        //mainViewPager.updateRecentlyList(new ArrayList<>());
+        setNotificationCount();
+        getParentFolders();
+        File file = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zippedFileName);
+        if (file.exists()) {
+            file.delete();
+        }
+        File extractedFiles = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
+        if (extractedFiles.exists()) {
+            extractedFiles.delete();
+        }
+
+        try {
+            sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum - 1).getFileName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (urlNum == downloadEntityLists.size()) {
+            progressDialog.dismiss();
+            setRecommendedList();
+            appendLog("Finished downloading all base/updated versions");
+            mainVP.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (mainVP.getCurrentItem() == 0 ) {
+                        initShowCase();
+                    }
+                }
+            });
+
+        } else if (urlNum < downloadEntityLists.size()) {
+            beginDownload(downloadEntityLists.get(urlNum).getDownloadLink(), downloadEntityLists.get(urlNum).getFileName());
+            urlNum = urlNum + 1;
+        }
+        progressDialog.dismiss();
     }
 
     public void decodeFile(String strFile, String filename) {

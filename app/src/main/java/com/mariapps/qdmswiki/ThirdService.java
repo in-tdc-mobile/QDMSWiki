@@ -1,18 +1,10 @@
 package com.mariapps.qdmswiki;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Environment;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.NotificationCompat;
 import android.util.Base64;
 import android.util.Log;
 
@@ -54,7 +46,7 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SecondService  extends Service implements HomeView {
+public class ThirdService extends Service implements HomeView {
 
     JsonParser parser = new JsonParser();
     JsonArray jsonArray;
@@ -71,14 +63,6 @@ public class SecondService  extends Service implements HomeView {
     List<ImageModel> imageList = new ArrayList<>();
     List<DownloadFilesResponseModel.DownloadEntityList> downloadEntityLists = new ArrayList<>();
 
-    final String CHANNEL_ID = "10001";
-    // The user-visible name of the channel.
-    final String CHANNEL_NAME = "Default";
-    PendingIntent contentIntent;
-    public static   String url="";
-    public static String filename="";
-    NotificationManager notificationManager;
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -89,21 +73,6 @@ public class SecondService  extends Service implements HomeView {
     public int onStartCommand(Intent intent, int flags, int startId) {
         sessionManager = new SessionManager(this);
         homePresenter = new HomePresenter(this, this);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            initChannels(this,"Processing Files", "QDMS");
-        }
-        else{
-            notificationManager = (NotificationManager)
-                    this.getSystemService(Context.NOTIFICATION_SERVICE);
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
-            mBuilder.setSmallIcon(R.drawable.app_icon)
-                    .setContentTitle("QDMS")
-                    // .setContentIntent(contentIntent)
-                    .setContentText("Processing Files");
-            notificationManager.notify(1, mBuilder.build());
-            startForeground(1,mBuilder.build());
-        }
 
         try {
             File folder = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"); //This is just to cast to a File type since you pass it as a String
@@ -249,11 +218,7 @@ public class SecondService  extends Service implements HomeView {
             appendLog("Exception : "+e.getMessage());
         }
 
-        MessageEvent messageEvent = new MessageEvent();
-        messageEvent.setType("SECOND");
-        EventBus.getDefault().post(messageEvent);
-
-        stopSelf();
+        EventBus.getDefault().post(new MessageEvent());
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -447,27 +412,6 @@ public class SecondService  extends Service implements HomeView {
     public void onGetArticleInfoError() {
 
     }
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public void initChannels(Context context, String msg, String title) {
-        notificationManager =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        int importance = NotificationManager.IMPORTANCE_HIGH;
-        NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance);
-        notificationChannel.setShowBadge(true);
-        notificationChannel.setName("QDMS");
-        notificationChannel.setDescription(msg);
-        notificationManager.createNotificationChannel(notificationChannel);
-        Notification notification = new Notification.Builder(this)
-                .setContentTitle(title)
-                .setContentText(msg)
-                .setSmallIcon(R.drawable.app_icon)
-                .setChannelId(CHANNEL_ID)
-                .setContentIntent(contentIntent)
-                .build();
-        notificationManager.notify(1, notification);
-        startForeground(1,notification);
-    }
-
 }
+
 

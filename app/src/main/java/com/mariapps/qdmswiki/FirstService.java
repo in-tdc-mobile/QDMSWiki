@@ -46,18 +46,9 @@ import com.mariapps.qdmswiki.usersettings.UserInfoModel;
 import com.mariapps.qdmswiki.usersettings.UserSettingsModel;
 import com.mariapps.qdmswiki.utils.DateUtils;
 import com.mariapps.qdmswiki.utils.MessageEvent;
-import com.tonyodev.fetch2.Download;
-import com.tonyodev.fetch2.Error;
-import com.tonyodev.fetch2.Fetch;
-import com.tonyodev.fetch2.FetchConfiguration;
 import com.tonyodev.fetch2.FetchListener;
-import com.tonyodev.fetch2.NetworkType;
-import com.tonyodev.fetch2.Priority;
-import com.tonyodev.fetch2.Request;
-import com.tonyodev.fetch2core.DownloadBlock;
 
 import org.greenrobot.eventbus.EventBus;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -89,6 +80,15 @@ public class FirstService extends Service implements HomeView {
     private FetchListener fetchListener;
     private String zippedFileName;
     private DocumentModel documentModel;
+
+    final String CHANNEL_ID = "10001";
+    // The user-visible name of the channel.
+    final String CHANNEL_NAME = "Default";
+    PendingIntent contentIntent;
+    public static   String url="";
+    public static String filename="";
+    NotificationManager notificationManager;
+
     List<SearchModel> childList = new ArrayList<>();
     List<DocumentModel> parentFolderList = new ArrayList<>();
     List<DocumentModel> recommendedList = new ArrayList<>();
@@ -113,8 +113,23 @@ public class FirstService extends Service implements HomeView {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
+        sessionManager = new SessionManager(this);
         homePresenter = new HomePresenter(this, this);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            initChannels(this,"Processing Files", "QDMS");
+        }
+        else{
+            notificationManager = (NotificationManager)
+                    this.getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
+            mBuilder.setSmallIcon(R.drawable.app_icon)
+                    .setContentTitle("QDMS")
+                    // .setContentIntent(contentIntent)
+                    .setContentText("Processing Files");
+            notificationManager.notify(1, mBuilder.build());
+            startForeground(1,mBuilder.build());
+        }
 
         try {
             File folder = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"); //This is just to cast to a File type since you pass it as a String
@@ -208,7 +223,11 @@ public class FirstService extends Service implements HomeView {
             progressDialog.dismiss();
         }
 
-        EventBus.getDefault().post(new MessageEvent());
+        MessageEvent messageEvent = new MessageEvent();
+        messageEvent.setType("FIRST");
+        EventBus.getDefault().post(messageEvent);
+
+        stopSelf();
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -381,5 +400,27 @@ public class FirstService extends Service implements HomeView {
     public void onGetArticleInfoError() {
 
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void initChannels(Context context, String msg, String title) {
+        notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        int importance = NotificationManager.IMPORTANCE_HIGH;
+        NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance);
+        notificationChannel.setShowBadge(true);
+        notificationChannel.setName("QDMS");
+        notificationChannel.setDescription(msg);
+        notificationManager.createNotificationChannel(notificationChannel);
+        Notification notification = new Notification.Builder(this)
+                .setContentTitle(title)
+                .setContentText(msg)
+                .setSmallIcon(R.drawable.app_icon)
+                .setChannelId(CHANNEL_ID)
+                .setContentIntent(contentIntent)
+                .build();
+        notificationManager.notify(1, notification);
+        startForeground(1,notification);
+    }
+
 }
 

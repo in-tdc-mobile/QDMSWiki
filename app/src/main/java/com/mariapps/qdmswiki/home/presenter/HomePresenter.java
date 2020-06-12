@@ -70,6 +70,12 @@ public class HomePresenter {
         this.homeView = homeView;
         serviceController = ApiServiceFactory.getInstance().getFacade();
         homeDatabase = HomeDatabase.getInstance(context);
+//        if(dbox==null){
+//            dbox = ObjectBox.get().boxFor(DocumentModelObj.class);
+//        }
+//        if(abox==null){
+//            abox = ObjectBox.get().boxFor(ArticleModelObj.class);
+//        }
         //url = "http://10.201.1.19:8899/QDMSMobileService/api/Home/DownloadFile";
         //url = "http://pal4-demo-app.westeurope.cloudapp.azure.com:8099/file/Extract1.zip";
         //url = "https://qdmswiki2019.blob.core.windows.net/sqldata/09102019124722.zip";//700mb
@@ -101,6 +107,9 @@ public class HomePresenter {
     }
 
     public void deleteDocument(final DocumentModel documentModel) {
+        if(dbox==null){
+            dbox = ObjectBox.get().boxFor(DocumentModelObj.class);
+        }
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
@@ -209,6 +218,8 @@ public class HomePresenter {
             }
 
 
+
+
             @Override
             public void onError(Throwable e) {
 
@@ -217,6 +228,9 @@ public class HomePresenter {
     }
 
     public void deleteArticles(ArticleModel articleModel) {
+        if(abox==null){
+            abox = ObjectBox.get().boxFor(ArticleModelObj.class);
+        }
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
