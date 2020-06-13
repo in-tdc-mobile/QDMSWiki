@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.mariapps.qdmswiki.home.model.DownloadFilesResponseModel;
 import com.mariapps.qdmswiki.home.view.HomeActivity;
 import com.tonyodev.fetch2.Download;
 import com.tonyodev.fetch2.Error;
@@ -32,17 +33,19 @@ import com.tonyodev.fetch2core.DownloadBlock;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DownloadService extends Service {
     int downloadID=0;
     final String CHANNEL_ID = "10001";
-    // The user-visible name of the channel.
     final String CHANNEL_NAME = "Default";
     PendingIntent contentIntent;
   public static   String url="";
     public static String filename="";
     NotificationManager notificationManager;
+    ArrayList<DownloadFilesResponseModel.DownloadEntityList> downloadEntityLists = new ArrayList();
+    int urlNum=0;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -54,6 +57,9 @@ public class DownloadService extends Service {
         Log.e("onHandleIntent","started");
         url = intent.getStringExtra("url");
         filename = intent.getStringExtra("filename");
+        downloadEntityLists=intent.getParcelableArrayListExtra("downloadEntityLists") ;
+        urlNum=intent.getIntExtra("urlNum",0);
+
        // Intent pintent = new Intent(this, HomeActivity.class);
        // contentIntent = PendingIntent.getActivity(this, 1, pintent, PendingIntent.FLAG_UPDATE_CURRENT);
         if(url!=null)
@@ -72,7 +78,7 @@ public class DownloadService extends Service {
             notificationManager.notify(1, mBuilder.build());
             startForeground(1,mBuilder.build());
         }
-        return super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
 
     /*@Override
@@ -168,6 +174,16 @@ public class DownloadService extends Service {
               //  HomeActivity.Decompress decompress = new HomeActivity.Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zipFileName, Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
                 //decompress.execute();
                 AppConfig.getDwnldcmplted().postValue("completed");
+                Intent insertServiceIntent = new Intent(DownloadService.this, InsertionService.class);
+                insertServiceIntent.putExtra("destDirectory",Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
+                insertServiceIntent.putExtra("zipFilePath",Environment.getExternalStorageDirectory() + "/QDMSWiki/" + filename);
+                insertServiceIntent.putParcelableArrayListExtra("downloadEntityLists",downloadEntityLists);
+                insertServiceIntent.putExtra("urlNum",url);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(insertServiceIntent);
+                } else {
+                    startService(insertServiceIntent);
+                }
                 stopSelf();
             }
 

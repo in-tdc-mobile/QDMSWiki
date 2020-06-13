@@ -2,13 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mariapps.qdmswiki">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
     <application
         android:allowBackup="false"
         android:hardwareAccelerated="false"
@@ -19,7 +12,8 @@
         android:roundIcon="@drawable/app_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".bookmarks.view.BookMarkActivityAll"></activity>
+        <activity android:name=".bookmarks.view.BookMarkActivityAll" />
+
         <activity
             android:name=".splash.view.SplashScreenActivity"
             android:alwaysRetainTaskState="true"
@@ -70,16 +64,15 @@
         <activity
             android:name=".bookmarks.view.BookmarkActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:windowSoftInputMode="stateHidden|adjustResize" /> <!-- <activity -->
-        <!-- android:name=".documents.view.DocumentViewActivity" -->
-        <!-- android:windowSoftInputMode="stateHidden|adjustResize" -->
-        <!-- android:configChanges="orientation|screenSize|keyboardHidden" /> -->
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".search.view.FolderStructureActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/FolderStructureTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
-
+            android:windowSoftInputMode="stateHidden|adjustResize" /> <!-- <activity -->
+        <!-- android:name=".documents.view.DocumentViewActivity" -->
+        <!-- android:windowSoftInputMode="stateHidden|adjustResize" -->
+        <!-- android:configChanges="orientation|screenSize|keyboardHidden" /> -->
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -89,6 +82,11 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths" />
         </provider>
+
+        <service
+            android:name=".InsertionService"
+            android:enabled="true"
+            android:exported="true"></service>
 
         <service android:name=".serviceclasses.FcmMessageService">
             <intent-filter>
@@ -108,5 +106,12 @@
             android:enabled="true"
             android:stopWithTask="true" />
     </application>
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
 </manifest>

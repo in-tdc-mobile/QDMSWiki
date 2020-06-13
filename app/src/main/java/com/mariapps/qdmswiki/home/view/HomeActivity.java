@@ -272,9 +272,9 @@ public class HomeActivity extends BaseActivity implements HomeView {
         }
         AppConfig.getDwnldcmplted().observe(this, s -> {
             progressLayout.setVisibility(View.GONE);
-            Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zippedFileName, Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
+            //Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zippedFileName, Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
             //Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + "202006122.zip", Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
-            decompress.execute();
+            //decompress.execute();
         });
         AppConfig.getDwnldstarted().observe(this, new Observer<String>() {
             @Override
@@ -298,9 +298,47 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 txtDownload.setText("Downloading "+ urlNum + " of "+downloadEntityLists.size());
             }
         });
-        Log.e("total00", "" + Runtime.getRuntime().totalMemory());
-        Log.e("heap00", "" + Runtime.getRuntime().maxMemory());
-        Log.e("allocated00", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
+       AppConfig.getInsertstarted().observe(this, new Observer<String>() {
+           @Override
+           public void onChanged(@Nullable String s) {
+            progressDialog.setTitle("Files Processing");
+            progressDialog.setMessage("");
+            progressDialog.show();
+
+           }
+       });
+
+        AppConfig.getInsertcompletedall().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                    progressDialog.dismiss();
+                    setRecommendedList();
+                    appendLog("Finished downloading all base/updated versions");
+                    mainVP.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mainVP.getCurrentItem() == 0 ) {
+                                initShowCase();
+                            }
+                        }
+                    });
+                progressDialog.dismiss();
+
+                }
+
+
+
+        });
+
+        AppConfig.getInsertprogress().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                progressDialog.setTitle("Files Processing");
+                progressDialog.setMessage(s);
+                progressDialog.show();
+
+            }
+        });
        // Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + "20200527080434.zip", Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
         //decompress.execute();
     // ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
@@ -572,6 +610,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
         Intent intent = new Intent(context, DownloadService.class);
         intent.putExtra("url", url);
         intent.putExtra("filename", zipFileName);
+        intent.putExtra("urlNum", urlNum);
+        intent.putParcelableArrayListExtra("downloadEntityLists", (ArrayList)downloadEntityLists);
         if(applog.getString("status","").equals("end")){
         if (!url.equals("") && !zipFileName.equals("")) {
             if (!isMyServiceRunning(DownloadService.class)) {
