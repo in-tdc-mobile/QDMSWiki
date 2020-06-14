@@ -85,6 +85,7 @@
 
         <service
             android:name=".InsertionService"
+            android:stopWithTask="true"
             android:enabled="true"
             android:exported="true"></service>
 
@@ -93,7 +94,7 @@
                 <action
                     android:name="com.google.firebase.MESSAGING_EVENT"
                     android:enabled="true"
-                    android:exported="true" />
+                    />
             </intent-filter>
         </service>
         <service android:name=".serviceclasses.MyFirebaseInstanceIDService">

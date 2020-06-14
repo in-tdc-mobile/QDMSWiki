@@ -109,6 +109,9 @@ public class InsertionService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if(ObjectBox.get()==null){
+            ObjectBox.init(getApplicationContext());
+        }
         dbox = ObjectBox.get().boxFor(DocumentModelObj.class);
         abox = ObjectBox.get().boxFor(ArticleModelObj.class);
         sessionManager = new SessionManager(this.getApplicationContext());
@@ -131,9 +134,8 @@ public class InsertionService extends Service {
         zipFilePath = Environment.getExternalStorageDirectory() + "/QDMSWiki/" + intent.getStringExtra("zipFilePath");
         zipFilename = intent.getStringExtra("zipFilePath");
         downloadEntityLists = intent.getParcelableArrayListExtra("downloadEntityLists");
-        urlNum = Integer.valueOf(intent.getStringExtra("urlNum"));
-       setStartinsertionasync();
-        urlNum = intent.getIntExtra("urlNum", 0);
+        urlNum = Integer.parseInt(intent.getStringExtra("urlNum"));
+        setStartinsertionasync();
         Log.e("urlNum",urlNum+"");
         Log.e("zipFilename",zipFilename+"");
         Log.e("zipFilePath",zipFilePath);
@@ -222,14 +224,14 @@ public class InsertionService extends Service {
                     AppConfig.getInsertcompletedall().postValue("completed");
                 } else if (urlNum < downloadEntityLists.size()) {
                     Log.e("insertionservice", "urlNum < downloadEntityLists.size()");
-                    urlNum = urlNum + 1;
+                    urlNum++;
                     Intent intentStartDownload = new Intent(getApplicationContext(), DownloadService.class);
                     intentStartDownload.putExtra("url", downloadEntityLists.get(urlNum).getDownloadLink());
                     intentStartDownload.putExtra("filename", downloadEntityLists.get(urlNum).getFileName());
-                    intentStartDownload.putExtra("urlNum", urlNum);
+                    intentStartDownload.putExtra("urlNum", urlNum+"");
                     intentStartDownload.putParcelableArrayListExtra("downloadEntityLists", (ArrayList) downloadEntityLists);
                     if (!isMyServiceRunning(DownloadService.class)) {
-                        Log.e("dservice caled","from i service");
+                        Log.e("dservice caled","from i service  urlnois"+urlNum);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             try {
                                 sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum - 1).getFileName());
@@ -280,6 +282,7 @@ public class InsertionService extends Service {
             try {
                 byte[] buffer = new byte[1024];
                 File destDir = new File(destDirectory+urlNum);
+                Log.e("exractdfolder",destDir.getAbsolutePath());
                 if (!destDir.exists()) {
                     destDir.mkdir();
                 }
@@ -320,6 +323,7 @@ public class InsertionService extends Service {
 
             try {
                 File folder = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+urlNum); //This is just to cast to a File type since you pass it as a String
+                Log.e("insertionfolder",folder.getAbsolutePath());
                 File[] filesInFolder = folder.listFiles(); // This returns all the folders and files in your path
                 for (int i = 0; i < filesInFolder.length; i++) { //For each of the entries do:
                     if (filesInFolder[i].isDirectory()) {

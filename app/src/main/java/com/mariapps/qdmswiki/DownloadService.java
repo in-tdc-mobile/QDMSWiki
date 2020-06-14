@@ -60,7 +60,8 @@ public class DownloadService extends Service {
         url = intent.getStringExtra("url");
         filename = intent.getStringExtra("filename");
         downloadEntityLists=intent.getParcelableArrayListExtra("downloadEntityLists") ;
-        urlNum=Integer.valueOf(intent.getStringExtra("urlNum"));
+        Log.e("parseInt",intent.getStringExtra("urlNum"));
+        urlNum=Integer.parseInt(intent.getStringExtra("urlNum"));
 
        // Intent pintent = new Intent(this, HomeActivity.class);
        // contentIntent = PendingIntent.getActivity(this, 1, pintent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -159,9 +160,9 @@ public class DownloadService extends Service {
                 insertServiceIntent.putExtra("destDirectory",Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
                 insertServiceIntent.putExtra("zipFilePath", filename);
                 insertServiceIntent.putParcelableArrayListExtra("downloadEntityLists",downloadEntityLists);
-                insertServiceIntent.putExtra("urlNum",urlNum);
+                insertServiceIntent.putExtra("urlNum",urlNum+"");
                 if (!isMyServiceRunning(InsertionService.class)) {
-                    Log.e("fromdserivce","iservice called");
+                    Log.e("fromdserivce","iservice called  urlnumis"+urlNum);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         startForegroundService(insertServiceIntent);
                     } else {

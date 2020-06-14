@@ -62,6 +62,7 @@ import com.mariapps.qdmswiki.DocumentModelObj;
 import com.mariapps.qdmswiki.DocumentModelObj_;
 import com.mariapps.qdmswiki.DownloadService;
 
+import com.mariapps.qdmswiki.InsertionService;
 import com.mariapps.qdmswiki.ObjectBox;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.SessionManager;
@@ -619,7 +620,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         Intent intent = new Intent(context, DownloadService.class);
         intent.putExtra("url", url);
         intent.putExtra("filename", zipFileName);
-        intent.putExtra("urlNum", urlNum);
+        intent.putExtra("urlNum", urlNum+"");
         intent.putParcelableArrayListExtra("downloadEntityLists", (ArrayList)downloadEntityLists);
         if(applog.getString("status","").equals("end")){
         if (!url.equals("") && !zipFileName.equals("")) {
@@ -906,12 +907,12 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 urlNum = urlNum + 1;
                 //added lines new
             }
-          /*  AppConfig.getDwnldcmplted().postValue("completed");
+           /* AppConfig.getDwnldcmplted().postValue("completed");
             Intent insertServiceIntent = new Intent(this, InsertionService.class);
             insertServiceIntent.putExtra("destDirectory",Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
             insertServiceIntent.putExtra("zipFilePath", downloadEntityLists.get(urlNum).getFileName());
             insertServiceIntent.putParcelableArrayListExtra("downloadEntityLists",(ArrayList)downloadEntityLists);
-            insertServiceIntent.putExtra("urlNum",urlNum);
+            insertServiceIntent.putExtra("urlNum",urlNum+"");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(insertServiceIntent);
             } else {
