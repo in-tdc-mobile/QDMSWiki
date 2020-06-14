@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -63,7 +64,7 @@ public class DownloadService extends Service {
        // Intent pintent = new Intent(this, HomeActivity.class);
        // contentIntent = PendingIntent.getActivity(this, 1, pintent, PendingIntent.FLAG_UPDATE_CURRENT);
         if(url!=null)
-        beginDownload(url,filename);
+        //beginDownload(url,filename);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             initChannels(this,"Downloading Files", "QDMS");
         }
@@ -78,32 +79,11 @@ public class DownloadService extends Service {
             notificationManager.notify(1, mBuilder.build());
             startForeground(1,mBuilder.build());
         }
+        beginDownload(url,filename);
         return START_STICKY;
     }
 
-    /*@Override
-        protected void onHandleIntent(@Nullable Intent intent) {
-                Log.e("onHandleIntent","started");
-                url = intent.getStringExtra("url");
-                filename = intent.getStringExtra("filename");
-                Intent pintent = new Intent(this, HomeActivity.class);
-                contentIntent = PendingIntent.getActivity(this, 1, pintent, PendingIntent.FLAG_UPDATE_CURRENT);
-                beginDownload(url,filename);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    initChannels(this,"Downloading Files", "QDMS");
-                }
-                else{
-                    notificationManager = (NotificationManager)
-                            this.getSystemService(Context.NOTIFICATION_SERVICE);
-                    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
-                    mBuilder.setSmallIcon(R.drawable.app_icon)
-                            .setContentTitle("QDMS")
-                            .setContentIntent(contentIntent)
-                            .setContentText("Downloading Files");
-                    notificationManager.notify((int) System.currentTimeMillis(), mBuilder.build());
-                    startForeground(1,mBuilder.build());
-                }
-        }*/
+
     public void beginDownload(String url, String zipFileName) {
         AppConfig.getDwnldstarted().postValue("started");
         FetchConfiguration fetchConfiguration = new FetchConfiguration.Builder(this)

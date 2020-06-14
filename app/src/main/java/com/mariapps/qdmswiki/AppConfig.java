@@ -34,10 +34,19 @@ public class AppConfig {
     public static  MutableLiveData<Integer> dwnldprgress=null;
     public static  MutableLiveData<String> dwnldcmplted=null;
     public static  MutableLiveData<String> dwnlderror=null;
+
     public static  MutableLiveData<String> insertstarted=null;
     public static  MutableLiveData<String> insertcompletedall=null;
     public static  MutableLiveData<String> insertprogress=null;
+    public static  MutableLiveData<String> insertcompletedonce=null;
 
+
+    public static MutableLiveData<String> getInsertcompletedonce() {
+        if(insertcompletedonce==null){
+            insertcompletedonce=new MutableLiveData<>();
+        }
+        return insertcompletedonce;
+    }
 
     public static MutableLiveData<String> getInsertstarted() {
         if(insertstarted==null){

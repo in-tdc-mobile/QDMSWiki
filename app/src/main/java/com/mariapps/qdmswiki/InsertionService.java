@@ -5,11 +5,16 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Intent;
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.util.Base64;
@@ -59,7 +64,7 @@ import java.util.zip.ZipInputStream;
 import io.objectbox.Box;
 
 
-public class InsertionService extends IntentService {
+public class InsertionService extends Service {
     List<SearchModel> childList = new ArrayList<>();
     List<DocumentModel> parentFolderList = new ArrayList<>();
     List<DocumentModel> recommendedList = new ArrayList<>();
@@ -81,32 +86,35 @@ public class InsertionService extends IntentService {
     SessionManager sessionManager;
     HomeDatabase homeDatabase;
     NotificationManager notificationManager;
-    int urlNum=0;
+    int urlNum = 0;
     PendingIntent contentIntent;
     final String CHANNEL_ID = "10001";
     final String CHANNEL_NAME = "Default";
+    String destDirectory = "";
+    String zipFilePath = "";
+    String zipFilename = "";
+    String flag = "no";
+    AsyncTask<String,Void,String> startinsertionasync=null;
 
 
 
-    public InsertionService() {
-        super("InsertionService");
+
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
-
     @Override
-    protected void onHandleIntent(Intent intent) {
+    public int onStartCommand(Intent intent, int flags, int startId) {
         dbox = ObjectBox.get().boxFor(DocumentModelObj.class);
         abox = ObjectBox.get().boxFor(ArticleModelObj.class);
         sessionManager = new SessionManager(this.getApplicationContext());
         homeDatabase = HomeDatabase.getInstance(this);
-
-
-
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            initChannels(this,"Processing Files", "QDMS");
-        }
-        else{
+            initChannels(this, "Processing Files", "QDMS");
+        } else {
             notificationManager = (NotificationManager)
                     this.getSystemService(Context.NOTIFICATION_SERVICE);
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
@@ -115,14 +123,136 @@ public class InsertionService extends IntentService {
                     // .setContentIntent(contentIntent)
                     .setContentText("Processing Files");
             notificationManager.notify(2, mBuilder.build());
-            startForeground(2,mBuilder.build());
+            startForeground(2, mBuilder.build());
         }
 
-        String destDirectory = intent.getStringExtra("destDirectory");
-        String zipFilePath = Environment.getExternalStorageDirectory() + "/QDMSWiki/" +intent.getStringExtra("zipFilePath");
-        String zipFilename=intent.getStringExtra("zipFilePath");
+        destDirectory = intent.getStringExtra("destDirectory");
+        zipFilePath = Environment.getExternalStorageDirectory() + "/QDMSWiki/" + intent.getStringExtra("zipFilePath");
+        zipFilename = intent.getStringExtra("zipFilePath");
         downloadEntityLists = intent.getParcelableArrayListExtra("downloadEntityLists");
-        urlNum=intent.getIntExtra("urlNum",0);
+        urlNum = intent.getIntExtra("urlNum", 0);
+       setStartinsertionasync();
+        return START_STICKY;
+    }
+
+    public void setStartinsertionasync(){
+        startinsertionasync=new AsyncTask<String, Void, String>() {
+            @Override
+            protected String doInBackground(String... strings) {
+                Log.e("asyncstask","doInBackground");
+                startInsertion();
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                Log.e("asyncstask","onPostExecute");
+                startdownload()
+;            }
+        };
+        startinsertionasync.execute();
+    }
+
+    @Override
+    public void onDestroy() {
+        if(startinsertionasync!=null){
+            Log.e("asyncstask","iscanclled");
+            startinsertionasync.cancel(true);
+        }
+        super.onDestroy();
+
+    }
+
+    private void startdownload() {
+            try {
+                for (int i1 = 0; i1 < userSettingsList.size(); i1++) {
+                    try {
+                        appendLog("Session User Info Id " + sessionManager.getUserInfoId() + ": User settings user id " + userSettingsList.get(i1).getUserID());
+                        if (userSettingsList.get(i1).getUserID().equals(sessionManager.getUserInfoId())) {
+                            appendLog("Extracting user settings");
+                            homeDatabase.homeDao().deleteUserSettingsEntity();
+                            homeDatabase.homeDao().insertUserSettings(userSettingsList.get(i1));
+                            break;
+                        }
+                    } catch (Exception e) {
+                        continue;
+                    }
+                }
+                for (int i1 = 0; i1 < notificationList.size(); i1++) {
+                    List<ReceiverModel> receiverList = notificationList.get(i1).getReceviers();
+                    for (int j = 0; j < receiverList.size(); j++) {
+                        try {
+                            appendLog("Session User Info Id " + sessionManager.getUserInfoId() + " : Receiver id " + receiverList.get(j).getRecevierId());
+                            if (receiverList.get(j).getRecevierId().equals(sessionManager.getUserInfoId())) {
+                                appendLog("Extracting notifications");
+                                notificationList.get(i1).setIsUnread(receiverList.get(j).getUnread());
+                                homeDatabase.homeDao().deleteNotification(notificationList.get(i1).getId());
+                                homeDatabase.homeDao().insertNotification(notificationList.get(i1));
+                                break;
+                            }
+                        } catch (Exception e) {
+
+                        }
+
+                    }
+                }
+                Log.e("insertionservice", "filedelete");
+                File file = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zipFilename);
+                if (file.exists()) {
+                    file.delete();
+                }
+                File extractedFiles = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
+                if (extractedFiles.exists()) {
+                    extractedFiles.delete();
+                }
+                if (urlNum == downloadEntityLists.size()) {
+                    Log.e("insertionservice", "getInsertcompletedall");
+                    try {
+                        sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum - 1).getFileName());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    AppConfig.getInsertcompletedall().postValue("completed");
+                } else if (urlNum < downloadEntityLists.size()) {
+                    Log.e("insertionservice", "urlNum < downloadEntityLists.size()");
+                    urlNum = urlNum + 1;
+                    Intent intentStartDownload = new Intent(getApplicationContext(), DownloadService.class);
+                    intentStartDownload.putExtra("url", downloadEntityLists.get(urlNum).getDownloadLink());
+                    intentStartDownload.putExtra("filename", downloadEntityLists.get(urlNum).getFileName());
+                    intentStartDownload.putExtra("urlNum", urlNum);
+                    intentStartDownload.putParcelableArrayListExtra("downloadEntityLists", (ArrayList) downloadEntityLists);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        try {
+                            sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum - 1).getFileName());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        Log.e("insertionservice", "startForegroundService(intentStartDownload)");
+                        startForegroundService(intentStartDownload);
+                        stopSelf();
+                        AppConfig.getInsertcompletedonce().postValue("Starting to download next file");
+                    } else {
+                        try {
+                            Log.e("insertionservice", "startForegroundService(intentStartDownload)");
+                            sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum - 1).getFileName());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        AppConfig.getInsertcompletedonce().postValue("Starting to download next file");
+                        startService(intentStartDownload);
+                        stopSelf();
+                    }
+                }
+            } catch (Exception e) {
+                Log.e("insertionservice", e.getLocalizedMessage());
+            }
+
+    }
+
+
+    public void startInsertion() {
+
         if (!destDirectory.equals("") && !zipFilePath.equals("")) {
             AppConfig.getInsertstarted().postValue("started");
             AppConfig.getInsertprogress().postValue("File unzipping");
@@ -185,8 +315,9 @@ public class InsertionService extends IntentService {
                             try {
                                 fileList.clear();
                                 try {
+                                    Log.e("allocatedbefore", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
                                     fileList.addAll(readJsonStream(new FileInputStream(filesInFolder[i])));
-                                    Log.e("allocatedafter2", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
+                                    Log.e("allocatedafter", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
                                 } catch (Exception e) {
                                     Log.e("catchedreader", "" + filesInFolder[i].getName() + "   " + e.getLocalizedMessage());
                                     try {
@@ -248,7 +379,7 @@ public class InsertionService extends IntentService {
                                     }
                                     dbox.put(objList);
                                     homeDatabase.homeDao().insertDocumentbylist(documentList);
-                                    Log.e("docinsertion","list size is "+documentList.size()+"docname is "+documentList.get(0).documentName);
+                                    Log.e("docinsertion", "list size is " + documentList.size() + "docname is " + documentList.get(0).documentName);
                                     AppConfig.getInsertprogress().postValue("Inserting documents to database");
                                 }
 
@@ -444,91 +575,17 @@ public class InsertionService extends IntentService {
                     }
 
 
+
                 }
 
 
             } catch (Exception e) {
+                Log.e("insertionservice", e.getLocalizedMessage());
                 appendLog("Exception : " + e.getMessage());
                 //progressDialog.dismiss();
 
             }
-                for (int i1 = 0; i1 < userSettingsList.size(); i1++) {
-                    try {
-                        appendLog("Session User Info Id " + sessionManager.getUserInfoId() + ": User settings user id " + userSettingsList.get(i1).getUserID());
-                        if (userSettingsList.get(i1).getUserID().equals(sessionManager.getUserInfoId())) {
-                            appendLog("Extracting user settings");
-                            homeDatabase.homeDao().deleteUserSettingsEntity();
-                            homeDatabase.homeDao().insertUserSettings(userSettingsList.get(i1));
-                            break;
-                        }
-                    } catch (Exception e) {
-                        continue;
-                    }
-                }
-                for (int i1 = 0; i1 < notificationList.size(); i1++) {
-                    List<ReceiverModel> receiverList = notificationList.get(i1).getReceviers();
-                    for (int j = 0; j < receiverList.size(); j++) {
-                        try {
-                            appendLog("Session User Info Id " + sessionManager.getUserInfoId() + " : Receiver id " + receiverList.get(j).getRecevierId());
-                            if (receiverList.get(j).getRecevierId().equals(sessionManager.getUserInfoId())) {
-                                appendLog("Extracting notifications");
-                                notificationList.get(i1).setIsUnread(receiverList.get(j).getUnread());
-                                homeDatabase.homeDao().deleteNotification(notificationList.get(i1).getId());
-                                homeDatabase.homeDao().insertNotification(notificationList.get(i1));
-                                break;
-                            }
-                        } catch (Exception e) {
 
-                        }
-
-                }
-                File file = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zipFilename);
-                if (file.exists()) {
-                    file.delete();
-                }
-                File extractedFiles = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
-                if (extractedFiles.exists()) {
-                    extractedFiles.delete();
-                }
-
-
-                if (urlNum == downloadEntityLists.size()) {
-                    try {
-                        sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum - 1).getFileName());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    AppConfig.getInsertcompletedall().postValue("completed");
-                    stopSelf();
-                }
-                else if (urlNum < downloadEntityLists.size()) {
-                    urlNum = urlNum + 1;
-                    Intent intentStartDownload = new Intent(this, DownloadService.class);
-                    intentStartDownload.putExtra("url", downloadEntityLists.get(urlNum).getDownloadLink());
-                    intentStartDownload.putExtra("filename", downloadEntityLists.get(urlNum).getFileName());
-                    intentStartDownload.putExtra("urlNum", urlNum);
-                    intentStartDownload.putParcelableArrayListExtra("downloadEntityLists", (ArrayList)downloadEntityLists);
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                    try {
-                                        sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum - 1).getFileName());
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                    this.startForegroundService(intent);
-                                    AppConfig.getInsertprogress().postValue("Starting to download next file");
-                                    stopSelf();
-                                } else {
-                                    try {
-                                        sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum - 1).getFileName());
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                    AppConfig.getInsertprogress().postValue("Starting to download next file");
-                                    this.startService(new Intent(this, DownloadService.class));
-                                    stopSelf();
-                                }
-                }
-            }
 
         }
 
@@ -675,7 +732,7 @@ public class InsertionService extends IntentService {
                 .setContentIntent(contentIntent)
                 .build();
         notificationManager.notify(2, notification);
-        startForeground(2,notification);
+        startForeground(2, notification);
     }
 
 }

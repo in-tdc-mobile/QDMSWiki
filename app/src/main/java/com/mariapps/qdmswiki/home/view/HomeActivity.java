@@ -298,6 +298,13 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 txtDownload.setText("Downloading "+ urlNum + " of "+downloadEntityLists.size());
             }
         });
+        AppConfig.getInsertcompletedonce().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                Log.e("getInsertcompletedonce",s);
+                progressDialog.dismiss();
+            }
+        });
        AppConfig.getInsertstarted().observe(this, new Observer<String>() {
            @Override
            public void onChanged(@Nullable String s) {
