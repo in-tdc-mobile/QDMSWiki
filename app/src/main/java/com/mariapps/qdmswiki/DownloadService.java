@@ -160,7 +160,8 @@ public class DownloadService extends Service {
                 insertServiceIntent.putExtra("zipFilePath", filename);
                 insertServiceIntent.putParcelableArrayListExtra("downloadEntityLists",downloadEntityLists);
                 insertServiceIntent.putExtra("urlNum",urlNum);
-                if (isMyServiceRunning(InsertionService.class)) {
+                if (!isMyServiceRunning(InsertionService.class)) {
+                    Log.e("fromdserivce","iservice called");
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         startForegroundService(insertServiceIntent);
                     } else {

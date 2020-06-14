@@ -61,6 +61,7 @@ import com.mariapps.qdmswiki.ArticleModelObj_;
 import com.mariapps.qdmswiki.DocumentModelObj;
 import com.mariapps.qdmswiki.DocumentModelObj_;
 import com.mariapps.qdmswiki.DownloadService;
+
 import com.mariapps.qdmswiki.ObjectBox;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.SessionManager;
@@ -272,6 +273,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         }
         AppConfig.getDwnldcmplted().observe(this, s -> {
             progressLayout.setVisibility(View.GONE);
+            urlNum++;
             //Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zippedFileName, Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
             //Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + "202006122.zip", Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
             //decompress.execute();
@@ -295,7 +297,6 @@ public class HomeActivity extends BaseActivity implements HomeView {
             public void onChanged(@Nullable Integer s) {
                 Log.e("serviceprogress", s + "");
                 donut_progress.setProgress(Math.round(s));
-                urlNum++;
                 txtDownload.setText("Downloading "+ urlNum + " of "+downloadEntityLists.size());
             }
         });
@@ -905,6 +906,17 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 urlNum = urlNum + 1;
                 //added lines new
             }
+          /*  AppConfig.getDwnldcmplted().postValue("completed");
+            Intent insertServiceIntent = new Intent(this, InsertionService.class);
+            insertServiceIntent.putExtra("destDirectory",Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
+            insertServiceIntent.putExtra("zipFilePath", downloadEntityLists.get(urlNum).getFileName());
+            insertServiceIntent.putParcelableArrayListExtra("downloadEntityLists",(ArrayList)downloadEntityLists);
+            insertServiceIntent.putExtra("urlNum",urlNum);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(insertServiceIntent);
+            } else {
+                startService(insertServiceIntent);
+            }*/
         }
     }
 
