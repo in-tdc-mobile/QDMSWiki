@@ -60,7 +60,7 @@ public class DownloadService extends Service {
         url = intent.getStringExtra("url");
         filename = intent.getStringExtra("filename");
         downloadEntityLists=intent.getParcelableArrayListExtra("downloadEntityLists") ;
-        urlNum=intent.getIntExtra("urlNum",0);
+        urlNum=Integer.valueOf(intent.getStringExtra("urlNum"));
 
        // Intent pintent = new Intent(this, HomeActivity.class);
        // contentIntent = PendingIntent.getActivity(this, 1, pintent, PendingIntent.FLAG_UPDATE_CURRENT);
