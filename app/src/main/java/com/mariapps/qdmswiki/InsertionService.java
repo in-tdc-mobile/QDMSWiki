@@ -131,7 +131,7 @@ public class InsertionService extends Service {
         zipFilePath = Environment.getExternalStorageDirectory() + "/QDMSWiki/" + intent.getStringExtra("zipFilePath");
         zipFilename = intent.getStringExtra("zipFilePath");
         downloadEntityLists = intent.getParcelableArrayListExtra("downloadEntityLists");
-        urlNum = intent.getIntExtra("urlNum", 0);
+        urlNum = Integer.valueOf(intent.getStringExtra("urlNum"));
        setStartinsertionasync();
         return START_STICKY;
     }
