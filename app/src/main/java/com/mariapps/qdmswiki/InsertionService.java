@@ -87,6 +87,7 @@ public class InsertionService extends IntentService {
     final String CHANNEL_NAME = "Default";
 
 
+
     public InsertionService() {
         super("InsertionService");
     }
@@ -100,8 +101,10 @@ public class InsertionService extends IntentService {
         homeDatabase = HomeDatabase.getInstance(this);
 
 
+
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            initChannels(this,"Downloading Files", "QDMS");
+            initChannels(this,"Processing Files", "QDMS");
         }
         else{
             notificationManager = (NotificationManager)
@@ -116,7 +119,8 @@ public class InsertionService extends IntentService {
         }
 
         String destDirectory = intent.getStringExtra("destDirectory");
-        String zipFilePath = intent.getStringExtra("zipFilePath");
+        String zipFilePath = Environment.getExternalStorageDirectory() + "/QDMSWiki/" +intent.getStringExtra("zipFilePath");
+        String zipFilename=intent.getStringExtra("zipFilePath");
         downloadEntityLists = intent.getParcelableArrayListExtra("downloadEntityLists");
         urlNum=intent.getIntExtra("urlNum",0);
         if (!destDirectory.equals("") && !zipFilePath.equals("")) {
@@ -448,7 +452,6 @@ public class InsertionService extends IntentService {
                 //progressDialog.dismiss();
 
             }
-            finally {
                 for (int i1 = 0; i1 < userSettingsList.size(); i1++) {
                     try {
                         appendLog("Session User Info Id " + sessionManager.getUserInfoId() + ": User settings user id " + userSettingsList.get(i1).getUserID());
@@ -477,9 +480,9 @@ public class InsertionService extends IntentService {
                         } catch (Exception e) {
 
                         }
-                    }
+
                 }
-                File file = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + Uri.parse(zipFilePath).getLastPathSegment());
+                File file = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zipFilename);
                 if (file.exists()) {
                     file.delete();
                 }
@@ -488,13 +491,15 @@ public class InsertionService extends IntentService {
                     extractedFiles.delete();
                 }
 
-                try {
-                    sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum - 1).getFileName());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+
                 if (urlNum == downloadEntityLists.size()) {
+                    try {
+                        sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum - 1).getFileName());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     AppConfig.getInsertcompletedall().postValue("completed");
+                    stopSelf();
                 }
                 else if (urlNum < downloadEntityLists.size()) {
                     urlNum = urlNum + 1;
@@ -504,11 +509,23 @@ public class InsertionService extends IntentService {
                     intentStartDownload.putExtra("urlNum", urlNum);
                     intentStartDownload.putParcelableArrayListExtra("downloadEntityLists", (ArrayList)downloadEntityLists);
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    try {
+                                        sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum - 1).getFileName());
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
                                     this.startForegroundService(intent);
                                     AppConfig.getInsertprogress().postValue("Starting to download next file");
+                                    stopSelf();
                                 } else {
+                                    try {
+                                        sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum - 1).getFileName());
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
                                     AppConfig.getInsertprogress().postValue("Starting to download next file");
                                     this.startService(new Intent(this, DownloadService.class));
+                                    stopSelf();
                                 }
                 }
             }

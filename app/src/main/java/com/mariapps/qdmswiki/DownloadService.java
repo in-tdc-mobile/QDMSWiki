@@ -176,9 +176,9 @@ public class DownloadService extends Service {
                 AppConfig.getDwnldcmplted().postValue("completed");
                 Intent insertServiceIntent = new Intent(DownloadService.this, InsertionService.class);
                 insertServiceIntent.putExtra("destDirectory",Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
-                insertServiceIntent.putExtra("zipFilePath",Environment.getExternalStorageDirectory() + "/QDMSWiki/" + filename);
+                insertServiceIntent.putExtra("zipFilePath", filename);
                 insertServiceIntent.putParcelableArrayListExtra("downloadEntityLists",downloadEntityLists);
-                insertServiceIntent.putExtra("urlNum",url);
+                insertServiceIntent.putExtra("urlNum",urlNum);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     startForegroundService(insertServiceIntent);
                 } else {
