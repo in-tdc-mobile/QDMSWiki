@@ -1,5 +1,6 @@
 package com.mariapps.qdmswiki;
 
+import android.app.ActivityManager;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -159,12 +160,15 @@ public class DownloadService extends Service {
                 insertServiceIntent.putExtra("zipFilePath", filename);
                 insertServiceIntent.putParcelableArrayListExtra("downloadEntityLists",downloadEntityLists);
                 insertServiceIntent.putExtra("urlNum",urlNum);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    startForegroundService(insertServiceIntent);
-                } else {
-                    startService(insertServiceIntent);
+                if (isMyServiceRunning(InsertionService.class)) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        startForegroundService(insertServiceIntent);
+                    } else {
+                        startService(insertServiceIntent);
+                    }
+                    stopSelf();
                 }
-                stopSelf();
+
             }
 
             @Override
@@ -193,6 +197,16 @@ public class DownloadService extends Service {
             }
         };
         fetch.addListener(fetchListener);
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void initChannels(Context context, String msg, String title) {

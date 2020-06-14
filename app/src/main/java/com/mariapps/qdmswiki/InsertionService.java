@@ -1,5 +1,6 @@
 package com.mariapps.qdmswiki;
 
+import android.app.ActivityManager;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -222,32 +223,45 @@ public class InsertionService extends Service {
                     intentStartDownload.putExtra("filename", downloadEntityLists.get(urlNum).getFileName());
                     intentStartDownload.putExtra("urlNum", urlNum);
                     intentStartDownload.putParcelableArrayListExtra("downloadEntityLists", (ArrayList) downloadEntityLists);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        try {
-                            sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum - 1).getFileName());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        Log.e("insertionservice", "startForegroundService(intentStartDownload)");
-                        startForegroundService(intentStartDownload);
-                        stopSelf();
-                        AppConfig.getInsertcompletedonce().postValue("Starting to download next file");
-                    } else {
-                        try {
+                    if (isMyServiceRunning(DownloadService.class)) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            try {
+                                sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum - 1).getFileName());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                             Log.e("insertionservice", "startForegroundService(intentStartDownload)");
-                            sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum - 1).getFileName());
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                            startForegroundService(intentStartDownload);
+                            stopSelf();
+                            AppConfig.getInsertcompletedonce().postValue("Starting to download next file");
+                        } else {
+                            try {
+                                Log.e("insertionservice", "startForegroundService(intentStartDownload)");
+                                sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum - 1).getFileName());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            AppConfig.getInsertcompletedonce().postValue("Starting to download next file");
+                            startService(intentStartDownload);
+                            stopSelf();
                         }
-                        AppConfig.getInsertcompletedonce().postValue("Starting to download next file");
-                        startService(intentStartDownload);
-                        stopSelf();
                     }
+
                 }
             } catch (Exception e) {
                 Log.e("insertionservice", e.getLocalizedMessage());
             }
 
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -259,7 +273,7 @@ public class InsertionService extends Service {
             ZipFile zip = null;
             try {
                 byte[] buffer = new byte[1024];
-                File destDir = new File(destDirectory);
+                File destDir = new File(destDirectory+urlNum);
                 if (!destDir.exists()) {
                     destDir.mkdir();
                 }
@@ -299,7 +313,7 @@ public class InsertionService extends Service {
 
 
             try {
-                File folder = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"); //This is just to cast to a File type since you pass it as a String
+                File folder = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+urlNum); //This is just to cast to a File type since you pass it as a String
                 File[] filesInFolder = folder.listFiles(); // This returns all the folders and files in your path
                 for (int i = 0; i < filesInFolder.length; i++) { //For each of the entries do:
                     if (filesInFolder[i].isDirectory()) {

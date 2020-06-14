@@ -295,6 +295,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
             public void onChanged(@Nullable Integer s) {
                 Log.e("serviceprogress", s + "");
                 donut_progress.setProgress(Math.round(s));
+                urlNum++;
                 txtDownload.setText("Downloading "+ urlNum + " of "+downloadEntityLists.size());
             }
         });
