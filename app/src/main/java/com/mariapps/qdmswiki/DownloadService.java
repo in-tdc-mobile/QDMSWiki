@@ -45,6 +45,7 @@ public class DownloadService extends Service {
     PendingIntent contentIntent;
   public static   String url="";
     public static String filename="";
+    private static String type="";
     NotificationManager notificationManager;
     ArrayList<DownloadFilesResponseModel.DownloadEntityList> downloadEntityLists = new ArrayList();
     int urlNum=0;
@@ -59,6 +60,7 @@ public class DownloadService extends Service {
         Log.e("dservice","onStartCommand");
         url = intent.getStringExtra("url");
         filename = intent.getStringExtra("filename");
+        type = intent.getStringExtra("Type");
         downloadEntityLists=intent.getParcelableArrayListExtra("downloadEntityLists") ;
         Log.e("parseInt",intent.getStringExtra("urlNum"));
         urlNum=Integer.parseInt(intent.getStringExtra("urlNum"));
@@ -232,6 +234,7 @@ public class DownloadService extends Service {
         Intent insertServiceIntent = new Intent(DownloadService.this, InsertionService.class);
         insertServiceIntent.putExtra("destDirectory",Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
         insertServiceIntent.putExtra("zipFilePath", filename);
+        insertServiceIntent.putExtra("Type", type);
         insertServiceIntent.putParcelableArrayListExtra("downloadEntityLists",downloadEntityLists);
         insertServiceIntent.putExtra("urlNum",urlNum+"");
         if (!isMyServiceRunning(InsertionService.class)) {
