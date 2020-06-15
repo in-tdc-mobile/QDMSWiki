@@ -10,13 +10,14 @@ import android.os.Parcelable;
 import com.google.gson.annotations.SerializedName;
 import com.mariapps.qdmswiki.home.database.HomeTypeConverter;
 
+import org.jetbrains.annotations.NotNull;
+
 @Entity(tableName = "FileChunksEntity")
 @TypeConverters(HomeTypeConverter.class)
 public class FileListModel implements Parcelable {
 
-    @PrimaryKey(autoGenerate = true)
-    public Long uId;
-
+    @PrimaryKey
+    @NotNull
     @ColumnInfo(name = "Id")
     @SerializedName("_id")
     private String id;
@@ -33,21 +34,13 @@ public class FileListModel implements Parcelable {
     @SerializedName("data")
     private String data;
 
-    public FileListModel(Long uId, String id, String filesId, String n, String data) {
-        this.uId = uId;
+    public FileListModel(@NotNull String id, String filesId, String n, String data) {
         this.id = id;
         this.filesId = filesId;
         this.n = n;
         data = data;
     }
 
-    public Long getuId() {
-        return uId;
-    }
-
-    public void setuId(Long uId) {
-        this.uId = uId;
-    }
 
     public String getId() {
         return id;
@@ -87,11 +80,6 @@ public class FileListModel implements Parcelable {
     }
 
     protected FileListModel(Parcel in) {
-        if (in.readByte() == 0) {
-            uId = null;
-        } else {
-            uId = in.readLong();
-        }
         id = in.readString();
         filesId = in.readString();
         n = in.readString();
@@ -100,12 +88,6 @@ public class FileListModel implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        if (uId == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(uId);
-        }
         dest.writeString(id);
         dest.writeString(filesId);
         dest.writeString(n);

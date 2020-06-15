@@ -2,7 +2,6 @@ package com.mariapps.qdmswiki.home.model;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 import android.os.Parcel;
@@ -10,6 +9,9 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 import com.mariapps.qdmswiki.home.database.HomeTypeConverter;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -17,9 +19,9 @@ import java.util.List;
 @TypeConverters(HomeTypeConverter.class)
 public class DocumentModel implements Parcelable {
 
-    @PrimaryKey(autoGenerate = true)
-    public Long uId;
 
+    @PrimaryKey
+    @NotNull
     @ColumnInfo(name = "Id")
     @SerializedName("_id")
     public String id;
@@ -39,7 +41,6 @@ public class DocumentModel implements Parcelable {
     @ColumnInfo(name = "DocumentNumber")
     @SerializedName("DocumentNumber")
     public String documentNumber;
-
 
     @SerializedName("DocumentData")
     public String documentData;
@@ -97,7 +98,7 @@ public class DocumentModel implements Parcelable {
     @SerializedName("PassengersVesselIds")
     public List<String> passengersVesselIds;
 
-    public DocumentModel(String id, String categoryId, String documentCode, String documentName/*, String documentData,*/, String version,List<TagModel> tags) {
+    public DocumentModel(@NotNull String id, String categoryId, String documentCode, String documentName/*, String documentData,*/, String version,List<TagModel> tags) {
         this.id = id;
         this.categoryId = categoryId;
         this.documentCode = documentCode;
@@ -107,10 +108,10 @@ public class DocumentModel implements Parcelable {
         this.tags = tags;
     }
 
-    public DocumentModel() {
-    }
-
     public String getId() {
+        if(id==null){
+            id="";
+        }
         return id;
     }
 
@@ -148,14 +149,6 @@ public class DocumentModel implements Parcelable {
 
     public void setDocumentData(String documentData) {
         this.documentData = documentData;
-    }
-
-    public Long getuId() {
-        return uId;
-    }
-
-    public void setuId(Long uId) {
-        this.uId = uId;
     }
 
     public String getDocumentNumber() {
@@ -303,11 +296,6 @@ public class DocumentModel implements Parcelable {
     }
 
     protected DocumentModel(Parcel in) {
-        if (in.readByte() == 0) {
-            uId = null;
-        } else {
-            uId = in.readLong();
-        }
         categoryId = in.readString();
         categoryName = in.readString();
         documentCode = in.readString();
@@ -332,12 +320,6 @@ public class DocumentModel implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        if (uId == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(uId);
-        }
         dest.writeString(categoryId);
         dest.writeString(categoryName);
         dest.writeString(documentCode);

@@ -271,6 +271,7 @@ public interface HomeDao {
     ArticleModel getArticleDetail(String articleId);
 
     @Query("SELECT category.Id as folderid, " +
+            " category.Id as Id, " +
             " category.CategoryName as categoryName, " +
             " 'Category' as type, " +
             " category.Id as categoryId " +
@@ -559,6 +560,7 @@ public interface HomeDao {
 
 
     @Query(" SELECT  document.DocumentName, " +
+            " document.Id, " +
             " document.DocumentNumber, " +
             " document.Version, "+
             " document.Date," +
@@ -572,6 +574,7 @@ public interface HomeDao {
     DocumentModel getDocumentInfo(String documentId);
 
     @Query(" SELECT  article.ArticleName, " +
+            " article.Id,"+
             " article.ArticleNumber, " +
             " article.Version, "+
             " article.Date," +

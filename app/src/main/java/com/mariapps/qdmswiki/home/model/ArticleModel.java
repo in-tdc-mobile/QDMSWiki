@@ -13,6 +13,9 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkEntryModel;
 import com.mariapps.qdmswiki.home.database.HomeTypeConverter;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,9 +25,8 @@ import kotlin.jvm.JvmOverloads;
 @TypeConverters(HomeTypeConverter.class)
 public class ArticleModel implements Parcelable {
 
-    @PrimaryKey(autoGenerate = true)
-    public Long uId;
-
+    @PrimaryKey
+    @NotNull
     @ColumnInfo(name = "Id")
     @SerializedName("_id")
     private String id;
@@ -91,7 +93,7 @@ public class ArticleModel implements Parcelable {
     private List<String> articleToPassengersVesselIds = null;
 
 
-    public ArticleModel(String id, String articleName, String documentData, List<String> categoryIds) {
+    public ArticleModel(@NotNull String id, String articleName, String documentData, List<String> categoryIds) {
         this.id = id;
 //        this.appId = appId;
 //        this.draftId = draftId;
@@ -102,14 +104,6 @@ public class ArticleModel implements Parcelable {
     }
 
     public ArticleModel() {
-    }
-
-    public Long getuId() {
-        return uId;
-    }
-
-    public void setuId(Long uId) {
-        this.uId = uId;
     }
 
     public String getId() {
