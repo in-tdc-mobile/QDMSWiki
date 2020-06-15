@@ -172,34 +172,49 @@ public class InsertionService extends Service {
             Log.e("asyncstask","iscancelled");
             startinsertionasync.cancel(true);
         }
-        Intent intentStartDownload = new Intent(getApplicationContext(), DownloadService.class);
-        intentStartDownload.putExtra("url", downloadEntityLists.get(sessionManager.geturlno()).getDownloadLink());
-        intentStartDownload.putExtra("filename", downloadEntityLists.get(sessionManager.geturlno()).getFileName());
-        intentStartDownload.putExtra("urlNum", sessionManager.geturlno()+"");
-        intentStartDownload.putParcelableArrayListExtra("downloadEntityLists", (ArrayList) downloadEntityLists);
-        if (!isMyServiceRunning(DownloadService.class)) {
-            Log.e("dservice caled","from i service  urlnois"+sessionManager.geturlno());
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                try {
-                    sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(sessionManager.geturlno() - 1).getFileName());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                Log.e("insertionservice", "startForegroundService(intentStartDownload)");
-                startForegroundService(intentStartDownload);
-                stopSelf();
-                AppConfig.getInsertcompletedonce().postValue("Starting to download next file");
-            } else {
-                try {
+        if(sessionManager.geturlno()==downloadEntityLists.size()){
+            Log.e("insertionservice", "getInsertcompletedall");
+            try {
+                sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(sessionManager.geturlno() - 1).getFileName());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            sessionManager.seturlno("0");
+            AppConfig.getInsertcompletedall().postValue("completed");
+
+        }
+
+        else if(sessionManager.geturlno()<downloadEntityLists.size()) {
+            Intent intentStartDownload = new Intent(getApplicationContext(), DownloadService.class);
+            intentStartDownload.putExtra("url", downloadEntityLists.get(sessionManager.geturlno()).getDownloadLink());
+            intentStartDownload.putExtra("filename", downloadEntityLists.get(sessionManager.geturlno()).getFileName());
+            intentStartDownload.putExtra("urlNum", sessionManager.geturlno()+"");
+            intentStartDownload.putParcelableArrayListExtra("downloadEntityLists", (ArrayList) downloadEntityLists);
+            if (!isMyServiceRunning(DownloadService.class)) {
+                Log.e("dservice caled","from i service  urlnois"+sessionManager.geturlno());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    try {
+                        sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(sessionManager.geturlno() - 1).getFileName());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     Log.e("insertionservice", "startForegroundService(intentStartDownload)");
-                    sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(sessionManager.geturlno() - 1).getFileName());
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    startForegroundService(intentStartDownload);
+                    stopSelf();
+                    AppConfig.getInsertcompletedonce().postValue("Starting to download next file");
+                } else {
+                    try {
+                        Log.e("insertionservice", "startForegroundService(intentStartDownload)");
+                        sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(sessionManager.geturlno() - 1).getFileName());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    AppConfig.getInsertcompletedonce().postValue("Starting to download next file");
+                    startService(intentStartDownload);
                 }
-                AppConfig.getInsertcompletedonce().postValue("Starting to download next file");
-                startService(intentStartDownload);
             }
         }
+
         super.onDestroy();
 
     }
@@ -255,7 +270,8 @@ public class InsertionService extends Service {
                     }
                     sessionManager.seturlno("0");
                     AppConfig.getInsertcompletedall().postValue("completed");
-                } else if (sessionManager.geturlno() < downloadEntityLists.size()) {
+                }
+                else if (sessionManager.geturlno() < downloadEntityLists.size()) {
                     Log.e("insertionservice", "urlNum < downloadEntityLists.size()");
                     sessionManager.addurlno();
                     stopForeground(true);
