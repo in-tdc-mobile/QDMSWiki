@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
@@ -218,6 +219,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
     ReadAndInsertJsonDataforarticles readAndInsertJsonDataforart=null;
     ReadAndInsertJsonData1 readAndInsertJsonData1=null;
 
+    SharedPreferences applog;
+
 
     Box<DocumentModelObj> dbox;
     Box<ArticleModelObj> abox;
@@ -232,6 +235,9 @@ public class HomeActivity extends BaseActivity implements HomeView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ObjectBox.init(getApplicationContext());
+        applog=getSharedPreferences("qdms",0);
+        dbox=ObjectBox.get().boxFor(DocumentModelObj.class);
+        abox=ObjectBox.get().boxFor(ArticleModelObj.class);
       /*  Box<DocumentModelObj> box = ObjectBox.get().boxFor(DocumentModelObj.class);
       // box.removeAll();
         Box<ArticleModelObj> abox = ObjectBox.get().boxFor(ArticleModelObj.class);
@@ -244,6 +250,9 @@ public class HomeActivity extends BaseActivity implements HomeView {
         homeDatabase = HomeDatabase.getInstance(HomeActivity.this);
         progressDialog = new ProgressDialog(HomeActivity.this);
         util = new ShowCasePreferenceUtil(HomeActivity.this);
+        if(!applog.contains("status")){
+            applog.edit().putString("status","end").commit();
+        }
         //sessionManager.setKeyLastUpdatedFileName("20191203");//"20191121092627"
        homePresenter.getDownloadUrl(new DownloadFilesRequestModel(sessionManager.getKeyLastUpdatedFileName(), sessionManager.getDeviceId(), sessionManager.getUserId()));
         //homePresenter.getDownloadUrl(new DownloadFilesRequestModel(null, sessionManager.getDeviceId(), sessionManager.getUserId()));
@@ -264,6 +273,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         AppConfig.getDwnldcmplted().observe(this, s -> {
             progressLayout.setVisibility(View.GONE);
             Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zippedFileName, Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
+            //Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + "202006122.zip", Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
             decompress.execute();
         });
         AppConfig.getDwnldstarted().observe(this, new Observer<String>() {
@@ -295,6 +305,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         //decompress.execute();
 //      ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
 //      readAndInsertJsonData.execute();
+
         //setup();
         //5a0c0ade3b6a9e5490d6e7d0
      /*Box<DocumentModelObj>   dbox = ObjectBox.get().boxFor(DocumentModelObj.class);
@@ -801,7 +812,11 @@ public class HomeActivity extends BaseActivity implements HomeView {
             downloadEntityLists = downloadFilesResponseModel.getDownloadEntityList();
             appendLog("DownloadEntityList size =" + downloadEntityLists.size());
             if (downloadFilesResponseModel != null && downloadEntityLists.size() > 0) {
-
+                try {
+                    sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum).getFileName());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 beginDownload(downloadEntityLists.get(urlNum).getDownloadLink(), downloadEntityLists.get(urlNum).getFileName());
                 try {
                     sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum).getFileName());
@@ -936,6 +951,8 @@ request.setAllowedNetworkTypes(
         @Override
         protected String doInBackground(String... params) {
             try {
+                applog.edit().putString("task","ReadAndInsertJsonData").commit();
+                applog.edit().putString("status","started").commit();
                 File folder = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"); //This is just to cast to a File type since you pass it as a String
                 File[] filesInFolder = folder.listFiles(); // This returns all the folders and files in your path
                 for (File file : filesInFolder) { //For each of the entries do:
@@ -950,33 +967,13 @@ request.setAllowedNetworkTypes(
                     } else {
               if (file.getName().contains("file")) {
                             try {
-                                ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-                                ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
-                                activityManager.getMemoryInfo(mi);
-                                final Runtime runtime = Runtime.getRuntime();
-                                final long usedMemInMB=(runtime.totalMemory() - runtime.freeMemory()) / 1048576L;
-                                final long maxHeapSizeInMB=runtime.maxMemory() / 1048576L;
-                                final long availHeapSizeInMB = maxHeapSizeInMB - usedMemInMB;
-                               // Log.e("usedMemInMB",usedMemInMB+"");
-                               // Log.e("maxHeapSizeInMB",maxHeapSizeInMB+"");
-                              //  Log.e("availHeapSizeInMB",availHeapSizeInMB+"");
-                               // Log.e("total", "" + Runtime.getRuntime().totalMemory());
-                               // Log.e("heap", "" + Runtime.getRuntime().maxMemory());
-                               // Log.e("allocated", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
-                              //  Log.e("thefileis",file.getName());
-                                appendLog("Extracting file " + file.getName());
-                                final Runtime runtime1 = Runtime.getRuntime();
-                                final long usedMemInM1B1=(runtime.totalMemory() - runtime.freeMemory()) / 1048576L;
-                                final long maxHeapSizeInMB1=runtime.maxMemory() / 1048576L;
-                                final long availHeapSizeInMB1 = maxHeapSizeInMB - usedMemInMB;
-                               // Log.e("usedMemInMB1",usedMemInM1B1+"");
-                               // Log.e("maxHeapSizeInMB1",maxHeapSizeInMB1+"");
-                               // Log.e("availHeapSizeInMB1",availHeapSizeInMB1+"");
-                               // Log.e("allocatedafter1", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
                                 fileList.clear();
-                              //fileList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FileListModel>>() {}.getType()));
                                 try {
-                                    fileList.addAll(readJsonStream(new FileInputStream(file)));
+                                    /*JsonParser parser = new JsonParser();
+                                    JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles/" + file.getName()));//path to the JSON file.
+                                    jsonArray = data.getAsJsonArray("fileChunks");*/
+                                    fileList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FileListModel>>() {}.getType()));
+                                    //fileList.addAll(readJsonStream(new FileInputStream(file)));
                                     Log.e("allocatedafter2", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
                                 }catch (Exception e){
                                     Log.e("catchedreader", ""+file.getName()+"   "+e.getLocalizedMessage());
@@ -989,13 +986,13 @@ request.setAllowedNetworkTypes(
                                         Log.e("catchegsonparser", ""+file.getName()+"   "+e.getLocalizedMessage());
                                     }
                                 }
-                                Log.e("filelistsize",fileList.size()+"");
-                                /*for (int i = 0; i < fileList.size(); i++) {
+                                //Log.e("filelistsize",fileList.size()+"");
+                               /* for (int i = 0; i < fileList.size(); i++) {
                                     homePresenter.deleteFile(fileList.get(i));
                                 }*/
                                 filecount++;
                                 homePresenter.insertfilesbylist(fileList);
-                                Log.e("fileinsertion","list size is "+fileList.size()+"  count is "+filecount+"filenameis  "+fileList.get(0).getId());
+                                //Log.e("fileinsertion","list size is "+fileList.size()+"  count is "+filecount+"filenameis  "+fileList.get(0).getId());
                                // Log.e("allocatedafter3", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
                             } catch (JsonSyntaxException e) {
                                 appendLog("File json syntax exception : "+e.getMessage());
@@ -1024,6 +1021,8 @@ request.setAllowedNetworkTypes(
 
         @Override
         protected void onPostExecute(String result) {
+            applog.edit().putString("task","ReadAndInsertJsonData").commit();
+            applog.edit().putString("status","end").commit();
             super.onPostExecute(result);
             progressDialog.dismiss();
             readAndInsertJsonDatafordoc = new ReadAndInsertJsonDatafordoc();
@@ -1057,6 +1056,8 @@ request.setAllowedNetworkTypes(
         @Override
         protected String doInBackground(String... params) {
             try {
+                applog.edit().putString("task","ReadAndInsertJsonDatafordoc").commit();
+                applog.edit().putString("status","started").commit();
                 File folder = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"); //This is just to cast to a File type since you pass it as a String
                 File[] filesInFolder = folder.listFiles(); // This returns all the folders and files in your path
                 for (File file : filesInFolder) { //For each of the entries do:
@@ -1076,6 +1077,7 @@ request.setAllowedNetworkTypes(
                                 try {
                                  documentList.addAll(readJsonStreamfordoc(new FileInputStream(file)));
                                 }
+
                                 catch (Exception e){
                                     JsonParser parser = new JsonParser();
                                     JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles/" + file.getName()));//path to the JSON file.
@@ -1084,43 +1086,33 @@ request.setAllowedNetworkTypes(
                                 }
                                 //documentList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<DocumentModel>>() {}.getType());
                                 if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
+                                    List<DocumentModelObj> objList = new ArrayList<>();
                                     for (int i = 0; i < documentList.size(); i++) {
                                         if (documentList.get(i).getVesselIds().size() > 0 || documentList.get(i).getPassengersVesselIds().size() > 0) {
-                                            homeDatabase.homeDao().deleteDocument(documentList.get(i).getId());
-                                            try {
-                                                dbox.query().equal(DocumentModelObj_.id,documentList.get(i).getId()).build().remove();
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                            homeDatabase.homeDao().insertDocument(documentList.get(i));
-                                            dbox.put(new DocumentModelObj(documentList.get(i).getId(),documentList.get(i).getDocumentName(),documentList.get(i).getDocumentData()));
-                                            // homePresenter.deleteDocumentSingle(documentList.get(i));
                                             documentList.get(i).setIsRecommended("NO");
                                             List<TagModel> tagList = documentList.get(i).getTags();
                                             homePresenter.insertTags(tagList);
-                                        } else
-                                            continue;
+                                            DocumentModelObj obj=new DocumentModelObj(documentList.get(i).id,documentList.get(i).documentName,documentList.get(i).documentData);
+                                            objList.add(obj);
+                                            //homePresenter.insertDocumentsSingle(documentList.get(i));
+                                        }
                                     }
                                     doccount++;
-                                  //  homePresenter.insertdocbylist(documentList);
+                                    dbox.put(objList);
+                                    homePresenter.insertdocbylist(documentList);
                                     Log.e("docinsertion","list size is "+documentList.size()+"  count is "+doccount+"docname is "+documentList.get(0).documentName);
 
                                 } else {
+                                    List<DocumentModelObj> objList = new ArrayList<>();
                                     for (int i = 0; i < documentList.size(); i++) {
                                         documentList.get(i).setIsRecommended("NO");
-                                        homeDatabase.homeDao().deleteDocument(documentList.get(i).getId());
-                                        try {
-                                            dbox.query().equal(DocumentModelObj_.id,documentList.get(i).getId()).build().remove();
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                        homeDatabase.homeDao().insertDocument(documentList.get(i));
-                                        dbox.put(new DocumentModelObj(documentList.get(i).getId(),documentList.get(i).getDocumentName(),documentList.get(i).getDocumentData()));
-                                      //  homePresenter.deleteDocumentSingle(documentList.get(i));
                                         List<TagModel> tagList = documentList.get(i).getTags();
                                         homePresenter.insertTags(tagList);
+                                        DocumentModelObj obj=new DocumentModelObj(documentList.get(i).id,documentList.get(i).documentName,documentList.get(i).documentData);
+                                        objList.add(obj);
+                                        //homePresenter.insertDocumentsSingle(documentList.get(i));
                                     }
-
+                                    dbox.put(objList);
                                     homePresenter.insertdocbylist(documentList);
                                 }
 
@@ -1151,6 +1143,8 @@ request.setAllowedNetworkTypes(
 
         @Override
         protected void onPostExecute(String result) {
+            applog.edit().putString("task","ReadAndInsertJsonDatafordoc").commit();
+            applog.edit().putString("status","end").commit();
             super.onPostExecute(result);
             progressDialog.dismiss();
             readAndInsertJsonDataforart = new ReadAndInsertJsonDataforarticles();
@@ -1185,6 +1179,8 @@ request.setAllowedNetworkTypes(
         @Override
         protected String doInBackground(String... params) {
             try {
+                applog.edit().putString("task","ReadAndInsertJsonDataforarticles").commit();
+                applog.edit().putString("status","started").commit();
                 File folder = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"); //This is just to cast to a File type since you pass it as a String
                 File[] filesInFolder = folder.listFiles(); // This returns all the folders and files in your path
                 for (File file : filesInFolder) { //For each of the entries do:
@@ -1213,28 +1209,25 @@ request.setAllowedNetworkTypes(
                                 // articleList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ArticleModel>>() {}.getType());
                                 List<ArticleModel> newlist = new ArrayList<>();
                                 if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
+                                    List<ArticleModelObj> objList = new ArrayList<>();
                                     for (int i = 0; i < articleList.size(); i++) {
                                         if (articleList.get(i).getArticleToVesselIds().size() > 0 || articleList.get(i).getArticleToPassengersVesselIds().size() > 0) {
                                             newlist.add(articleList.get(i));
-                                            homeDatabase.homeDao().deleteArticle(articleList.get(i).getId());
-                                            try {
-                                                abox.query().equal(ArticleModelObj_.id,articleList.get(i).getId()).build().remove();
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                            homeDatabase.homeDao().insertArticle(articleList.get(i));
-                                            abox.put(new ArticleModelObj(articleList.get(i).getId(),articleList.get(i).getArticleName(),articleList.get(i).documentData));
+                                            ArticleModelObj obj=new ArticleModelObj(articleList.get(i).getId(),articleList.get(i).getArticleName(),articleList.get(i).documentData);
+                                            objList.add(obj);
                                             //homePresenter.deleteArticlessingle(articleList.get(i));
                                         }
                                     }
-                                    //homePresenter.insertarticlesbylist(newlist);
+                                    abox.put(objList);
+                                    homePresenter.insertarticlesbylist(newlist);
                                 } else {
-                                     // homePresenter.deleteArticlesBylist(articleList);
-//
-                                  /* for (int i = 0; i < articleList.size(); i++) {
-                                       homePresenter.deleteArticlessingle(articleList.get(i));
-                                    }*/
                                     artcount++;
+                                    List<ArticleModelObj> objList = new ArrayList<>();
+                                    for (int i = 0; i < articleList.size(); i++) {
+                                        ArticleModelObj obj=new ArticleModelObj(articleList.get(i).getId(),articleList.get(i).getArticleName(),articleList.get(i).documentData);
+                                        objList.add(obj);
+                                    }
+                                    abox.put(objList);
                                     homePresenter.insertarticlesbylist(articleList);
                                     Log.e("artinsertion","list size is "+articleList.size()+"  count is "+artcount+" file name is"+articleList.get(0).getArticleName());
                                 }
@@ -1265,6 +1258,8 @@ request.setAllowedNetworkTypes(
 
         @Override
         protected void onPostExecute(String result) {
+            applog.edit().putString("task","ReadAndInsertJsonDataforarticles").commit();
+            applog.edit().putString("status","end").commit();
             super.onPostExecute(result);
             progressDialog.dismiss();
             readAndInsertJsonData1 = new ReadAndInsertJsonData1();
@@ -1303,6 +1298,8 @@ request.setAllowedNetworkTypes(
         @Override
         protected String doInBackground(String... params) {
             try {
+                applog.edit().putString("task","ReadAndInsertJsonData1").commit();
+                applog.edit().putString("status","started").commit();
                 File folder = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"); //This is just to cast to a File type since you pass it as a String
                 File[] filesInFolder = folder.listFiles(); // This returns all the folders and files in your path
                 for (File file : filesInFolder) { //For each of the entries do:
@@ -1520,6 +1517,8 @@ request.setAllowedNetworkTypes(
 
                 urlNum = urlNum + 1;
             }
+            applog.edit().putString("task","ReadAndInsertJsonData1").commit();
+            applog.edit().putString("status","end").commit();
             progressDialog.dismiss();
         }
     }

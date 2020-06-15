@@ -690,9 +690,11 @@ public interface HomeDao {
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertDocumentbylist(List<DocumentModel> documentModel);
+
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertArticlebylist(List<ArticleModel> articleModel);
+
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertFileListModelbylist(List<FileListModel> fileListModel);

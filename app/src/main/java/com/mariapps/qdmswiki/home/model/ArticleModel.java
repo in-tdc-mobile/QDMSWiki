@@ -47,7 +47,7 @@ public class ArticleModel implements Parcelable {
     @SerializedName("ArticleNumber")
     private Integer articleNumber;
 
-
+    @Ignore
     @SerializedName("DocumentData")
     public String documentData;
 
