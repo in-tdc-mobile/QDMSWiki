@@ -87,7 +87,7 @@
             android:name=".InsertionService"
             android:stopWithTask="true"
             android:enabled="true"
-            android:exported="true"></service>
+            ></service>
 
         <service android:name=".serviceclasses.FcmMessageService">
             <intent-filter>

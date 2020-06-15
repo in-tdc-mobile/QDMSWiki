@@ -150,7 +150,7 @@ public class InsertionService extends Service implements HomeView {
         Log.e("zipFilename",zipFilename+"");
         Log.e("zipFilePath",zipFilePath);
         setStartinsertionasync();
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     public void setStartinsertionasync(){

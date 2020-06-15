@@ -84,7 +84,7 @@ public class DownloadService extends Service {
             startForeground(1,mBuilder.build());
         }
         beginDownload(url,filename);
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
 
