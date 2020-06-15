@@ -51,7 +51,7 @@ import android.widget.Toast;
 
 import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.ArticleModelObj;
-import com.mariapps.qdmswiki.ArticleModelObj_;
+import com.mariapps.qdmswi.ArticleModelObj_;
 import com.mariapps.qdmswiki.BuildConfig;
 import com.mariapps.qdmswiki.DocumentModelObj;
 import com.mariapps.qdmswiki.DocumentModelObj_;

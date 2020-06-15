@@ -54,6 +54,10 @@ public class DownloadFilesResponseModel {
         @SerializedName("FileSize")
         public String fileSize;
 
+        @ColumnInfo(name = "Type")
+        @SerializedName("Type")
+        public String type;
+
         public DownloadEntityList(Long uId, String downloadLink, String fileName, String fileSize) {
             this.uId = uId;
             this.downloadLink = downloadLink;
@@ -93,6 +97,13 @@ public class DownloadFilesResponseModel {
             this.fileSize = fileSize;
         }
 
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
 
         protected DownloadEntityList(Parcel in) {
             if (in.readByte() == 0) {
@@ -103,6 +114,7 @@ public class DownloadFilesResponseModel {
             downloadLink = in.readString();
             fileName = in.readString();
             fileSize = in.readString();
+            type = in.readString();
         }
 
         @Override
@@ -121,6 +133,7 @@ public class DownloadFilesResponseModel {
             dest.writeString(downloadLink);
             dest.writeString(fileName);
             dest.writeString(fileSize);
+            dest.writeString(type);
         }
 
 
