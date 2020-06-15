@@ -39,9 +39,12 @@ import com.mariapps.qdmswiki.home.model.FileListModel;
 import com.mariapps.qdmswiki.home.model.FormsModel;
 import com.mariapps.qdmswiki.home.model.ImageModel;
 import com.mariapps.qdmswiki.home.model.TagModel;
+import com.mariapps.qdmswiki.home.presenter.HomePresenter;
+import com.mariapps.qdmswiki.home.view.HomeView;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
 import com.mariapps.qdmswiki.notification.model.ReceiverModel;
 import com.mariapps.qdmswiki.search.model.SearchModel;
+import com.mariapps.qdmswiki.serviceclasses.APIException;
 import com.mariapps.qdmswiki.usersettings.UserInfoModel;
 import com.mariapps.qdmswiki.usersettings.UserSettingsModel;
 import com.mariapps.qdmswiki.utils.DateUtils;
@@ -65,7 +68,7 @@ import java.util.zip.ZipInputStream;
 import io.objectbox.Box;
 
 
-public class InsertionService extends Service {
+public class InsertionService extends Service implements HomeView {
     List<SearchModel> childList = new ArrayList<>();
     List<DocumentModel> parentFolderList = new ArrayList<>();
     List<DocumentModel> recommendedList = new ArrayList<>();
@@ -94,9 +97,10 @@ public class InsertionService extends Service {
     String destDirectory = "";
     String zipFilePath = "";
     String zipFilename = "";
+    String type = "";
     String flag = "no";
     AsyncTask<String,Void,String> startinsertionasync=null;
-
+    HomePresenter homePresenter;
 
 
 
@@ -120,6 +124,7 @@ public class InsertionService extends Service {
         dbox = ObjectBox.get().boxFor(DocumentModelObj.class);
         abox = ObjectBox.get().boxFor(ArticleModelObj.class);
         sessionManager = new SessionManager(this.getApplicationContext());
+        homePresenter = new HomePresenter(this,this);
         homeDatabase = HomeDatabase.getInstance(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             initChannels(this, "Processing Files", "QDMS");
@@ -138,6 +143,7 @@ public class InsertionService extends Service {
         destDirectory = intent.getStringExtra("destDirectory");
         zipFilePath = Environment.getExternalStorageDirectory() + "/QDMSWiki/" + intent.getStringExtra("zipFilePath");
         zipFilename = intent.getStringExtra("zipFilePath");
+        type = intent.getStringExtra("Type");
         downloadEntityLists = intent.getParcelableArrayListExtra("downloadEntityLists");
      //   urlNum = Integer.parseInt(intent.getStringExtra("urlNum"));
       //  Log.e("urlNum",urlNum+"");
@@ -253,13 +259,29 @@ public class InsertionService extends Service {
                     }
                 }
                 Log.e("insertionservice", "filedelete");
-                File file = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zipFilename);
-                if (file.exists()) {
-                    file.delete();
+                try {
+                    File file = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zipFilename);
+                    if (file.exists()) {
+                        file.delete();
+                    }
                 }
-                File extractedFiles = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
-                if (extractedFiles.exists()) {
-                    extractedFiles.delete();
+                catch (Exception e){
+                    Log.e("File delete exception",e.getMessage());
+                }
+
+                try {
+                    File extractedFiles = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno());
+                    String[] children = extractedFiles.list();
+                    for (int i = 0; i < children.length; i++)
+                    {
+                        new File(extractedFiles, children[i]).delete();
+                    }
+                    if (extractedFiles.exists()) {
+                        extractedFiles.delete();
+                    }
+                }
+                catch (Exception e){
+                    Log.e("Folder delete exception",e.getMessage());
                 }
                 if (sessionManager.geturlno() == downloadEntityLists.size()) {
                     Log.e("insertionservice", "getInsertcompletedall");
@@ -361,27 +383,37 @@ public class InsertionService extends Service {
                         if (filesInFolder[i].getName().contains("file")) {
                             try {
                                 fileList.clear();
-                                try {
-                                    Log.e("allocatedbefore", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
-                                    Log.e("filenameis",filesInFolder[i].getName());
+                                if (type.equals("U")) {
                                     fileList.addAll(readJsonStream(new FileInputStream(filesInFolder[i])));
-                                    Log.e("allocatedafter", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
-                                } catch (Exception e) {
-                                    Log.e("catchedreader", "" + filesInFolder[i].getName() + "   " + e.getLocalizedMessage());
-                                    try {
-                                        JsonParser parser = new JsonParser();
-                                        JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
-                                        JsonArray jsonArray = data.getAsJsonArray("fileChunks");
-                                        AppConfig.getInsertprogress().postValue("Inserting files to database");
-                                        fileList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FileListModel>>() {
-                                        }.getType()));
-                                    } catch (Exception e1) {
-                                        Log.e("catchegsonparser", "" + filesInFolder[i].getName() + "   " + e.getLocalizedMessage());
+                                    for (int index = 0;index < fileList.size(); index++) {
+                                        homePresenter.deleteFile(fileList.get(index));
                                     }
                                 }
-                                homeDatabase.homeDao().insertFileListModelbylist(fileList);
-                                //Log.e("fileinsertion","list size is "+fileList.size()+"  count is "+filecount+"filenameis  "+fileList.get(0).getId());
-                                // Log.e("allocatedafter3", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
+
+                                else{
+                                    try {
+                                        Log.e("allocatedbefore", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
+                                        Log.e("filenameis",filesInFolder[i].getName());
+                                        fileList.addAll(readJsonStream(new FileInputStream(filesInFolder[i])));
+                                        Log.e("allocatedafter", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
+                                    } catch (Exception e) {
+                                        Log.e("catchedreader", "" + filesInFolder[i].getName() + "   " + e.getLocalizedMessage());
+                                        try {
+                                            JsonParser parser = new JsonParser();
+                                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                                            JsonArray jsonArray = data.getAsJsonArray("fileChunks");
+                                            AppConfig.getInsertprogress().postValue("Inserting files to database");
+                                            fileList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FileListModel>>() {
+                                            }.getType()));
+                                        } catch (Exception e1) {
+                                            Log.e("catchegsonparser", "" + filesInFolder[i].getName() + "   " + e.getLocalizedMessage());
+                                        }
+                                    }
+                                    homeDatabase.homeDao().insertFileListModelbylist(fileList);
+                                    //Log.e("fileinsertion","list size is "+fileList.size()+"  count is "+filecount+"filenameis  "+fileList.get(0).getId());
+                                    // Log.e("allocatedafter3", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
+                                }
+
                             } catch (JsonSyntaxException e) {
                                 appendLog("File json syntax exception : " + e.getMessage());
                                 e.printStackTrace();
@@ -390,46 +422,74 @@ public class InsertionService extends Service {
                             try {
                                 appendLog("Extracting document " + filesInFolder[i].getName());
                                 documentList.clear();
-                                try {
+                                if(type.equals("U")){
                                     documentList.addAll(readJsonStreamfordoc(new FileInputStream(filesInFolder[i])));
-                                } catch (Exception e) {
-                                    JsonParser parser = new JsonParser();
-                                    JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
-                                    JsonArray jsonArray = data.getAsJsonArray("Documents");
-                                    documentList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<DocumentModel>>() {
-                                    }.getType()));
-                                }
-                                //documentList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<DocumentModel>>() {}.getType());
-                                if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
-                                    List<DocumentModelObj> objList = new ArrayList<>();
-                                    for (int i1 = 0; i1 < documentList.size(); i1++) {
-                                        if (documentList.get(i1).getVesselIds().size() > 0 || documentList.get(i1).getPassengersVesselIds().size() > 0) {
+
+                                    if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
+                                        for (int i1 = 0; i1 < documentList.size(); i1++) {
+                                            if (documentList.get(i1).getVesselIds().size() > 0 || documentList.get(i1).getPassengersVesselIds().size() > 0) {
+                                                documentList.get(i1).setIsRecommended("NO");
+                                                List<TagModel> tagList = documentList.get(i).getTags();
+                                                homeDatabase.homeDao().insertTag(tagList);
+                                                homePresenter.insertDocumentsSingle(documentList.get(i));
+                                            }
+                                        }
+                                        AppConfig.getInsertprogress().postValue("Inserting documents to database");
+                                    } else {
+                                        for (int i1 = 0; i1 < documentList.size(); i1++) {
                                             documentList.get(i1).setIsRecommended("NO");
-                                            List<TagModel> tagList = documentList.get(i).getTags();
+                                            List<TagModel> tagList = documentList.get(i1).getTags();
+                                            homeDatabase.homeDao().insertTag(tagList);
+                                            homePresenter.insertDocumentsSingle(documentList.get(i));
+                                        }
+                                    }
+
+                                }
+                                else{
+                                    try {
+                                        documentList.addAll(readJsonStreamfordoc(new FileInputStream(filesInFolder[i])));
+                                    } catch (Exception e) {
+                                        JsonParser parser = new JsonParser();
+                                        JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                                        JsonArray jsonArray = data.getAsJsonArray("Documents");
+                                        documentList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<DocumentModel>>() {
+                                        }.getType()));
+                                    }
+                                    //documentList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<DocumentModel>>() {}.getType());
+                                    if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
+                                        List<DocumentModelObj> objList = new ArrayList<>();
+                                        List<DocumentModel> docList = new ArrayList<>();
+                                        for (int i1 = 0; i1 < documentList.size(); i1++) {
+                                            if (documentList.get(i1).getVesselIds().size() > 0 || documentList.get(i1).getPassengersVesselIds().size() > 0) {
+                                                documentList.get(i1).setIsRecommended("NO");
+                                                List<TagModel> tagList = documentList.get(i).getTags();
+                                                homeDatabase.homeDao().insertTag(tagList);
+                                                DocumentModelObj obj = new DocumentModelObj(documentList.get(i1).id, documentList.get(i1).documentName, documentList.get(i1).documentData);
+                                                objList.add(obj);
+                                                docList.add(documentList.get(i1));
+                                                //homePresenter.insertDocumentsSingle(documentList.get(i));
+                                            }
+                                        }
+                                        dbox.put(objList);
+                                        homeDatabase.homeDao().insertDocumentbylist(docList);
+                                        AppConfig.getInsertprogress().postValue("Inserting documents to database");
+                                    } else {
+                                        List<DocumentModelObj> objList = new ArrayList<>();
+                                        for (int i1 = 0; i1 < documentList.size(); i1++) {
+                                            documentList.get(i1).setIsRecommended("NO");
+                                            List<TagModel> tagList = documentList.get(i1).getTags();
                                             homeDatabase.homeDao().insertTag(tagList);
                                             DocumentModelObj obj = new DocumentModelObj(documentList.get(i1).id, documentList.get(i1).documentName, documentList.get(i1).documentData);
                                             objList.add(obj);
                                             //homePresenter.insertDocumentsSingle(documentList.get(i));
                                         }
+                                        dbox.put(objList);
+                                        homeDatabase.homeDao().insertDocumentbylist(documentList);
+                                        Log.e("docinsertion", "list size is " + documentList.size() + "docname is " + documentList.get(0).documentName);
+                                        AppConfig.getInsertprogress().postValue("Inserting documents to database");
                                     }
-                                    dbox.put(objList);
-                                    homeDatabase.homeDao().insertDocumentbylist(documentList);
-                                    AppConfig.getInsertprogress().postValue("Inserting documents to database");
-                                } else {
-                                    List<DocumentModelObj> objList = new ArrayList<>();
-                                    for (int i1 = 0; i1 < documentList.size(); i1++) {
-                                        documentList.get(i1).setIsRecommended("NO");
-                                        List<TagModel> tagList = documentList.get(i1).getTags();
-                                        homeDatabase.homeDao().insertTag(tagList);
-                                        DocumentModelObj obj = new DocumentModelObj(documentList.get(i1).id, documentList.get(i1).documentName, documentList.get(i1).documentData);
-                                        objList.add(obj);
-                                        //homePresenter.insertDocumentsSingle(documentList.get(i));
-                                    }
-                                    dbox.put(objList);
-                                    homeDatabase.homeDao().insertDocumentbylist(documentList);
-                                    Log.e("docinsertion", "list size is " + documentList.size() + "docname is " + documentList.get(0).documentName);
-                                    AppConfig.getInsertprogress().postValue("Inserting documents to database");
                                 }
+
 
                             } catch (JsonSyntaxException e) {
                                 appendLog("Doc json syntax exception : " + e.getMessage());
@@ -439,40 +499,59 @@ public class InsertionService extends Service {
                             try {
                                 appendLog("Extracting article " + filesInFolder[i].getName());
                                 articleList.clear();
-                                try {
+                                if(type.equals("U")){
                                     articleList.addAll(readJsonStreamforarticle(new FileInputStream(filesInFolder[i])));
-                                } catch (Exception e) {
-                                    JsonParser parser = new JsonParser();
-                                    JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
-                                    JsonArray jsonArray = data.getAsJsonArray("Articles");
-                                    articleList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ArticleModel>>() {
-                                    }.getType()));
-                                }
-                                // articleList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ArticleModel>>() {}.getType());
-                                List<ArticleModel> newlist = new ArrayList<>();
-                                if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
-                                    List<ArticleModelObj> objList = new ArrayList<>();
-                                    for (int i1 = 0; i1 < articleList.size(); i1++) {
-                                        if (articleList.get(i1).getArticleToVesselIds().size() > 0 || articleList.get(i1).getArticleToPassengersVesselIds().size() > 0) {
-                                            newlist.add(articleList.get(i1));
-                                            ArticleModelObj obj = new ArticleModelObj(articleList.get(i1).getId(), articleList.get(i1).getArticleName(), articleList.get(i1).documentData);
-                                            objList.add(obj);
-                                            //homePresenter.deleteArticlessingle(articleList.get(i));
+                                    if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
+                                        for (int i1 = 0; i1 < articleList.size(); i1++) {
+                                            if (articleList.get(i1).getArticleToVesselIds().size() > 0 || articleList.get(i1).getArticleToPassengersVesselIds().size() > 0) {
+                                                homePresenter.deleteArticlessingle(articleList.get(i));
+                                            }
+                                        }
+                                        AppConfig.getInsertprogress().postValue("Inserting articles to database");
+                                    } else {
+                                        for (int i1 = 0; i1 < articleList.size(); i1++) {
+                                            homePresenter.deleteArticlessingle(articleList.get(i));
                                         }
                                     }
-                                    abox.put(objList);
-                                    homeDatabase.homeDao().insertArticlebylist(newlist);
-                                    AppConfig.getInsertprogress().postValue("Inserting articles to database");
-                                } else {
-                                    List<ArticleModelObj> objList = new ArrayList<>();
-                                    for (int i1 = 0; i1 < articleList.size(); i1++) {
-                                        ArticleModelObj obj = new ArticleModelObj(articleList.get(i1).getId(), articleList.get(i1).getArticleName(), articleList.get(i1).documentData);
-                                        objList.add(obj);
-                                    }
-                                    abox.put(objList);
-                                    homeDatabase.homeDao().insertArticlebylist(articleList);
-                                    AppConfig.getInsertprogress().postValue("Inserting articles to database");
+
                                 }
+                                else{
+                                    try {
+                                        articleList.addAll(readJsonStreamforarticle(new FileInputStream(filesInFolder[i])));
+                                    } catch (Exception e) {
+                                        JsonParser parser = new JsonParser();
+                                        JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                                        JsonArray jsonArray = data.getAsJsonArray("Articles");
+                                        articleList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ArticleModel>>() {
+                                        }.getType()));
+                                    }
+                                    // articleList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ArticleModel>>() {}.getType());
+                                    List<ArticleModel> newlist = new ArrayList<>();
+                                    if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
+                                        List<ArticleModelObj> objList = new ArrayList<>();
+                                        for (int i1 = 0; i1 < articleList.size(); i1++) {
+                                            if (articleList.get(i1).getArticleToVesselIds().size() > 0 || articleList.get(i1).getArticleToPassengersVesselIds().size() > 0) {
+                                                newlist.add(articleList.get(i1));
+                                                ArticleModelObj obj = new ArticleModelObj(articleList.get(i1).getId(), articleList.get(i1).getArticleName(), articleList.get(i1).documentData);
+                                                objList.add(obj);
+                                            }
+                                        }
+                                        abox.put(objList);
+                                        homeDatabase.homeDao().insertArticlebylist(newlist);
+                                        AppConfig.getInsertprogress().postValue("Inserting articles to database");
+                                    } else {
+                                        List<ArticleModelObj> objList = new ArrayList<>();
+                                        for (int i1 = 0; i1 < articleList.size(); i1++) {
+                                            ArticleModelObj obj = new ArticleModelObj(articleList.get(i1).getId(), articleList.get(i1).getArticleName(), articleList.get(i1).documentData);
+                                            objList.add(obj);
+                                        }
+                                        abox.put(objList);
+                                        homeDatabase.homeDao().insertArticlebylist(articleList);
+                                        AppConfig.getInsertprogress().postValue("Inserting articles to database");
+                                    }
+
+                                }
+
                             } catch (JsonSyntaxException e) {
                                 appendLog("Article json syntax exception : " + e.getMessage());
                                 e.printStackTrace();
@@ -625,6 +704,8 @@ public class InsertionService extends Service {
 
 
                 }
+
+
 
 
             } catch (Exception e) {
@@ -783,4 +864,123 @@ public class InsertionService extends Service {
         startForeground(2, notification);
     }
 
+    @Override
+    public void onGetDownloadUrlSuccess(String url) {
+
+    }
+
+    @Override
+    public void onGetDownloadUrlError(APIException e) {
+
+    }
+
+    @Override
+    public void onGetParentFolderSuccess(List<DocumentModel> documentModels) {
+
+    }
+
+    @Override
+    public void onGetChildFoldersList(List<SearchModel> documentModels) {
+
+    }
+
+    @Override
+    public void onGetUserImageSuccess(UserInfoModel userInfoModel) {
+
+    }
+
+    @Override
+    public void onGetUserImageError() {
+
+    }
+
+    @Override
+    public void onGetCategoryDetailsSuccess(CategoryModel categoryModel) {
+
+    }
+
+    @Override
+    public void onGetCategoryDetailsError() {
+
+    }
+
+    @Override
+    public void onInsertCategoryDetailsSuccess() {
+
+    }
+
+    @Override
+    public void onInsertCategoryDetailsError() {
+
+    }
+
+    @Override
+    public void onGetDocumentInfoSuccess(DocumentModel documentModel) {
+
+    }
+
+    @Override
+    public void onGetDocumentInfoError() {
+
+    }
+
+    @Override
+    public void onGetNotificationCountSuccess(List<NotificationModel> notificationList) {
+
+    }
+
+    @Override
+    public void onGetNotificationCountError() {
+
+    }
+
+    @Override
+    public void onInsertFileListSuccess() {
+
+    }
+
+    @Override
+    public void onInsertFileListError() {
+
+    }
+
+    @Override
+    public void onInsertFormSuccess() {
+
+    }
+
+    @Override
+    public void onInsertFormError() {
+
+    }
+
+    @Override
+    public void onInsertImageSuccess() {
+
+    }
+
+    @Override
+    public void onInsertImageError() {
+
+    }
+
+    @Override
+    public void onGetDownloadFilesSuccess(DownloadFilesResponseModel downloadFilesResponseModel) {
+
+    }
+
+    @Override
+    public void onGetDownloadFilesError() {
+
+    }
+
+    @Override
+    public void onGetArticleInfoSuccess(ArticleModel articleModel) {
+
+    }
+
+    @Override
+    public void onGetArticleInfoError() {
+
+    }
 }

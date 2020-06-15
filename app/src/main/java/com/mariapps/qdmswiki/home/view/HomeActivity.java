@@ -230,6 +230,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
     int doccount=0;
     int artcount=0;
     int filecount=0;
+    private String type;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -328,6 +329,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
                         @Override
                         public void run() {
                             if (mainVP.getCurrentItem() == 0 ) {
+                                linLayout.setAlpha(1.0f);
+                                relLayout.setAlpha(1.0f);
                                 initShowCase();
                             }
                         }
@@ -614,13 +617,15 @@ public class HomeActivity extends BaseActivity implements HomeView {
         }
     }
 
-    public void beginDownload(String url, String zipFileName) {
+    public void beginDownload(String url, String zipFileName, String typ) {
         this.url = url;
+        type =typ;
         zippedFileName = zipFileName;
         Intent intent = new Intent(context, DownloadService.class);
         intent.putExtra("url", url);
         intent.putExtra("filename", zipFileName);
         intent.putExtra("urlNum", urlNum+"");
+        intent.putExtra("Type", type);
         intent.putParcelableArrayListExtra("downloadEntityLists", (ArrayList)downloadEntityLists);
         if(applog.getString("status","").equals("end")){
         if (!url.equals("") && !zipFileName.equals("")) {
@@ -903,7 +908,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                beginDownload(downloadEntityLists.get(urlNum).getDownloadLink(), downloadEntityLists.get(urlNum).getFileName());
+                beginDownload(downloadEntityLists.get(urlNum).getDownloadLink(), downloadEntityLists.get(urlNum).getFileName(),
+                        downloadEntityLists.get(urlNum).getType());
                 urlNum = urlNum + 1;
                 //added lines new
             }
@@ -1605,7 +1611,8 @@ request.setAllowedNetworkTypes(
                 });
 
             } else if (urlNum < downloadEntityLists.size()) {
-                beginDownload(downloadEntityLists.get(urlNum).getDownloadLink(), downloadEntityLists.get(urlNum).getFileName());
+                beginDownload(downloadEntityLists.get(urlNum).getDownloadLink(), downloadEntityLists.get(urlNum).getFileName(),
+                        downloadEntityLists.get(urlNum).getType());
                 urlNum = urlNum + 1;
             }
             applog.edit().putString("task","ReadAndInsertJsonData1").commit();
