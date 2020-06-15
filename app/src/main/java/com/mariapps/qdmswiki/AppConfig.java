@@ -35,37 +35,37 @@ public class AppConfig {
     public static  MutableLiveData<String> dwnldcmplted=null;
     public static  MutableLiveData<String> dwnlderror=null;
 
-    public static  MutableLiveData<String> insertstarted=null;
-    public static  MutableLiveData<String> insertcompletedall=null;
-    public static  MutableLiveData<String> insertprogress=null;
-    public static  MutableLiveData<String> insertcompletedonce=null;
+    public static  SingleLiveEvent<String> insertstarted=null;
+    public static  SingleLiveEvent<String> insertcompletedall=null;
+    public static  SingleLiveEvent<String> insertprogress=null;
+    public static  SingleLiveEvent<String> insertcompletedonce=null;
 
 
-    public static MutableLiveData<String> getInsertcompletedonce() {
+    public static SingleLiveEvent<String> getInsertcompletedonce() {
         if(insertcompletedonce==null){
-            insertcompletedonce=new MutableLiveData<>();
+            insertcompletedonce=new SingleLiveEvent<>();
         }
         return insertcompletedonce;
     }
 
-    public static MutableLiveData<String> getInsertstarted() {
+    public static SingleLiveEvent<String> getInsertstarted() {
         if(insertstarted==null){
-            insertstarted=new MutableLiveData<>();
+            insertstarted=new SingleLiveEvent<>();
         }
 
         return insertstarted;
     }
 
-    public static MutableLiveData<String> getInsertcompletedall() {
+    public static SingleLiveEvent<String> getInsertcompletedall() {
         if(insertcompletedall==null){
-            insertcompletedall=new MutableLiveData<>();
+            insertcompletedall=new SingleLiveEvent<>();
         }
         return insertcompletedall;
     }
 
-    public static MutableLiveData<String> getInsertprogress() {
+    public static SingleLiveEvent<String> getInsertprogress() {
         if(insertprogress==null){
-            insertprogress=new MutableLiveData<>();
+            insertprogress=new SingleLiveEvent<>();
         }
         return insertprogress;
     }
