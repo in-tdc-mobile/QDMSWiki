@@ -312,6 +312,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
        AppConfig.getInsertstarted().observe(this, new Observer<String>() {
            @Override
            public void onChanged(@Nullable String s) {
+               progressDialog.setCancelable(false);
             progressDialog.setTitle("Files Processing");
             progressDialog.setMessage("");
             progressDialog.show();
@@ -346,6 +347,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         AppConfig.getInsertprogress().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
+                progressDialog.setCancelable(false);
                 progressDialog.setTitle("Files Processing");
                 progressDialog.setMessage(s);
                 progressDialog.show();
@@ -630,6 +632,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         if(applog.getString("status","").equals("end")){
         if (!url.equals("") && !zipFileName.equals("")) {
             if (!isMyServiceRunning(DownloadService.class)) {
+                sessionManager.seturlno("0");
                 Log.e("service", "notrunning");
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     context.startForegroundService(intent);
