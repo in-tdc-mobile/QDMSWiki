@@ -52,6 +52,22 @@ public class SessionManager {
         editor.commit();
     }
 
+    public void seturlno(String urlno){
+        editor.putString("urlno", urlno);
+        editor.commit();
+    }
+
+    public void addurlno(){
+        int num=Integer.parseInt(pref.getString("urlno", "0"));
+        num++;
+        seturlno(num+"");
+    }
+
+    public Integer geturlno(){
+        return  Integer.parseInt(pref.getString("urlno", "0"));
+    }
+
+
     public String getUserId() {
         return pref.getString(KEY_USER_ID, "");
     }

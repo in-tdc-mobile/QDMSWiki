@@ -56,7 +56,7 @@ public class DownloadService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.e("onHandleIntent","started");
+        Log.e("dservice","onStartCommand");
         url = intent.getStringExtra("url");
         filename = intent.getStringExtra("filename");
         downloadEntityLists=intent.getParcelableArrayListExtra("downloadEntityLists") ;
@@ -155,21 +155,10 @@ public class DownloadService extends Service {
                // progressLayout.setVisibility(View.GONE);
               //  HomeActivity.Decompress decompress = new HomeActivity.Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zipFileName, Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
                 //decompress.execute();
-                AppConfig.getDwnldcmplted().postValue("completed");
-                Intent insertServiceIntent = new Intent(DownloadService.this, InsertionService.class);
-                insertServiceIntent.putExtra("destDirectory",Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
-                insertServiceIntent.putExtra("zipFilePath", filename);
-                insertServiceIntent.putParcelableArrayListExtra("downloadEntityLists",downloadEntityLists);
-                insertServiceIntent.putExtra("urlNum",urlNum+"");
-                if (!isMyServiceRunning(InsertionService.class)) {
-                    Log.e("fromdserivce","iservice called  urlnumis"+urlNum);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        startForegroundService(insertServiceIntent);
-                    } else {
-                        startService(insertServiceIntent);
-                    }
-                    stopSelf();
-                }
+                fetch.removeListener(this);
+                fetch.close();
+                stopForeground(true);
+                stopSelf();
 
             }
 
@@ -235,5 +224,25 @@ public class DownloadService extends Service {
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
         Log.e("onTaskRemoved","onTaskRemoved");
+    }
+
+    @Override
+    public void onDestroy() {
+        AppConfig.getDwnldcmplted().postValue("completed");
+        Intent insertServiceIntent = new Intent(DownloadService.this, InsertionService.class);
+        insertServiceIntent.putExtra("destDirectory",Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
+        insertServiceIntent.putExtra("zipFilePath", filename);
+        insertServiceIntent.putParcelableArrayListExtra("downloadEntityLists",downloadEntityLists);
+        insertServiceIntent.putExtra("urlNum",urlNum+"");
+        if (!isMyServiceRunning(InsertionService.class)) {
+            Log.e("fromdserivce","iservice called  urlnumis"+urlNum);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(insertServiceIntent);
+            } else {
+                startService(insertServiceIntent);
+            }
+        }
+        super.onDestroy();
+        Log.e("Deservice","onDestroy");
     }
 }

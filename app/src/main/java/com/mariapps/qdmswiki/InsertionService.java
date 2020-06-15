@@ -87,7 +87,7 @@ public class InsertionService extends Service {
     SessionManager sessionManager;
     HomeDatabase homeDatabase;
     NotificationManager notificationManager;
-    int urlNum = 0;
+   // int urlNum = 0;
     PendingIntent contentIntent;
     final String CHANNEL_ID = "10001";
     final String CHANNEL_NAME = "Default";
@@ -109,6 +109,11 @@ public class InsertionService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.e("iservice","onStartCommand");
+       /* if(isMyServiceRunning(DownloadService.class)){
+            //stopService(new Intent(this,DownloadService.class));
+            stopSelf();
+        }*/
         if(ObjectBox.get()==null){
             ObjectBox.init(getApplicationContext());
         }
@@ -134,9 +139,8 @@ public class InsertionService extends Service {
         zipFilePath = Environment.getExternalStorageDirectory() + "/QDMSWiki/" + intent.getStringExtra("zipFilePath");
         zipFilename = intent.getStringExtra("zipFilePath");
         downloadEntityLists = intent.getParcelableArrayListExtra("downloadEntityLists");
-        urlNum = Integer.parseInt(intent.getStringExtra("urlNum"));
-        setStartinsertionasync();
-        Log.e("urlNum",urlNum+"");
+     //   urlNum = Integer.parseInt(intent.getStringExtra("urlNum"));
+      //  Log.e("urlNum",urlNum+"");
         Log.e("zipFilename",zipFilename+"");
         Log.e("zipFilePath",zipFilePath);
         setStartinsertionasync();
@@ -167,6 +171,34 @@ public class InsertionService extends Service {
         if(startinsertionasync!=null){
             Log.e("asyncstask","iscancelled");
             startinsertionasync.cancel(true);
+        }
+        Intent intentStartDownload = new Intent(getApplicationContext(), DownloadService.class);
+        intentStartDownload.putExtra("url", downloadEntityLists.get(sessionManager.geturlno()).getDownloadLink());
+        intentStartDownload.putExtra("filename", downloadEntityLists.get(sessionManager.geturlno()).getFileName());
+        intentStartDownload.putExtra("urlNum", sessionManager.geturlno()+"");
+        intentStartDownload.putParcelableArrayListExtra("downloadEntityLists", (ArrayList) downloadEntityLists);
+        if (!isMyServiceRunning(DownloadService.class)) {
+            Log.e("dservice caled","from i service  urlnois"+sessionManager.geturlno());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                try {
+                    sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(sessionManager.geturlno() - 1).getFileName());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                Log.e("insertionservice", "startForegroundService(intentStartDownload)");
+                startForegroundService(intentStartDownload);
+                stopSelf();
+                AppConfig.getInsertcompletedonce().postValue("Starting to download next file");
+            } else {
+                try {
+                    Log.e("insertionservice", "startForegroundService(intentStartDownload)");
+                    sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(sessionManager.geturlno() - 1).getFileName());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                AppConfig.getInsertcompletedonce().postValue("Starting to download next file");
+                startService(intentStartDownload);
+            }
         }
         super.onDestroy();
 
@@ -214,46 +246,21 @@ public class InsertionService extends Service {
                 if (extractedFiles.exists()) {
                     extractedFiles.delete();
                 }
-                if (urlNum == downloadEntityLists.size()) {
+                if (sessionManager.geturlno() == downloadEntityLists.size()) {
                     Log.e("insertionservice", "getInsertcompletedall");
                     try {
-                        sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum - 1).getFileName());
+                        sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(sessionManager.geturlno() - 1).getFileName());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    sessionManager.seturlno("0");
                     AppConfig.getInsertcompletedall().postValue("completed");
-                } else if (urlNum < downloadEntityLists.size()) {
+                } else if (sessionManager.geturlno() < downloadEntityLists.size()) {
                     Log.e("insertionservice", "urlNum < downloadEntityLists.size()");
-                    urlNum++;
-                    Intent intentStartDownload = new Intent(getApplicationContext(), DownloadService.class);
-                    intentStartDownload.putExtra("url", downloadEntityLists.get(urlNum).getDownloadLink());
-                    intentStartDownload.putExtra("filename", downloadEntityLists.get(urlNum).getFileName());
-                    intentStartDownload.putExtra("urlNum", urlNum+"");
-                    intentStartDownload.putParcelableArrayListExtra("downloadEntityLists", (ArrayList) downloadEntityLists);
-                    if (!isMyServiceRunning(DownloadService.class)) {
-                        Log.e("dservice caled","from i service  urlnois"+urlNum);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            try {
-                                sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum - 1).getFileName());
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            Log.e("insertionservice", "startForegroundService(intentStartDownload)");
-                            startForegroundService(intentStartDownload);
-                            stopSelf();
-                            AppConfig.getInsertcompletedonce().postValue("Starting to download next file");
-                        } else {
-                            try {
-                                Log.e("insertionservice", "startForegroundService(intentStartDownload)");
-                                sessionManager.setKeyLastUpdatedFileName(downloadEntityLists.get(urlNum - 1).getFileName());
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            AppConfig.getInsertcompletedonce().postValue("Starting to download next file");
-                            startService(intentStartDownload);
-                            stopSelf();
-                        }
-                    }
+                    sessionManager.addurlno();
+                    stopForeground(true);
+                    stopSelf();
+
 
                 }
             } catch (Exception e) {
@@ -281,7 +288,7 @@ public class InsertionService extends Service {
             ZipFile zip = null;
             try {
                 byte[] buffer = new byte[1024];
-                File destDir = new File(destDirectory+urlNum);
+                File destDir = new File(destDirectory+sessionManager.geturlno());
                 Log.e("exractdfolder",destDir.getAbsolutePath());
                 if (!destDir.exists()) {
                     destDir.mkdir();
@@ -322,7 +329,7 @@ public class InsertionService extends Service {
 
 
             try {
-                File folder = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+urlNum); //This is just to cast to a File type since you pass it as a String
+                File folder = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()); //This is just to cast to a File type since you pass it as a String
                 Log.e("insertionfolder",folder.getAbsolutePath());
                 File[] filesInFolder = folder.listFiles(); // This returns all the folders and files in your path
                 for (int i = 0; i < filesInFolder.length; i++) { //For each of the entries do:
@@ -347,7 +354,7 @@ public class InsertionService extends Service {
                                     Log.e("catchedreader", "" + filesInFolder[i].getName() + "   " + e.getLocalizedMessage());
                                     try {
                                         JsonParser parser = new JsonParser();
-                                        JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+urlNum+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                                        JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
                                         JsonArray jsonArray = data.getAsJsonArray("fileChunks");
                                         AppConfig.getInsertprogress().postValue("Inserting files to database");
                                         fileList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FileListModel>>() {
@@ -371,7 +378,7 @@ public class InsertionService extends Service {
                                     documentList.addAll(readJsonStreamfordoc(new FileInputStream(filesInFolder[i])));
                                 } catch (Exception e) {
                                     JsonParser parser = new JsonParser();
-                                    JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+urlNum+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                                    JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
                                     JsonArray jsonArray = data.getAsJsonArray("Documents");
                                     documentList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<DocumentModel>>() {
                                     }.getType()));
@@ -420,7 +427,7 @@ public class InsertionService extends Service {
                                     articleList.addAll(readJsonStreamforarticle(new FileInputStream(filesInFolder[i])));
                                 } catch (Exception e) {
                                     JsonParser parser = new JsonParser();
-                                    JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+urlNum+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                                    JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
                                     JsonArray jsonArray = data.getAsJsonArray("Articles");
                                     articleList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ArticleModel>>() {
                                     }.getType()));
@@ -457,7 +464,7 @@ public class InsertionService extends Service {
                         } else if (filesInFolder[i].getName().contains("image")) {
                             //check that it's not a dir
                             JsonParser parser = new JsonParser();
-                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+urlNum+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
                             try {
                                 appendLog("Extracting image " + filesInFolder[i].getName());
                                 JsonArray jsonArray = data.getAsJsonArray("Images");
@@ -488,7 +495,7 @@ public class InsertionService extends Service {
                             }
                         } else if (filesInFolder[i].getName().contains("category")) {
                             JsonParser parser = new JsonParser();
-                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+urlNum+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
                             try {
                                 appendLog("Extracting category " + filesInFolder[i].getName());
                                 JsonArray jsonArray = data.getAsJsonArray("Categories");
@@ -505,7 +512,7 @@ public class InsertionService extends Service {
                             }
                         } else if (filesInFolder[i].getName().contains("bookmarks")) {
                             JsonParser parser = new JsonParser();
-                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+urlNum+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
                             try {
                                 appendLog("Extracting bookmark " + filesInFolder[i].getName());
                                 JsonArray jsonArray = data.getAsJsonArray("Bookmarks");
@@ -531,7 +538,7 @@ public class InsertionService extends Service {
                             }
                         } else if (filesInFolder[i].getName().contains("notifications")) {
                             JsonParser parser = new JsonParser();
-                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles+"+urlNum+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles+"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
                             try {
                                 JsonArray jsonArray = data.getAsJsonArray("Notifications");
                                 notificationList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<NotificationModel>>() {
@@ -542,7 +549,7 @@ public class InsertionService extends Service {
                             }
                         } else if (filesInFolder[i].getName().contains("userInfo")) {
                             JsonParser parser = new JsonParser();
-                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles+"+urlNum+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles+"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
                             try {
                                 appendLog("Extracting user info " + filesInFolder[i].getName());
                                 JsonArray jsonArray = data.getAsJsonArray("UserInfo");
@@ -569,7 +576,7 @@ public class InsertionService extends Service {
                             }
                         } else if (filesInFolder[i].getName().contains("userSet")) {
                             JsonParser parser = new JsonParser();
-                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles+"+urlNum+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles+"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
                             try {
                                 JsonArray jsonArray = data.getAsJsonArray("UserSettings");
                                 userSettingsList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<UserSettingsModel>>() {
@@ -581,7 +588,7 @@ public class InsertionService extends Service {
 
                         } else if (filesInFolder[i].getName().contains("forms")) {
                             JsonParser parser = new JsonParser();
-                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles+"+urlNum+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles+"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
                             try {
                                 appendLog("Extracting form " + filesInFolder[i].getName());
                                 JsonArray jsonArray = data.getAsJsonArray("Forms");
