@@ -144,7 +144,7 @@ public class InsertionService extends Service {
         Log.e("zipFilename",zipFilename+"");
         Log.e("zipFilePath",zipFilePath);
         setStartinsertionasync();
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     public void setStartinsertionasync(){
@@ -257,7 +257,7 @@ public class InsertionService extends Service {
                 if (file.exists()) {
                     file.delete();
                 }
-                File extractedFiles = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
+                File extractedFiles = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno());
                 if (extractedFiles.exists()) {
                     extractedFiles.delete();
                 }
@@ -373,8 +373,7 @@ public class InsertionService extends Service {
                                         JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
                                         JsonArray jsonArray = data.getAsJsonArray("fileChunks");
                                         AppConfig.getInsertprogress().postValue("Inserting files to database");
-                                        fileList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FileListModel>>() {
-                                        }.getType()));
+                                        fileList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FileListModel>>() {}.getType()));
                                     } catch (Exception e1) {
                                         Log.e("catchegsonparser", "" + filesInFolder[i].getName() + "   " + e.getLocalizedMessage());
                                     }
