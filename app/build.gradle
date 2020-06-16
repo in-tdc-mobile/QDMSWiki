@@ -7,7 +7,7 @@ android {
         applicationId "com.mariapps.qdmswiki"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 8
+        versionCode 9
         versionName "1.0.4"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
