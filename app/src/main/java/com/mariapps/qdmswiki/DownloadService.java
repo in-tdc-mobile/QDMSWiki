@@ -49,6 +49,8 @@ public class DownloadService extends Service {
     NotificationManager notificationManager;
     ArrayList<DownloadFilesResponseModel.DownloadEntityList> downloadEntityLists = new ArrayList();
     int urlNum=0;
+    Boolean iscompleted=false;
+    Fetch fetch;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -84,7 +86,7 @@ public class DownloadService extends Service {
             startForeground(1,mBuilder.build());
         }
         beginDownload(url,filename);
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
 
@@ -93,7 +95,7 @@ public class DownloadService extends Service {
         FetchConfiguration fetchConfiguration = new FetchConfiguration.Builder(this)
                 .enableRetryOnNetworkGain(true)
                 .build();
-       Fetch fetch = Fetch.Impl.getInstance(fetchConfiguration);
+     fetch  = Fetch.Impl.getInstance(fetchConfiguration);
         final Request request = new Request(url, Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zipFileName);
         request.setPriority(Priority.HIGH);
         request.setNetworkType(NetworkType.ALL);
@@ -161,6 +163,7 @@ public class DownloadService extends Service {
                 fetch.close();
                 stopForeground(true);
                 stopSelf();
+                iscompleted=true;
 
             }
 
@@ -230,20 +233,31 @@ public class DownloadService extends Service {
 
     @Override
     public void onDestroy() {
-        AppConfig.getDwnldcmplted().postValue("completed");
-        Intent insertServiceIntent = new Intent(DownloadService.this, InsertionService.class);
-        insertServiceIntent.putExtra("destDirectory",Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
-        insertServiceIntent.putExtra("zipFilePath", filename);
-        insertServiceIntent.putExtra("Type", type);
-        insertServiceIntent.putParcelableArrayListExtra("downloadEntityLists",downloadEntityLists);
-        insertServiceIntent.putExtra("urlNum",urlNum+"");
-        if (!isMyServiceRunning(InsertionService.class)) {
-            Log.e("fromdserivce","iservice called  urlnumis"+urlNum);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(insertServiceIntent);
-            } else {
-                startService(insertServiceIntent);
+        if(iscompleted){
+            AppConfig.getDwnldcmplted().postValue("completed");
+            Intent insertServiceIntent = new Intent(DownloadService.this, InsertionService.class);
+            insertServiceIntent.putExtra("destDirectory",Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
+            insertServiceIntent.putExtra("zipFilePath", filename);
+            insertServiceIntent.putExtra("Type", type);
+            insertServiceIntent.putParcelableArrayListExtra("downloadEntityLists",downloadEntityLists);
+            insertServiceIntent.putExtra("urlNum",urlNum+"");
+            if (!isMyServiceRunning(InsertionService.class)) {
+                Log.e("fromdserivce","iservice called  urlnumis"+urlNum);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(insertServiceIntent);
+                } else {
+                    startService(insertServiceIntent);
+                }
             }
+        }
+        try {
+            if(fetch!=null){
+                if(!fetch.isClosed()){
+                    fetch.close();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         super.onDestroy();
         Log.e("Deservice","onDestroy");
