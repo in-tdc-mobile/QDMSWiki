@@ -406,7 +406,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
     @Override
     protected void onStop() {
         super.onStop();
-        Log.e("onStop", "stopped");
+        Log.e("onStop", "stopped activity");
     }
 
     private void getParentFolders() {
