@@ -195,6 +195,7 @@ public class InsertionService extends Service implements HomeView {
                 Intent intentStartDownload = new Intent(getApplicationContext(), DownloadService.class);
                 intentStartDownload.putExtra("url", downloadEntityLists.get(sessionManager.geturlno()).getDownloadLink());
                 intentStartDownload.putExtra("filename", downloadEntityLists.get(sessionManager.geturlno()).getFileName());
+                intentStartDownload.putExtra("Type", downloadEntityLists.get(sessionManager.geturlno()).getType());
                 intentStartDownload.putExtra("urlNum", sessionManager.geturlno()+"");
                 intentStartDownload.putParcelableArrayListExtra("downloadEntityLists", (ArrayList) downloadEntityLists);
                 if (!isMyServiceRunning(DownloadService.class)) {
