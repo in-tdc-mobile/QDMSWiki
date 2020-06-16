@@ -333,6 +333,10 @@ public class HomeActivity extends BaseActivity implements HomeView {
                                 relLayout.setAlpha(1.0f);
                                 initShowCase();
                             }
+                            mainViewPager.updateRecentlyList(new ArrayList<>());
+                            setNotificationCount();
+                            getParentFolders();
+                            getRecommendedList();
                         }
                     });
                 progressDialog.dismiss();
@@ -428,6 +432,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         } catch (IllegalStateException e) {
             Log.d("IllegalStateException", "Exception", e);
         }
+
     }
 
     private void initNavDrawer() {
@@ -1580,7 +1585,7 @@ request.setAllowedNetworkTypes(
                     }
                 }
             }
-            //mainViewPager.updateRecentlyList(new ArrayList<>());
+            mainViewPager.updateRecentlyList(new ArrayList<>());
             setNotificationCount();
             getParentFolders();
             File file = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zippedFileName);
@@ -1809,7 +1814,7 @@ request.setAllowedNetworkTypes(
                 }
 
                 getRecommendedList();
-            }
+        }
 
 
             @Override
