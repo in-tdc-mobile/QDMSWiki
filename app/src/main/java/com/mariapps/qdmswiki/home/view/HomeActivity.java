@@ -334,10 +334,26 @@ public class HomeActivity extends BaseActivity implements HomeView {
                                 relLayout.setAlpha(1.0f);
                                 initShowCase();
                             }
-                            mainViewPager.updateRecentlyList(new ArrayList<>());
-                            setNotificationCount();
-                            getParentFolders();
-                            getRecommendedList();
+                            try {
+                                mainViewPager.updateRecentlyList(new ArrayList<>());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            try {
+                                setNotificationCount();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            try {
+                                getParentFolders();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            try {
+                                getRecommendedList();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     });
                 progressDialog.dismiss();
@@ -629,6 +645,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         type =typ;
         zippedFileName = zipFileName;
         Intent intent = new Intent(context, DownloadService.class);
+        Log.e("firsturl",url);
         intent.putExtra("url", url);
         intent.putExtra("filename", zipFileName);
         intent.putExtra("urlNum", urlNum+"");
@@ -681,9 +698,6 @@ public class HomeActivity extends BaseActivity implements HomeView {
 
             }
         }
-
-
-
     }
 
 
@@ -911,6 +925,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
             downloadEntityLists = downloadFilesResponseModel.getDownloadEntityList();
             appendLog("DownloadEntityList size =" + downloadEntityLists.size());
             if (downloadFilesResponseModel != null && downloadEntityLists.size() > 0) {
+                Log.e("urlno",urlNum+"   "+downloadEntityLists.get(urlNum).getDownloadLink());
                 beginDownload(downloadEntityLists.get(urlNum).getDownloadLink(), downloadEntityLists.get(urlNum).getFileName(),
                         downloadEntityLists.get(urlNum).getType());
                 urlNum = urlNum + 1;

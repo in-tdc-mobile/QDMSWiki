@@ -59,33 +59,38 @@ public class DownloadService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.e("dservice","onStartCommand");
-        url = intent.getStringExtra("url");
-        filename = intent.getStringExtra("filename");
-        type = intent.getStringExtra("Type");
-        downloadEntityLists=intent.getParcelableArrayListExtra("downloadEntityLists") ;
-        Log.e("parseInt",intent.getStringExtra("urlNum"));
-        urlNum=Integer.parseInt(intent.getStringExtra("urlNum"));
+        if(intent!=null){
+            Log.e("dservice","onStartCommand");
+            url = intent.getStringExtra("url");
+            filename = intent.getStringExtra("filename");
+            type = intent.getStringExtra("Type");
+            downloadEntityLists=intent.getParcelableArrayListExtra("downloadEntityLists") ;
+            Log.e("parseInt",intent.getStringExtra("urlNum"));
+            urlNum=Integer.parseInt(intent.getStringExtra("urlNum"));
 
-       // Intent pintent = new Intent(this, HomeActivity.class);
-       // contentIntent = PendingIntent.getActivity(this, 1, pintent, PendingIntent.FLAG_UPDATE_CURRENT);
-        if(url!=null)
-        //beginDownload(url,filename);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            initChannels(this,"Downloading Files", "QDMS");
+            // Intent pintent = new Intent(this, HomeActivity.class);
+            // contentIntent = PendingIntent.getActivity(this, 1, pintent, PendingIntent.FLAG_UPDATE_CURRENT);
+            if(url!=null)
+                //beginDownload(url,filename);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    initChannels(this,"Downloading Files", "QDMS");
+                }
+                else{
+                    notificationManager = (NotificationManager)
+                            this.getSystemService(Context.NOTIFICATION_SERVICE);
+                    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
+                    mBuilder.setSmallIcon(R.drawable.app_icon)
+                            .setContentTitle("QDMS")
+                            // .setContentIntent(contentIntent)
+                            .setContentText("Downloading Files");
+                    notificationManager.notify(1, mBuilder.build());
+                    startForeground(1,mBuilder.build());
+                }
+            beginDownload(url,filename);
         }
-        else{
-            notificationManager = (NotificationManager)
-                    this.getSystemService(Context.NOTIFICATION_SERVICE);
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
-            mBuilder.setSmallIcon(R.drawable.app_icon)
-                    .setContentTitle("QDMS")
-                   // .setContentIntent(contentIntent)
-                    .setContentText("Downloading Files");
-            notificationManager.notify(1, mBuilder.build());
-            startForeground(1,mBuilder.build());
+        else {
+            stopSelf();
         }
-        beginDownload(url,filename);
         return START_NOT_STICKY;
     }
 
@@ -96,6 +101,7 @@ public class DownloadService extends Service {
                 .enableRetryOnNetworkGain(true)
                 .build();
      fetch  = Fetch.Impl.getInstance(fetchConfiguration);
+     Log.e("fetchurl",url);
         final Request request = new Request(url, Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zipFileName);
         request.setPriority(Priority.HIGH);
         request.setNetworkType(NetworkType.ALL);
@@ -159,6 +165,7 @@ public class DownloadService extends Service {
                // progressLayout.setVisibility(View.GONE);
               //  HomeActivity.Decompress decompress = new HomeActivity.Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zipFileName, Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
                 //decompress.execute();
+                Log.e("fetch","onCompleted"+download.getUrl());
                 fetch.removeListener(this);
                 fetch.close();
                 stopForeground(true);

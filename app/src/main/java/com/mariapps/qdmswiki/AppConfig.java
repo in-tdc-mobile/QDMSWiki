@@ -30,10 +30,10 @@ public class AppConfig {
     public static final String FRAG_HOME = "fragmenthome";
     public static final String FRAG_NAV_DRAWER = "fragmentnavdrawer";
     public static final String FRAG_NAV_DETAILS_DRAWER = "fragmentnavdetailsdrawer";
-    public static MutableLiveData<String> dwnldstarted=null;
-    public static  MutableLiveData<Integer> dwnldprgress=null;
-    public static  MutableLiveData<String> dwnldcmplted=null;
-    public static  MutableLiveData<String> dwnlderror=null;
+    public static SingleLiveEvent<String> dwnldstarted=null;
+    public static  SingleLiveEvent<Integer> dwnldprgress=null;
+    public static  SingleLiveEvent<String> dwnldcmplted=null;
+    public static  SingleLiveEvent<String> dwnlderror=null;
 
     public static  SingleLiveEvent<String> insertstarted=null;
     public static  SingleLiveEvent<String> insertcompletedall=null;
@@ -70,30 +70,30 @@ public class AppConfig {
         return insertprogress;
     }
 
-    public static MutableLiveData<String> getDwnldstarted() {
+    public static SingleLiveEvent<String> getDwnldstarted() {
         if(dwnldstarted==null){
-            dwnldstarted = new MutableLiveData<>();
+            dwnldstarted = new SingleLiveEvent<>();
         }
         return dwnldstarted;
     }
 
-    public static MutableLiveData<Integer> getDwnldprgress() {
+    public static SingleLiveEvent<Integer> getDwnldprgress() {
         if(dwnldprgress==null){
-            dwnldprgress = new MutableLiveData<>();
+            dwnldprgress = new SingleLiveEvent<>();
         }
         return dwnldprgress;
     }
 
-    public static MutableLiveData<String> getDwnldcmplted() {
+    public static SingleLiveEvent<String> getDwnldcmplted() {
         if(dwnldcmplted==null){
-            dwnldcmplted = new MutableLiveData<>();
+            dwnldcmplted = new SingleLiveEvent<>();
         }
         return dwnldcmplted;
     }
 
-    public static MutableLiveData<String> getDwnlderror() {
+    public static SingleLiveEvent<String> getDwnlderror() {
         if(dwnlderror==null){
-            dwnlderror = new MutableLiveData<>();
+            dwnlderror = new SingleLiveEvent<>();
         }
         return dwnlderror;
     }
