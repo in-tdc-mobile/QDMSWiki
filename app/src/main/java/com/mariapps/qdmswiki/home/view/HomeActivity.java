@@ -406,13 +406,6 @@ public class HomeActivity extends BaseActivity implements HomeView {
 
     public void senderrorlogs(){
         appendErrorLog("testlog");
-        String mailBody = " Comments : " + "\n\n\n" +
-                " Name : " + sessionManager.getUserName() + "\n" +
-                " OS   : Android Version " + android.os.Build.VERSION.RELEASE + "\n" +
-                " App Version : " + BuildConfig.VERSION_NAME + "\n" +
-                " App Name : " +  getResources().getString(R.string.app_name) + "\n" +
-                " Device : " + android.os.Build.MODEL + "\n";
-
         QDMSWikiApi service = QDMSWikiApplication.getInstance().getAPI();
         RequestBody userid = RequestBody.create(MediaType.parse("text/plain"), sessionManager.getUserId());
         RequestBody deviceType = RequestBody.create(MediaType.parse("text/plain"),"ANDROID "+android.os.Build.VERSION.RELEASE);
@@ -420,7 +413,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         RequestBody deviceName = RequestBody.create(MediaType.parse("text/plain"), android.os.Build.MODEL);
         RequestBody logfilebody =RequestBody.create(MediaType.parse("*/*"), new File("sdcard/QDMSWiki/qdms_error_file.txt"));
         MultipartBody.Part logfile = MultipartBody.Part.createFormData("", new File("sdcard/QDMSWiki/qdms_error_file.txt").getName(),logfilebody);
-        service.senderrorlogs(logfile,userid,appVersion,deviceName).enqueue(new Callback<LogResponse>() {
+        service.senderrorlogs(logfile,userid,appVersion,deviceName,deviceType).enqueue(new Callback<LogResponse>() {
             @Override
             public void onResponse(Call<LogResponse> call, Response<LogResponse> response) {
 
