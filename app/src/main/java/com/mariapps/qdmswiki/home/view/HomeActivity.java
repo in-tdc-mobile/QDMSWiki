@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.ProgressDialog;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.Transformations;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -58,13 +59,17 @@ import com.google.gson.stream.JsonReader;
 import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.ArticleModelObj;
 import com.mariapps.qdmswiki.ArticleModelObj_;
+import com.mariapps.qdmswiki.BuildConfig;
 import com.mariapps.qdmswiki.DocumentModelObj;
 import com.mariapps.qdmswiki.DocumentModelObj_;
 import com.mariapps.qdmswiki.DownloadService;
 
 import com.mariapps.qdmswiki.InsertionService;
+import com.mariapps.qdmswiki.LogResponse;
 import com.mariapps.qdmswiki.ObjectBox;
+import com.mariapps.qdmswiki.QDMSWikiApplication;
 import com.mariapps.qdmswiki.R;
+import com.mariapps.qdmswiki.SendAllIdModel;
 import com.mariapps.qdmswiki.SessionManager;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkEntryModel;
@@ -90,6 +95,8 @@ import com.mariapps.qdmswiki.notification.view.NotificationActivity;
 import com.mariapps.qdmswiki.search.model.SearchModel;
 import com.mariapps.qdmswiki.search.view.FolderStructureActivity;
 import com.mariapps.qdmswiki.serviceclasses.APIException;
+import com.mariapps.qdmswiki.serviceclasses.QDMSWikiApi;
+import com.mariapps.qdmswiki.serviceclasses.QDMSWikiNetworkService;
 import com.mariapps.qdmswiki.settings.view.SettingsActivity;
 import com.mariapps.qdmswiki.usersettings.UserInfoModel;
 import com.mariapps.qdmswiki.usersettings.UserSettingsCategoryModel;
@@ -141,6 +148,12 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.internal.operators.parallel.ParallelDoOnNextTry;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class HomeActivity extends BaseActivity implements HomeView {
     @BindView(R.id.toolbar)
@@ -386,6 +399,84 @@ public class HomeActivity extends BaseActivity implements HomeView {
         for (int i = 0; i < dbox.getAll().size(); i++) {
             Log.e("nameofdoc",dbox.getAll().get(i).documentData.length()+"");
         }*/
+
+    senderrorlogs();
+
+    }
+
+    public void senderrorlogs(){
+        appendErrorLog("testlog");
+        String mailBody = " Comments : " + "\n\n\n" +
+                " Name : " + sessionManager.getUserName() + "\n" +
+                " OS   : Android Version " + android.os.Build.VERSION.RELEASE + "\n" +
+                " App Version : " + BuildConfig.VERSION_NAME + "\n" +
+                " App Name : " +  getResources().getString(R.string.app_name) + "\n" +
+                " Device : " + android.os.Build.MODEL + "\n";
+
+        QDMSWikiApi service = QDMSWikiApplication.getInstance().getAPI();
+        RequestBody userid = RequestBody.create(MediaType.parse("text/plain"), sessionManager.getUserId());
+        RequestBody deviceType = RequestBody.create(MediaType.parse("text/plain"),"ANDROID "+android.os.Build.VERSION.RELEASE);
+        RequestBody appVersion = RequestBody.create(MediaType.parse("text/plain"), BuildConfig.VERSION_NAME);
+        RequestBody deviceName = RequestBody.create(MediaType.parse("text/plain"), android.os.Build.MODEL);
+        RequestBody logfilebody =RequestBody.create(MediaType.parse("*/*"), new File("sdcard/QDMSWiki/qdms_error_file.txt"));
+        MultipartBody.Part logfile = MultipartBody.Part.createFormData("", new File("sdcard/QDMSWiki/qdms_error_file.txt").getName(),logfilebody);
+        service.senderrorlogs(logfile,userid,appVersion,deviceName).enqueue(new Callback<LogResponse>() {
+            @Override
+            public void onResponse(Call<LogResponse> call, Response<LogResponse> response) {
+
+                try {
+                    Log.e("success send jsonlog",response.body().toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LogResponse> call, Throwable t) {
+                try {
+                    Log.e("onFailure send jsonlog",t.getLocalizedMessage());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public void sendAllIdstoServer(){
+        SendAllIdModel allIdModel = new SendAllIdModel();
+        List<SendAllIdModel.ArticleIdList> ArticleIdList = new ArrayList<>();
+        List<SendAllIdModel.DocumentsIdList> DocumentsIdList = new ArrayList<>();
+        List<SendAllIdModel.FileChunkIdList> FileChunkIdList = new ArrayList<>();
+        List<SendAllIdModel.ImageNameList> ImageNameList = new ArrayList<>();
+
+                List<String> imageids = new ArrayList<>();
+                imageids.addAll(homeDatabase.homeDao().getimagenames());
+
+        List<String> fileids = new ArrayList<>();
+        fileids.addAll(homeDatabase.homeDao().getFileids());
+
+        List<String> articleids = new ArrayList<>();
+        articleids.addAll(homeDatabase.homeDao().getartids());
+
+        List<String> docids = new ArrayList<>();
+        docids.addAll(homeDatabase.homeDao().getdocids());
+
+        for (int i = 0; i < articleids.size(); i++) {
+            ArticleIdList.add(new SendAllIdModel.ArticleIdList(articleids.get(i)));
+        }
+        for (int i = 0; i < docids.size(); i++) {
+            DocumentsIdList.add(new SendAllIdModel.DocumentsIdList(docids.get(i)));
+        }
+        for (int i = 0; i < fileids.size(); i++) {
+            FileChunkIdList.add(new SendAllIdModel.FileChunkIdList(fileids.get(i)));
+        }
+        for (int i = 0; i < imageids.size(); i++) {
+            ImageNameList.add(new SendAllIdModel.ImageNameList(imageids.get(i)));
+        }
+        allIdModel.setArticleIdList(ArticleIdList);
+        allIdModel.setDocumentsIdList(DocumentsIdList);
+        allIdModel.setFileChunkIdList(FileChunkIdList);
+        allIdModel.setImageNameList(ImageNameList);
     }
 
     public void initShowCase() {
@@ -651,9 +742,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
         intent.putExtra("urlNum", urlNum+"");
         intent.putExtra("Type", type);
         intent.putParcelableArrayListExtra("downloadEntityLists", (ArrayList)downloadEntityLists);
-        if(applog.getString("status","").equals("end")){
         if (!url.equals("") && !zipFileName.equals("")) {
-            if (!isMyServiceRunning(DownloadService.class)) {
+            /*if (!isMyServiceRunning(DownloadService.class)) {
                 sessionManager.seturlno("0");
                 Log.e("service", "notrunning");
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -663,40 +753,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 }
             } else {
                 Log.e("service", "isrunning");
-            }
-        }
-        }
-        else {
-            if(applog.getString("task","").equals("ReadAndInsertJsonData")){
-              if(readAndInsertJsonData==null){
-                  readAndInsertJsonData = new ReadAndInsertJsonData();
-                  readAndInsertJsonData.execute();
-              }
-            }
-
-            else if(applog.getString("task","").equals("ReadAndInsertJsonDatafordoc")){
-                if(readAndInsertJsonDatafordoc==null){
-                    readAndInsertJsonDatafordoc = new ReadAndInsertJsonDatafordoc();
-                    readAndInsertJsonDatafordoc.execute();
-                }
-
-            }
-
-            if(applog.getString("task","").equals("ReadAndInsertJsonDataforarticles")){
-                if(readAndInsertJsonDataforart==null){
-                    readAndInsertJsonDataforart = new ReadAndInsertJsonDataforarticles();
-                    readAndInsertJsonDataforart.execute();
-                }
-
-            }
-
-            if(applog.getString("task","").equals("ReadAndInsertJsonData1")){
-                if(readAndInsertJsonData1==null){
-                    readAndInsertJsonData1 = new ReadAndInsertJsonData1();
-                     readAndInsertJsonData1.execute();
-                }
-
-            }
+            }*/
         }
     }
 
@@ -983,6 +1040,30 @@ request.setAllowedNetworkTypes(
      };*/
     public void appendLog(String text) {
         File logFile = new File("sdcard/QDMSWiki/qdms_log_file.txt");
+        if (!logFile.exists()) {
+            try {
+                logFile.createNewFile();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        try {
+            //BufferedWriter for performance, true to set append to file flag
+            BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
+            buf.append(text + " :  " +DateUtils.getCurrentDate());
+            buf.newLine();
+            buf.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public void appendErrorLog(String text) {
+        File logFile = new File("sdcard/QDMSWiki/qdms_error_file.txt");
         if (!logFile.exists()) {
             try {
                 logFile.createNewFile();

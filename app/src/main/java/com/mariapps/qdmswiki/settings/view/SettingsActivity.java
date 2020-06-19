@@ -2,6 +2,7 @@ package com.mariapps.qdmswiki.settings.view;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -34,6 +35,7 @@ import com.mariapps.qdmswiki.settings.model.LogoutRespObj;
 import com.mariapps.qdmswiki.settings.model.SettingsItem;
 import com.mariapps.qdmswiki.settings.presenter.SettingsPresenter;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,6 +118,8 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
                         sendIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"support@mariapps.com"});
                         sendIntent.putExtra(Intent.EXTRA_SUBJECT, "QDMWiki Android support [UserID: " +sessionManager.getUserId()+"]");
                         sendIntent.putExtra(Intent.EXTRA_TEXT, mailBody);
+                        Uri uri = Uri.fromFile(new File("sdcard/QDMSWiki/qdms_log_file.txt"));
+                        sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
                         startActivity(Intent.createChooser(sendIntent, "Send Email"));
                         break;
                     case 4:

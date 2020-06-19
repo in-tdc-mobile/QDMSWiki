@@ -1,5 +1,6 @@
 package com.mariapps.qdmswiki.serviceclasses;
 
+import com.mariapps.qdmswiki.LogResponse;
 import com.mariapps.qdmswiki.home.model.DownloadFilesRequestModel;
 import com.mariapps.qdmswiki.home.model.DownloadFilesResponseModel;
 import com.mariapps.qdmswiki.login.model.LoginRequestObj;
@@ -7,9 +8,14 @@ import com.mariapps.qdmswiki.login.model.LoginResponse;
 import com.mariapps.qdmswiki.settings.model.LogoutRequestObj;
 import com.mariapps.qdmswiki.settings.model.LogoutRespObj;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.http.Body;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import rx.Observable;
 
 /**
@@ -27,4 +33,12 @@ public interface QDMSWikiApi {
     @POST("Home/DownloadFiles")
     Observable<Response<DownloadFilesResponseModel>> getUrls(@Body DownloadFilesRequestModel downloadFilesRequestModel);
 
+    @Multipart
+    @POST("Home/SendEmail")
+    Call<LogResponse> senderrorlogs(
+            @Part MultipartBody.Part file,
+            @Part("userId") RequestBody userId,
+            @Part("appVersion") RequestBody appVersion,
+            @Part("deviceName") RequestBody deviceName
+    );
 }

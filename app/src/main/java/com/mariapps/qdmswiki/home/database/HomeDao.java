@@ -695,5 +695,17 @@ public interface HomeDao {
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertFileListModelbylist(List<FileListModel> fileListModel);
+
+    @Query("SELECT Id  FROM FileChunksEntity")
+    List<String> getFileids();
+
+    @Query("SELECT Id  FROM DocumentEntity")
+    List<String> getdocids();
+
+    @Query("SELECT Id  FROM ArticleEntity")
+    List<String> getartids();
+
+    @Query("SELECT imageName  FROM imageentity")
+    List<String> getimagenames();
 }
 
