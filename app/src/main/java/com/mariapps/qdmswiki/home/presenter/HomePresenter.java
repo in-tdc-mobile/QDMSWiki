@@ -1196,7 +1196,7 @@ public class HomePresenter {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-                childList = homeDatabase.homeDao().getAllDocumentsInsideFolder(parentId);
+                childList = homeDatabase.homeDao().getAllDocumentsAndFoldersInsideFolder(parentId);
                 for(int i=0;i<childList.size();i++){
                     if(childList.get(i).getType().equals("Article")){
                         List<String> categoryIds = Collections.singletonList(childList.get(i).getCategoryId().substring(1, childList.get(i).getCategoryId().length() - 1));
