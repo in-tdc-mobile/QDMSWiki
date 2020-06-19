@@ -42,4 +42,6 @@ public interface QDMSWikiApi {
             @Part("deviceName") RequestBody deviceName,
             @Part("deviceType") RequestBody deviceType
     );
+
+    //" @Part MultipartBody.Part file,"
 }
