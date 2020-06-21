@@ -117,26 +117,46 @@
     </LinearLayout>
 
     <LinearLayout
-        android:visibility="gone"
+        android:visibility="visible"
         android:id="@+id/progressLayout"
         android:orientation="vertical"
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
+<android.support.constraint.ConstraintLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
     <com.mariapps.qdmswiki.utils.DonutProgress
+        app:donut_background_color="@color/white"
         android:id="@+id/donut_progress"
-        app:donut_circle_starting_degree="-90"
-        app:donut_progress="0"
-        app:donut_text_size="@dimen/dimen_30dp"
-        app:donut_unfinished_stroke_width="@dimen/dimen_5dp"
-        app:donut_finished_stroke_width="@dimen/dimen_5dp"
-        app:donut_unfinished_color="@color/grey_400"
-        app:donut_finished_color="@color/searchType"
-        app:donut_text_color="@color/searchType"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        app:donut_circle_starting_degree="-90"
+        app:donut_finished_color="@color/searchType"
+        app:donut_finished_stroke_width="@dimen/dimen_5dp"
+        app:donut_progress="0"
+        app:donut_text_color="@color/searchType"
+        app:donut_text_size="@dimen/dimen_30dp"
+        app:donut_unfinished_color="@color/grey_400"
+        app:donut_unfinished_stroke_width="@dimen/dimen_5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/loading"
+        android:layout_width="@dimen/dimen_100dp"
+        android:layout_height="@dimen/dimen_30dp"
+        app:layout_constraintBottom_toBottomOf="@+id/donut_progress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/donut_progress"
+        app:layout_constraintVertical_bias="0.8" />
+</android.support.constraint.ConstraintLayout>
+
 
     <com.mariapps.qdmswiki.custom.CustomTextView
         android:id="@+id/txtDownload"

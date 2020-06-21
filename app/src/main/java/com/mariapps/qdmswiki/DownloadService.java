@@ -43,7 +43,7 @@ public class DownloadService extends Service {
     final String CHANNEL_ID = "10001";
     final String CHANNEL_NAME = "Default";
     PendingIntent contentIntent;
-  public static   String url="";
+    public static   String url="";
     public static String filename="";
     private static String type="";
     NotificationManager notificationManager;
@@ -65,7 +65,7 @@ public class DownloadService extends Service {
             filename = intent.getStringExtra("filename");
             type = intent.getStringExtra("Type");
             downloadEntityLists=intent.getParcelableArrayListExtra("downloadEntityLists") ;
-            Log.e("parseInt",intent.getStringExtra("urlNum"));
+          //  Log.e("parseInt",intent.getStringExtra("urlNum"));
             urlNum=Integer.parseInt(intent.getStringExtra("urlNum"));
 
             // Intent pintent = new Intent(this, HomeActivity.class);
@@ -100,8 +100,8 @@ public class DownloadService extends Service {
         FetchConfiguration fetchConfiguration = new FetchConfiguration.Builder(this)
                 .enableRetryOnNetworkGain(true)
                 .build();
-     fetch  = Fetch.Impl.getInstance(fetchConfiguration);
-     Log.e("fetchurl",url);
+        fetch  = Fetch.Impl.getInstance(fetchConfiguration);
+        Log.e("fetchurl",url);
         final Request request = new Request(url, Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zipFileName);
         request.setPriority(Priority.HIGH);
         request.setNetworkType(NetworkType.ALL);
@@ -111,10 +111,6 @@ public class DownloadService extends Service {
             //An error occurred enqueuing the request.
         });
         FetchListener     fetchListener = new FetchListener() {
-
-
-
-
             @Override
             public void onWaitingNetwork(@NotNull Download download) {
                 fetch.resume(downloadID);

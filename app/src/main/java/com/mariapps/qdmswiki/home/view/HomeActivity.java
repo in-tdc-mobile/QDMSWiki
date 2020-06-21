@@ -44,11 +44,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -188,6 +191,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
     DonutProgress donut_progress;
     @BindView(R.id.txtDownload)
     CustomTextView txtDownload;
+    @BindView(R.id.loading)
+    ImageView loading;
 
     private ActionBarDrawerToggle mDrawerToggle;
     private HomePresenter homePresenter;
@@ -269,6 +274,10 @@ public class HomeActivity extends BaseActivity implements HomeView {
         if(!applog.contains("status")){
             applog.edit().putString("status","end").commit();
         }
+                Glide
+                .with( context )
+                .load( R.drawable.loading )
+                .into( loading );
         //sessionManager.setKeyLastUpdatedFileName("20191203");//"20191121092627"
        homePresenter.getDownloadUrl(new DownloadFilesRequestModel(sessionManager.getKeyLastUpdatedFileName(), sessionManager.getDeviceId(), sessionManager.getUserId()));
         //homePresenter.getDownloadUrl(new DownloadFilesRequestModel(null, sessionManager.getDeviceId(), sessionManager.getUserId()));
@@ -743,7 +752,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         intent.putExtra("Type", type);
         intent.putParcelableArrayListExtra("downloadEntityLists", (ArrayList)downloadEntityLists);
         if (!url.equals("") && !zipFileName.equals("")) {
-            /*if (!isMyServiceRunning(DownloadService.class)) {
+            if (!isMyServiceRunning(DownloadService.class)) {
                 sessionManager.seturlno("0");
                 Log.e("service", "notrunning");
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -753,7 +762,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 }
             } else {
                 Log.e("service", "isrunning");
-            }*/
+            }
         }
     }
 
