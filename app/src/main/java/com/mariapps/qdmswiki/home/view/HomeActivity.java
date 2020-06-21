@@ -409,27 +409,22 @@ public class HomeActivity extends BaseActivity implements HomeView {
             Log.e("nameofdoc",dbox.getAll().get(i).documentData.length()+"");
         }*/
 
-    senderrorlogs();
+   // senderrorlogs();
+    sendAllIdstoServer();
 
     }
 
     public void senderrorlogs(){
         appendErrorLog("testlog");
-        String mailBody = " Comments : " + "\n\n\n" +
-                " Name : " + sessionManager.getUserName() + "\n" +
-                " OS   : Android Version " + android.os.Build.VERSION.RELEASE + "\n" +
-                " App Version : " + BuildConfig.VERSION_NAME + "\n" +
-                " App Name : " +  getResources().getString(R.string.app_name) + "\n" +
-                " Device : " + android.os.Build.MODEL + "\n";
-
         QDMSWikiApi service = QDMSWikiApplication.getInstance().getAPI();
         RequestBody userid = RequestBody.create(MediaType.parse("text/plain"), sessionManager.getUserId());
         RequestBody deviceType = RequestBody.create(MediaType.parse("text/plain"),"ANDROID "+android.os.Build.VERSION.RELEASE);
         RequestBody appVersion = RequestBody.create(MediaType.parse("text/plain"), BuildConfig.VERSION_NAME);
         RequestBody deviceName = RequestBody.create(MediaType.parse("text/plain"), android.os.Build.MODEL);
-        RequestBody logfilebody =RequestBody.create(MediaType.parse("*/*"), new File("sdcard/QDMSWiki/qdms_error_file.txt"));
-        MultipartBody.Part logfile = MultipartBody.Part.createFormData("", new File("sdcard/QDMSWiki/qdms_error_file.txt").getName(),logfilebody);
-        service.senderrorlogs(logfile,userid,appVersion,deviceName).enqueue(new Callback<LogResponse>() {
+        File file = new File("sdcard/QDMSWiki/qdms_error_file.txt");
+        RequestBody logfilebody =RequestBody.create(MediaType.parse("*/*"),file);
+        MultipartBody.Part logfile = MultipartBody.Part.createFormData("",file.getName(),logfilebody);
+        service.senderrorlogs(logfile,userid,appVersion,deviceName,deviceType).enqueue(new Callback<LogResponse>() {
             @Override
             public void onResponse(Call<LogResponse> call, Response<LogResponse> response) {
 
@@ -452,40 +447,46 @@ public class HomeActivity extends BaseActivity implements HomeView {
     }
 
     public void sendAllIdstoServer(){
-        SendAllIdModel allIdModel = new SendAllIdModel();
-        List<SendAllIdModel.ArticleIdList> ArticleIdList = new ArrayList<>();
-        List<SendAllIdModel.DocumentsIdList> DocumentsIdList = new ArrayList<>();
-        List<SendAllIdModel.FileChunkIdList> FileChunkIdList = new ArrayList<>();
-        List<SendAllIdModel.ImageNameList> ImageNameList = new ArrayList<>();
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                SendAllIdModel allIdModel = new SendAllIdModel();
+                List<SendAllIdModel.ArticleIdList> ArticleIdList = new ArrayList<>();
+                List<SendAllIdModel.DocumentsIdList> DocumentsIdList = new ArrayList<>();
+                List<SendAllIdModel.FileChunkIdList> FileChunkIdList = new ArrayList<>();
+                List<SendAllIdModel.ImageNameList> ImageNameList = new ArrayList<>();
 
                 List<String> imageids = new ArrayList<>();
                 imageids.addAll(homeDatabase.homeDao().getimagenames());
 
-        List<String> fileids = new ArrayList<>();
-        fileids.addAll(homeDatabase.homeDao().getFileids());
+                List<String> fileids = new ArrayList<>();
+                fileids.addAll(homeDatabase.homeDao().getFileids());
 
-        List<String> articleids = new ArrayList<>();
-        articleids.addAll(homeDatabase.homeDao().getartids());
+                List<String> articleids = new ArrayList<>();
+                articleids.addAll(homeDatabase.homeDao().getartids());
 
-        List<String> docids = new ArrayList<>();
-        docids.addAll(homeDatabase.homeDao().getdocids());
+                List<String> docids = new ArrayList<>();
+                docids.addAll(homeDatabase.homeDao().getdocids());
 
-        for (int i = 0; i < articleids.size(); i++) {
-            ArticleIdList.add(new SendAllIdModel.ArticleIdList(articleids.get(i)));
-        }
-        for (int i = 0; i < docids.size(); i++) {
-            DocumentsIdList.add(new SendAllIdModel.DocumentsIdList(docids.get(i)));
-        }
-        for (int i = 0; i < fileids.size(); i++) {
-            FileChunkIdList.add(new SendAllIdModel.FileChunkIdList(fileids.get(i)));
-        }
-        for (int i = 0; i < imageids.size(); i++) {
-            ImageNameList.add(new SendAllIdModel.ImageNameList(imageids.get(i)));
-        }
-        allIdModel.setArticleIdList(ArticleIdList);
-        allIdModel.setDocumentsIdList(DocumentsIdList);
-        allIdModel.setFileChunkIdList(FileChunkIdList);
-        allIdModel.setImageNameList(ImageNameList);
+                for (int i = 0; i < articleids.size(); i++) {
+                    ArticleIdList.add(new SendAllIdModel.ArticleIdList(articleids.get(i)));
+                }
+                for (int i = 0; i < docids.size(); i++) {
+                    DocumentsIdList.add(new SendAllIdModel.DocumentsIdList(docids.get(i)));
+                }
+                for (int i = 0; i < fileids.size(); i++) {
+                    FileChunkIdList.add(new SendAllIdModel.FileChunkIdList(fileids.get(i)));
+                }
+                for (int i = 0; i < imageids.size(); i++) {
+                    ImageNameList.add(new SendAllIdModel.ImageNameList(imageids.get(i)));
+                }
+                allIdModel.setArticleIdList(ArticleIdList);
+                allIdModel.setDocumentsIdList(DocumentsIdList);
+                allIdModel.setFileChunkIdList(FileChunkIdList);
+                allIdModel.setImageNameList(ImageNameList);
+            }
+        });
+
     }
 
     public void initShowCase() {
@@ -758,7 +759,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     context.startForegroundService(intent);
                 } else {
-                    context.startService(new Intent(context, DownloadService.class));
+                    context.startService(intent);
                 }
             } else {
                 Log.e("service", "isrunning");
