@@ -1,6 +1,7 @@
 package com.mariapps.qdmswiki.serviceclasses;
 
 import com.mariapps.qdmswiki.LogResponse;
+import com.mariapps.qdmswiki.SendIdtoServerModel;
 import com.mariapps.qdmswiki.home.model.DownloadFilesRequestModel;
 import com.mariapps.qdmswiki.home.model.DownloadFilesResponseModel;
 import com.mariapps.qdmswiki.login.model.LoginRequestObj;
@@ -13,6 +14,7 @@ import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.http.Body;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -32,6 +34,12 @@ public interface QDMSWikiApi {
 
     @POST("Home/DownloadFiles")
     Observable<Response<DownloadFilesResponseModel>> getUrls(@Body DownloadFilesRequestModel downloadFilesRequestModel);
+
+
+    @FormUrlEncoded
+    @POST("Home/FetchMongoDbById")
+    Call<LogResponse> sendAllidstoServerapi(@Body SendIdtoServerModel sendIdtoServerModel);
+
 
     @Multipart
     @POST("Home/SendEmail")

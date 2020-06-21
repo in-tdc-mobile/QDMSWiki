@@ -61,20 +61,31 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.mariapps.qdmswiki.APIClient;
 import com.mariapps.qdmswiki.AppConfig;
+import com.mariapps.qdmswiki.ArtDetail;
 import com.mariapps.qdmswiki.ArticleModelObj;
 import com.mariapps.qdmswiki.ArticleModelObj_;
+import com.mariapps.qdmswiki.BookmarkDetail;
 import com.mariapps.qdmswiki.BuildConfig;
+import com.mariapps.qdmswiki.CatDetail;
+import com.mariapps.qdmswiki.DocDetail;
 import com.mariapps.qdmswiki.DocumentModelObj;
 import com.mariapps.qdmswiki.DocumentModelObj_;
 import com.mariapps.qdmswiki.DownloadService;
 
+import com.mariapps.qdmswiki.FileDetail;
+import com.mariapps.qdmswiki.FormDetail;
+import com.mariapps.qdmswiki.ImageDetail;
 import com.mariapps.qdmswiki.InsertionService;
 import com.mariapps.qdmswiki.LogResponse;
+import com.mariapps.qdmswiki.NotificationDetail;
 import com.mariapps.qdmswiki.ObjectBox;
 import com.mariapps.qdmswiki.QDMSWikiApplication;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.SendAllIdModel;
+import com.mariapps.qdmswiki.SendIdtoServerModel;
 import com.mariapps.qdmswiki.SessionManager;
+import com.mariapps.qdmswiki.UserInfoDetail;
+import com.mariapps.qdmswiki.UserSetDetail;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkEntryModel;
 import com.mariapps.qdmswiki.bookmarks.model.BookmarkModel;
@@ -377,6 +388,16 @@ public class HomeActivity extends BaseActivity implements HomeView {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                            try {
+                                senderrorlogs();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            try {
+                                sendAllIdstoServer();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     });
                 progressDialog.dismiss();
@@ -410,8 +431,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
             Log.e("nameofdoc",dbox.getAll().get(i).documentData.length()+"");
         }*/
 
-   // senderrorlogs();
-    sendAllIdstoServer();
+    //senderrorlogs();
+    //sendAllIdstoServer();
 
     }
 
@@ -451,40 +472,118 @@ public class HomeActivity extends BaseActivity implements HomeView {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                SendAllIdModel allIdModel = new SendAllIdModel();
-                List<SendAllIdModel.ArticleIdList> ArticleIdList = new ArrayList<>();
-                List<SendAllIdModel.DocumentsIdList> DocumentsIdList = new ArrayList<>();
-                List<SendAllIdModel.FileChunkIdList> FileChunkIdList = new ArrayList<>();
-                List<SendAllIdModel.ImageNameList> ImageNameList = new ArrayList<>();
+                SendIdtoServerModel sendIdtoServerModel = new SendIdtoServerModel();
+                sendIdtoServerModel.setAppVersion(BuildConfig.VERSION_NAME);
+                sendIdtoServerModel.setDeviceName(android.os.Build.MODEL);
+                sendIdtoServerModel.setDeviceType("ANDROID "+android.os.Build.VERSION.RELEASE);
+                sendIdtoServerModel.setUserId(sessionManager.getUserId());
 
-                List<String> imageids = new ArrayList<>();
-                imageids.addAll(homeDatabase.homeDao().getimagenames());
+
+                List<ArtDetail> ArtDetailList = new ArrayList<>();
+                List<DocDetail> DocDetailList = new ArrayList<>();
+                List<FileDetail> FileDetailList = new ArrayList<>();
+                List<FormDetail> FormDetailList = new ArrayList<>();
+                List<UserSetDetail> UserSetDetailList = new ArrayList<>();
+                List<UserInfoDetail> UserInfoDetailList = new ArrayList<>();
+                List<NotificationDetail> NotificationDetailList = new ArrayList<>();
+                List<CatDetail> CatDetailList = new ArrayList<>();
+                List<ImageDetail> ImageDetailList = new ArrayList<>();
+                List<BookmarkDetail> BookmarkDetailList = new ArrayList<>();
+
 
                 List<String> fileids = new ArrayList<>();
                 fileids.addAll(homeDatabase.homeDao().getFileids());
+                for (int i = 0; i < fileids.size(); i++) {
+                    FileDetailList.add(new FileDetail(fileids.get(i)));
+                }
 
                 List<String> articleids = new ArrayList<>();
                 articleids.addAll(homeDatabase.homeDao().getartids());
+                for (int i = 0; i < articleids.size(); i++) {
+                    ArtDetailList.add(new ArtDetail(articleids.get(i)));
+                }
 
                 List<String> docids = new ArrayList<>();
                 docids.addAll(homeDatabase.homeDao().getdocids());
-
-                for (int i = 0; i < articleids.size(); i++) {
-                    ArticleIdList.add(new SendAllIdModel.ArticleIdList(articleids.get(i)));
-                }
                 for (int i = 0; i < docids.size(); i++) {
-                    DocumentsIdList.add(new SendAllIdModel.DocumentsIdList(docids.get(i)));
+                    DocDetailList.add(new DocDetail(docids.get(i)));
                 }
-                for (int i = 0; i < fileids.size(); i++) {
-                    FileChunkIdList.add(new SendAllIdModel.FileChunkIdList(fileids.get(i)));
+
+                List<String> bookmarkids = new ArrayList<>();
+                bookmarkids.addAll(homeDatabase.homeDao().getbookmarkids());
+                for (int i = 0; i < bookmarkids.size(); i++) {
+                    BookmarkDetailList.add(new BookmarkDetail(bookmarkids.get(i)));
                 }
+
+                List<String> formids = new ArrayList<>();
+                formids.addAll(homeDatabase.homeDao().getformids());
+                for (int i = 0; i < formids.size(); i++) {
+                    FormDetailList.add(new FormDetail(formids.get(i)));
+                }
+
+                List<String> usersetids = new ArrayList<>();
+                usersetids.addAll(homeDatabase.homeDao().getusersetids());
+                for (int i = 0; i < usersetids.size(); i++) {
+                    UserSetDetailList.add(new UserSetDetail(usersetids.get(i)));
+                }
+
+                List<String> notifids = new ArrayList<>();
+                notifids.addAll(homeDatabase.homeDao().getnotifids());
+                for (int i = 0; i < notifids.size(); i++) {
+                    NotificationDetailList.add(new NotificationDetail(notifids.get(i)));
+                }
+
+                List<String> userinfoids = new ArrayList<>();
+                userinfoids.addAll(homeDatabase.homeDao().getuserinfoids());
+                for (int i = 0; i < userinfoids.size(); i++) {
+                    UserInfoDetailList.add(new UserInfoDetail(userinfoids.get(i)));
+                }
+
+                List<String> catids = new ArrayList<>();
+                catids.addAll(homeDatabase.homeDao().getcatids());
+                for (int i = 0; i < catids.size(); i++) {
+                    CatDetailList.add(new CatDetail(catids.get(i)));
+                }
+
+
+                List<String> imageids = new ArrayList<>();
+                imageids.addAll(homeDatabase.homeDao().getimageids());
                 for (int i = 0; i < imageids.size(); i++) {
-                    ImageNameList.add(new SendAllIdModel.ImageNameList(imageids.get(i)));
+                    ImageDetailList.add(new ImageDetail(imageids.get(i)));
                 }
-                allIdModel.setArticleIdList(ArticleIdList);
-                allIdModel.setDocumentsIdList(DocumentsIdList);
-                allIdModel.setFileChunkIdList(FileChunkIdList);
-                allIdModel.setImageNameList(ImageNameList);
+                sendIdtoServerModel.setArtDetails(ArtDetailList);
+                sendIdtoServerModel.setDocDetails(DocDetailList);
+                sendIdtoServerModel.setFileDetails(FileDetailList);
+                sendIdtoServerModel.setFormDetails(FormDetailList);
+                sendIdtoServerModel.setBookmarkDetails(BookmarkDetailList);
+                sendIdtoServerModel.setImageDetails(ImageDetailList);
+                sendIdtoServerModel.setUserInfoDetails(UserInfoDetailList);
+                sendIdtoServerModel.setUserSetDetails(UserSetDetailList);
+                sendIdtoServerModel.setNotificationDetails(NotificationDetailList);
+                sendIdtoServerModel.setCatDetails(CatDetailList);
+                QDMSWikiApi service = APIClient.getClient().create(QDMSWikiApi.class);
+                service.sendAllidstoServerapi(sendIdtoServerModel).enqueue(new Callback<LogResponse>() {
+                    @Override
+                    public void onResponse(Call<LogResponse> call, Response<LogResponse> response) {
+
+                        try {
+                            Log.e("success alllogtoserver",response.body().toString());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<LogResponse> call, Throwable t) {
+                        try {
+                            Log.e("onFail alllogtoserver",t.getLocalizedMessage());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+
             }
         });
 

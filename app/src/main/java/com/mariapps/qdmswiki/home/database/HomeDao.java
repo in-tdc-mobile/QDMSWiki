@@ -705,7 +705,30 @@ public interface HomeDao {
     @Query("SELECT Id  FROM ArticleEntity")
     List<String> getartids();
 
-    @Query("SELECT imageName  FROM imageentity")
-    List<String> getimagenames();
+    @Query("SELECT Id  FROM imageentity")
+    List<String> getimageids();
+
+    @Query("SELECT Id  FROM CategoryEntity")
+    List<String> getcatids();
+
+
+    @Query("SELECT Id  FROM UserInfoEntity")
+    List<String> getuserinfoids();
+
+
+    @Query("SELECT Id  FROM FormsEntity")
+    List<String> getformids();
+
+
+    @Query("SELECT Id  FROM BookMarkEntity")
+    List<String> getbookmarkids();
+
+    @Query("SELECT Id  FROM NotificationEntity")
+    List<String> getnotifids();
+
+
+    @Query("SELECT Id  FROM UserSettingsEntity")
+    List<String> getusersetids();
+
 }
 
