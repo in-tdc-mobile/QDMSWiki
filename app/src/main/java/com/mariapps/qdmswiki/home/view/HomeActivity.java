@@ -341,6 +341,10 @@ public class HomeActivity extends BaseActivity implements HomeView {
             public void onChanged(@Nullable String s) {
                 Log.e("getInsertcompletedonce",s);
                 progressDialog.dismiss();
+                if(urlNum>3){
+                    //senderrorlogs();
+                    sendAllIdstoServer();
+                }
             }
         });
        AppConfig.getInsertstarted().observe(this, new Observer<String>() {
