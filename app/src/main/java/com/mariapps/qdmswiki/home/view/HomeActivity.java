@@ -59,6 +59,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
+import com.mariapps.qdmswiki.APIClient;
 import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.ArticleModelObj;
 import com.mariapps.qdmswiki.ArticleModelObj_;
@@ -416,7 +417,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
 
     public void senderrorlogs(){
         appendErrorLog("testlog");
-        QDMSWikiApi service = QDMSWikiApplication.getInstance().getAPI();
+        QDMSWikiApi service = APIClient.getClient().create(QDMSWikiApi.class);
         RequestBody userid = RequestBody.create(MediaType.parse("text/plain"), sessionManager.getUserId());
         RequestBody deviceType = RequestBody.create(MediaType.parse("text/plain"),"ANDROID "+android.os.Build.VERSION.RELEASE);
         RequestBody appVersion = RequestBody.create(MediaType.parse("text/plain"), BuildConfig.VERSION_NAME);
