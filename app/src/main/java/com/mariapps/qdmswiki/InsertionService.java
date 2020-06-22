@@ -258,7 +258,6 @@ public class InsertionService extends Service implements HomeView {
                         } catch (Exception e) {
 
                         }
-
                     }
                 }
                 Log.e("insertionservice", "filedelete");
