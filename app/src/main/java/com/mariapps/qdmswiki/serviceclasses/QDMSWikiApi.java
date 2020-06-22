@@ -36,7 +36,7 @@ public interface QDMSWikiApi {
     Observable<Response<DownloadFilesResponseModel>> getUrls(@Body DownloadFilesRequestModel downloadFilesRequestModel);
 
 
-    @FormUrlEncoded
+
     @POST("Home/FetchMongoDbById")
     Call<LogResponse> sendAllidstoServerapi(@Body SendIdtoServerModel sendIdtoServerModel);
 

@@ -190,6 +190,7 @@ public class InsertionService extends Service implements HomeView {
 
         }
 
+        //sessionManager.geturlno()<downloadEntityLists.size() was this condition
         else if(sessionManager.geturlno()<downloadEntityLists.size()) {
             if(iscompleted){
                 Intent intentStartDownload = new Intent(getApplicationContext(), DownloadService.class);

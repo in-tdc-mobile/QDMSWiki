@@ -341,7 +341,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
             public void onChanged(@Nullable String s) {
                 Log.e("getInsertcompletedonce",s);
                 progressDialog.dismiss();
-                if(urlNum>3){
+                if(urlNum==5){
                     //senderrorlogs();
                     sendAllIdstoServer();
                 }
@@ -436,7 +436,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         }*/
 
     //senderrorlogs();
-    //sendAllIdstoServer();
+    sendAllIdstoServer();
 
     }
 
@@ -856,7 +856,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         intent.putExtra("urlNum", urlNum+"");
         intent.putExtra("Type", type);
         intent.putParcelableArrayListExtra("downloadEntityLists", (ArrayList)downloadEntityLists);
-        if (!url.equals("") && !zipFileName.equals("")) {
+       /* if (!url.equals("") && !zipFileName.equals("")) {
             if (!isMyServiceRunning(DownloadService.class)) {
                 sessionManager.seturlno("0");
                 Log.e("service", "notrunning");
@@ -868,7 +868,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
             } else {
                 Log.e("service", "isrunning");
             }
-        }
+        }*/
     }
 
 

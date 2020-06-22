@@ -7,8 +7,8 @@ import android.arch.lifecycle.MutableLiveData;
 
 public class AppConfig {
     //public static final String BASE_URL = "http://10.201.1.19:8899/QDMSMobileService/api/";//DEV
-   public static final String BASE_URL = "http://10.201.1.164/QDMSMobileService/api/";//QA
-   // public static final String BASE_URL = "https://mobapp-seafarer.bs-shipmanagement.com/QDMSMobileService/api/";  //PROD
+ //  public static final String BASE_URL = "http://10.201.1.164/QDMSMobileService/api/";//QA
+    public static final String BASE_URL = "https://mobapp-seafarer.bs-shipmanagement.com/QDMSMobileService/api/";  //PROD
  //   public static final String BASE_URL =   "http://mapps-qa-iis-v4/QDMSMobileService/api/";
     //public static final String BASE_URL = "https://pal4uat.bs-shipmanagement.com/QDMSMobileService/api/";//UAT
     public static final String TIMESTAMP_FORMAT = "yyyyMMdd_HHmmss";
