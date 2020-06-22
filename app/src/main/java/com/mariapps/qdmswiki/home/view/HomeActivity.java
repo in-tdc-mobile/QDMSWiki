@@ -283,6 +283,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         homeDatabase = HomeDatabase.getInstance(HomeActivity.this);
         progressDialog = new ProgressDialog(HomeActivity.this);
         util = new ShowCasePreferenceUtil(HomeActivity.this);
+        createImageFolder();
         if(!applog.contains("status")){
             applog.edit().putString("status","end").commit();
         }
@@ -441,19 +442,21 @@ public class HomeActivity extends BaseActivity implements HomeView {
     }
 
     public void senderrorlogs(){
-        appendErrorLog("testlog");
+        appendErrorLog("");
         QDMSWikiApi service = APIClient.getClient().create(QDMSWikiApi.class);
         RequestBody userid = RequestBody.create(MediaType.parse("text/plain"), sessionManager.getUserId());
         RequestBody deviceType = RequestBody.create(MediaType.parse("text/plain"),"ANDROID "+android.os.Build.VERSION.RELEASE);
         RequestBody appVersion = RequestBody.create(MediaType.parse("text/plain"), BuildConfig.VERSION_NAME);
         RequestBody deviceName = RequestBody.create(MediaType.parse("text/plain"), android.os.Build.MODEL);
         File file = new File("sdcard/QDMSWiki/qdms_error_file.txt");
+        File logfileall = new File("sdcard/QDMSWiki/qdms_log_file.txt");
         RequestBody logfilebody =RequestBody.create(MediaType.parse("*/*"),file);
         MultipartBody.Part logfile = MultipartBody.Part.createFormData("",file.getName(),logfilebody);
-        service.senderrorlogs(logfile,userid,appVersion,deviceName,deviceType).enqueue(new Callback<LogResponse>() {
+        RequestBody logfilebody1 =RequestBody.create(MediaType.parse("*/*"),logfileall);
+        MultipartBody.Part logfile1 = MultipartBody.Part.createFormData("",logfileall.getName(),logfilebody1);
+        service.senderrorlogs(logfile,logfile1,userid,appVersion,deviceName,deviceType).enqueue(new Callback<LogResponse>() {
             @Override
             public void onResponse(Call<LogResponse> call, Response<LogResponse> response) {
-
                 try {
                     Log.e("success send jsonlog",response.body().toString());
                 } catch (Exception e) {
@@ -550,11 +553,16 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 }
 
 
-                List<String> imageids = new ArrayList<>();
-                imageids.addAll(homeDatabase.homeDao().getimageids());
-                for (int i = 0; i < imageids.size(); i++) {
-                    ImageDetailList.add(new ImageDetail(imageids.get(i)));
+
+                File mydir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/QDMSWiki/Images");
+                if (mydir.exists()) {
+                    File[] imageids = mydir.listFiles();
+                    for (int i = 0; i < imageids.length; i++) {
+                        ImageDetailList.add(new ImageDetail(imageids[i].getName()));
+                    }
                 }
+
+
                 sendIdtoServerModel.setArtDetails(ArtDetailList);
                 sendIdtoServerModel.setDocDetails(DocDetailList);
                 sendIdtoServerModel.setFileDetails(FileDetailList);
@@ -1254,7 +1262,7 @@ request.setAllowedNetworkTypes(
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            createImageFolder();
+
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             if (urlNum == downloadEntityLists.size()) {
                 linLayout.setAlpha(1.0f);

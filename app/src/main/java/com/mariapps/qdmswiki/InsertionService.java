@@ -236,7 +236,7 @@ public class InsertionService extends Service implements HomeView {
                         appendLog("Session User Info Id " + sessionManager.getUserInfoId() + ": User settings user id " + userSettingsList.get(i1).getUserID());
                         if (userSettingsList.get(i1).getUserID().equals(sessionManager.getUserInfoId())) {
                             appendLog("Extracting user settings");
-                            homeDatabase.homeDao().deleteUserSettingsEntity();
+                            homeDatabase.homeDao().deleteUserSettingsEntityByUserId(userSettingsList.get(i1).getUserID());
                             homeDatabase.homeDao().insertUserSettings(userSettingsList.get(i1));
                             break;
                         }
@@ -259,7 +259,6 @@ public class InsertionService extends Service implements HomeView {
                         } catch (Exception e) {
 
                         }
-
                     }
                 }
                 Log.e("insertionservice", "filedelete");
@@ -380,8 +379,8 @@ public class InsertionService extends Service implements HomeView {
                         appendLog("Extracting directory " + filesInFolder[i].getName());
                         File[] filesInsideFolder = filesInFolder[i].listFiles();
                         for (int j = 0; j < filesInsideFolder.length; j++) {
-                            appendLog("Copying " + filesInsideFolder[i].getName() + " to image folder");
-                            copyFile(new File(filesInsideFolder[i].getAbsolutePath()), new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/Images/" + filesInsideFolder[i].getName()));
+                            appendLog("Copying " + filesInsideFolder[j].getName() + " to image folder");
+                            copyFile(new File(filesInsideFolder[j].getAbsolutePath()), new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/Images/" + filesInsideFolder[j].getName()));
                         }
 
                     } else {
@@ -661,7 +660,7 @@ public class InsertionService extends Service implements HomeView {
                             }
                         } else if (filesInFolder[i].getName().contains("notifications")) {
                             JsonParser parser = new JsonParser();
-                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles+"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
                             try {
                                 JsonArray jsonArray = data.getAsJsonArray("Notifications");
                                 notificationList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<NotificationModel>>() {
@@ -673,7 +672,7 @@ public class InsertionService extends Service implements HomeView {
                             }
                         } else if (filesInFolder[i].getName().contains("userInfo")) {
                             JsonParser parser = new JsonParser();
-                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles+"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
                             try {
                                 appendLog("Extracting user info " + filesInFolder[i].getName());
                                 JsonArray jsonArray = data.getAsJsonArray("UserInfo");
@@ -687,12 +686,13 @@ public class InsertionService extends Service implements HomeView {
                                     }
                                 }
                                 for (int i1 = 0; i1 < userInfoList.size(); i1++) {
-                                    homeDatabase.homeDao().insertUserInfo(userInfoList.get(i1));
                                     if (!(String.valueOf(userInfoList.get(i1).getUserId()).equals(sessionManager.getUserId()))) {
                                         userInfoList.get(i1).setImageName("");
                                     } else {
                                         userInfoList.get(i1).setImageName(userInfoList.get(i1).getImageName());
                                     }
+                                    homeDatabase.homeDao().deleteUserInfoEntity(userInfoList.get(i1).getId());
+                                    homeDatabase.homeDao().insertUserInfo(userInfoList.get(i1));
                                 }
                             } catch (JsonSyntaxException e) {
                                 appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
@@ -701,7 +701,7 @@ public class InsertionService extends Service implements HomeView {
                             }
                         } else if (filesInFolder[i].getName().contains("userSet")) {
                             JsonParser parser = new JsonParser();
-                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles+"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
                             try {
                                 JsonArray jsonArray = data.getAsJsonArray("UserSettings");
                                 userSettingsList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<UserSettingsModel>>() {
@@ -714,7 +714,7 @@ public class InsertionService extends Service implements HomeView {
 
                         } else if (filesInFolder[i].getName().contains("forms")) {
                             JsonParser parser = new JsonParser();
-                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles+"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
                             try {
                                 appendLog("Extracting form " + filesInFolder[i].getName());
                                 JsonArray jsonArray = data.getAsJsonArray("Forms");
@@ -858,15 +858,16 @@ public class InsertionService extends Service implements HomeView {
         try {
             if (!strFile.isEmpty()) {
                 File ext = Environment.getExternalStorageDirectory();
-                if (!new File(ext.getAbsolutePath() + "/QDMSWiki/Images/" + filename).exists()) {
-                    byte[] data = Base64.decode(strFile, Base64.DEFAULT);
+                if (!new File(ext.getAbsolutePath() + "/QDMSWiki/Images").exists()) {
                     File mydir = new File(ext.getAbsolutePath() + "/QDMSWiki/Images");
-                    File file = new File(mydir, filename);
-                    FileOutputStream fos = new FileOutputStream(file);
-                    fos.write(data);
-                    fos.close();
+                    mydir.mkdir();
                 }
-
+                byte[] data = Base64.decode(strFile, Base64.DEFAULT);
+                File mydir = new File(ext.getAbsolutePath() + "/QDMSWiki/Images");
+                File file = new File(mydir, filename);
+                FileOutputStream fos = new FileOutputStream(file);
+                fos.write(data);
+                fos.close();
             }
 
         } catch (IOException e) {

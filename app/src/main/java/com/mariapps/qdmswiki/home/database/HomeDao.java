@@ -123,6 +123,9 @@ public interface HomeDao {
     @Query("DELETE FROM UserInfoEntity WHERE Id=:id")
     void deleteUserInfoEntity(String id);
 
+    @Query("DELETE FROM UserSettingsEntity WHERE UserId =:userId")
+    void deleteUserSettingsEntityByUserId(String userId);
+
     @Query("DELETE FROM FormsEntity WHERE Id=:id")
     void deleteForm(String id);
 
