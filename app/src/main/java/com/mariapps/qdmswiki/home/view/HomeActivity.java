@@ -283,6 +283,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         homeDatabase = HomeDatabase.getInstance(HomeActivity.this);
         progressDialog = new ProgressDialog(HomeActivity.this);
         util = new ShowCasePreferenceUtil(HomeActivity.this);
+        createImageFolder();
         if(!applog.contains("status")){
             applog.edit().putString("status","end").commit();
         }
@@ -436,7 +437,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         }*/
 
     //senderrorlogs();
-    //sendAllIdstoServer();
+    sendAllIdstoServer();
 
     }
 
@@ -1254,7 +1255,7 @@ request.setAllowedNetworkTypes(
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            createImageFolder();
+
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             if (urlNum == downloadEntityLists.size()) {
                 linLayout.setAlpha(1.0f);
