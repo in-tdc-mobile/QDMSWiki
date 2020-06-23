@@ -322,7 +322,6 @@ public class InsertionService extends Service implements HomeView {
 
 
     public void startInsertion() {
-
         if (!destDirectory.equals("") && !zipFilePath.equals("")) {
             AppConfig.getInsertstarted().postValue("started");
             AppConfig.getInsertprogress().postValue("File unzipping");
@@ -381,7 +380,6 @@ public class InsertionService extends Service implements HomeView {
                             appendLog("Copying " + filesInsideFolder[i].getName() + " to image folder");
                             copyFile(new File(filesInsideFolder[i].getAbsolutePath()), new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/Images/" + filesInsideFolder[i].getName()));
                         }
-
                     } else {
                         if (filesInFolder[i].getName().contains("file")) {
                             try {
@@ -393,6 +391,7 @@ public class InsertionService extends Service implements HomeView {
                                             homePresenter.deleteFile(fileList.get(index));
                                         }
                                     } catch (IOException e) {
+                                        sessionManager.putJsonError("y");
                                         appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
                                         e.printStackTrace();
                                     }
@@ -405,6 +404,7 @@ public class InsertionService extends Service implements HomeView {
                                         fileList.addAll(readJsonStream(new FileInputStream(filesInFolder[i])));
                                         Log.e("allocatedafter", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
                                     } catch (Exception e) {
+                                        sessionManager.putJsonError("y");
                                         appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
                                         Log.e("catchedreader", "" + filesInFolder[i].getName() + "   " + e.getLocalizedMessage());
                                         try {
@@ -424,6 +424,7 @@ public class InsertionService extends Service implements HomeView {
                                 }
 
                             } catch (JsonSyntaxException e) {
+                                sessionManager.putJsonError("y");
                                 appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
                                 appendLog("File json syntax exception : " + e.getMessage());
                                 e.printStackTrace();
@@ -454,15 +455,16 @@ public class InsertionService extends Service implements HomeView {
                                             }
                                         }
                                     } catch (IOException e) {
+                                        sessionManager.putJsonError("y");
                                         appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
                                         e.printStackTrace();
                                     }
-
                                 }
                                 else{
                                     try {
                                         documentList.addAll(readJsonStreamfordoc(new FileInputStream(filesInFolder[i])));
                                     } catch (Exception e) {
+                                        sessionManager.putJsonError("y");
                                         appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
                                         JsonParser parser = new JsonParser();
                                         JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
@@ -504,10 +506,9 @@ public class InsertionService extends Service implements HomeView {
                                         AppConfig.getInsertprogress().postValue("Inserting documents to database");
                                     }
                                 }
-
-
                             } catch (JsonSyntaxException e)
                             {
+                                sessionManager.putJsonError("y");
                                 appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
                                 appendLog("Doc json syntax exception : " + e.getMessage());
                                 e.printStackTrace();
@@ -532,15 +533,16 @@ public class InsertionService extends Service implements HomeView {
                                             }
                                         }
                                     } catch (IOException e) {
+                                        sessionManager.putJsonError("y");
                                         appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
                                         e.printStackTrace();
                                     }
-
                                 }
                                 else{
                                     try {
                                         articleList.addAll(readJsonStreamforarticle(new FileInputStream(filesInFolder[i])));
                                     } catch (Exception e) {
+                                        sessionManager.putJsonError("y");
                                         appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
                                         JsonParser parser = new JsonParser();
                                         JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
@@ -573,8 +575,8 @@ public class InsertionService extends Service implements HomeView {
                                         AppConfig.getInsertprogress().postValue("Inserting articles to database");
                                     }
                                 }
-
                             } catch (JsonSyntaxException e) {
+                                sessionManager.putJsonError("y");
                                 appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
                                 appendLog("Article json syntax exception : " + e.getMessage());
                                 e.printStackTrace();
@@ -608,6 +610,7 @@ public class InsertionService extends Service implements HomeView {
                                 }
 
                             } catch (JsonSyntaxException e) {
+                                sessionManager.putJsonError("y");
                                 appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
                                 appendLog("Image json syntax exception : " + e.getMessage());
                                 e.printStackTrace();
@@ -626,6 +629,7 @@ public class InsertionService extends Service implements HomeView {
                                     AppConfig.getInsertprogress().postValue("Inserting categories to database");
                                 }
                             } catch (JsonSyntaxException e) {
+                                sessionManager.putJsonError("y");
                                 appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
                                 appendLog("Category json syntax exception : " + e.getMessage());
                                 e.printStackTrace();
@@ -653,6 +657,7 @@ public class InsertionService extends Service implements HomeView {
                                     //homePresenter.insertBookmarkEntries(bookmarkEntryList);
                                 }
                             } catch (JsonSyntaxException e) {
+                                sessionManager.putJsonError("y");
                                 appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
                                 appendLog("Bookmark json syntax exception : " + e.getMessage());
                                 e.printStackTrace();
@@ -665,6 +670,7 @@ public class InsertionService extends Service implements HomeView {
                                 notificationList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<NotificationModel>>() {
                                 }.getType());
                             } catch (JsonSyntaxException e) {
+                                sessionManager.putJsonError("y");
                                 appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
                                 appendLog("Notification json syntax exception : " + e.getMessage());
                                 e.printStackTrace();
@@ -693,6 +699,7 @@ public class InsertionService extends Service implements HomeView {
                                     }
                                 }
                             } catch (JsonSyntaxException e) {
+                                sessionManager.putJsonError("y");
                                 appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
                                 appendLog("USer Info json syntax exception : " + e.getMessage());
                                 e.printStackTrace();
@@ -705,6 +712,7 @@ public class InsertionService extends Service implements HomeView {
                                 userSettingsList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<UserSettingsModel>>() {
                                 }.getType());
                             } catch (JsonSyntaxException e) {
+                                sessionManager.putJsonError("y");
                                 appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
                                 appendLog("User settings json syntax exception : " + e.getMessage());
                                 e.printStackTrace();
@@ -724,6 +732,7 @@ public class InsertionService extends Service implements HomeView {
 
                                 }
                             } catch (JsonSyntaxException e) {
+                                sessionManager.putJsonError("y");
                                 appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
                                 appendLog("Forms json syntax exception : " + e.getMessage());
                                 e.printStackTrace();

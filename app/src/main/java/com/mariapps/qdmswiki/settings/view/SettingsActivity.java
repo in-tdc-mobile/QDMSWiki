@@ -1,34 +1,54 @@
 package com.mariapps.qdmswiki.settings.view;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mariapps.qdmswiki.APIClient;
+import com.mariapps.qdmswiki.ArtDetail;
+import com.mariapps.qdmswiki.BookmarkDetail;
 import com.mariapps.qdmswiki.BuildConfig;
+import com.mariapps.qdmswiki.CatDetail;
+import com.mariapps.qdmswiki.DocDetail;
+import com.mariapps.qdmswiki.FileDetail;
+import com.mariapps.qdmswiki.FormDetail;
+import com.mariapps.qdmswiki.ImageDetail;
+import com.mariapps.qdmswiki.LogResponse;
+import com.mariapps.qdmswiki.NotificationDetail;
 import com.mariapps.qdmswiki.R;
+import com.mariapps.qdmswiki.SendIdtoServerModel;
 import com.mariapps.qdmswiki.SessionManager;
+import com.mariapps.qdmswiki.UserInfoDetail;
+import com.mariapps.qdmswiki.UserSetDetail;
 import com.mariapps.qdmswiki.applicationinfo.view.ApplicationInfoActivity;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.bookmarks.view.BookMarkActivityAll;
 import com.mariapps.qdmswiki.bookmarks.view.BookmarkActivity;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.custom.CustomTextView;
+import com.mariapps.qdmswiki.home.database.HomeDatabase;
 import com.mariapps.qdmswiki.home.model.DownloadFilesRequestModel;
 import com.mariapps.qdmswiki.home.model.DownloadFilesResponseModel;
 import com.mariapps.qdmswiki.home.view.HomeActivity;
 import com.mariapps.qdmswiki.login.view.LoginActivity;
+import com.mariapps.qdmswiki.serviceclasses.QDMSWikiApi;
 import com.mariapps.qdmswiki.settings.adapter.SettingsAdapter;
 import com.mariapps.qdmswiki.settings.model.LogoutRequestObj;
 import com.mariapps.qdmswiki.settings.model.LogoutRespObj;
@@ -42,6 +62,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SettingsActivity extends BaseActivity implements SettingsView{
     @BindView(R.id.headingTV)
@@ -118,17 +141,189 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
                         sendIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"support@mariapps.com"});
                         sendIntent.putExtra(Intent.EXTRA_SUBJECT, "QDMWiki Android support [UserID: " +sessionManager.getUserId()+"]");
                         sendIntent.putExtra(Intent.EXTRA_TEXT, mailBody);
-                        Uri uri = Uri.fromFile(new File("sdcard/QDMSWiki/qdms_log_file.txt"));
+                        Uri uri = FileProvider.getUriForFile(SettingsActivity.this, BuildConfig.APPLICATION_ID + ".provider",new File("sdcard/QDMSWiki/qdms_log_file.txt"));
                         sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
                         startActivity(Intent.createChooser(sendIntent, "Send Email"));
                         break;
                     case 4:
+                        sendAllIdstoServer();
+                        break;
+                    case 5:
                         createAlert();
                         break;
                 }
             }
         });
         listRV.setAdapter(settingsAdapter);
+    }
+
+    public void showdialogforrecheck(){
+        AlertDialog.Builder bu = new AlertDialog.Builder(SettingsActivity.this);
+        bu.setTitle("Are you sure you want to continue?");
+        bu.setMessage("This will send a mail and cross check with production data and get as an update if anything is missing");
+        bu.setPositiveButton("yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                sendAllIdstoServer();
+                dialog.dismiss();
+            }
+        });
+
+        bu.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+            }
+        });
+        bu.show();
+    }
+
+
+    public void sendAllIdstoServer(){
+        progressDialog.setMessage("Processing your request");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+     HomeDatabase   homeDatabase = HomeDatabase.getInstance(SettingsActivity.this);
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                SendIdtoServerModel sendIdtoServerModel = new SendIdtoServerModel();
+                sendIdtoServerModel.setAppVersion(BuildConfig.VERSION_NAME);
+                sendIdtoServerModel.setDeviceName(android.os.Build.MODEL);
+                sendIdtoServerModel.setDeviceType("ANDROID "+android.os.Build.VERSION.RELEASE);
+                sendIdtoServerModel.setUserId(sessionManager.getUserId());
+
+
+                List<ArtDetail> ArtDetailList = new ArrayList<>();
+                List<DocDetail> DocDetailList = new ArrayList<>();
+                List<FileDetail> FileDetailList = new ArrayList<>();
+                List<FormDetail> FormDetailList = new ArrayList<>();
+                List<UserSetDetail> UserSetDetailList = new ArrayList<>();
+                List<UserInfoDetail> UserInfoDetailList = new ArrayList<>();
+                List<NotificationDetail> NotificationDetailList = new ArrayList<>();
+                List<CatDetail> CatDetailList = new ArrayList<>();
+                List<ImageDetail> ImageDetailList = new ArrayList<>();
+                List<BookmarkDetail> BookmarkDetailList = new ArrayList<>();
+
+
+                List<String> fileids = new ArrayList<>();
+                fileids.addAll(homeDatabase.homeDao().getFileids());
+                for (int i = 0; i < fileids.size(); i++) {
+                    FileDetailList.add(new FileDetail(fileids.get(i)));
+                }
+
+                List<String> articleids = new ArrayList<>();
+                articleids.addAll(homeDatabase.homeDao().getartids());
+                for (int i = 0; i < articleids.size(); i++) {
+                    ArtDetailList.add(new ArtDetail(articleids.get(i)));
+                }
+
+                List<String> docids = new ArrayList<>();
+                docids.addAll(homeDatabase.homeDao().getdocids());
+                for (int i = 0; i < docids.size(); i++) {
+                    DocDetailList.add(new DocDetail(docids.get(i)));
+                }
+
+                List<String> bookmarkids = new ArrayList<>();
+                bookmarkids.addAll(homeDatabase.homeDao().getbookmarkids());
+                for (int i = 0; i < bookmarkids.size(); i++) {
+                    BookmarkDetailList.add(new BookmarkDetail(bookmarkids.get(i)));
+                }
+
+                List<String> formids = new ArrayList<>();
+                formids.addAll(homeDatabase.homeDao().getformids());
+                for (int i = 0; i < formids.size(); i++) {
+                    FormDetailList.add(new FormDetail(formids.get(i)));
+                }
+
+                List<String> usersetids = new ArrayList<>();
+                usersetids.addAll(homeDatabase.homeDao().getusersetids());
+                for (int i = 0; i < usersetids.size(); i++) {
+                    UserSetDetailList.add(new UserSetDetail(usersetids.get(i)));
+                }
+
+                List<String> notifids = new ArrayList<>();
+                notifids.addAll(homeDatabase.homeDao().getnotifids());
+                for (int i = 0; i < notifids.size(); i++) {
+                    NotificationDetailList.add(new NotificationDetail(notifids.get(i)));
+                }
+
+                List<String> userinfoids = new ArrayList<>();
+                userinfoids.addAll(homeDatabase.homeDao().getuserinfoids());
+                for (int i = 0; i < userinfoids.size(); i++) {
+                    UserInfoDetailList.add(new UserInfoDetail(userinfoids.get(i)));
+                }
+
+                List<String> catids = new ArrayList<>();
+                catids.addAll(homeDatabase.homeDao().getcatids());
+                for (int i = 0; i < catids.size(); i++) {
+                    CatDetailList.add(new CatDetail(catids.get(i)));
+                }
+
+
+
+                File mydir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/QDMSWiki/Images");
+                if (mydir.exists()) {
+                    File[] imageids = mydir.listFiles();
+                    for (int i = 0; i < imageids.length; i++) {
+                        ImageDetailList.add(new ImageDetail(imageids[i].getName()));
+                    }
+                }
+
+
+                sendIdtoServerModel.setArtDetails(ArtDetailList);
+                sendIdtoServerModel.setDocDetails(DocDetailList);
+                sendIdtoServerModel.setFileDetails(FileDetailList);
+                sendIdtoServerModel.setFormDetails(FormDetailList);
+                sendIdtoServerModel.setBookmarkDetails(BookmarkDetailList);
+                sendIdtoServerModel.setImageDetails(ImageDetailList);
+                sendIdtoServerModel.setUserInfoDetails(UserInfoDetailList);
+                sendIdtoServerModel.setUserSetDetails(UserSetDetailList);
+                sendIdtoServerModel.setNotificationDetails(NotificationDetailList);
+                sendIdtoServerModel.setCatDetails(CatDetailList);
+                QDMSWikiApi service = APIClient.getClient().create(QDMSWikiApi.class);
+                service.sendAllidstoServerapi(sendIdtoServerModel).enqueue(new Callback<LogResponse>() {
+                    @Override
+                    public void onResponse(Call<LogResponse> call, Response<LogResponse> response) {
+                        progressDialog.dismiss();
+
+                        try {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    AlertDialog.Builder bu = new AlertDialog.Builder(SettingsActivity.this);
+                                    bu.setTitle("QDMS Wiki");
+                                    bu.setMessage("We will cross check the data and will provide an update if anything is missing");
+                                    bu.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                                }
+                            });
+                            Log.e("success alllogtoserver",response.body().toString());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<LogResponse> call, Throwable t) {
+                        progressDialog.dismiss();
+                        try {
+                            Log.e("onFail alllogtoserver",t.getLocalizedMessage());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+
+            }
+        });
+
     }
 
     private void createAlert() {
@@ -193,6 +388,7 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
         settingsItems.add(new SettingsItem(R.drawable.ic_app_info,"App Info",R.color.black));
         settingsItems.add(new SettingsItem(R.drawable.ic_check_update,"Check for QDMS data updates",R.color.black));
         settingsItems.add(new SettingsItem(R.drawable.app_support,"App Support",R.color.black));
+        settingsItems.add(new SettingsItem(R.drawable.app_support,"Re-Check for Data",R.color.black));
         settingsItems.add(new SettingsItem(R.drawable.ic_logout,"Logout",R.color.red_900));
         return settingsItems;
     }

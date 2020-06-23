@@ -36,7 +36,7 @@ public interface QDMSWikiApi {
     Observable<Response<DownloadFilesResponseModel>> getUrls(@Body DownloadFilesRequestModel downloadFilesRequestModel);
 
 
-    @FormUrlEncoded
+
     @POST("Home/FetchMongoDbById")
     Call<LogResponse> sendAllidstoServerapi(@Body SendIdtoServerModel sendIdtoServerModel);
 
@@ -49,7 +49,9 @@ public interface QDMSWikiApi {
             @Part("userId") RequestBody userId,
             @Part("appVersion") RequestBody appVersion,
             @Part("deviceName") RequestBody deviceName,
-            @Part("deviceType") RequestBody deviceType
+            @Part("deviceType") RequestBody deviceType,
+            @Part("EmpId") RequestBody EmpId,
+            @Part("DeviceId") RequestBody DeviceId
     );
 
     //" @Part MultipartBody.Part file,"
