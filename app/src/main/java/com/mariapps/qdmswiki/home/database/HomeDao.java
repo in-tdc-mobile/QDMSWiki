@@ -723,7 +723,7 @@ public interface HomeDao {
     List<String> getformids();
 
 
-    @Query("SELECT Id  FROM BookMarkEntity")
+    @Query("SELECT BookmarkId FROM BookMarkEntryEntity")
     List<String> getbookmarkids();
 
     @Query("SELECT Id  FROM NotificationEntity")

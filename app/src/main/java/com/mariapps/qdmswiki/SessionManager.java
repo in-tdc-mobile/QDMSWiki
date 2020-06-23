@@ -72,6 +72,41 @@ public class SessionManager {
         return pref.getString(KEY_USER_ID, "");
     }
 
+    public String getJsonError(){
+        return pref.getString("jsonerror","");
+    }
+
+    public void putJsonError(String msg){
+        editor.putString("jsonerror", msg);
+        editor.commit();
+    }
+
+
+    public String getisFirst(){
+        return pref.getString("isfirst","");
+    }
+
+    public void putisFirst(String msg){
+        editor.putString("isfirst", msg);
+        editor.commit();
+    }
+
+
+
+
+    public String getisSend(){
+        return pref.getString("issend","");
+    }
+
+    public void putisSend(String msg){
+        editor.putString("issend", msg);
+        editor.commit();
+    }
+
+
+
+
+
     public void setUserInfoId(String id) {
         editor.putString(KEY_USER_INFO_ID, id);
         editor.commit();

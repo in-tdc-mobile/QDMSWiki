@@ -342,10 +342,6 @@ public class HomeActivity extends BaseActivity implements HomeView {
             public void onChanged(@Nullable String s) {
                 Log.e("getInsertcompletedonce",s);
                 progressDialog.dismiss();
-                if(urlNum==5){
-                    //senderrorlogs();
-                    sendAllIdstoServer();
-                }
             }
         });
        AppConfig.getInsertstarted().observe(this, new Observer<String>() {
@@ -394,12 +390,23 @@ public class HomeActivity extends BaseActivity implements HomeView {
                                 e.printStackTrace();
                             }
                             try {
-                                senderrorlogs();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            try {
-                                sendAllIdstoServer();
+                                if(sessionManager.getisFirst().equals("")){
+                                    if(!sessionManager.getJsonError().equals("")){
+                                        if(sessionManager.getJsonError().equals("y")){
+                                            senderrorlogs();
+                                        }
+                                    }
+                                    sendAllIdstoServer();
+                                }
+                                else if(sessionManager.getisFirst().equals("n")){
+                                    if(!sessionManager.getJsonError().equals("")){
+                                        if(sessionManager.getJsonError().equals("y")){
+                                            senderrorlogs();
+                                            sendAllIdstoServer();
+                                        }
+                                    }
+                                }
+
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -437,7 +444,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         }*/
 
     //senderrorlogs();
-    sendAllIdstoServer();
+    //sendAllIdstoServer();
 
     }
 
@@ -448,16 +455,19 @@ public class HomeActivity extends BaseActivity implements HomeView {
         RequestBody deviceType = RequestBody.create(MediaType.parse("text/plain"),"ANDROID "+android.os.Build.VERSION.RELEASE);
         RequestBody appVersion = RequestBody.create(MediaType.parse("text/plain"), BuildConfig.VERSION_NAME);
         RequestBody deviceName = RequestBody.create(MediaType.parse("text/plain"), android.os.Build.MODEL);
+        RequestBody deviceId = RequestBody.create(MediaType.parse("text/plain"), sessionManager.getDeviceId());
+        RequestBody empId = RequestBody.create(MediaType.parse("text/plain"), sessionManager.getUserId());
         File file = new File("sdcard/QDMSWiki/qdms_error_file.txt");
         File logfileall = new File("sdcard/QDMSWiki/qdms_log_file.txt");
         RequestBody logfilebody =RequestBody.create(MediaType.parse("*/*"),file);
         MultipartBody.Part logfile = MultipartBody.Part.createFormData("",file.getName(),logfilebody);
         RequestBody logfilebody1 =RequestBody.create(MediaType.parse("*/*"),logfileall);
         MultipartBody.Part logfile1 = MultipartBody.Part.createFormData("",logfileall.getName(),logfilebody1);
-        service.senderrorlogs(logfile,logfile1,userid,appVersion,deviceName,deviceType).enqueue(new Callback<LogResponse>() {
+        service.senderrorlogs(logfile,logfile1,userid,appVersion,deviceName,deviceType,empId,deviceId).enqueue(new Callback<LogResponse>() {
             @Override
             public void onResponse(Call<LogResponse> call, Response<LogResponse> response) {
                 try {
+                    sessionManager.putJsonError("n");
                     Log.e("success send jsonlog",response.body().toString());
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -484,6 +494,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 sendIdtoServerModel.setDeviceName(android.os.Build.MODEL);
                 sendIdtoServerModel.setDeviceType("ANDROID "+android.os.Build.VERSION.RELEASE);
                 sendIdtoServerModel.setUserId(sessionManager.getUserId());
+                sendIdtoServerModel.setEmpId(sessionManager.getUserId());
+                sendIdtoServerModel.setDeviceId(sessionManager.getDeviceId());
 
 
                 List<ArtDetail> ArtDetailList = new ArrayList<>();
@@ -579,6 +591,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
                     public void onResponse(Call<LogResponse> call, Response<LogResponse> response) {
 
                         try {
+                            sessionManager.putisFirst("n");
+                            sessionManager.putisSend("y");
                             Log.e("success alllogtoserver",response.body().toString());
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -864,7 +878,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         intent.putExtra("urlNum", urlNum+"");
         intent.putExtra("Type", type);
         intent.putParcelableArrayListExtra("downloadEntityLists", (ArrayList)downloadEntityLists);
-       /* if (!url.equals("") && !zipFileName.equals("")) {
+        if (!url.equals("") && !zipFileName.equals("")) {
             if (!isMyServiceRunning(DownloadService.class)) {
                 sessionManager.seturlno("0");
                 Log.e("service", "notrunning");
@@ -876,9 +890,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
             } else {
                 Log.e("service", "isrunning");
             }
-        }*/
-
-
+        }
     }
 
 
@@ -1264,7 +1276,7 @@ request.setAllowedNetworkTypes(
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
+            createImageFolder();
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             if (urlNum == downloadEntityLists.size()) {
                 linLayout.setAlpha(1.0f);

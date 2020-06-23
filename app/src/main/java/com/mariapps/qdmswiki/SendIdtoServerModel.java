@@ -12,6 +12,8 @@ public class SendIdtoServerModel {
     private List<CatDetail> catDetails;
     private String deviceName;
     private String deviceType;
+    private String DeviceId;
+    private String EmpId;
     private List<DocDetail> docDetails;
     private List<FileDetail> fileDetails;
     private List<FormDetail> formDetails;
@@ -20,6 +22,22 @@ public class SendIdtoServerModel {
     private String userId;
     private List<UserInfoDetail> userInfoDetails;
     private List<UserSetDetail> userSetDetails;
+
+    public String getDeviceId() {
+        return DeviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        DeviceId = deviceId;
+    }
+
+    public String getEmpId() {
+        return EmpId;
+    }
+
+    public void setEmpId(String empId) {
+        EmpId = empId;
+    }
 
     public String getAppVersion() {
         return appVersion;
