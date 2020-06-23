@@ -123,6 +123,9 @@ public interface HomeDao {
     @Query("DELETE FROM UserInfoEntity WHERE Id=:id")
     void deleteUserInfoEntity(String id);
 
+    @Query("DELETE FROM UserSettingsEntity WHERE UserId =:userId")
+    void deleteUserSettingsEntityByUserId(String userId);
+
     @Query("DELETE FROM FormsEntity WHERE Id=:id")
     void deleteForm(String id);
 
@@ -720,7 +723,7 @@ public interface HomeDao {
     List<String> getformids();
 
 
-    @Query("SELECT Id  FROM BookMarkEntity")
+    @Query("SELECT BookmarkId FROM BookMarkEntryEntity")
     List<String> getbookmarkids();
 
     @Query("SELECT Id  FROM NotificationEntity")

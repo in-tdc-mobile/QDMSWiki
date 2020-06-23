@@ -283,6 +283,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         homeDatabase = HomeDatabase.getInstance(HomeActivity.this);
         progressDialog = new ProgressDialog(HomeActivity.this);
         util = new ShowCasePreferenceUtil(HomeActivity.this);
+        createImageFolder();
         if(!applog.contains("status")){
             applog.edit().putString("status","end").commit();
         }
@@ -444,8 +445,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
 
     //senderrorlogs();
     //sendAllIdstoServer();
-        //remove
-        //remove
+
     }
 
     public void senderrorlogs(){
