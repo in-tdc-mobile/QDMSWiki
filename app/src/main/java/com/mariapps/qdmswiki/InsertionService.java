@@ -589,6 +589,7 @@ public class InsertionService extends Service implements HomeView {
                                 JsonArray jsonArray = data.getAsJsonArray("Images");
                                 imageList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ImageModel>>() {
                                 }.getType());
+                                appendLog("Extracting image size" + imageList.size()+"");
 //                                for (int i = 0; i < imageList.size(); i++) {
 //                                    homePresenter.deleteImage(imageList.get(i));
 //
@@ -603,6 +604,7 @@ public class InsertionService extends Service implements HomeView {
                                                 decodeFile(imageList.get(i1).getImageDataAsString(), imageList.get(i1).getImageName());
                                             AppConfig.getInsertprogress().postValue("Inserting images to database");
                                         } catch (Exception e1) {
+                                            appendLog("Extracting image size error" + e1.getLocalizedMessage());
                                             continue;
                                         }
                                     }
@@ -868,9 +870,11 @@ public class InsertionService extends Service implements HomeView {
                 FileOutputStream fos = new FileOutputStream(file);
                 fos.write(data);
                 fos.close();
+                appendLog(file.getName());
             }
 
         } catch (IOException e) {
+            appendLog("error from decodefile  "+e.getLocalizedMessage());
             e.printStackTrace();
         }
 

@@ -877,6 +877,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 Log.e("service", "isrunning");
             }
         }*/
+
+
     }
 
 
