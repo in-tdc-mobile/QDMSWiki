@@ -132,6 +132,7 @@ import com.tonyodev.fetch2.Request;
 import com.tonyodev.fetch2core.DownloadBlock;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
@@ -166,6 +167,7 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -271,6 +273,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         applog=getSharedPreferences("qdms",0);
         dbox=ObjectBox.get().boxFor(DocumentModelObj.class);
         abox=ObjectBox.get().boxFor(ArticleModelObj.class);
+        appendErrorLog("");
       /*  Box<DocumentModelObj> box = ObjectBox.get().boxFor(DocumentModelObj.class);
       // box.removeAll();
         Box<ArticleModelObj> abox = ObjectBox.get().boxFor(ArticleModelObj.class);
@@ -443,13 +446,13 @@ public class HomeActivity extends BaseActivity implements HomeView {
             Log.e("nameofdoc",dbox.getAll().get(i).documentData.length()+"");
         }*/
 
-    //senderrorlogs();
-    //sendAllIdstoServer();
+    ///sendAllIdstoServer();
+
+
 
     }
 
     public void senderrorlogs(){
-        appendErrorLog("");
         QDMSWikiApi service = APIClient.getClient().create(QDMSWikiApi.class);
         RequestBody userid = RequestBody.create(MediaType.parse("text/plain"), sessionManager.getUserId());
         RequestBody deviceType = RequestBody.create(MediaType.parse("text/plain"),"ANDROID "+android.os.Build.VERSION.RELEASE);
@@ -510,7 +513,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 List<BookmarkDetail> BookmarkDetailList = new ArrayList<>();
 
 
-                List<String> fileids = new ArrayList<>();
+           /*     List<String> fileids = new ArrayList<>();
                 fileids.addAll(homeDatabase.homeDao().getFileids());
                 for (int i = 0; i < fileids.size(); i++) {
                     FileDetailList.add(new FileDetail(fileids.get(i)));
@@ -566,13 +569,14 @@ public class HomeActivity extends BaseActivity implements HomeView {
 
 
 
+
                 File mydir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/QDMSWiki/Images");
                 if (mydir.exists()) {
                     File[] imageids = mydir.listFiles();
                     for (int i = 0; i < imageids.length; i++) {
                         ImageDetailList.add(new ImageDetail(imageids[i].getName()));
                     }
-                }
+                }*/
 
 
                 sendIdtoServerModel.setArtDetails(ArtDetailList);
@@ -586,21 +590,32 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 sendIdtoServerModel.setNotificationDetails(NotificationDetailList);
                 sendIdtoServerModel.setCatDetails(CatDetailList);
                 QDMSWikiApi service = APIClient.getClient().create(QDMSWikiApi.class);
-                service.sendAllidstoServerapi(sendIdtoServerModel).enqueue(new Callback<LogResponse>() {
+                service.sendAllidstoServerapi(sendIdtoServerModel).enqueue(new Callback<ResponseBody>() {
                     @Override
-                    public void onResponse(Call<LogResponse> call, Response<LogResponse> response) {
-
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         try {
-                            sessionManager.putisFirst("n");
-                            sessionManager.putisSend("y");
-                            Log.e("success alllogtoserver",response.body().toString());
+                            JSONObject job;
+                            try {
+                                String resp = response.body().string();
+                                job = new JSONObject(resp);
+                                JSONObject job1 = job   .getJSONObject("CommonEntity");
+                                Log.e("isauth",job1.getString("IsAuthourized"));
+                                Log.e("trans",job1.getString("TransactionStatus"));
+                                if (job1.getString("TransactionStatus").equals("Y")) {
+                                    sessionManager.putisFirst("n");
+                                    sessionManager.putisSend("y");
+                                    Log.e("success alllogtoserver",response.body().toString());
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<LogResponse> call, Throwable t) {
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
                         try {
                             Log.e("onFail alllogtoserver",t.getLocalizedMessage());
                         } catch (Exception e) {

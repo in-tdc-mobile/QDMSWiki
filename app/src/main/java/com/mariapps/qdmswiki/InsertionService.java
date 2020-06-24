@@ -231,36 +231,48 @@ public class InsertionService extends Service implements HomeView {
 
     private void startdownload() {
             try {
-                for (int i1 = 0; i1 < userSettingsList.size(); i1++) {
-                    try {
-                        appendLog("Session User Info Id " + sessionManager.getUserInfoId() + ": User settings user id " + userSettingsList.get(i1).getUserID());
-                        if (userSettingsList.get(i1).getUserID().equals(sessionManager.getUserInfoId())) {
-                            appendLog("Extracting user settings");
-                            homeDatabase.homeDao().deleteUserSettingsEntityByUserId(userSettingsList.get(i1).getUserID());
-                            homeDatabase.homeDao().insertUserSettings(userSettingsList.get(i1));
-                            break;
-                        }
-                    } catch (Exception e) {
-                        continue;
-                    }
-                }
-                for (int i1 = 0; i1 < notificationList.size(); i1++) {
-                    List<ReceiverModel> receiverList = notificationList.get(i1).getReceviers();
-                    for (int j = 0; j < receiverList.size(); j++) {
+                try {
+                    for (int i1 = 0; i1 < userSettingsList.size(); i1++) {
                         try {
-                            appendLog("Session User Info Id " + sessionManager.getUserInfoId() + " : Receiver id " + receiverList.get(j).getRecevierId());
-                            if (receiverList.get(j).getRecevierId().equals(sessionManager.getUserInfoId())) {
-                                appendLog("Extracting notifications");
-                                notificationList.get(i1).setIsUnread(receiverList.get(j).getUnread());
-                                homeDatabase.homeDao().deleteNotification(notificationList.get(i1).getId());
-                                homeDatabase.homeDao().insertNotification(notificationList.get(i1));
+                            appendLog("Session User Info Id " + sessionManager.getUserInfoId() + ": User settings user id " + userSettingsList.get(i1).getUserID());
+                            if (userSettingsList.get(i1).getUserID().equals(sessionManager.getUserInfoId())) {
+                                appendLog("Extracting user settings");
+                                homeDatabase.homeDao().deleteUserSettingsEntityByUserId(userSettingsList.get(i1).getUserID());
+                                homeDatabase.homeDao().insertUserSettings(userSettingsList.get(i1));
                                 break;
                             }
                         } catch (Exception e) {
-
+                            continue;
                         }
                     }
                 }
+                catch (Exception e){
+                    Log.e("insertionservice1", e.getLocalizedMessage());
+                }
+
+                try {
+                    for (int i1 = 0; i1 < notificationList.size(); i1++) {
+                        List<ReceiverModel> receiverList = notificationList.get(i1).getReceviers();
+                        for (int j = 0; j < receiverList.size(); j++) {
+                            try {
+                                appendLog("Session User Info Id " + sessionManager.getUserInfoId() + " : Receiver id " + receiverList.get(j).getRecevierId());
+                                if (receiverList.get(j).getRecevierId().equals(sessionManager.getUserInfoId())) {
+                                    appendLog("Extracting notifications");
+                                    notificationList.get(i1).setIsUnread(receiverList.get(j).getUnread());
+                                    homeDatabase.homeDao().deleteNotification(notificationList.get(i1).getId());
+                                    homeDatabase.homeDao().insertNotification(notificationList.get(i1));
+                                    break;
+                                }
+                            } catch (Exception e) {
+
+                            }
+                        }
+                    }
+                }
+                catch (Exception e){
+                    Log.e("insertionservice2", e.getLocalizedMessage());
+                }
+
                 Log.e("insertionservice", "filedelete");
                 try {
                     File file = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + zipFilename);
@@ -286,6 +298,7 @@ public class InsertionService extends Service implements HomeView {
                 catch (Exception e){
                     Log.e("Folder delete exception",e.getMessage());
                 }
+
                 if (sessionManager.geturlno() == downloadEntityLists.size()) {
                     Log.e("insertionservice", "getInsertcompletedall");
                     try {
@@ -302,11 +315,9 @@ public class InsertionService extends Service implements HomeView {
                     stopForeground(true);
                     stopSelf();
                     iscompleted=true;
-
-
                 }
             } catch (Exception e) {
-                Log.e("insertionservice", e.getLocalizedMessage());
+                Log.e("insertionserviceexcept", e.getLocalizedMessage());
             }
 
     }
@@ -408,16 +419,6 @@ public class InsertionService extends Service implements HomeView {
                                         sessionManager.putJsonError("y");
                                         appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
                                         Log.e("catchedreader", "" + filesInFolder[i].getName() + "   " + e.getLocalizedMessage());
-                                        try {
-                                            JsonParser parser = new JsonParser();
-                                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
-                                            JsonArray jsonArray = data.getAsJsonArray("fileChunks");
-                                            AppConfig.getInsertprogress().postValue("Inserting files to database");
-                                            fileList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FileListModel>>() {
-                                            }.getType()));
-                                        } catch (Exception e1) {
-                                            Log.e("catchegsonparser", "" + filesInFolder[i].getName() + "   " + e.getLocalizedMessage());
-                                        }
                                     }
                                     homeDatabase.homeDao().insertFileListModelbylist(fileList);
                                     //Log.e("fileinsertion","list size is "+fileList.size()+"  count is "+filecount+"filenameis  "+fileList.get(0).getId());
@@ -430,7 +431,8 @@ public class InsertionService extends Service implements HomeView {
                                 appendLog("File json syntax exception : " + e.getMessage());
                                 e.printStackTrace();
                             }
-                        } else if (filesInFolder[i].getName().contains("docs")) {
+                        }
+                        else if (filesInFolder[i].getName().contains("docs")) {
                             try {
                                 appendLog("Extracting document " + filesInFolder[i].getName());
                                 documentList.clear();
@@ -467,11 +469,6 @@ public class InsertionService extends Service implements HomeView {
                                     } catch (Exception e) {
                                         sessionManager.putJsonError("y");
                                         appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
-                                        JsonParser parser = new JsonParser();
-                                        JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
-                                        JsonArray jsonArray = data.getAsJsonArray("Documents");
-                                        documentList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<DocumentModel>>() {
-                                        }.getType()));
                                     }
                                     //documentList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<DocumentModel>>() {}.getType());
                                     if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
@@ -514,7 +511,8 @@ public class InsertionService extends Service implements HomeView {
                                 appendLog("Doc json syntax exception : " + e.getMessage());
                                 e.printStackTrace();
                             }
-                        } else if (filesInFolder[i].getName().contains("art")) { //check that it's not a dir
+                        }
+                        else if (filesInFolder[i].getName().contains("art")) { //check that it's not a dir
                             try {
                                 appendLog("Extracting article " + filesInFolder[i].getName());
                                 articleList.clear();
@@ -582,11 +580,11 @@ public class InsertionService extends Service implements HomeView {
                                 appendLog("Article json syntax exception : " + e.getMessage());
                                 e.printStackTrace();
                             }
-                        } else if (filesInFolder[i].getName().contains("image")) {
-                            //check that it's not a dir
-                            JsonParser parser = new JsonParser();
-                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                        }
+                        else if (filesInFolder[i].getName().contains("image")) {
                             try {
+                                JsonParser parser = new JsonParser();
+                                JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
                                 appendLog("Extracting image " + filesInFolder[i].getName());
                                 JsonArray jsonArray = data.getAsJsonArray("Images");
                                 imageList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ImageModel>>() {
@@ -618,10 +616,12 @@ public class InsertionService extends Service implements HomeView {
                                 appendLog("Image json syntax exception : " + e.getMessage());
                                 e.printStackTrace();
                             }
-                        } else if (filesInFolder[i].getName().contains("category")) {
-                            JsonParser parser = new JsonParser();
-                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                        }
+                        else if (filesInFolder[i].getName().contains("category")) {
+
                             try {
+                                JsonParser parser = new JsonParser();
+                                JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
                                 appendLog("Extracting category " + filesInFolder[i].getName());
                                 JsonArray jsonArray = data.getAsJsonArray("Categories");
                                 categoryList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<CategoryModel>>() {
@@ -637,10 +637,12 @@ public class InsertionService extends Service implements HomeView {
                                 appendLog("Category json syntax exception : " + e.getMessage());
                                 e.printStackTrace();
                             }
-                        } else if (filesInFolder[i].getName().contains("bookmarks")) {
-                            JsonParser parser = new JsonParser();
-                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                        }
+                        else if (filesInFolder[i].getName().contains("bookmarks")) {
+
                             try {
+                                JsonParser parser = new JsonParser();
+                                JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
                                 appendLog("Extracting bookmark " + filesInFolder[i].getName());
                                 JsonArray jsonArray = data.getAsJsonArray("Bookmarks");
                                 bookmarkList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<BookmarkModel>>() {
@@ -665,10 +667,11 @@ public class InsertionService extends Service implements HomeView {
                                 appendLog("Bookmark json syntax exception : " + e.getMessage());
                                 e.printStackTrace();
                             }
-                        } else if (filesInFolder[i].getName().contains("notifications")) {
-                            JsonParser parser = new JsonParser();
-                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                        }
+                        else if (filesInFolder[i].getName().contains("notifications")) {
                             try {
+                                JsonParser parser = new JsonParser();
+                                JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
                                 JsonArray jsonArray = data.getAsJsonArray("Notifications");
                                 notificationList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<NotificationModel>>() {
                                 }.getType());
@@ -678,10 +681,11 @@ public class InsertionService extends Service implements HomeView {
                                 appendLog("Notification json syntax exception : " + e.getMessage());
                                 e.printStackTrace();
                             }
-                        } else if (filesInFolder[i].getName().contains("userInfo")) {
-                            JsonParser parser = new JsonParser();
-                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                        }
+                        else if (filesInFolder[i].getName().contains("userInfo")) {
                             try {
+                                JsonParser parser = new JsonParser();
+                                JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
                                 appendLog("Extracting user info " + filesInFolder[i].getName());
                                 JsonArray jsonArray = data.getAsJsonArray("UserInfo");
                                 userInfoList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<UserInfoModel>>() {
@@ -708,10 +712,11 @@ public class InsertionService extends Service implements HomeView {
                                 appendLog("USer Info json syntax exception : " + e.getMessage());
                                 e.printStackTrace();
                             }
-                        } else if (filesInFolder[i].getName().contains("userSet")) {
-                            JsonParser parser = new JsonParser();
-                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                        }
+                        else if (filesInFolder[i].getName().contains("userSet")) {
                             try {
+                                JsonParser parser = new JsonParser();
+                                JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
                                 JsonArray jsonArray = data.getAsJsonArray("UserSettings");
                                 userSettingsList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<UserSettingsModel>>() {
                                 }.getType());
@@ -722,10 +727,11 @@ public class InsertionService extends Service implements HomeView {
                                 e.printStackTrace();
                             }
 
-                        } else if (filesInFolder[i].getName().contains("forms")) {
-                            JsonParser parser = new JsonParser();
-                            JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                        }
+                        else if (filesInFolder[i].getName().contains("forms")) {
                             try {
+                                JsonParser parser = new JsonParser();
+                                JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
                                 appendLog("Extracting form " + filesInFolder[i].getName());
                                 JsonArray jsonArray = data.getAsJsonArray("Forms");
                                 formsList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FormsModel>>() {

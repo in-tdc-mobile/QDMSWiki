@@ -11,6 +11,7 @@ import com.mariapps.qdmswiki.settings.model.LogoutRespObj;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.http.Body;
@@ -38,7 +39,7 @@ public interface QDMSWikiApi {
 
 
     @POST("Home/FetchMongoDbById")
-    Call<LogResponse> sendAllidstoServerapi(@Body SendIdtoServerModel sendIdtoServerModel);
+    Call<ResponseBody> sendAllidstoServerapi(@Body SendIdtoServerModel sendIdtoServerModel);
 
 
     @Multipart

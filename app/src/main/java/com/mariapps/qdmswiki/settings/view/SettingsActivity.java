@@ -55,6 +55,9 @@ import com.mariapps.qdmswiki.settings.model.LogoutRespObj;
 import com.mariapps.qdmswiki.settings.model.SettingsItem;
 import com.mariapps.qdmswiki.settings.presenter.SettingsPresenter;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +65,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -146,7 +150,7 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
                         startActivity(Intent.createChooser(sendIntent, "Send Email"));
                         break;
                     case 4:
-                        sendAllIdstoServer();
+                        showdialogforrecheck();
                         break;
                     case 5:
                         createAlert();
@@ -283,34 +287,54 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
                 sendIdtoServerModel.setNotificationDetails(NotificationDetailList);
                 sendIdtoServerModel.setCatDetails(CatDetailList);
                 QDMSWikiApi service = APIClient.getClient().create(QDMSWikiApi.class);
-                service.sendAllidstoServerapi(sendIdtoServerModel).enqueue(new Callback<LogResponse>() {
+                service.sendAllidstoServerapi(sendIdtoServerModel).enqueue(new Callback<ResponseBody>() {
                     @Override
-                    public void onResponse(Call<LogResponse> call, Response<LogResponse> response) {
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         progressDialog.dismiss();
 
                         try {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    AlertDialog.Builder bu = new AlertDialog.Builder(SettingsActivity.this);
-                                    bu.setTitle("QDMS Wiki");
-                                    bu.setMessage("We will cross check the data and will provide an update if anything is missing");
-                                    bu.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                        }
-                                    });
+                            JSONObject job;
+                            try {
+                                String resp = response.body().string();
+                                job = new JSONObject(resp);
+                                JSONObject job1 = job   .getJSONObject("CommonEntity");
+                                Log.e("isauth",job1.getString("IsAuthourized"));
+                                Log.e("trans",job1.getString("TransactionStatus"));
+                                if (job1.getString("TransactionStatus").equals("Y")) {
+                                    try {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                AlertDialog.Builder bu = new AlertDialog.Builder(SettingsActivity.this);
+                                                bu.setTitle("QDMS Wiki");
+                                                bu.setMessage("We will cross check the data and will provide an update if anything is missing");
+                                                bu.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        dialog.dismiss();
+                                                    }
+                                                });
+                                                bu.show();
+                                            }
+                                        });
+                                        Log.e("success alllogtoserver",response.body().toString());
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    Log.e("success alllogtoserver",response.body().toString());
                                 }
-                            });
-                            Log.e("success alllogtoserver",response.body().toString());
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+
+
                     }
 
                     @Override
-                    public void onFailure(Call<LogResponse> call, Throwable t) {
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
                         progressDialog.dismiss();
                         try {
                             Log.e("onFail alllogtoserver",t.getLocalizedMessage());
@@ -388,7 +412,7 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
         settingsItems.add(new SettingsItem(R.drawable.ic_app_info,"App Info",R.color.black));
         settingsItems.add(new SettingsItem(R.drawable.ic_check_update,"Check for QDMS data updates",R.color.black));
         settingsItems.add(new SettingsItem(R.drawable.app_support,"App Support",R.color.black));
-        settingsItems.add(new SettingsItem(R.drawable.app_support,"Re-Check for Data",R.color.black));
+        settingsItems.add(new SettingsItem(R.drawable.recheck_data_icon,"Re-Check for Data",R.color.black));
         settingsItems.add(new SettingsItem(R.drawable.ic_logout,"Logout",R.color.red_900));
         return settingsItems;
     }
