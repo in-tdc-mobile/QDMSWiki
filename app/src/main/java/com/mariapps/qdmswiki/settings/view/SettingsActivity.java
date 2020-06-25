@@ -164,7 +164,7 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
     public void showdialogforrecheck(){
         AlertDialog.Builder bu = new AlertDialog.Builder(SettingsActivity.this);
         bu.setTitle("Are you sure you want to continue?");
-        bu.setMessage("This will send a mail and cross check with production data and get as an update if anything is missing");
+        bu.setMessage("This will cross the data of your mobile with PAL DB.");
         bu.setPositiveButton("yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -307,7 +307,7 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
                                             public void run() {
                                                 AlertDialog.Builder bu = new AlertDialog.Builder(SettingsActivity.this);
                                                 bu.setTitle("QDMS Wiki");
-                                                bu.setMessage("We will cross check the data and will provide an update if anything is missing");
+                                                bu.setMessage("Thank you for initiating the Re-Check Data process , we will notify you once any discrepancies found.");
                                                 bu.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                                     @Override
                                                     public void onClick(DialogInterface dialog, int which) {
