@@ -145,8 +145,12 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
                         sendIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"support@mariapps.com"});
                         sendIntent.putExtra(Intent.EXTRA_SUBJECT, "QDMWiki Android support [UserID: " +sessionManager.getUserId()+"]");
                         sendIntent.putExtra(Intent.EXTRA_TEXT, mailBody);
-                        Uri uri = FileProvider.getUriForFile(SettingsActivity.this, BuildConfig.APPLICATION_ID + ".provider",new File("sdcard/QDMSWiki/qdms_log_file.txt"));
-                        sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                        try {
+                            Uri uri = FileProvider.getUriForFile(SettingsActivity.this, BuildConfig.APPLICATION_ID + ".provider",new File("sdcard/QDMSWiki/qdms_log_file.txt"));
+                            sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         startActivity(Intent.createChooser(sendIntent, "Send Email"));
                         break;
                     case 4:

@@ -44,7 +44,7 @@ public interface QDMSWikiApi {
 
     @Multipart
     @POST("Home/SendEmail")
-    Call<LogResponse> senderrorlogs(
+    Call<ResponseBody> senderrorlogs(
             @Part MultipartBody.Part file,
             @Part MultipartBody.Part logfile,
             @Part("userId") RequestBody userId,

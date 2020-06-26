@@ -466,19 +466,32 @@ public class HomeActivity extends BaseActivity implements HomeView {
         MultipartBody.Part logfile = MultipartBody.Part.createFormData("",file.getName(),logfilebody);
         RequestBody logfilebody1 =RequestBody.create(MediaType.parse("*/*"),logfileall);
         MultipartBody.Part logfile1 = MultipartBody.Part.createFormData("",logfileall.getName(),logfilebody1);
-        service.senderrorlogs(logfile,logfile1,userid,appVersion,deviceName,deviceType,empId,deviceId).enqueue(new Callback<LogResponse>() {
+        service.senderrorlogs(logfile,logfile1,userid,appVersion,deviceName,deviceType,empId,deviceId).enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<LogResponse> call, Response<LogResponse> response) {
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
                 try {
-                    sessionManager.putJsonError("n");
-                    Log.e("success send jsonlog",response.body().toString());
+                    JSONObject job;
+                    try {
+                        String resp = response.body().string();
+                        job = new JSONObject(resp);
+                        JSONObject job1 = job   .getJSONObject("CommonEntity");
+                        Log.e("isauth",job1.getString("IsAuthourized"));
+                        Log.e("trans",job1.getString("TransactionStatus"));
+                        if (job1.getString("TransactionStatus").equals("Y")) {
+                            sessionManager.putJsonError("n");
+                            Log.e("success alllogtoserver",response.body().toString());
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
 
             @Override
-            public void onFailure(Call<LogResponse> call, Throwable t) {
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
                 try {
                     Log.e("onFailure send jsonlog",t.getLocalizedMessage());
                 } catch (Exception e) {
@@ -513,7 +526,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 List<BookmarkDetail> BookmarkDetailList = new ArrayList<>();
 
 
-           /*     List<String> fileids = new ArrayList<>();
+                List<String> fileids = new ArrayList<>();
                 fileids.addAll(homeDatabase.homeDao().getFileids());
                 for (int i = 0; i < fileids.size(); i++) {
                     FileDetailList.add(new FileDetail(fileids.get(i)));
@@ -576,7 +589,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
                     for (int i = 0; i < imageids.length; i++) {
                         ImageDetailList.add(new ImageDetail(imageids[i].getName()));
                     }
-                }*/
+                }
 
 
                 sendIdtoServerModel.setArtDetails(ArtDetailList);
