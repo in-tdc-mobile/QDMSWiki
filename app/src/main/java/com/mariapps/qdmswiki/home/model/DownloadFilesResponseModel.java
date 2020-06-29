@@ -58,6 +58,10 @@ public class DownloadFilesResponseModel {
         @SerializedName("Type")
         public String type;
 
+        @ColumnInfo(name = "compressedSize")
+        @SerializedName("compressedSize")
+        public String compressedSize;
+
 
         public DownloadEntityList(Long uId, String downloadLink, String fileName, String fileSize) {
             this.uId = uId;
@@ -117,6 +121,7 @@ public class DownloadFilesResponseModel {
             fileName = in.readString();
             fileSize = in.readString();
             type = in.readString();
+            compressedSize=in.readString();
         }
 
         @Override
@@ -136,6 +141,7 @@ public class DownloadFilesResponseModel {
             dest.writeString(fileName);
             dest.writeString(fileSize);
             dest.writeString(type);
+            dest.writeString(compressedSize);
         }
 
 

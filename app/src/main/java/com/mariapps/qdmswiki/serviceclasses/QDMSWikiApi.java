@@ -2,6 +2,7 @@ package com.mariapps.qdmswiki.serviceclasses;
 
 import com.mariapps.qdmswiki.LogResponse;
 import com.mariapps.qdmswiki.SendIdtoServerModel;
+import com.mariapps.qdmswiki.UpdateStatusModel;
 import com.mariapps.qdmswiki.home.model.DownloadFilesRequestModel;
 import com.mariapps.qdmswiki.home.model.DownloadFilesResponseModel;
 import com.mariapps.qdmswiki.login.model.LoginRequestObj;
@@ -40,6 +41,9 @@ public interface QDMSWikiApi {
 
     @POST("Home/FetchMongoDbById")
     Call<ResponseBody> sendAllidstoServerapi(@Body SendIdtoServerModel sendIdtoServerModel);
+
+    @POST("Home/UpdateLastProcessedStatus")
+    Call<ResponseBody> UpdateLastProcessedStatus(@Body UpdateStatusModel updateStatusModel);
 
 
     @Multipart

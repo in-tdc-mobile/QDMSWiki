@@ -2,10 +2,12 @@ package com.mariapps.qdmswiki.home.view;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.Transformations;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -17,6 +19,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.PersistableBundle;
+import android.os.StatFs;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -84,6 +87,7 @@ import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.SendAllIdModel;
 import com.mariapps.qdmswiki.SendIdtoServerModel;
 import com.mariapps.qdmswiki.SessionManager;
+import com.mariapps.qdmswiki.UpdateStatusModel;
 import com.mariapps.qdmswiki.UserInfoDetail;
 import com.mariapps.qdmswiki.UserSetDetail;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
@@ -358,6 +362,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
            }
        });
 
+       //beginDownload("","","");
+
         AppConfig.getInsertcompletedall().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
@@ -446,11 +452,14 @@ public class HomeActivity extends BaseActivity implements HomeView {
             Log.e("nameofdoc",dbox.getAll().get(i).documentData.length()+"");
         }*/
 
-    ///sendAllIdstoServer();
+    //sendAllIdstoServer();
+
+       // sendLastProccesdStatus("test","test");
 
 
 
     }
+
 
     public void senderrorlogs(){
         QDMSWikiApi service = APIClient.getClient().create(QDMSWikiApi.class);
@@ -499,6 +508,50 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 }
             }
         });
+    }
+
+    public void sendLastProccesdStatus(String zipFilename,String type){
+        try {
+            QDMSWikiApi service = APIClient.getClient().create(QDMSWikiApi.class);
+            UpdateStatusModel updateStatusModel = new UpdateStatusModel();
+            updateStatusModel.setDeviceId(sessionManager.getDeviceId());
+            updateStatusModel.setEmpId(sessionManager.getUserId());
+            updateStatusModel.setFile_Name(zipFilename);
+            updateStatusModel.setType(type);
+            service.UpdateLastProcessedStatus(updateStatusModel).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    try {
+                        JSONObject job;
+                        try {
+                            String resp = response.body().string();
+                            job = new JSONObject(resp);
+                            JSONObject job1 = job   .getJSONObject("CommonEntity");
+                            Log.e("isauth",job1.getString("IsAuthourized"));
+                            Log.e("trans",job1.getString("TransactionStatus"));
+                            if (job1.getString("TransactionStatus").equals("Y")) {
+                                Log.e("success UpLastProcStat",response.body().toString());
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    try {
+                        Log.e("onFail UpLastProcStat",t.getLocalizedMessage());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void sendAllIdstoServer(){
@@ -596,12 +649,12 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 sendIdtoServerModel.setDocDetails(DocDetailList);
                 sendIdtoServerModel.setFileDetails(FileDetailList);
                 sendIdtoServerModel.setFormDetails(FormDetailList);
-                sendIdtoServerModel.setBookmarkDetails(BookmarkDetailList);
+                 sendIdtoServerModel.setBookmarkDetails(BookmarkDetailList);
                 sendIdtoServerModel.setImageDetails(ImageDetailList);
                 sendIdtoServerModel.setUserInfoDetails(UserInfoDetailList);
                 sendIdtoServerModel.setUserSetDetails(UserSetDetailList);
-                sendIdtoServerModel.setNotificationDetails(NotificationDetailList);
-                sendIdtoServerModel.setCatDetails(CatDetailList);
+                 sendIdtoServerModel.setNotificationDetails(NotificationDetailList);
+                 sendIdtoServerModel.setCatDetails(CatDetailList);
                 QDMSWikiApi service = APIClient.getClient().create(QDMSWikiApi.class);
                 service.sendAllidstoServerapi(sendIdtoServerModel).enqueue(new Callback<ResponseBody>() {
                     @Override
@@ -895,6 +948,22 @@ public class HomeActivity extends BaseActivity implements HomeView {
         }
     }
 
+    public long freeMemory()
+    {
+        StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+        long bytesAvailable;
+        if (android.os.Build.VERSION.SDK_INT >=
+                android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            bytesAvailable = stat.getBlockSizeLong() * stat.getAvailableBlocksLong();
+        }
+        else {
+            bytesAvailable = (long)stat.getBlockSize() * (long)stat.getAvailableBlocks();
+        }
+        long megAvailable = bytesAvailable / (1024 * 1024);
+        Log.e("","Available MB : "+megAvailable);
+
+        return bytesAvailable;
+    }
     public void beginDownload(String url, String zipFileName, String typ) {
         this.url = url;
         type =typ;
@@ -906,7 +975,39 @@ public class HomeActivity extends BaseActivity implements HomeView {
         intent.putExtra("urlNum", urlNum+"");
         intent.putExtra("Type", type);
         intent.putParcelableArrayListExtra("downloadEntityLists", (ArrayList)downloadEntityLists);
-        if (!url.equals("") && !zipFileName.equals("")) {
+
+        int totalSize = 0;
+        int downloadSize=0;
+
+        for (int i = 0; i < downloadEntityLists.size(); i++) {
+            totalSize += Integer.parseInt(downloadEntityLists.get(i).fileSize);
+            downloadSize += Integer.parseInt(downloadEntityLists.get(i).fileSize);
+        }
+
+        if(totalSize>freeMemory()){
+            AlertDialog.Builder bu = new AlertDialog.Builder(HomeActivity.this);
+            bu.setTitle("QDMS Wiki");
+            int sizeinmb=totalSize/(1024*1024);
+            bu.setMessage("Your device doesn't have enough space to download all the files. A total of "+sizeinmb+"MB free space is needed");
+            bu.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    finish();
+                }
+            });
+            bu.show();
+        }
+        else {
+            AlertDialog.Builder bu = new AlertDialog.Builder(HomeActivity.this);
+            bu.setTitle("QDMS Wiki");
+            int sizeinmb=downloadSize/(1024*1024);
+            bu.setMessage(sizeinmb+"MB data is needed to download the files. Do you want to proceed?");
+            bu.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                     if (!url.equals("") && !zipFileName.equals("")) {
             if (!isMyServiceRunning(DownloadService.class)) {
                 sessionManager.seturlno("0");
                 Log.e("service", "notrunning");
@@ -919,6 +1020,29 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 Log.e("service", "isrunning");
             }
         }
+                }
+            });
+            bu.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    finish();
+                }
+            });
+            bu.show();
+        }
+
+        Log.e("totalSize",totalSize+"");
+        Log.e("downloadSize",downloadSize+"");
+        Log.e("downloadSize",freeMemory()+"");
+
+
+
+
+
+
+
+
     }
 
 
@@ -2193,6 +2317,15 @@ request.setAllowedNetworkTypes(
     @Override
     protected void onResume() {
         super.onResume();
+        if(!isMyServiceRunning(DownloadService.class)&&!isMyServiceRunning(InsertionService.class)){
+         try {
+             progressDialog.dismiss();
+             progressLayout.setVisibility(View.GONE);
+         }
+         catch (Exception e){
+
+         }
+        }
         setNotificationCount();
     }
 

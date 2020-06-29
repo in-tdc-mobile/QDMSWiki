@@ -45,9 +45,13 @@ import com.mariapps.qdmswiki.notification.model.NotificationModel;
 import com.mariapps.qdmswiki.notification.model.ReceiverModel;
 import com.mariapps.qdmswiki.search.model.SearchModel;
 import com.mariapps.qdmswiki.serviceclasses.APIException;
+import com.mariapps.qdmswiki.serviceclasses.QDMSWikiApi;
 import com.mariapps.qdmswiki.usersettings.UserInfoModel;
 import com.mariapps.qdmswiki.usersettings.UserSettingsModel;
 import com.mariapps.qdmswiki.utils.DateUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -66,6 +70,10 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import io.objectbox.Box;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class InsertionService extends Service implements HomeView {
@@ -175,6 +183,7 @@ public class InsertionService extends Service implements HomeView {
     @Override
     public void onDestroy() {
         if(startinsertionasync!=null){
+            sendLastProccesdStatus(zipFilename,type);
             Log.e("asyncstask","iscancelled");
             startinsertionasync.cancel(true);
         }
@@ -227,6 +236,50 @@ public class InsertionService extends Service implements HomeView {
 
         super.onDestroy();
 
+    }
+
+    public void sendLastProccesdStatus(String zipFilename,String type){
+        try {
+            QDMSWikiApi service = APIClient.getClient().create(QDMSWikiApi.class);
+            UpdateStatusModel updateStatusModel = new UpdateStatusModel();
+            updateStatusModel.setDeviceId(sessionManager.getDeviceId());
+            updateStatusModel.setEmpId(sessionManager.getUserId());
+            updateStatusModel.setFile_Name(zipFilename);
+            updateStatusModel.setType(type);
+            service.UpdateLastProcessedStatus(updateStatusModel).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    try {
+                        JSONObject job;
+                        try {
+                            String resp = response.body().string();
+                            job = new JSONObject(resp);
+                            JSONObject job1 = job   .getJSONObject("CommonEntity");
+                            Log.e("isauth",job1.getString("IsAuthourized"));
+                            Log.e("trans",job1.getString("TransactionStatus"));
+                            if (job1.getString("TransactionStatus").equals("Y")) {
+                                Log.e("success UpLastProcStat",response.body().toString());
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    try {
+                        Log.e("onFail UpLastProcStat",t.getLocalizedMessage());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void startdownload() {
