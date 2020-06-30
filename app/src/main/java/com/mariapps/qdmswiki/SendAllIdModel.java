@@ -6,7 +6,6 @@ import java.util.List;
 
 
 public class SendAllIdModel {
-
     private String appVersion;
     private List<ArticleIdList> articleIdList;
     private String deviceName;

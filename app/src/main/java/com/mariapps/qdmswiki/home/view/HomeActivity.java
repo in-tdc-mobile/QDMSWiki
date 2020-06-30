@@ -452,7 +452,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
             Log.e("nameofdoc",dbox.getAll().get(i).documentData.length()+"");
         }*/
 
-    //sendAllIdstoServer();
+    sendAllIdstoServer();
 
        // sendLastProccesdStatus("test","test");
 
@@ -1031,18 +1031,9 @@ public class HomeActivity extends BaseActivity implements HomeView {
             });
             bu.show();
         }
-
         Log.e("totalSize",totalSize+"");
         Log.e("downloadSize",downloadSize+"");
         Log.e("downloadSize",freeMemory()+"");
-
-
-
-
-
-
-
-
     }
 
 

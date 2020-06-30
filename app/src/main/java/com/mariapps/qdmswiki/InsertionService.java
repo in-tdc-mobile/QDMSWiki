@@ -233,9 +233,7 @@ public class InsertionService extends Service implements HomeView {
                 }
             }
         }
-
         super.onDestroy();
-
     }
 
     public void sendLastProccesdStatus(String zipFilename,String type){
