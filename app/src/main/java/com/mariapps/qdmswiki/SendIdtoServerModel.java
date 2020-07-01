@@ -6,38 +6,28 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class SendIdtoServerModel {
 
+
+
+
+
     private String appVersion;
-    private List<ArtDetail> artDetails;
-    private List<BookmarkDetail> bookmarkDetails;
-    private List<CatDetail> catDetails;
+    private List<ArtDetail> ArtDetails;
+    private List<BookmarkDetail> BookmarkDetails;
+    private List<CatDetail> CatDetails;
     private String deviceName;
     private String deviceType;
     private String DeviceId;
     private String EmpId;
-    private List<DocDetail> docDetails;
-    private List<FileDetail> fileDetails;
-    private List<FormDetail> formDetails;
-    private List<ImageDetail> imageDetails;
-    private List<NotificationDetail> notificationDetails;
+    private List<DocDetail> DocDetails;
+    private List<FileDetail> FileDetails;
+    private List<FormDetail> FormDetails;
+    private List<ImageDetail> ImageDetails;
+    private List<NotificationDetail> NotificationDetails;
     private String userId;
-    private List<UserInfoDetail> userInfoDetails;
-    private List<UserSetDetail> userSetDetails;
+    private List<UserInfoDetail> UserInfoDetails;
+    private List<UserSetDetail> UserSetDetails;
 
-    public String getDeviceId() {
-        return DeviceId;
-    }
 
-    public void setDeviceId(String deviceId) {
-        DeviceId = deviceId;
-    }
-
-    public String getEmpId() {
-        return EmpId;
-    }
-
-    public void setEmpId(String empId) {
-        EmpId = empId;
-    }
 
     public String getAppVersion() {
         return appVersion;
@@ -48,27 +38,27 @@ public class SendIdtoServerModel {
     }
 
     public List<ArtDetail> getArtDetails() {
-        return artDetails;
+        return ArtDetails;
     }
 
     public void setArtDetails(List<ArtDetail> artDetails) {
-        this.artDetails = artDetails;
+        ArtDetails = artDetails;
     }
 
     public List<BookmarkDetail> getBookmarkDetails() {
-        return bookmarkDetails;
+        return BookmarkDetails;
     }
 
     public void setBookmarkDetails(List<BookmarkDetail> bookmarkDetails) {
-        this.bookmarkDetails = bookmarkDetails;
+        BookmarkDetails = bookmarkDetails;
     }
 
     public List<CatDetail> getCatDetails() {
-        return catDetails;
+        return CatDetails;
     }
 
     public void setCatDetails(List<CatDetail> catDetails) {
-        this.catDetails = catDetails;
+        CatDetails = catDetails;
     }
 
     public String getDeviceName() {
@@ -87,44 +77,60 @@ public class SendIdtoServerModel {
         this.deviceType = deviceType;
     }
 
+    public String getDeviceId() {
+        return DeviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        DeviceId = deviceId;
+    }
+
+    public String getEmpId() {
+        return EmpId;
+    }
+
+    public void setEmpId(String empId) {
+        EmpId = empId;
+    }
+
     public List<DocDetail> getDocDetails() {
-        return docDetails;
+        return DocDetails;
     }
 
     public void setDocDetails(List<DocDetail> docDetails) {
-        this.docDetails = docDetails;
+        DocDetails = docDetails;
     }
 
     public List<FileDetail> getFileDetails() {
-        return fileDetails;
+        return FileDetails;
     }
 
     public void setFileDetails(List<FileDetail> fileDetails) {
-        this.fileDetails = fileDetails;
+        FileDetails = fileDetails;
     }
 
     public List<FormDetail> getFormDetails() {
-        return formDetails;
+        return FormDetails;
     }
 
     public void setFormDetails(List<FormDetail> formDetails) {
-        this.formDetails = formDetails;
+        FormDetails = formDetails;
     }
 
     public List<ImageDetail> getImageDetails() {
-        return imageDetails;
+        return ImageDetails;
     }
 
     public void setImageDetails(List<ImageDetail> imageDetails) {
-        this.imageDetails = imageDetails;
+        ImageDetails = imageDetails;
     }
 
     public List<NotificationDetail> getNotificationDetails() {
-        return notificationDetails;
+        return NotificationDetails;
     }
 
     public void setNotificationDetails(List<NotificationDetail> notificationDetails) {
-        this.notificationDetails = notificationDetails;
+        NotificationDetails = notificationDetails;
     }
 
     public String getUserId() {
@@ -136,19 +142,18 @@ public class SendIdtoServerModel {
     }
 
     public List<UserInfoDetail> getUserInfoDetails() {
-        return userInfoDetails;
+        return UserInfoDetails;
     }
 
     public void setUserInfoDetails(List<UserInfoDetail> userInfoDetails) {
-        this.userInfoDetails = userInfoDetails;
+        UserInfoDetails = userInfoDetails;
     }
 
     public List<UserSetDetail> getUserSetDetails() {
-        return userSetDetails;
+        return UserSetDetails;
     }
 
     public void setUserSetDetails(List<UserSetDetail> userSetDetails) {
-        this.userSetDetails = userSetDetails;
+        UserSetDetails = userSetDetails;
     }
-
 }

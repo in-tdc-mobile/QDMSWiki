@@ -5,17 +5,17 @@ package com.mariapps.qdmswiki;
 @SuppressWarnings("unused")
 public class CatDetail {
 
-    private String id;
+    private String Id;
 
     public String getId() {
-        return id;
+        return Id;
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.Id = id;
     }
 
     public CatDetail(String id) {
-        this.id = id;
+        this.Id = id;
     }
 }
