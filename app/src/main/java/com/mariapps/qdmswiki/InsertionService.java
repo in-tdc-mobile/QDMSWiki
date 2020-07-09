@@ -596,7 +596,7 @@ public class InsertionService extends Service implements HomeView {
                                         articleList.addAll(readJsonStreamforarticle(new FileInputStream(filesInFolder[i])));
                                         if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
                                             for (int i1 = 0; i1 < articleList.size(); i1++) {
-                                                if (articleList.get(i1).getArticleToVesselIds().size() > 0 || articleList.get(i1).getArticleToPassengersVesselIds().size() > 0) {
+                                                if (articleList.get(i1).getArticleToVesselIds()!=null&&articleList.get(i1).getArticleToVesselIds().size() > 0 || articleList.get(i1).getArticleToPassengersVesselIds()!=null&&articleList.get(i1).getArticleToPassengersVesselIds().size() > 0) {
                                                     homePresenter.deleteArticlessingle(articleList.get(i));
                                                 }
                                             }
@@ -618,18 +618,13 @@ public class InsertionService extends Service implements HomeView {
                                     } catch (Exception e) {
                                         sessionManager.putJsonError("y");
                                         appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
-                                        JsonParser parser = new JsonParser();
-                                        JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
-                                        JsonArray jsonArray = data.getAsJsonArray("Articles");
-                                        articleList.addAll(new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ArticleModel>>() {
-                                        }.getType()));
                                     }
                                     // articleList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ArticleModel>>() {}.getType());
                                     List<ArticleModel> newlist = new ArrayList<>();
                                     if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
                                         List<ArticleModelObj> objList = new ArrayList<>();
                                         for (int i1 = 0; i1 < articleList.size(); i1++) {
-                                            if (articleList.get(i1).getArticleToVesselIds().size() > 0 || articleList.get(i1).getArticleToPassengersVesselIds().size() > 0) {
+                                            if (articleList.get(i1).getArticleToVesselIds()!=null&&articleList.get(i1).getArticleToVesselIds().size() > 0 || articleList.get(i1).getArticleToPassengersVesselIds()!=null&&articleList.get(i1).getArticleToPassengersVesselIds().size() > 0) {
                                                 newlist.add(articleList.get(i1));
                                                 ArticleModelObj obj = new ArticleModelObj(articleList.get(i1).getId(), articleList.get(i1).getArticleName(), articleList.get(i1).documentData);
                                                 objList.add(obj);
