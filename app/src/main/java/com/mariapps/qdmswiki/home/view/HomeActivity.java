@@ -474,6 +474,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
     }
 
 
+
+
     public void senderrorlogs(){
         QDMSWikiApi service = APIClient.getClient().create(QDMSWikiApi.class);
         RequestBody userid = RequestBody.create(MediaType.parse("text/plain"), sessionManager.getUserId());

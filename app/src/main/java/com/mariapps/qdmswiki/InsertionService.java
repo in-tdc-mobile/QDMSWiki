@@ -347,7 +347,7 @@ public class InsertionService extends Service implements HomeView {
                             File[] filesInsideFolder = children[i].listFiles();
                             for (int j = 0; j < filesInsideFolder.length; j++) {
                                try {
-                                   filesInsideFolder[i].delete();
+                                   filesInsideFolder[j].delete();
                                }
                                catch (Exception e){
 
@@ -461,7 +461,6 @@ public class InsertionService extends Service implements HomeView {
                         appendLog("Extracting directory " + filesInFolder[i].getName());
                         File[] filesInsideFolder = filesInFolder[i].listFiles();
                         for (int j = 0; j < filesInsideFolder.length; j++) {
-                            appendLog("Copying " + filesInsideFolder[j].getName() + " to image folder");
                             copyFile(new File(filesInsideFolder[j].getAbsolutePath()), new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/Images/" + filesInsideFolder[j].getName()));
                         }
                     } else {
