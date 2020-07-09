@@ -1,8 +1,12 @@
 package com.mariapps.qdmswiki.search.model;
 
+import android.arch.persistence.room.ColumnInfo;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SearchModel implements Serializable {
 
@@ -13,6 +17,9 @@ public class SearchModel implements Serializable {
     private String categoryId;
     private String categoryName;
     private String version;
+   /* public ArrayList<String> vesselIds;
+    public ArrayList<String> passengersVesselIds;*/
+
 
     public String getId() {
         return id;
@@ -61,4 +68,21 @@ public class SearchModel implements Serializable {
     public void setVersion(String version) {
         this.version = version;
     }
+
+/*    public List<String> getVesselIds() {
+        return vesselIds;
+    }
+
+    public void setVesselIds(ArrayList<String> vesselIds) {
+        this.vesselIds = vesselIds;
+    }
+
+
+    public ArrayList<String> getPassengersVesselIds() {
+        return passengersVesselIds;
+    }
+
+    public void setPassengersVesselIds(ArrayList<String> passengersVesselIds) {
+        this.passengersVesselIds = passengersVesselIds;
+    }*/
 }

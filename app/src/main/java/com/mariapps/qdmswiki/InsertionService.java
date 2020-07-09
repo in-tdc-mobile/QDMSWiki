@@ -63,6 +63,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -288,11 +289,13 @@ public class InsertionService extends Service implements HomeView {
                             appendLog("Session User Info Id " + sessionManager.getUserInfoId() + ": User settings user id " + userSettingsList.get(i1).getUserID());
                             if (userSettingsList.get(i1).getUserID().equals(sessionManager.getUserInfoId())) {
                                 appendLog("Extracting user settings");
-                                homeDatabase.homeDao().deleteUserSettingsEntityByUserId(userSettingsList.get(i1).getUserID());
-                                homeDatabase.homeDao().insertUserSettings(userSettingsList.get(i1));
+                                homePresenter.deleteUserSettingsEntityByUserId(userSettingsList.get(i1));
+
+                                Log.e("user settings",userSettingsList.get(i1).getUserID());
                                 break;
                             }
                         } catch (Exception e) {
+                            Log.e("user settings Exception",e.getLocalizedMessage());
                             continue;
                         }
                     }
@@ -310,12 +313,12 @@ public class InsertionService extends Service implements HomeView {
                                 if (receiverList.get(j).getRecevierId().equals(sessionManager.getUserInfoId())) {
                                     appendLog("Extracting notifications");
                                     notificationList.get(i1).setIsUnread(receiverList.get(j).getUnread());
-                                    homeDatabase.homeDao().deleteNotification(notificationList.get(i1).getId());
-                                    homeDatabase.homeDao().insertNotification(notificationList.get(i1));
+                                    homePresenter.deleteNotification(notificationList.get(i1));
+                                    homePresenter.insertNotification(notificationList.get(i1));
                                     break;
                                 }
                             } catch (Exception e) {
-
+                                Log.e("notification Exception",e.getLocalizedMessage());
                             }
                         }
                     }
@@ -337,10 +340,22 @@ public class InsertionService extends Service implements HomeView {
 
                 try {
                     File extractedFiles = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno());
-                    String[] children = extractedFiles.list();
+                    File[] children = extractedFiles.listFiles();
                     for (int i = 0; i < children.length; i++)
                     {
-                        new File(extractedFiles, children[i]).delete();
+                        if (children[i].isDirectory()) {
+                            File[] filesInsideFolder = children[i].listFiles();
+                            for (int j = 0; j < filesInsideFolder.length; j++) {
+                               try {
+                                   filesInsideFolder[i].delete();
+                               }
+                               catch (Exception e){
+
+                               }
+
+                            }
+                        }
+                        children[i].delete();
                     }
                     if (extractedFiles.exists()) {
                         extractedFiles.delete();
@@ -501,12 +516,7 @@ public class InsertionService extends Service implements HomeView {
                                             }
                                             AppConfig.getInsertprogress().postValue("Inserting documents to database");
                                         } else {
-                                            for (int i1 = 0; i1 < documentList.size(); i1++) {
-                                                documentList.get(i1).setIsRecommended("NO");
-                                                List<TagModel> tagList = documentList.get(i1).getTags();
-                                                homeDatabase.homeDao().insertTag(tagList);
-                                                homePresenter.insertDocumentsSingle(documentList.get(i));
-                                            }
+
                                         }
                                     } catch (IOException e) {
                                         sessionManager.putJsonError("y");
@@ -641,6 +651,7 @@ public class InsertionService extends Service implements HomeView {
                                 imageList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ImageModel>>() {
                                 }.getType());
                                 appendLog("Extracting image size" + imageList.size()+"");
+
 //                                for (int i = 0; i < imageList.size(); i++) {
 //                                    homePresenter.deleteImage(imageList.get(i));
 //
@@ -655,6 +666,7 @@ public class InsertionService extends Service implements HomeView {
                                                 decodeFile(imageList.get(i1).getImageDataAsString(), imageList.get(i1).getImageName());
                                             AppConfig.getInsertprogress().postValue("Inserting images to database");
                                         } catch (Exception e1) {
+                                            Log.e("errorinimagejson",e.getLocalizedMessage());
                                             appendLog("Extracting image size error" + e1.getLocalizedMessage());
                                             continue;
                                         }

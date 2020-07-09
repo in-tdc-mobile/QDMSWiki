@@ -1004,6 +1004,8 @@ public class HomePresenter {
         });
     }
 
+
+
     public void deleteUserSettingsTag(List<UserSettingsTagModel> userSettingsTagModel) {
 
         Completable.fromAction(new Action() {
@@ -1110,6 +1112,36 @@ public class HomePresenter {
 
             }
         });
+    }
+
+
+    public void deleteUserSettingsEntityByUserId(UserSettingsModel userSettingsModel){
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                if (userSettingsModel != null) {
+                    homeDatabase.homeDao().deleteUserSettingsEntityByUserId(userSettingsModel.getUserID());
+                }
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+               insertUserSettings(userSettingsModel);
+            }
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+
     }
 
     public void deleteUserInfo(final UserInfoModel userInfoModel) {

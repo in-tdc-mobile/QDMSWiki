@@ -14,6 +14,7 @@ import com.mariapps.qdmswiki.home.model.FormsModel;
 import com.mariapps.qdmswiki.home.model.TagModel;
 import com.mariapps.qdmswiki.notification.model.NotificationModel;
 import com.mariapps.qdmswiki.notification.model.ReceiverModel;
+import com.mariapps.qdmswiki.search.model.SearchModel;
 import com.mariapps.qdmswiki.usersettings.UserInfoModel;
 import com.mariapps.qdmswiki.usersettings.UserSettingsCategoryModel;
 import com.mariapps.qdmswiki.usersettings.UserSettingsModel;
@@ -57,6 +58,28 @@ public class HomeTypeConverter {
     public static String documentEntityToString(List<DocumentModel> documentModelList) {
         return gson.toJson(documentModelList);
     }
+
+
+
+    @TypeConverter
+    public static List<SearchModel> searchEntityToList(String data) {
+        if (data == null) {
+            return Collections.emptyList();
+        }
+
+        Type listType = new TypeToken<List<SearchModel>>() {}.getType();
+
+        return gson.fromJson(data, listType);
+    }
+
+    @TypeConverter
+    public static String searchEntityToString(List<SearchModel> searchModelList) {
+        return gson.toJson(searchModelList);
+    }
+
+
+
+
 
     @TypeConverter
     public static List<TagModel> tagEntityToList(String data) {

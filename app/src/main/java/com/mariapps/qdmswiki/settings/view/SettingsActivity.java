@@ -201,6 +201,8 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
                 sendIdtoServerModel.setDeviceName(android.os.Build.MODEL);
                 sendIdtoServerModel.setDeviceType("ANDROID "+android.os.Build.VERSION.RELEASE);
                 sendIdtoServerModel.setUserId(sessionManager.getUserId());
+                sendIdtoServerModel.setDeviceId(sessionManager.getDeviceId());
+                sendIdtoServerModel.setEmpId(sessionManager.getUserId());
 
 
                 List<ArtDetail> ArtDetailList = new ArrayList<>();
@@ -278,6 +280,7 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
                         ImageDetailList.add(new ImageDetail(imageids[i].getName()));
                     }
                 }
+
 
 
                 sendIdtoServerModel.setArtDetails(ArtDetailList);
@@ -383,7 +386,6 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
                 dialog.dismiss();
                 settingsPresenter.getLoggedOut(new LogoutRequestObj(sessionManager.getUserId(),sessionManager.getDeviceId()));
                 sessionManager.removeSession();
-
                 Intent logoutIntent = new Intent(SettingsActivity.this, LoginActivity.class);
                 logoutIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(logoutIntent);

@@ -58,16 +58,18 @@ public class DownloadFilesResponseModel {
         @SerializedName("Type")
         public String type;
 
-        @ColumnInfo(name = "compressedSize")
-        @SerializedName("compressedSize")
-        public String compressedSize;
+        @ColumnInfo(name = "ZipSize")
+        @SerializedName("ZipSize")
+        public String ZipSize;
 
 
-        public DownloadEntityList(Long uId, String downloadLink, String fileName, String fileSize) {
+        public DownloadEntityList(Long uId, String downloadLink, String fileName, String fileSize, String type, String zipSize) {
             this.uId = uId;
             this.downloadLink = downloadLink;
             this.fileName = fileName;
             this.fileSize = fileSize;
+            this.type = type;
+            ZipSize = zipSize;
         }
 
         public Long getuId() {
@@ -102,6 +104,13 @@ public class DownloadFilesResponseModel {
             this.fileSize = fileSize;
         }
 
+        public String getZipSize() {
+            return ZipSize;
+        }
+
+        public void setZipSize(String zipSize) {
+            ZipSize = zipSize;
+        }
 
         public String getType() {
             return type;
@@ -121,7 +130,7 @@ public class DownloadFilesResponseModel {
             fileName = in.readString();
             fileSize = in.readString();
             type = in.readString();
-            compressedSize=in.readString();
+            ZipSize=in.readString();
         }
 
         @Override
@@ -141,7 +150,7 @@ public class DownloadFilesResponseModel {
             dest.writeString(fileName);
             dest.writeString(fileSize);
             dest.writeString(type);
-            dest.writeString(compressedSize);
+            dest.writeString(ZipSize);
         }
 
 
@@ -157,4 +166,6 @@ public class DownloadFilesResponseModel {
             }
         };
     }
+
+
 }

@@ -162,8 +162,17 @@ public class SessionManager {
         editor.commit();
     }
 
+    public void setUserEmail(String username) {
+        editor.putString("UserEmail", username);
+        editor.commit();
+    }
+
     public String getLoginName() {
         return pref.getString(KEY_LOGIN_NAME, "");
+    }
+
+    public String getLoginUserEmail() {
+        return pref.getString("UserEmail", "");
     }
 
     public void setLoginName(String loginName) {
@@ -276,6 +285,10 @@ public class SessionManager {
         setLoginName("");
         setUserId("");
         setUserInfoId("");
+    }
+
+    public void removeSessionAll() {
+      editor.clear().commit();
     }
 
 }

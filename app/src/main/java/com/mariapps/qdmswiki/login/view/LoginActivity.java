@@ -1,8 +1,11 @@
 package com.mariapps.qdmswiki.login.view;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -21,10 +24,13 @@ import com.mariapps.qdmswiki.SessionManager;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
 import com.mariapps.qdmswiki.custom.CustomButton;
 import com.mariapps.qdmswiki.custom.CustomProgressBar;
+import com.mariapps.qdmswiki.home.database.HomeDatabase;
 import com.mariapps.qdmswiki.home.view.HomeActivity;
+import com.mariapps.qdmswiki.login.database.Login;
 import com.mariapps.qdmswiki.login.model.LoginRequestObj;
 import com.mariapps.qdmswiki.login.model.LoginResponse;
 import com.mariapps.qdmswiki.login.presenter.LoginPresenter;
+import com.mariapps.qdmswiki.settings.view.SettingsActivity;
 import com.mariapps.qdmswiki.utils.CommonUtils;
 import com.mariapps.qdmswiki.walkthrough.view.WalkthroughActivity;
 
@@ -51,6 +57,7 @@ public class LoginActivity extends BaseActivity implements LoginView{
 
     private LoginPresenter loginPresenter;
     private SessionManager sessionManager;
+    String userEmail="";
     private static final int MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE = 123;
 
     @Override
@@ -108,6 +115,7 @@ public class LoginActivity extends BaseActivity implements LoginView{
         switch (view.getId()) {
             case R.id.loginBtn:
                 if (!usernameET.getText().toString().equals("") && !passwordET.getText().toString().equals("")) {
+                    userEmail=usernameET.getText().toString();
                     Animation animation1 = AnimationUtils.loadAnimation(getApplicationContext(),
                             R.anim.anim_scale_down);
                     animation1.setAnimationListener(new Animation.AnimationListener() {
@@ -123,9 +131,8 @@ public class LoginActivity extends BaseActivity implements LoginView{
                             loadinLoadingPB.setVisibility(View.VISIBLE);
 
                             sessionManager.setDeviceId(CommonUtils.getDeviceId(LoginActivity.this));
-                            loginPresenter.getLoggedIn(new LoginRequestObj(usernameET.getText().toString(), passwordET.getText().toString(), sessionManager.getKeyFcmTokenId(), "ANDROID",
-                                    sessionManager.getDeviceId(), "1", "Closed"));
-
+                                loginPresenter.getLoggedIn(new LoginRequestObj(usernameET.getText().toString(), passwordET.getText().toString(), sessionManager.getKeyFcmTokenId(), "ANDROID",
+                                        sessionManager.getDeviceId(), "1", "Closed"));
                         }
 
                         @Override
@@ -177,8 +184,7 @@ public class LoginActivity extends BaseActivity implements LoginView{
                     sessionManager.setUserName(loginResponse.getLoginQdms().getName());
                     sessionManager.setUserId(loginResponse.getLoginQdms().getUserId());
                     sessionManager.setKeyIsSeafarerLogin(loginResponse.getLoginQdms().getIsSeafarerLogin());
-
-
+                    sessionManager.setUserEmail(userEmail);
                     if (sessionManager.isFirstTimeLaunch()) {
                         Intent intent = new Intent(LoginActivity.this, WalkthroughActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -198,6 +204,18 @@ public class LoginActivity extends BaseActivity implements LoginView{
         }
         loginBtn.setVisibility(View.VISIBLE);
         loadinLoadingPB.setVisibility(View.GONE);
+    }
+
+    public void clearData(){
+        sessionManager.removeSessionAll();
+        HomeDatabase homeDatabase = HomeDatabase.getInstance(LoginActivity.this);
+        new AsyncTask<String,Void,String>(){
+            @Override
+            protected String doInBackground(String... strings) {
+                homeDatabase.clearAllTables();
+                return "";
+            }
+        }.execute();
     }
 
     @Override

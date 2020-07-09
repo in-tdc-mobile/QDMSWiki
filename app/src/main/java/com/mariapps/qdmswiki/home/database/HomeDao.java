@@ -214,7 +214,9 @@ public interface HomeDao {
             " document.Version," +
             " document.tags," +
             " document.Date," +
-            " category.CategoryName as categoryName " +
+            " category.CategoryName as categoryName ," +
+            " document.VesselIds as vesselIds ," +
+            " document.PassengersVesselIds as passengerVesselIds " +
             " FROM DocumentEntity as document " +
             " LEFT JOIN CategoryEntity as category" +
             " ON category.Id = document.CategoryId" +
@@ -257,7 +259,9 @@ public interface HomeDao {
             " article.categoryNames," +
             " article.Version," +
             " article.tags," +
-            " article.Date " +
+            " article.Date," +
+            " article.ArticleToVesselIds," +
+            " article.ArticleToPassengersVesselIds " +
             " FROM ArticleEntity as article "+
             " ORDER BY article.Date desc")
     List<ArticleModel> getArticles();
@@ -391,10 +395,36 @@ public interface HomeDao {
             " category.CategoryName as name, " +
             " '' as version, " +
             " category.Id as categoryId, " +
-            " '' as categoryName "+
+            " '' as categoryName " +
             " FROM CategoryEntity as category" +
             " WHERE category.Parent LIKE :folderId ")
     List<SearchModel> getAllDocumentsAndFoldersInsideFolder(String folderId);
+
+/*    @Query("SELECT document.Id as id, " +
+            " 'Document' as type, " +
+            " document.DocumentName as name, " +
+            " document.Version as version, " +
+            " document.CategoryId as categoryId, " +
+            " category.CategoryName as categoryName , " +
+            " document.VesselIds as vesselIds , " +
+            " document.PassengersVesselIds as passengerVesselIds "+
+            " FROM DocumentEntity as document " +
+            " INNER JOIN CategoryEntity as category "+
+            " ON document.CategoryId = category.Id "+
+            " AND document.CategoryId LIKE :folderId " +
+            " UNION "+
+            " SELECT category.Id as id, " +
+            " 'Category' as type, " +
+            " category.CategoryName as name, " +
+            " '' as version, " +
+            " category.Id as categoryId, " +
+            " '' as categoryName , " +
+            " '' as vesselIds , " +
+            " '' as passengerVesselIds "+
+            " FROM CategoryEntity as category" +
+            " WHERE category.Parent LIKE :folderId ")
+    List<SearchModel> getAllDocumentsAndFoldersInsideFolderForSeafarer(String folderId);*/
+
 
     @Query("SELECT document.Id as id, " +
             " 'Document' as type, " +
@@ -686,6 +716,9 @@ public interface HomeDao {
 
     @Query("DELETE FROM ImageEntity")
     void deleteImageListEntity();
+
+    @Query("SELECT * FROM UserSettingsEntity")
+    List<UserSettingsModel> getuserSettings();
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)

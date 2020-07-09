@@ -364,6 +364,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
 
        //beginDownload("","","");
 
+
+
         AppConfig.getInsertcompletedall().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
@@ -452,11 +454,22 @@ public class HomeActivity extends BaseActivity implements HomeView {
             Log.e("nameofdoc",dbox.getAll().get(i).documentData.length()+"");
         }*/
 
-    sendAllIdstoServer();
+
 
        // sendLastProccesdStatus("test","test");
 
+       // setRecommendedList();
+        getRecommendedList();
 
+       /* new AsyncTask<String,Void,String>(){
+
+            @Override
+            protected String doInBackground(String... strings) {
+           ArticleModel articleModel=     homeDatabase.homeDao().getArticleData("5f05569efdfdc33454136396");
+           Log.e("articleModel",articleModel.getArticleName()) ;
+           return null;
+            }
+        }.execute();*/
 
     }
 
@@ -980,8 +993,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
         int downloadSize=0;
 
         for (int i = 0; i < downloadEntityLists.size(); i++) {
+            downloadSize += Integer.parseInt(downloadEntityLists.get(i).ZipSize);
             totalSize += Integer.parseInt(downloadEntityLists.get(i).fileSize);
-            downloadSize += Integer.parseInt(downloadEntityLists.get(i).fileSize);
         }
 
         if(totalSize>freeMemory()){
@@ -2150,6 +2163,8 @@ request.setAllowedNetworkTypes(
             public void run() throws Exception {
                 homeDatabase.homeDao().deleteRecommendedDocuments();
                 documentList = homeDatabase.homeDao().getDocuments();
+                userSettingsList.clear();
+                userSettingsList.addAll(homeDatabase.homeDao().getuserSettings());
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
@@ -2164,13 +2179,13 @@ request.setAllowedNetworkTypes(
                     boolean isRecommended = false;
                     List<TagModel> tagList = documentList.get(i).getTags();
                     for (int j = 0; j < userSettingsList.size(); j++) {
-                        if (userSettingsList.get(j).getUserID().equals(sessionManager.getUserInfoId())) {
                             //loop tags
                             List<UserSettingsTagModel> userSettingsTagList = userSettingsList.get(j).getTags();
                             for (int k = 0; k < tagList.size(); k++) {
                                 for (int l = 0; l < userSettingsTagList.size(); l++) {
                                     if (tagList.get(k).getId().equals(userSettingsTagList.get(l).getId())) {
                                         documentList.get(i).setIsRecommended("YES");
+                                        Log.e("documentList","yes");
                                         homePresenter.updateIsRecommended(documentList.get(i).getId());
                                         isRecommended = true;
                                         break;
@@ -2189,7 +2204,7 @@ request.setAllowedNetworkTypes(
                                     }
                                 }
                             }
-                        }
+
                     }
                 }
 
