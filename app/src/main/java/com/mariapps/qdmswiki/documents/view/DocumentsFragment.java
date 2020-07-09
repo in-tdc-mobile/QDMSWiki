@@ -17,12 +17,14 @@ import android.widget.RelativeLayout;
 
 import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
+import com.mariapps.qdmswiki.SessionManager;
 import com.mariapps.qdmswiki.baseclasses.BaseFragment;
 import com.mariapps.qdmswiki.custom.CustomEditText;
 import com.mariapps.qdmswiki.custom.CustomProgressBar;
 import com.mariapps.qdmswiki.custom.CustomRecyclerView;
 import com.mariapps.qdmswiki.documents.adapter.DocumentsAdapter;
 import com.mariapps.qdmswiki.home.database.HomeDatabase;
+import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
 import com.mariapps.qdmswiki.search.view.FolderStructureActivity;
 
@@ -54,6 +56,7 @@ public class DocumentsFragment extends BaseFragment {
     private DocumentsAdapter documentsAdapter;
     private List<DocumentModel> documentsList = new ArrayList<>();
     private HomeDatabase homeDatabase;
+    private SessionManager sessionManager;
 //    DocumentListener documentListener;
 
     @Override
@@ -71,6 +74,8 @@ public class DocumentsFragment extends BaseFragment {
         rvDocuments.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvDocuments.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
         homeDatabase = HomeDatabase.getInstance(getActivity());
+        sessionManager = new SessionManager(getActivity());
+
         getDocumentList();
         Log.e("DocumentsFragment",documentsList.size()+"");
         return view;
@@ -109,7 +114,21 @@ public class DocumentsFragment extends BaseFragment {
             @Override
             public void run() throws Exception {
                 documentsList = homeDatabase.homeDao().getDocuments();
+                /*if(sessionManager.getKeyIsSeafarerLogin().equals("True")){
+                    List<DocumentModel> seafarerdoclist = homeDatabase.homeDao().getDocumentsForSeafarer();
+                    for(int i =0; i<seafarerdoclist.size();i++){
+                        if((seafarerdoclist.get(i).getVesselIds() != null &&
+                                seafarerdoclist.get(i).getVesselIds().isEmpty()) ||
+                                (seafarerdoclist.get(i).getPassengersVesselIds()!= null) &&
+                                        seafarerdoclist.get(i).getPassengersVesselIds().isEmpty()){
+                            documentsList.add(seafarerdoclist.get(i));
+                        }
+                    }
 
+                }
+                else {
+                    documentsList = homeDatabase.homeDao().getDocuments();
+                }*/
 
             }
         }).observeOn(AndroidSchedulers.mainThread())
@@ -121,6 +140,7 @@ public class DocumentsFragment extends BaseFragment {
 
             @Override
             public void onComplete() {
+                Log.e("sizeofdocis  ",documentsList.size()+"");
                 setData(documentsList);
             }
 

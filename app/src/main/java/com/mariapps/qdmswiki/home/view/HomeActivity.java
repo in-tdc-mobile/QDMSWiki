@@ -294,12 +294,12 @@ public class HomeActivity extends BaseActivity implements HomeView {
         if(!applog.contains("status")){
             applog.edit().putString("status","end").commit();
         }
-                Glide
+        Glide
                 .with( context )
                 .load( R.drawable.loading )
                 .into( loading );
         //sessionManager.setKeyLastUpdatedFileName("20191203");//"20191121092627"
-       homePresenter.getDownloadUrl(new DownloadFilesRequestModel(sessionManager.getKeyLastUpdatedFileName(), sessionManager.getDeviceId(), sessionManager.getUserId()));
+        homePresenter.getDownloadUrl(new DownloadFilesRequestModel(sessionManager.getKeyLastUpdatedFileName(), sessionManager.getDeviceId(), sessionManager.getUserId()));
         //homePresenter.getDownloadUrl(new DownloadFilesRequestModel(null, sessionManager.getDeviceId(), sessionManager.getUserId()));
         // ("https://qdmswiki2k19.blob.core.windows.net/update/20191114153246.zip","20191114153246.zip");
         setSupportActionBar(toolbar);
@@ -312,7 +312,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
             progressLayout.setVisibility(View.VISIBLE);
         }
         else
-            {
+        {
             progressLayout.setVisibility(View.GONE);
         }
         AppConfig.getDwnldcmplted().observe(this, s -> {
@@ -351,81 +351,81 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 progressDialog.dismiss();
             }
         });
-       AppConfig.getInsertstarted().observe(this, new Observer<String>() {
-           @Override
-           public void onChanged(@Nullable String s) {
-               progressDialog.setCancelable(false);
-            progressDialog.setTitle("Files Processing");
-            progressDialog.setMessage("");
-            progressDialog.show();
+        AppConfig.getInsertstarted().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                progressDialog.setCancelable(false);
+                progressDialog.setTitle("Files Processing");
+                progressDialog.setMessage("");
+                progressDialog.show();
 
-           }
-       });
+            }
+        });
 
-       //beginDownload("","","");
+        //beginDownload("","","");
 
 
 
         AppConfig.getInsertcompletedall().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
-                    progressDialog.dismiss();
-                    setRecommendedList();
-                    appendLog("Finished downloading all base/updated versions");
-                    mainVP.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (mainVP.getCurrentItem() == 0 ) {
-                                linLayout.setAlpha(1.0f);
-                                relLayout.setAlpha(1.0f);
-                                initShowCase();
-                            }
-                            try {
-                                mainViewPager.updateRecentlyList(new ArrayList<>());
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            try {
-                                setNotificationCount();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            try {
-                                getParentFolders();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            try {
-                                getRecommendedList();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            try {
-                                if(sessionManager.getisFirst().equals("")){
-                                    if(!sessionManager.getJsonError().equals("")){
-                                        if(sessionManager.getJsonError().equals("y")){
-                                            senderrorlogs();
-                                        }
-                                    }
-                                    sendAllIdstoServer();
-                                }
-                                else if(sessionManager.getisFirst().equals("n")){
-                                    if(!sessionManager.getJsonError().equals("")){
-                                        if(sessionManager.getJsonError().equals("y")){
-                                            senderrorlogs();
-                                            sendAllIdstoServer();
-                                        }
-                                    }
-                                }
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                progressDialog.dismiss();
+                setRecommendedList();
+                appendLog("Finished downloading all base/updated versions");
+                mainVP.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mainVP.getCurrentItem() == 0 ) {
+                            linLayout.setAlpha(1.0f);
+                            relLayout.setAlpha(1.0f);
+                            initShowCase();
                         }
-                    });
+                        try {
+                            mainViewPager.updateRecentlyList(new ArrayList<>());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            setNotificationCount();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            getParentFolders();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            getRecommendedList();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            if(sessionManager.getisFirst().equals("")){
+                                if(!sessionManager.getJsonError().equals("")){
+                                    if(sessionManager.getJsonError().equals("y")){
+                                        senderrorlogs();
+                                    }
+                                }
+                                sendAllIdstoServer();
+                            }
+                            else if(sessionManager.getisFirst().equals("n")){
+                                if(!sessionManager.getJsonError().equals("")){
+                                    if(sessionManager.getJsonError().equals("y")){
+                                        senderrorlogs();
+                                        sendAllIdstoServer();
+                                    }
+                                }
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
                 progressDialog.dismiss();
 
-                }
+            }
 
 
 
@@ -441,10 +441,10 @@ public class HomeActivity extends BaseActivity implements HomeView {
 
             }
         });
-       // Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + "20200527080434.zip", Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
+        // Decompress decompress = new Decompress(Environment.getExternalStorageDirectory() + "/QDMSWiki/" + "20200527080434.zip", Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles");
         //decompress.execute();
-    // ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
-      //readAndInsertJsonData.execute();
+        // ReadAndInsertJsonData readAndInsertJsonData = new ReadAndInsertJsonData();
+        //readAndInsertJsonData.execute();
         //setup();
         //5a0c0ade3b6a9e5490d6e7d0
      /*Box<DocumentModelObj>   dbox = ObjectBox.get().boxFor(DocumentModelObj.class);
@@ -456,9 +456,9 @@ public class HomeActivity extends BaseActivity implements HomeView {
 
 
 
-       // sendLastProccesdStatus("test","test");
+        // sendLastProccesdStatus("test","test");
 
-       // setRecommendedList();
+        // setRecommendedList();
         getRecommendedList();
 
        /* new AsyncTask<String,Void,String>(){
@@ -662,12 +662,12 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 sendIdtoServerModel.setDocDetails(DocDetailList);
                 sendIdtoServerModel.setFileDetails(FileDetailList);
                 sendIdtoServerModel.setFormDetails(FormDetailList);
-                 sendIdtoServerModel.setBookmarkDetails(BookmarkDetailList);
+                sendIdtoServerModel.setBookmarkDetails(BookmarkDetailList);
                 sendIdtoServerModel.setImageDetails(ImageDetailList);
                 sendIdtoServerModel.setUserInfoDetails(UserInfoDetailList);
                 sendIdtoServerModel.setUserSetDetails(UserSetDetailList);
-                 sendIdtoServerModel.setNotificationDetails(NotificationDetailList);
-                 sendIdtoServerModel.setCatDetails(CatDetailList);
+                sendIdtoServerModel.setNotificationDetails(NotificationDetailList);
+                sendIdtoServerModel.setCatDetails(CatDetailList);
                 QDMSWikiApi service = APIClient.getClient().create(QDMSWikiApi.class);
                 service.sendAllidstoServerapi(sendIdtoServerModel).enqueue(new Callback<ResponseBody>() {
                     @Override
@@ -993,7 +993,9 @@ public class HomeActivity extends BaseActivity implements HomeView {
         int downloadSize=0;
 
         for (int i = 0; i < downloadEntityLists.size(); i++) {
-            downloadSize += Integer.parseInt(downloadEntityLists.get(i).ZipSize);
+
+            ////changed here zipsize to file size
+            downloadSize += Integer.parseInt(downloadEntityLists.get(i).fileSize);
             totalSize += Integer.parseInt(downloadEntityLists.get(i).fileSize);
         }
 
@@ -1012,37 +1014,55 @@ public class HomeActivity extends BaseActivity implements HomeView {
             bu.show();
         }
         else {
-            AlertDialog.Builder bu = new AlertDialog.Builder(HomeActivity.this);
-            bu.setTitle("QDMS Wiki");
             int sizeinmb=downloadSize/(1024*1024);
-            bu.setMessage(sizeinmb+"MB data is needed to download the files. Do you want to proceed?");
-            bu.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                     if (!url.equals("") && !zipFileName.equals("")) {
-            if (!isMyServiceRunning(DownloadService.class)) {
-                sessionManager.seturlno("0");
-                Log.e("service", "notrunning");
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    context.startForegroundService(intent);
-                } else {
-                    context.startService(intent);
-                }
-            } else {
-                Log.e("service", "isrunning");
+            if(sizeinmb>5){
+                AlertDialog.Builder bu = new AlertDialog.Builder(HomeActivity.this);
+                bu.setTitle("QDMS Wiki");
+                bu.setMessage(sizeinmb+"MB data is needed to download the files. Do you want to proceed?");
+                bu.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        if (!url.equals("") && !zipFileName.equals("")) {
+                            if (!isMyServiceRunning(DownloadService.class)) {
+                                sessionManager.seturlno("0");
+                                Log.e("service", "notrunning");
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    context.startForegroundService(intent);
+                                } else {
+                                    context.startService(intent);
+                                }
+                            } else {
+                                Log.e("service", "isrunning");
+                            }
+                        }
+                    }
+                });
+                bu.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        finish();
+                    }
+                });
+                bu.show();
             }
-        }
+            else {
+                if (!url.equals("") && !zipFileName.equals("")) {
+                    if (!isMyServiceRunning(DownloadService.class)) {
+                        sessionManager.seturlno("0");
+                        Log.e("service", "notrunning");
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            context.startForegroundService(intent);
+                        } else {
+                            context.startService(intent);
+                        }
+                    } else {
+                        Log.e("service", "isrunning");
+                    }
                 }
-            });
-            bu.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                    finish();
-                }
-            });
-            bu.show();
+            }
+
         }
         Log.e("totalSize",totalSize+"");
         Log.e("downloadSize",downloadSize+"");
@@ -1453,15 +1473,15 @@ request.setAllowedNetworkTypes(
                 File[] filesInFolder = folder.listFiles(); // This returns all the folders and files in your path
                 for (File file : filesInFolder) { //For each of the entries do:
                     if (file.isDirectory()) {
-                            appendLog("Extracting directory " + file.getName());
-                            File[] filesInsideFolder = file.listFiles();
-                            for (File eachFile : filesInsideFolder) {
-                                appendLog("Copying " + eachFile.getName() + " to image folder");
-                                copyFile(new File(eachFile.getAbsolutePath()), new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/Images/" + eachFile.getName()));
-                            }
+                        appendLog("Extracting directory " + file.getName());
+                        File[] filesInsideFolder = file.listFiles();
+                        for (File eachFile : filesInsideFolder) {
+                            appendLog("Copying " + eachFile.getName() + " to image folder");
+                            copyFile(new File(eachFile.getAbsolutePath()), new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/Images/" + eachFile.getName()));
+                        }
 
                     } else {
-              if (file.getName().contains("file")) {
+                        if (file.getName().contains("file")) {
                             try {
                                 fileList.clear();
                                 try {
@@ -1489,7 +1509,7 @@ request.setAllowedNetworkTypes(
                                 filecount++;
                                 homePresenter.insertfilesbylist(fileList);
                                 //Log.e("fileinsertion","list size is "+fileList.size()+"  count is "+filecount+"filenameis  "+fileList.get(0).getId());
-                               // Log.e("allocatedafter3", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
+                                // Log.e("allocatedafter3", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
                             } catch (JsonSyntaxException e) {
                                 appendLog("File json syntax exception : "+e.getMessage());
                                 e.printStackTrace();
@@ -1571,7 +1591,7 @@ request.setAllowedNetworkTypes(
                                 appendLog("Extracting document " + file.getName());
                                 documentList.clear();
                                 try {
-                                 documentList.addAll(readJsonStreamfordoc(new FileInputStream(file)));
+                                    documentList.addAll(readJsonStreamfordoc(new FileInputStream(file)));
                                 }
 
                                 catch (Exception e){
@@ -2179,37 +2199,37 @@ request.setAllowedNetworkTypes(
                     boolean isRecommended = false;
                     List<TagModel> tagList = documentList.get(i).getTags();
                     for (int j = 0; j < userSettingsList.size(); j++) {
-                            //loop tags
-                            List<UserSettingsTagModel> userSettingsTagList = userSettingsList.get(j).getTags();
-                            for (int k = 0; k < tagList.size(); k++) {
-                                for (int l = 0; l < userSettingsTagList.size(); l++) {
-                                    if (tagList.get(k).getId().equals(userSettingsTagList.get(l).getId())) {
-                                        documentList.get(i).setIsRecommended("YES");
-                                        Log.e("documentList","yes");
-                                        homePresenter.updateIsRecommended(documentList.get(i).getId());
-                                        isRecommended = true;
-                                        break;
-                                    }
+                        //loop tags
+                        List<UserSettingsTagModel> userSettingsTagList = userSettingsList.get(j).getTags();
+                        for (int k = 0; k < tagList.size(); k++) {
+                            for (int l = 0; l < userSettingsTagList.size(); l++) {
+                                if (tagList.get(k).getId().equals(userSettingsTagList.get(l).getId())) {
+                                    documentList.get(i).setIsRecommended("YES");
+                                    Log.e("documentList","yes");
+                                    homePresenter.updateIsRecommended(documentList.get(i).getId());
+                                    isRecommended = true;
+                                    break;
                                 }
                             }
-                            //loop categories
-                            if (!isRecommended) {
-                                List<UserSettingsCategoryModel> userSettingsCategoryList = userSettingsList.get(j).getCategory();
-                                for (int l = 0; l < userSettingsCategoryList.size(); l++) {
-                                    if (documentList.get(i).getCategoryId().equals(userSettingsCategoryList.get(l).getId())) {
-                                        documentList.get(i).setIsRecommended("YES");
-                                        homePresenter.updateIsRecommended(documentList.get(i).getId());
-                                        isRecommended = true;
-                                        break;
-                                    }
+                        }
+                        //loop categories
+                        if (!isRecommended) {
+                            List<UserSettingsCategoryModel> userSettingsCategoryList = userSettingsList.get(j).getCategory();
+                            for (int l = 0; l < userSettingsCategoryList.size(); l++) {
+                                if (documentList.get(i).getCategoryId().equals(userSettingsCategoryList.get(l).getId())) {
+                                    documentList.get(i).setIsRecommended("YES");
+                                    homePresenter.updateIsRecommended(documentList.get(i).getId());
+                                    isRecommended = true;
+                                    break;
                                 }
                             }
+                        }
 
                     }
                 }
 
                 getRecommendedList();
-        }
+            }
 
 
             @Override
@@ -2298,6 +2318,7 @@ request.setAllowedNetworkTypes(
 
             @Override
             public void onComplete() {
+                if(recommendedList!=null&&recommendedList.size()>0)
                 mainViewPager.updateRecommendedList(recommendedList);
                 //getCurrentDocumentList();
             }
@@ -2324,13 +2345,13 @@ request.setAllowedNetworkTypes(
     protected void onResume() {
         super.onResume();
         if(!isMyServiceRunning(DownloadService.class)&&!isMyServiceRunning(InsertionService.class)){
-         try {
-             progressDialog.dismiss();
-             progressLayout.setVisibility(View.GONE);
-         }
-         catch (Exception e){
+            try {
+                progressDialog.dismiss();
+                progressLayout.setVisibility(View.GONE);
+            }
+            catch (Exception e){
 
-         }
+            }
         }
         setNotificationCount();
     }
@@ -2367,7 +2388,7 @@ request.setAllowedNetworkTypes(
     public void iniShowCase() {
         if (!util.getShowCasePref(ShowCasePreferenceUtil.RECOMMENDED).equals(ShowCasePreferenceUtil.RECOMMENDED) && !sessionManager.getIsDashboardTabShown()) {
             sessionManager.setDashboardTabShown(true);
-           mainViewPager.initRecommendedShowcase(util);
+            mainViewPager.initRecommendedShowcase(util);
         }
     }
 

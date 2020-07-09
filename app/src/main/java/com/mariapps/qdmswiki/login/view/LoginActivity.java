@@ -59,6 +59,7 @@ public class LoginActivity extends BaseActivity implements LoginView{
     private SessionManager sessionManager;
     String userEmail="";
     private static final int MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE = 123;
+    private static final int SYSTEM_ALERT_WINDOW_PERMISSIONS = 124;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,7 +79,17 @@ public class LoginActivity extends BaseActivity implements LoginView{
             }
         }
 
-
+        if (ContextCompat.checkSelfPermission(LoginActivity.this,
+                Manifest.permission.SYSTEM_ALERT_WINDOW)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(LoginActivity.this,
+                    android.Manifest.permission.SYSTEM_ALERT_WINDOW)) {
+            } else {
+                ActivityCompat.requestPermissions(LoginActivity.this,
+                        new String[]{android.Manifest.permission.SYSTEM_ALERT_WINDOW},
+                        SYSTEM_ALERT_WINDOW_PERMISSIONS);
+            }
+        }
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         Animation slide_up = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.anim_slide_up);
@@ -166,6 +177,24 @@ public class LoginActivity extends BaseActivity implements LoginView{
                     if (perms.get(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                     } else {
                         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+                        }
+                    }
+                }
+            }
+
+            case SYSTEM_ALERT_WINDOW_PERMISSIONS: {
+                Map<String, Integer> perms = new HashMap<>();
+                // Initialize the map with both permissions
+                perms.put(Manifest.permission.SYSTEM_ALERT_WINDOW, PackageManager.PERMISSION_GRANTED);
+                // Fill with actual results from user
+                if (grantResults.length > 0) {
+                    for (int i = 0; i < permissions.length; i++)
+                        perms.put(permissions[i], grantResults[i]);
+                    // Check for both permissions
+                    if (perms.get(android.Manifest.permission.SYSTEM_ALERT_WINDOW) == PackageManager.PERMISSION_GRANTED) {
+                    } else {
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.SYSTEM_ALERT_WINDOW)) {
 
                         }
                     }

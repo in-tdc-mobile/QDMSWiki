@@ -161,11 +161,17 @@ public class HomeFragment extends BaseFragment {
     }
 
     public void updateRecommendedList(List<DocumentModel> documentList) {
-        recommendedFragment.updateDocumentList(documentList);
+        if(documentList!=null){
+            recommendedFragment.updateDocumentList(documentList);
+        }
+
     }
 
     public void updateRecentlyList(List<RecentlyViewedModel> recentlyViewedList) {
-        recentlyFragment.updateRecentlyList(recentlyViewedList);
+        if (recentlyViewedList!=null) {
+            recentlyFragment.updateRecentlyList(recentlyViewedList);
+        }
+
     }
 
     @SuppressLint("ResourceType")

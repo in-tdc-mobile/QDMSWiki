@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import android.widget.RelativeLayout;
 
 import com.mariapps.qdmswiki.AppConfig;
 import com.mariapps.qdmswiki.R;
+import com.mariapps.qdmswiki.SessionManager;
 import com.mariapps.qdmswiki.articles.adapter.ArticlesAdapter;
 import com.mariapps.qdmswiki.baseclasses.BaseFragment;
 import com.mariapps.qdmswiki.custom.CustomEditText;
@@ -29,6 +31,7 @@ import com.mariapps.qdmswiki.home.model.ArticleModel;
 import com.mariapps.qdmswiki.home.model.DocumentModel;
 import com.mariapps.qdmswiki.search.view.FolderStructureActivity;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +64,7 @@ public class ArticlesFragment extends BaseFragment {
     List<String> categoryNames = new ArrayList<>();
     private HomeDatabase homeDatabase;
     private String categoryName;
+    private SessionManager sessionManager;
     String folderName;
 //    ArticleListener articleListener;
 
@@ -81,6 +85,7 @@ public class ArticlesFragment extends BaseFragment {
         rvDocuments.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvDocuments.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
         homeDatabase = HomeDatabase.getInstance(getActivity());
+        sessionManager = new SessionManager(getActivity());
 
         getArticlesList();
         return view;
@@ -105,6 +110,21 @@ public class ArticlesFragment extends BaseFragment {
             @Override
             public void run() throws Exception {
                 articleList = homeDatabase.homeDao().getArticles();
+               /* if(sessionManager.getKeyIsSeafarerLogin().equals("True")){
+                    articleList = homeDatabase.homeDao().getArticlesForSeafarer();
+//                    for(int i =0; i<seafarerariclelist.size();i++){
+//                        if((seafarerariclelist.get(i).getArticleToVesselIds() != null &&
+//                                seafarerariclelist.get(i).getArticleToVesselIds().size() >0) ||
+//
+//                                (seafarerariclelist.get(i).getArticleToPassengersVesselIds()!= null) &&
+//                                  seafarerariclelist.get(i).getArticleToPassengersVesselIds().size() > 0){
+//                            articleList.add(seafarerariclelist.get(i));
+//                        }
+//                    }
+                }
+                else {
+                    articleList = homeDatabase.homeDao().getArticles();
+                }*/
                 for(int i=0;i<articleList.size();i++){
                     categoryNames = new ArrayList<>();
                     for(int j=0;j<articleList.get(i).getCategoryIds().size();j++){
@@ -124,6 +144,7 @@ public class ArticlesFragment extends BaseFragment {
 
             @Override
             public void onComplete() {
+                Log.e("articlecountis",articleList.size()+"");
                 setData();
             }
 

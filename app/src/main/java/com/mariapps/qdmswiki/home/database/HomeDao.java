@@ -223,6 +223,24 @@ public interface HomeDao {
             " ORDER BY document.Date desc")
     List<DocumentModel> getDocuments();
 
+    @Query("SELECT document.Id, " +
+            " document.DocumentName, " +
+            " document.DocumentNumber, " +
+            " document.CategoryId," +
+            " document.Version," +
+            " document.tags," +
+            " document.Date," +
+            " category.CategoryName as categoryName ," +
+            " document.VesselIds as vesselIds ," +
+            " document.PassengersVesselIds as passengerVesselIds " +
+            " FROM DocumentEntity as document " +
+            " LEFT JOIN CategoryEntity as category" +
+            " ON category.Id = document.CategoryId" +
+            " WHERE document.VesselIds != 'null' "+
+            " OR document.PassengersVesselIds != 'null' "+
+            " ORDER BY document.Date desc")
+    List<DocumentModel> getDocumentsForSeafarer();
+
 
     @Query("SELECT document.Id, " +
             " document.DocumentName, " +
@@ -265,6 +283,23 @@ public interface HomeDao {
             " FROM ArticleEntity as article "+
             " ORDER BY article.Date desc")
     List<ArticleModel> getArticles();
+
+    @Query("SELECT article.Id, " +
+            " article.ArticleName, " +
+            " article.ArticleNumber, " +
+            " article.CategoryIds," +
+            " article.categoryNames," +
+            " article.Version," +
+            " article.tags," +
+            " article.Date," +
+            " article.ArticleToVesselIds," +
+            " article.ArticleToPassengersVesselIds " +
+            " FROM ArticleEntity as article "+
+            " WHERE article.ArticleToVesselIds != 'null' "+
+            " OR article.ArticleToPassengersVesselIds != 'null' "+
+            " ORDER BY article.Date desc "
+    )
+    List<ArticleModel> getArticlesForSeafarer();
 
     @Query("SELECT article.Id, " +
             " article.ArticleName, " +
