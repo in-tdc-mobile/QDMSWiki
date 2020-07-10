@@ -471,6 +471,39 @@ public class HomeActivity extends BaseActivity implements HomeView {
             }
         }.execute();*/
 
+
+      /* new AsyncTask<String,Void,Void>(){
+           @Override
+           protected Void doInBackground(String... strings) {
+               List<ArticleModel> artlist =homeDatabase.homeDao().getAllArticlestest();
+               int counter = 0;
+               for (int i = 0; i < artlist.size(); i++) {
+                   if (artlist.get(i).getArticleToVesselIds()!=null&&artlist.get(i).getArticleToVesselIds().size() > 0 || artlist.get(i).getArticleToPassengersVesselIds()!=null&&artlist.get(i).getArticleToPassengersVesselIds().size() > 0) {
+                     counter++;
+                   }
+               }
+               Log.e("total article count",counter+"");
+               return null;
+           }
+       }.execute();*/
+
+
+
+        /*new AsyncTask<String,Void,Void>(){
+            @Override
+            protected Void doInBackground(String... strings) {
+                List<DocumentModel> artlist =homeDatabase.homeDao().getAllDocstest();
+                int counter = 0;
+                for (int i = 0; i < artlist.size(); i++) {
+                    if (artlist.get(i).getVesselIds()!=null&&artlist.get(i).getVesselIds().size() > 0 || artlist.get(i).getPassengersVesselIds()!=null&&artlist.get(i).getPassengersVesselIds().size() > 0) {
+                        counter++;
+                    }
+                }
+                Log.e("total document count",counter+"");
+                return null;
+            }
+        }.execute();*/
+
     }
 
 
@@ -995,9 +1028,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
         int downloadSize=0;
 
         for (int i = 0; i < downloadEntityLists.size(); i++) {
-
-            ////changed here zipsize to file size
-            downloadSize += Integer.parseInt(downloadEntityLists.get(i).fileSize);
+            downloadSize += Integer.parseInt(downloadEntityLists.get(i).ZipSize);
             totalSize += Integer.parseInt(downloadEntityLists.get(i).fileSize);
         }
 

@@ -159,6 +159,20 @@ public interface HomeDao {
             " ORDER BY article.Date DESC ")
     List<SearchModel> getAllArticles();
 
+
+
+    @Query("SELECT * FROM ArticleEntity")
+    List<ArticleModel> getAllArticlestest();
+
+    @Query("SELECT * FROM DocumentEntity")
+    List<DocumentModel> getAllDocstest();
+
+
+
+
+
+
+
     @Query("SELECT category.Id as id, " +
             " 'Category' as type, " +
             " category.CategoryName as name, " +

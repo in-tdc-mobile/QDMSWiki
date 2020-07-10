@@ -512,12 +512,12 @@ public class InsertionService extends Service implements HomeView {
                                         documentList.addAll(readJsonStreamfordoc(new FileInputStream(filesInFolder[i])));
                                         if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
                                             for (int i1 = 0; i1 < documentList.size(); i1++) {
-
-                                                if (documentList.get(i1).getVesselIds()!=null&&documentList.get(i1).getVesselIds().size() > 0 ||documentList.get(i1).getPassengersVesselIds()!=null&& documentList.get(i1).getPassengersVesselIds().size() > 0) {
+                                                if (documentList.get(i1).getVesselIds()!=null&&documentList.get(i1).getVesselIds().size() > 0 ||
+                                                        documentList.get(i1).getPassengersVesselIds()!=null&& documentList.get(i1).getPassengersVesselIds().size() > 0) {
                                                     documentList.get(i1).setIsRecommended("NO");
-                                                    List<TagModel> tagList = documentList.get(i).getTags();
+                                                    List<TagModel> tagList = documentList.get(i1).getTags();
                                                     homeDatabase.homeDao().insertTag(tagList);
-                                                    homePresenter.insertDocumentsSingle(documentList.get(i));
+                                                    homePresenter.deleteDocumentSingle(documentList.get(i1));
                                                 }
                                             }
                                             AppConfig.getInsertprogress().postValue("Inserting documents to database");
@@ -525,10 +525,9 @@ public class InsertionService extends Service implements HomeView {
 
                                             for (int i1 = 0; i1 < documentList.size(); i1++) {
                                                     documentList.get(i1).setIsRecommended("NO");
-                                                    List<TagModel> tagList = documentList.get(i).getTags();
+                                                    List<TagModel> tagList = documentList.get(i1).getTags();
                                                     homeDatabase.homeDao().insertTag(tagList);
-                                                    homePresenter.insertDocumentsSingle(documentList.get(i));
-
+                                                    homePresenter.deleteDocumentSingle(documentList.get(i1));
                                             }
 
                                         }
@@ -550,9 +549,10 @@ public class InsertionService extends Service implements HomeView {
                                         List<DocumentModelObj> objList = new ArrayList<>();
                                         List<DocumentModel> docList = new ArrayList<>();
                                         for (int i1 = 0; i1 < documentList.size(); i1++) {
-                                            if (documentList.get(i1).getVesselIds()!=null&&documentList.get(i1).getVesselIds().size() > 0 ||documentList.get(i1).getPassengersVesselIds()!=null&& documentList.get(i1).getPassengersVesselIds().size() > 0) {
+                                            if (documentList.get(i1).getVesselIds()!=null&&documentList.get(i1).getVesselIds().size() > 0 ||
+                                                    documentList.get(i1).getPassengersVesselIds()!=null&& documentList.get(i1).getPassengersVesselIds().size() > 0) {
                                                 documentList.get(i1).setIsRecommended("NO");
-                                                List<TagModel> tagList = documentList.get(i).getTags();
+                                                List<TagModel> tagList = documentList.get(i1).getTags();
                                                 homeDatabase.homeDao().insertTag(tagList);
                                                 DocumentModelObj obj = new DocumentModelObj(documentList.get(i1).id, documentList.get(i1).documentName, documentList.get(i1).documentData);
                                                 objList.add(obj);
@@ -596,14 +596,15 @@ public class InsertionService extends Service implements HomeView {
                                         articleList.addAll(readJsonStreamforarticle(new FileInputStream(filesInFolder[i])));
                                         if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
                                             for (int i1 = 0; i1 < articleList.size(); i1++) {
-                                                if (articleList.get(i1).getArticleToVesselIds()!=null&&articleList.get(i1).getArticleToVesselIds().size() > 0 || articleList.get(i1).getArticleToPassengersVesselIds()!=null&&articleList.get(i1).getArticleToPassengersVesselIds().size() > 0) {
-                                                    homePresenter.deleteArticlessingle(articleList.get(i));
+                                                if (articleList.get(i1).getArticleToVesselIds()!=null&&articleList.get(i1).getArticleToVesselIds().size() > 0 ||
+                                                        articleList.get(i1).getArticleToPassengersVesselIds()!=null&&articleList.get(i1).getArticleToPassengersVesselIds().size() > 0) {
+                                                    homePresenter.deleteArticlessingle(articleList.get(i1));
                                                 }
                                             }
                                             AppConfig.getInsertprogress().postValue("Inserting articles to database");
                                         } else {
                                             for (int i1 = 0; i1 < articleList.size(); i1++) {
-                                                homePresenter.deleteArticlessingle(articleList.get(i));
+                                                homePresenter.deleteArticlessingle(articleList.get(i1));
                                             }
                                         }
                                     } catch (IOException e) {
@@ -624,7 +625,8 @@ public class InsertionService extends Service implements HomeView {
                                     if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
                                         List<ArticleModelObj> objList = new ArrayList<>();
                                         for (int i1 = 0; i1 < articleList.size(); i1++) {
-                                            if (articleList.get(i1).getArticleToVesselIds()!=null&&articleList.get(i1).getArticleToVesselIds().size() > 0 || articleList.get(i1).getArticleToPassengersVesselIds()!=null&&articleList.get(i1).getArticleToPassengersVesselIds().size() > 0) {
+                                            if (articleList.get(i1).getArticleToVesselIds()!=null&&articleList.get(i1).getArticleToVesselIds().size() > 0 ||
+                                                    articleList.get(i1).getArticleToPassengersVesselIds()!=null&&articleList.get(i1).getArticleToPassengersVesselIds().size() > 0) {
                                                 newlist.add(articleList.get(i1));
                                                 ArticleModelObj obj = new ArticleModelObj(articleList.get(i1).getId(), articleList.get(i1).getArticleName(), articleList.get(i1).documentData);
                                                 objList.add(obj);
