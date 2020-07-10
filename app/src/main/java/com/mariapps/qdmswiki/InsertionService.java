@@ -765,7 +765,6 @@ public class InsertionService extends Service implements HomeView {
                                 userInfoList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<UserInfoModel>>() {
                                 }.getType());
                                 for (int i1 = 0; i1 < userInfoList.size(); i1++) {
-                                    appendLog("User Id " + sessionManager.getUserId() + " : User Info Id " + userInfoList.get(i1).getUserId());
                                     if (String.valueOf(userInfoList.get(i1).getUserId()).equals(sessionManager.getUserId())) {
                                         sessionManager.setUserInfoId(userInfoList.get(i1).getId());
                                         break;
