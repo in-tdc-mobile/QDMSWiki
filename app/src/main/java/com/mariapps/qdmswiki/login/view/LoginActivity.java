@@ -19,6 +19,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
+import com.mariapps.qdmswiki.BuildConfig;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.SessionManager;
 import com.mariapps.qdmswiki.baseclasses.BaseActivity;
@@ -213,6 +214,7 @@ public class LoginActivity extends BaseActivity implements LoginView{
                     sessionManager.setUserName(loginResponse.getLoginQdms().getName());
                     sessionManager.setUserId(loginResponse.getLoginQdms().getUserId());
                     sessionManager.setKeyIsSeafarerLogin(loginResponse.getLoginQdms().getIsSeafarerLogin());
+                    sessionManager.setVersionNo(BuildConfig.VERSION_NAME);
                     sessionManager.setUserEmail(userEmail);
                     if (sessionManager.isFirstTimeLaunch()) {
                         Intent intent = new Intent(LoginActivity.this, WalkthroughActivity.class);

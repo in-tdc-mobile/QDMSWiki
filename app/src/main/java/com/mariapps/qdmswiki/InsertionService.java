@@ -196,6 +196,7 @@ public class InsertionService extends Service implements HomeView {
                 e.printStackTrace();
             }
             sessionManager.seturlno("0");
+            sessionManager.setIsDownloaded("y");
             AppConfig.getInsertcompletedall().postValue("completed");
 
         }
@@ -286,7 +287,6 @@ public class InsertionService extends Service implements HomeView {
                 try {
                     for (int i1 = 0; i1 < userSettingsList.size(); i1++) {
                         try {
-                            appendLog("Session User Info Id " + sessionManager.getUserInfoId() + ": User settings user id " + userSettingsList.get(i1).getUserID());
                             if (userSettingsList.get(i1).getUserID().equals(sessionManager.getUserInfoId())) {
                                 appendLog("Extracting user settings");
                                 homePresenter.deleteUserSettingsEntityByUserId(userSettingsList.get(i1));
@@ -303,13 +303,11 @@ public class InsertionService extends Service implements HomeView {
                 catch (Exception e){
                     Log.e("insertionservice1", e.getLocalizedMessage());
                 }
-
                 try {
                     for (int i1 = 0; i1 < notificationList.size(); i1++) {
                         List<ReceiverModel> receiverList = notificationList.get(i1).getReceviers();
                         for (int j = 0; j < receiverList.size(); j++) {
                             try {
-                                appendLog("Session User Info Id " + sessionManager.getUserInfoId() + " : Receiver id " + receiverList.get(j).getRecevierId());
                                 if (receiverList.get(j).getRecevierId().equals(sessionManager.getUserInfoId())) {
                                     appendLog("Extracting notifications");
                                     notificationList.get(i1).setIsUnread(receiverList.get(j).getUnread());

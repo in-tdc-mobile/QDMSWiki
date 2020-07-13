@@ -2,6 +2,7 @@ package com.mariapps.qdmswiki.serviceclasses;
 
 import com.mariapps.qdmswiki.LogResponse;
 import com.mariapps.qdmswiki.SendIdtoServerModel;
+import com.mariapps.qdmswiki.SendVersionModel;
 import com.mariapps.qdmswiki.UpdateStatusModel;
 import com.mariapps.qdmswiki.home.model.DownloadFilesRequestModel;
 import com.mariapps.qdmswiki.home.model.DownloadFilesResponseModel;
@@ -44,6 +45,9 @@ public interface QDMSWikiApi {
 
     @POST("Home/UpdateLastProcessedStatus")
     Call<ResponseBody> UpdateLastProcessedStatus(@Body UpdateStatusModel updateStatusModel);
+
+    @POST("Home/UpdateAppChanges")
+    Call<ResponseBody> UpdateVersion(@Body SendVersionModel sendVersionModel);
 
 
     @Multipart

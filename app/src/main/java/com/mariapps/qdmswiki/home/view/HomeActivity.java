@@ -86,6 +86,7 @@ import com.mariapps.qdmswiki.QDMSWikiApplication;
 import com.mariapps.qdmswiki.R;
 import com.mariapps.qdmswiki.SendAllIdModel;
 import com.mariapps.qdmswiki.SendIdtoServerModel;
+import com.mariapps.qdmswiki.SendVersionModel;
 import com.mariapps.qdmswiki.SessionManager;
 import com.mariapps.qdmswiki.UpdateStatusModel;
 import com.mariapps.qdmswiki.UserInfoDetail;
@@ -299,7 +300,34 @@ public class HomeActivity extends BaseActivity implements HomeView {
                 .load( R.drawable.loading )
                 .into( loading );
         //sessionManager.setKeyLastUpdatedFileName("20191203");//"20191121092627"
-        homePresenter.getDownloadUrl(new DownloadFilesRequestModel(sessionManager.getKeyLastUpdatedFileName(), sessionManager.getDeviceId(), sessionManager.getUserId()));
+        try {
+            if(sessionManager.getIsDownloaded().equals("")){
+                new AsyncTask<String,Void,Void>(){
+                    @Override
+                    protected Void doInBackground(String... strings) {
+                        Log.e("doInBackground","AsyncTask");
+                        try {
+                            homeDatabase.clearAllTables();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                }.execute();
+                try {
+                    dbox.removeAll();
+                    abox.removeAll();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                homePresenter.getDownloadUrl(new DownloadFilesRequestModel("", sessionManager.getDeviceId(), sessionManager.getUserId()));
+            }
+            else {
+                homePresenter.getDownloadUrl(new DownloadFilesRequestModel(sessionManager.getKeyLastUpdatedFileName(), sessionManager.getDeviceId(), sessionManager.getUserId()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         //homePresenter.getDownloadUrl(new DownloadFilesRequestModel(null, sessionManager.getDeviceId(), sessionManager.getUserId()));
         // ("https://qdmswiki2k19.blob.core.windows.net/update/20191114153246.zip","20191114153246.zip");
         setSupportActionBar(toolbar);
@@ -370,7 +398,12 @@ public class HomeActivity extends BaseActivity implements HomeView {
             @Override
             public void onChanged(@Nullable String s) {
                 progressDialog.dismiss();
-                setRecommendedList();
+                sessionManager.setIsDownloaded("y");
+                try {
+                    setRecommendedList();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 appendLog("Finished downloading all base/updated versions");
                 mainVP.post(new Runnable() {
                     @Override
@@ -459,7 +492,12 @@ public class HomeActivity extends BaseActivity implements HomeView {
         // sendLastProccesdStatus("test","test");
 
         // setRecommendedList();
-        getRecommendedList();
+
+        try {
+            getRecommendedList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
        /* new AsyncTask<String,Void,String>(){
 
@@ -716,6 +754,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
                                 Log.e("isauth",job1.getString("IsAuthourized"));
                                 Log.e("trans",job1.getString("TransactionStatus"));
                                 if (job1.getString("TransactionStatus").equals("Y")) {
+                                    sessionManager.setIsDownloaded("y");
                                     sessionManager.putisFirst("n");
                                     sessionManager.putisSend("y");
                                     Log.e("success alllogtoserver",response.body().toString());
@@ -731,6 +770,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
                         try {
+                            sessionManager.setIsDownloaded("y");
                             Log.e("onFail alllogtoserver",t.getLocalizedMessage());
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -2260,7 +2300,6 @@ request.setAllowedNetworkTypes(
 
                     }
                 }
-
                 getRecommendedList();
             }
 
@@ -2351,8 +2390,14 @@ request.setAllowedNetworkTypes(
 
             @Override
             public void onComplete() {
-                if(recommendedList!=null&&recommendedList.size()>0)
-                mainViewPager.updateRecommendedList(recommendedList);
+                try {
+                    if(recommendedList!=null&&recommendedList.size()>0){
+                        mainViewPager.updateRecommendedList(recommendedList);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
                 //getCurrentDocumentList();
             }
 
@@ -2387,6 +2432,40 @@ request.setAllowedNetworkTypes(
             }
         }
         setNotificationCount();
+        if (sessionManager.getVersionNo().equals("") || !sessionManager.getVersionNo().equals(BuildConfig.VERSION_NAME)) {
+            updateVersionNo();
+        }
+    }
+
+    private void updateVersionNo() {
+        QDMSWikiApi service = APIClient.getClient().create(QDMSWikiApi.class);
+        service.UpdateVersion(new SendVersionModel(sessionManager.getDeviceId(),sessionManager.getUserId(),"VERSION",BuildConfig.VERSION_NAME)).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    JSONObject job;
+                    try {
+                        String resp = response.body().string();
+                        job = new JSONObject(resp);
+                        Log.e("isauth",job.getString("IsAuthourized"));
+                        Log.e("trans",job.getString("TransactionStatus"));
+                        if (job.getString("TransactionStatus").equals("Y")) {
+                            sessionManager.setVersionNo(BuildConfig.VERSION_NAME);
+                            Log.e("success version",response.body().toString());
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
     }
 
     @SuppressLint("ResourceType")

@@ -17,12 +17,13 @@ public class SessionManager {
     private static final String KEY_FCM_TOKEN_ID = "keyfcmtokenid";
     private static final String KEY_USERNAME = "keyusername";
     private static final String KEY_USER_ID = "keyuserid";
+    private static final String IS_DOWNLOADED = "isdownloaded";
     private static final String KEY_USER_INFO_ID = "keyuserinfoid";
     private static final String KEY_LOGIN_NAME = "keyloginname";
     private static final String KEY_IS_SEAFARER_LOGIN = "isSeafarerLogin";
     private static final String KEY_LAST_UPDATED_FILE_NAME = "keylastupdatedfilename";
     private static final String IS_FIRST_TIME_LAUNCH = "IsFirstTimeLaunch";
-
+    private static final String VERSION_NO = "VersionNo";
     private static final String IS_DASHBOARD_SEARCH_SHOWN = "IsDashboardSearchShown";
     private static final String IS_DASHBOARD_MENU_SHOWN = "IsDashboardMenuShown";
     private static final String IS_DASHBOARD_TAB_SHOWN = "IsDashboardTabShown";
@@ -66,6 +67,27 @@ public class SessionManager {
     public Integer geturlno(){
         return  Integer.parseInt(pref.getString("urlno", "0"));
     }
+
+    public String getVersionNo() {
+        return pref.getString(VERSION_NO, "");
+    }
+
+    public void setVersionNo(String versionNo) {
+        editor.putString(VERSION_NO, versionNo);
+        editor.commit();
+    }
+
+
+    public String getIsDownloaded() {
+        return pref.getString(IS_DOWNLOADED, "");
+    }
+
+    public void setIsDownloaded(String isDownloaded) {
+        editor.putString(IS_DOWNLOADED, isDownloaded);
+        editor.commit();
+    }
+
+
 
 
     public String getUserId() {

@@ -142,7 +142,7 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
                                 " Device : " + android.os.Build.MODEL + "\n";
                         Intent sendIntent = new Intent(Intent.ACTION_SEND);
                         sendIntent.setType("text/plain");
-                        sendIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"support@mariapps.com"});
+                        sendIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"bsm-support@mariapps.com"});
                         sendIntent.putExtra(Intent.EXTRA_SUBJECT, "QDMWiki Android support [UserID: " +sessionManager.getUserId()+"]");
                         sendIntent.putExtra(Intent.EXTRA_TEXT, mailBody);
                         try {

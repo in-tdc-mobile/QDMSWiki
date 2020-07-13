@@ -161,7 +161,7 @@ public class HomeFragment extends BaseFragment {
     }
 
     public void updateRecommendedList(List<DocumentModel> documentList) {
-        if(documentList!=null){
+        if(documentList!=null&&documentList.size()>0){
             recommendedFragment.updateDocumentList(documentList);
         }
 

@@ -8,12 +8,11 @@ import android.arch.lifecycle.MutableLiveData;
 public class AppConfig {
     //public static final String BASE_URL = "http://10.201.1.19:8899/QDMSMobileService/api/";//DEV
    //public static final String BASE_URL = "http://10.201.1.164/QDMSMobileService/api/";//QA
-   // public static final String BASE_URL =  "https://bsm-qa.mariapps.com/QDMSMobileService/api/";//qa
-   // public static final String BASE_URL = "https://mobapp-seafarer.bs-shipmanagement.com/QDMSMobileService/api/";  //PROD
+   //public static final String BASE_URL =  "https://bsm-qa.mariapps.com/QDMSMobileService/api/";//qa
+    public static final String BASE_URL = "https://mobapp-seafarer.bs-shipmanagement.com/QDMSMobileService/api/";  //PROD
  //   public static final String BASE_URL =   "http://mapps-qa-iis-v4/QDMSMobileService/api/";
-    public static final String BASE_URL = "https://pal4uat.bs-shipmanagement.com/QDMSMobileService/api/";//UAT
+ //   public static final String BASE_URL = "https://pal4uat.bs-shipmanagement.com/QDMSMobileService/api/";//UAT
     public static final String TIMESTAMP_FORMAT = "yyyyMMdd_HHmmss";
-
     //Bundles
     public static final String BUNDLE_NAV_DRAWER = "bundlenavdrawer";
     public static final String BUNDLE_PAGE = "bundlepage";
@@ -27,7 +26,6 @@ public class AppConfig {
     public static final String BOOKMARK_ID = "";
     public static final String BUNDLE_NAV_DETAILS_OBJECT = "bundlenavdetailsobject";
     public static final String BUNDLE_NAV_DETAILS_LIST = "bundlenavdetailslist";
-
     //Fragments
     public static final String FRAG_HOME = "fragmenthome";
     public static final String FRAG_NAV_DRAWER = "fragmentnavdrawer";
@@ -36,13 +34,10 @@ public class AppConfig {
     public static  MutableLiveData<Integer> dwnldprgress=null;
     public static  MutableLiveData<String> dwnldcmplted=null;
     public static  MutableLiveData<String> dwnlderror=null;
-
     public static  MutableLiveData<String> insertstarted=null;
     public static  MutableLiveData<String> insertcompletedall=null;
     public static  MutableLiveData<String> insertprogress=null;
     public static  MutableLiveData<String> insertcompletedonce=null;
-
-
     public static MutableLiveData<String> getInsertcompletedonce() {
         if(insertcompletedonce==null){
             insertcompletedonce=new SingleLiveEvent<>();
@@ -54,7 +49,6 @@ public class AppConfig {
         if(insertstarted==null){
             insertstarted=new SingleLiveEvent<>();
         }
-
         return insertstarted;
     }
 
