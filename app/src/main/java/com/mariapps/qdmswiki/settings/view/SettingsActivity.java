@@ -189,171 +189,217 @@ public class SettingsActivity extends BaseActivity implements SettingsView{
 
 
     public void sendAllIdstoServer(){
-        progressDialog.setMessage("Processing your request");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-     HomeDatabase   homeDatabase = HomeDatabase.getInstance(SettingsActivity.this);
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                SendIdtoServerModel sendIdtoServerModel = new SendIdtoServerModel();
-                sendIdtoServerModel.setAppVersion(BuildConfig.VERSION_NAME);
-                sendIdtoServerModel.setDeviceName(android.os.Build.MODEL);
-                sendIdtoServerModel.setDeviceType("ANDROID "+android.os.Build.VERSION.RELEASE);
-                sendIdtoServerModel.setUserId(sessionManager.getUserId());
-                sendIdtoServerModel.setDeviceId(sessionManager.getDeviceId());
-                sendIdtoServerModel.setEmpId(sessionManager.getUserId());
+        try {
+            progressDialog.setMessage("Processing your request");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+            HomeDatabase   homeDatabase = HomeDatabase.getInstance(SettingsActivity.this);
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    SendIdtoServerModel sendIdtoServerModel = new SendIdtoServerModel();
+                    sendIdtoServerModel.setAppVersion(BuildConfig.VERSION_NAME);
+                    sendIdtoServerModel.setDeviceName(android.os.Build.MODEL);
+                    sendIdtoServerModel.setDeviceType("ANDROID "+android.os.Build.VERSION.RELEASE);
+                    sendIdtoServerModel.setUserId(sessionManager.getUserId());
+                    sendIdtoServerModel.setDeviceId(sessionManager.getDeviceId());
+                    sendIdtoServerModel.setEmpId(sessionManager.getUserId());
 
 
-                List<ArtDetail> ArtDetailList = new ArrayList<>();
-                List<DocDetail> DocDetailList = new ArrayList<>();
-                List<FileDetail> FileDetailList = new ArrayList<>();
-                List<FormDetail> FormDetailList = new ArrayList<>();
-                List<UserSetDetail> UserSetDetailList = new ArrayList<>();
-                List<UserInfoDetail> UserInfoDetailList = new ArrayList<>();
-                List<NotificationDetail> NotificationDetailList = new ArrayList<>();
-                List<CatDetail> CatDetailList = new ArrayList<>();
-                List<ImageDetail> ImageDetailList = new ArrayList<>();
-                List<BookmarkDetail> BookmarkDetailList = new ArrayList<>();
+                    List<ArtDetail> ArtDetailList = new ArrayList<>();
+                    List<DocDetail> DocDetailList = new ArrayList<>();
+                    List<FileDetail> FileDetailList = new ArrayList<>();
+                    List<FormDetail> FormDetailList = new ArrayList<>();
+                    List<UserSetDetail> UserSetDetailList = new ArrayList<>();
+                    List<UserInfoDetail> UserInfoDetailList = new ArrayList<>();
+                    List<NotificationDetail> NotificationDetailList = new ArrayList<>();
+                    List<CatDetail> CatDetailList = new ArrayList<>();
+                    List<ImageDetail> ImageDetailList = new ArrayList<>();
+                    List<BookmarkDetail> BookmarkDetailList = new ArrayList<>();
 
 
-                List<String> fileids = new ArrayList<>();
-                fileids.addAll(homeDatabase.homeDao().getFileids());
-                for (int i = 0; i < fileids.size(); i++) {
-                    FileDetailList.add(new FileDetail(fileids.get(i)));
-                }
-
-                List<String> articleids = new ArrayList<>();
-                articleids.addAll(homeDatabase.homeDao().getartids());
-                for (int i = 0; i < articleids.size(); i++) {
-                    ArtDetailList.add(new ArtDetail(articleids.get(i)));
-                }
-
-                List<String> docids = new ArrayList<>();
-                docids.addAll(homeDatabase.homeDao().getdocids());
-                for (int i = 0; i < docids.size(); i++) {
-                    DocDetailList.add(new DocDetail(docids.get(i)));
-                }
-
-                List<String> bookmarkids = new ArrayList<>();
-                bookmarkids.addAll(homeDatabase.homeDao().getbookmarkids());
-                for (int i = 0; i < bookmarkids.size(); i++) {
-                    BookmarkDetailList.add(new BookmarkDetail(bookmarkids.get(i)));
-                }
-
-                List<String> formids = new ArrayList<>();
-                formids.addAll(homeDatabase.homeDao().getformids());
-                for (int i = 0; i < formids.size(); i++) {
-                    FormDetailList.add(new FormDetail(formids.get(i)));
-                }
-
-                List<String> usersetids = new ArrayList<>();
-                usersetids.addAll(homeDatabase.homeDao().getusersetids());
-                for (int i = 0; i < usersetids.size(); i++) {
-                    UserSetDetailList.add(new UserSetDetail(usersetids.get(i)));
-                }
-
-                List<String> notifids = new ArrayList<>();
-                notifids.addAll(homeDatabase.homeDao().getnotifids());
-                for (int i = 0; i < notifids.size(); i++) {
-                    NotificationDetailList.add(new NotificationDetail(notifids.get(i)));
-                }
-
-                List<String> userinfoids = new ArrayList<>();
-                userinfoids.addAll(homeDatabase.homeDao().getuserinfoids());
-                for (int i = 0; i < userinfoids.size(); i++) {
-                    UserInfoDetailList.add(new UserInfoDetail(userinfoids.get(i)));
-                }
-
-                List<String> catids = new ArrayList<>();
-                catids.addAll(homeDatabase.homeDao().getcatids());
-                for (int i = 0; i < catids.size(); i++) {
-                    CatDetailList.add(new CatDetail(catids.get(i)));
-                }
-
-
-
-                File mydir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/QDMSWiki/Images");
-                if (mydir.exists()) {
-                    File[] imageids = mydir.listFiles();
-                    for (int i = 0; i < imageids.length; i++) {
-                        ImageDetailList.add(new ImageDetail(imageids[i].getName()));
+                    try {
+                        List<String> fileids = new ArrayList<>();
+                        fileids.addAll(homeDatabase.homeDao().getFileids());
+                        for (int i = 0; i < fileids.size(); i++) {
+                            FileDetailList.add(new FileDetail(fileids.get(i)));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                }
+
+                    try {
+                        List<String> articleids = new ArrayList<>();
+                        articleids.addAll(homeDatabase.homeDao().getartids());
+                        for (int i = 0; i < articleids.size(); i++) {
+                            ArtDetailList.add(new ArtDetail(articleids.get(i)));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        List<String> docids = new ArrayList<>();
+                        docids.addAll(homeDatabase.homeDao().getdocids());
+                        for (int i = 0; i < docids.size(); i++) {
+                            DocDetailList.add(new DocDetail(docids.get(i)));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        List<String> bookmarkids = new ArrayList<>();
+                        bookmarkids.addAll(homeDatabase.homeDao().getbookmarkids());
+                        for (int i = 0; i < bookmarkids.size(); i++) {
+                            BookmarkDetailList.add(new BookmarkDetail(bookmarkids.get(i)));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        List<String> formids = new ArrayList<>();
+                        formids.addAll(homeDatabase.homeDao().getformids());
+                        for (int i = 0; i < formids.size(); i++) {
+                            FormDetailList.add(new FormDetail(formids.get(i)));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        List<String> usersetids = new ArrayList<>();
+                        usersetids.addAll(homeDatabase.homeDao().getusersetids());
+                        for (int i = 0; i < usersetids.size(); i++) {
+                            UserSetDetailList.add(new UserSetDetail(usersetids.get(i)));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        List<String> notifids = new ArrayList<>();
+                        notifids.addAll(homeDatabase.homeDao().getnotifids());
+                        for (int i = 0; i < notifids.size(); i++) {
+                            NotificationDetailList.add(new NotificationDetail(notifids.get(i)));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        List<String> userinfoids = new ArrayList<>();
+                        userinfoids.addAll(homeDatabase.homeDao().getuserinfoids());
+                        for (int i = 0; i < userinfoids.size(); i++) {
+                            UserInfoDetailList.add(new UserInfoDetail(userinfoids.get(i)));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        List<String> catids = new ArrayList<>();
+                        catids.addAll(homeDatabase.homeDao().getcatids());
+                        for (int i = 0; i < catids.size(); i++) {
+                            CatDetailList.add(new CatDetail(catids.get(i)));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
 
+                    try {
+                        File mydir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/QDMSWiki/Images");
+                        if (mydir.exists()) {
+                            File[] imageids = mydir.listFiles();
+                            for (int i = 0; i < imageids.length; i++) {
+                                ImageDetailList.add(new ImageDetail(imageids[i].getName()));
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
-                sendIdtoServerModel.setArtDetails(ArtDetailList);
-                sendIdtoServerModel.setDocDetails(DocDetailList);
-                sendIdtoServerModel.setFileDetails(FileDetailList);
-                sendIdtoServerModel.setFormDetails(FormDetailList);
-                sendIdtoServerModel.setBookmarkDetails(BookmarkDetailList);
-                sendIdtoServerModel.setImageDetails(ImageDetailList);
-                sendIdtoServerModel.setUserInfoDetails(UserInfoDetailList);
-                sendIdtoServerModel.setUserSetDetails(UserSetDetailList);
-                sendIdtoServerModel.setNotificationDetails(NotificationDetailList);
-                sendIdtoServerModel.setCatDetails(CatDetailList);
-                QDMSWikiApi service = APIClient.getClient().create(QDMSWikiApi.class);
-                service.sendAllidstoServerapi(sendIdtoServerModel).enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        progressDialog.dismiss();
 
-                        try {
-                            JSONObject job;
+                    sendIdtoServerModel.setArtDetails(ArtDetailList);
+                    sendIdtoServerModel.setDocDetails(DocDetailList);
+                    sendIdtoServerModel.setFileDetails(FileDetailList);
+                    sendIdtoServerModel.setFormDetails(FormDetailList);
+                    sendIdtoServerModel.setBookmarkDetails(BookmarkDetailList);
+                    sendIdtoServerModel.setImageDetails(ImageDetailList);
+                    sendIdtoServerModel.setUserInfoDetails(UserInfoDetailList);
+                    sendIdtoServerModel.setUserSetDetails(UserSetDetailList);
+                    sendIdtoServerModel.setNotificationDetails(NotificationDetailList);
+                    sendIdtoServerModel.setCatDetails(CatDetailList);
+                    QDMSWikiApi service = APIClient.getClient().create(QDMSWikiApi.class);
+                    service.sendAllidstoServerapi(sendIdtoServerModel).enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            progressDialog.dismiss();
+
                             try {
-                                String resp = response.body().string();
-                                job = new JSONObject(resp);
-                                JSONObject job1 = job   .getJSONObject("CommonEntity");
-                                Log.e("isauth",job1.getString("IsAuthourized"));
-                                Log.e("trans",job1.getString("TransactionStatus"));
-                                if (job1.getString("TransactionStatus").equals("Y")) {
-                                    try {
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                AlertDialog.Builder bu = new AlertDialog.Builder(SettingsActivity.this);
-                                                bu.setTitle("QDMS Wiki");
-                                                bu.setMessage("Thank you for initiating the Re-Check Data process , we will notify you once any discrepancies found.");
-                                                bu.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        dialog.dismiss();
-                                                    }
-                                                });
-                                                bu.show();
-                                            }
-                                        });
+                                JSONObject job;
+                                try {
+                                    String resp = response.body().string();
+                                    job = new JSONObject(resp);
+                                    JSONObject job1 = job   .getJSONObject("CommonEntity");
+                                    Log.e("isauth",job1.getString("IsAuthourized"));
+                                    Log.e("trans",job1.getString("TransactionStatus"));
+                                    if (job1.getString("TransactionStatus").equals("Y")) {
+                                        try {
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    AlertDialog.Builder bu = new AlertDialog.Builder(SettingsActivity.this);
+                                                    bu.setTitle("QDMS Wiki");
+                                                    bu.setMessage("Thank you for initiating the Re-Check Data process , we will notify you once any discrepancies found.");
+                                                    bu.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            dialog.dismiss();
+                                                        }
+                                                    });
+                                                    bu.show();
+                                                }
+                                            });
+                                            Log.e("success alllogtoserver",response.body().toString());
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
                                         Log.e("success alllogtoserver",response.body().toString());
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
                                     }
-                                    Log.e("success alllogtoserver",response.body().toString());
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
                                 }
-                            } catch (JSONException e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+
+
                         }
 
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        progressDialog.dismiss();
-                        try {
-                            Log.e("onFail alllogtoserver",t.getLocalizedMessage());
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            progressDialog.dismiss();
+                            try {
+                                Log.e("onFail alllogtoserver",t.getLocalizedMessage());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
-                    }
-                });
+                    });
 
 
+                }
+            });
+        } catch (Exception e) {
+            if(progressDialog!=null){
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
-        });
+            e.printStackTrace();
+        }
 
     }
 
