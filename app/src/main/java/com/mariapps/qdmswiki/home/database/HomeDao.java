@@ -621,6 +621,18 @@ public interface HomeDao {
     List<BookmarkEntryModel> getBookmarkEntries(String documentId);
 
 
+
+    @Query(" SELECT bookmark.DocumentId, " +
+            " bookmark.BookmarkId, " +
+            " bookmark.BookmarkTitle "+
+            " FROM BookMarkEntryEntity as bookmark " +
+            " WHERE bookmark.DocumentId=:documentId")
+    List<BookmarkEntryModel> getBookmarkEntriesbyuserid(String documentId);
+
+
+
+
+
     @Query(" SELECT bookmark.DocumentId, " +
             " bookmark.BookmarkId, " +
             " bookmark.BookmarkTitle, "+
@@ -630,7 +642,7 @@ public interface HomeDao {
 
 
 
-    @Query(" SELECT bookmark.DocumentId, " +
+    @Query(" SELECT bookmark.DocumentId,"+
             " bookmark.BookmarkId, " +
             " bookmark.BookmarkTitle, "+
             " bookmark.DocumentId "+

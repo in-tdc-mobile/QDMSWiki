@@ -498,38 +498,178 @@ public class HomeActivity extends BaseActivity implements HomeView {
             e.printStackTrace();
         }
 
-
-
+        Log.e("userinfo id",sessionManager.getUserInfoId());
+    new AsyncTask<String,Void,String>(){
+        @Override
+        protected String doInBackground(String... strings) {
+           // homeDatabase.homeDao().deleteBookmarkEntrybyid("5f11ac276101ce9a846e07a2");
+            //homeDatabase.homeDao().deleteBookmarkEntrybyid("5f11adfa6101ce9a846e07a6");
+        //    testdelete();
+            return null;
+        }
+    }.execute();
     }
 
 
     public void testdelete(){
-        JsonParser parser = new JsonParser();
-        JsonObject data = (JsonObject) parser.parse("");//path to the JSON file.
-        JsonArray jsonArrayFiles = data.getAsJsonArray("fileChunks");
-        JsonArray jsonArrayBookMarks = data.getAsJsonArray("Bookmarks");
-        JsonArray jsonArrayNotif = data.getAsJsonArray("Notifications");
-        JsonArray jsonArrayCateg = data.getAsJsonArray("Categories");
+        try {
+            JsonParser parser = new JsonParser();
+            JsonObject data = (JsonObject) parser.parse("{\n" +
+                    "\t\"Notifications\": [{\n" +
+                    "\t\t\"_id\": \"5c07cb9b6101d16830cdb732\"\n" +
+                    "\t}, {\n" +
+                    "\t\t\"_id\": \"5c07cbcf6101d16830cdb733\"\n" +
+                    "\t}, {\n" +
+                    "\t\t\"_id\": \"5c07cbdf6101d16830cdb734\"\n" +
+                    "\t}],\n" +
+                    "\t\"Bookmarks\": [{\n" +
+                    "\t\t\"_id\": \"5a7c1c663b6a9e7854a53426\"\n" +
+                    "\t}, {\n" +
+                    "\t\t\"_id\": \"5ab9fa543b6a9e9cf84a7123\"\n" +
+                    "\t}],\n" +
+                    "\t\"Categories\": [{\n" +
+                    "\t\t\"_id\": \"59c253063b6a9e789cb1b8e0\"\n" +
+                    "\t}],\n" +
+                    "\t\"UserInfo\": [{\n" +
+                    "\t\t\"_id\": \"59bc537c3b6abc8ffcf55c69\"\n" +
+                    "\t}],\n" +
+                    "\t\"UserViewedDocs\": [{\n" +
+                    "\t\t\"_id\": \"59c892153b76db7d2cf484b3\"\n" +
+                    "\t}]\n" +
+                    "}");
+            JsonArray jsonArrayFiles = data.getAsJsonArray("fileChunks");
+            JsonArray jsonArrayBookMarks = data.getAsJsonArray("Bookmarks");
+            JsonArray jsonArrayNotif = data.getAsJsonArray("Notifications");
+            JsonArray jsonArrayCateg = data.getAsJsonArray("Categories");
+            JsonArray jsonArrayUserinfo = data.getAsJsonArray("UserInfo");
+            JsonArray jsonArrayUserSett = data.getAsJsonArray("UserSet");
+            JsonArray jsonArrayDoc = data.getAsJsonArray("Documents");
+            JsonArray jsonArrayArt = data.getAsJsonArray("Articles");
 
-        for (int i = 0; i < jsonArrayFiles.size(); i++) {
-            JsonObject job = jsonArrayFiles.get(i).getAsJsonObject();
-            Log.e("ids files ",job.get("_id").getAsString());
-        }
-        for (int i = 0; i < jsonArrayBookMarks.size(); i++) {
-            JsonObject job = jsonArrayBookMarks.get(i).getAsJsonObject();
-            Log.e("ids files ",job.get("_id").getAsString());
-        }
 
-        for (int i = 0; i < jsonArrayNotif.size(); i++) {
-            JsonObject job = jsonArrayNotif.get(i).getAsJsonObject();
-            Log.e("ids files ",job.get("_id").getAsString());
-        }
 
-        for (int i = 0; i < jsonArrayCateg.size(); i++) {
-            JsonObject job = jsonArrayCateg.get(i).getAsJsonObject();
-            Log.e("ids files ",job.get("_id").getAsString());
+            try {
+                if(jsonArrayArt!=null){
+                    for (int k = 0; k < jsonArrayArt.size(); k++) {
+                        JsonObject job = jsonArrayArt.get(k).getAsJsonObject();
+                        homeDatabase.homeDao().deleteArticle(job.get("_id").getAsString());
+                        Log.e("Article jsonArrayFiles ",job.get("_id").getAsString());
+                    }
+                }
+            } catch (Exception e) {
+                appendErrorLog("Article Delete error:"+e.getLocalizedMessage());
+                e.printStackTrace();
+            }
+
+
+
+            try {
+                if(jsonArrayDoc!=null){
+                    for (int k = 0; k < jsonArrayDoc.size(); k++) {
+                        JsonObject job = jsonArrayDoc.get(k).getAsJsonObject();
+                        homeDatabase.homeDao().deleteDocument(job.get("_id").getAsString());
+                        Log.e("Document jsonArrayf ",job.get("_id").getAsString());
+                    }
+                }
+
+            } catch (Exception e) {
+                appendErrorLog("Document Delete error:"+e.getLocalizedMessage());
+                e.printStackTrace();
+            }
+
+
+
+            try {
+                if(jsonArrayUserSett!=null){
+                    for (int k = 0; k < jsonArrayUserSett.size(); k++) {
+                        JsonObject job = jsonArrayUserSett.get(k).getAsJsonObject();
+                        homeDatabase.homeDao().deleteUserSettingsEntityByUserId(job.get("_id").getAsString());
+                        Log.e("Usersett jsonArrayf",job.get("_id").getAsString());
+                    }
+                }
+
+            } catch (Exception e) {
+                appendErrorLog("Usersettings Delete error:"+e.getLocalizedMessage());
+                e.printStackTrace();
+            }
+
+
+            try {
+                if(jsonArrayFiles!=null){
+                    for (int k = 0; k < jsonArrayFiles.size(); k++) {
+                        JsonObject job = jsonArrayFiles.get(k).getAsJsonObject();
+                        homeDatabase.homeDao().deletefileListModel(job.get("_id").getAsString());
+                        Log.e("FileCs jsonArrayF",job.get("_id").getAsString());
+                    }
+                }
+
+            } catch (Exception e) {
+                appendErrorLog("FileChunks Delete error:"+e.getLocalizedMessage());
+                e.printStackTrace();
+            }
+            try {
+                if(jsonArrayBookMarks!=null){
+                    for (int k = 0; k < jsonArrayBookMarks.size(); k++) {
+                        JsonObject job = jsonArrayBookMarks.get(k).getAsJsonObject();
+                        homeDatabase.homeDao().deleteBookmark(job.get("_id").getAsString());
+                        Log.e("Bookmarks jsonArrayBook",job.get("_id").getAsString());
+                    }
+                }
+
+            } catch (Exception e) {
+                appendErrorLog("Bookmarks Delete error:"+e.getLocalizedMessage());
+                e.printStackTrace();
+            }
+            try {
+                if(jsonArrayNotif!=null){
+                    for (int k = 0; k < jsonArrayNotif.size(); k++) {
+                        JsonObject job = jsonArrayNotif.get(k).getAsJsonObject();
+                        homeDatabase.homeDao().deleteNotification(job.get("_id").getAsString());
+                        Log.e("Notifi jsonArrayNotif ",job.get("_id").getAsString());
+                    }
+                }
+
+            } catch (Exception e) {
+                appendErrorLog("Notifications Delete error:"+e.getLocalizedMessage());
+                e.printStackTrace();
+            }
+            try {
+                if(jsonArrayUserinfo!=null){
+                    for (int k = 0; k < jsonArrayUserinfo.size(); k++) {
+                        JsonObject job = jsonArrayUserinfo.get(k).getAsJsonObject();
+                        homeDatabase.homeDao().deleteUserInfoEntity(job.get("_id").getAsString());
+                        Log.e("userinfo jsonArray",job.get("_id").getAsString());
+                    }
+                }
+
+            } catch (Exception e) {
+                appendErrorLog("userinfo Delete error:"+e.getLocalizedMessage());
+                e.printStackTrace();
+            }
+            try {
+                if(jsonArrayCateg!=null){
+                    for (int k = 0; k < jsonArrayCateg.size(); k++) {
+                        JsonObject job = jsonArrayCateg.get(k).getAsJsonObject();
+                        homeDatabase.homeDao().deleteCategory(job.get("_id").getAsString());
+                        Log.e("Categories jsonArray",job.get("_id").getAsString());
+                    }
+                }
+
+            } catch (Exception e) {
+                appendErrorLog("Categories Delete error:"+e.getLocalizedMessage());
+                e.printStackTrace();
+            }
+        } catch (JsonSyntaxException e) {
+            appendErrorLog("Delete error:"+e.getLocalizedMessage());
+            e.printStackTrace();
         }
     }
+
+
+
+
+
+
 
 
 
@@ -1116,6 +1256,7 @@ public class HomeActivity extends BaseActivity implements HomeView {
             if(sizeinmb>5){
                 AlertDialog.Builder bu = new AlertDialog.Builder(HomeActivity.this);
                 bu.setTitle("QDMS Wiki");
+                bu.setCancelable(false);
                 bu.setMessage(sizeinmb+"MB data is needed to download the files. Do you want to proceed?");
                 bu.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                     @Override
@@ -1969,6 +2110,7 @@ request.setAllowedNetworkTypes(
                             }
                         } else if (file.getName().contains("bookmarks")) {
                             try {
+                                Log.e("userinfo id",sessionManager.getUserInfoId());
                                 appendLog("Extracting bookmark " + file.getName());
                                 jsonArray = data.getAsJsonArray("Bookmarks");
                                 bookmarkList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<BookmarkModel>>() {
@@ -1981,7 +2123,10 @@ request.setAllowedNetworkTypes(
                                         bookmarkEntryList.get(j).setDocumentId(bookmarkList.get(i).getDocumentId());
                                     }
                                     for (int i1 = 0; i1 < bookmarkEntryList.size(); i1++) {
-                                        homePresenter.deleteBookmarkEntries(bookmarkEntryList.get(i1));
+                                        if(bookmarkList.get(i).getuId().equals(sessionManager.getUserInfoId())){
+                                            homePresenter.deleteBookmarkEntries(bookmarkEntryList.get(i1));
+                                        }
+
                                     }
                                     //homePresenter.insertBookmarkEntries(bookmarkEntryList);
                                 }
@@ -2292,7 +2437,6 @@ request.setAllowedNetworkTypes(
 
             @Override
             public void onComplete() {
-
                 if(userSettingsList.size()==0){
                     for (int i = 0; i < documentList.size(); i++) {
                         documentList.get(i).setIsRecommended("NO");

@@ -312,7 +312,6 @@ public class InsertionService extends Service implements HomeView {
                                     appendLog("Extracting notifications");
                                     notificationList.get(i1).setIsUnread(receiverList.get(j).getUnread());
                                     homePresenter.deleteNotification(notificationList.get(i1));
-                                    homePresenter.insertNotification(notificationList.get(i1));
                                     break;
                                 }
                             } catch (Exception e) {
@@ -710,7 +709,6 @@ public class InsertionService extends Service implements HomeView {
                             }
                         }
                         else if (filesInFolder[i].getName().contains("bookmarks")) {
-
                             try {
                                 JsonParser parser = new JsonParser();
                                 JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
@@ -720,14 +718,18 @@ public class InsertionService extends Service implements HomeView {
                                 }.getType());
                                 //homePresenter.deleteBookmarks(bookmarkList);
                                 for (int i2 = 0; i2 < bookmarkList.size(); i2++) {
-                                    homeDatabase.homeDao().deleteBookmark(bookmarkList.get(i2).getId());
+                                    homePresenter.deleteBookmark(bookmarkList.get(i2));
+                                   // homeDatabase.homeDao().deleteBookmark(bookmarkList.get(i2).getId());
                                     List<BookmarkEntryModel> bookmarkEntryList = bookmarkList.get(i2).getBookmarkEntries();
                                     for (int j = 0; j < bookmarkEntryList.size(); j++) {
                                         bookmarkEntryList.get(j).setDocumentId(bookmarkList.get(i2).getDocumentId());
                                     }
                                     for (int i1 = 0; i1 < bookmarkEntryList.size(); i1++) {
-                                        homeDatabase.homeDao().deleteBookmarkEntrybyid(bookmarkEntryList.get(i1).getBookmarkId());
-                                        homeDatabase.homeDao().insertBookmarkEntriessingle(bookmarkEntryList.get(i1));
+                                        if(bookmarkList.get(i).getUserId().equals(sessionManager.getUserInfoId())){
+                                            homePresenter.deleteBookmarkEntries(bookmarkEntryList.get(i1));
+                                        }
+                                        //homeDatabase.homeDao().deleteBookmarkEntrybyid(bookmarkEntryList.get(i1).getBookmarkId());
+                                        //homeDatabase.homeDao().insertBookmarkEntriessingle(bookmarkEntryList.get(i1));
                                         AppConfig.getInsertprogress().postValue("Inserting bookmarks to database");
                                     }
                                     //homePresenter.insertBookmarkEntries(bookmarkEntryList);
@@ -820,23 +822,22 @@ public class InsertionService extends Service implements HomeView {
                         else if (filesInFolder[i].getName().contains("delete")) {
                             try {
                                 JsonParser parser = new JsonParser();
-                                JsonObject data = (JsonObject) parser.parse("");//path to the JSON file.
+                                JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));
                                 JsonArray jsonArrayFiles = data.getAsJsonArray("fileChunks");
                                 JsonArray jsonArrayBookMarks = data.getAsJsonArray("Bookmarks");
                                 JsonArray jsonArrayNotif = data.getAsJsonArray("Notifications");
                                 JsonArray jsonArrayCateg = data.getAsJsonArray("Categories");
-                                JsonArray jsonArrayUserinfo = data.getAsJsonArray("userInfo");
-                                JsonArray jsonArrayUserSett = data.getAsJsonArray("userSet");
+                                JsonArray jsonArrayUserinfo = data.getAsJsonArray("UserInfo");
+                                JsonArray jsonArrayUserSett = data.getAsJsonArray("UserSet");
                                 JsonArray jsonArrayDoc = data.getAsJsonArray("Documents");
                                 JsonArray jsonArrayArt = data.getAsJsonArray("Articles");
-
-
-
                                 try {
-                                    for (int k = 0; k < jsonArrayArt.size(); k++) {
-                                        JsonObject job = jsonArrayArt.get(k).getAsJsonObject();
-                                        homeDatabase.homeDao().deleteArticle(job.get("_id").getAsString());
-                                        Log.e("Article jsonArrayFiles ",job.get("_id").getAsString());
+                                    if(jsonArrayArt!=null){
+                                        for (int k = 0; k < jsonArrayArt.size(); k++) {
+                                            JsonObject job = jsonArrayArt.get(k).getAsJsonObject();
+                                            homeDatabase.homeDao().deleteArticle(job.get("_id").getAsString());
+                                            Log.e("Article jsonArrayFiles ",job.get("_id").getAsString());
+                                        }
                                     }
                                 } catch (Exception e) {
                                     appendErrorLog("Article Delete error:"+e.getLocalizedMessage());
@@ -846,11 +847,14 @@ public class InsertionService extends Service implements HomeView {
 
 
                                 try {
-                                    for (int k = 0; k < jsonArrayDoc.size(); k++) {
-                                        JsonObject job = jsonArrayDoc.get(k).getAsJsonObject();
-                                        homeDatabase.homeDao().deleteDocument(job.get("_id").getAsString());
-                                        Log.e("Document jsonArrayf ",job.get("_id").getAsString());
+                                    if(jsonArrayDoc!=null){
+                                        for (int k = 0; k < jsonArrayDoc.size(); k++) {
+                                            JsonObject job = jsonArrayDoc.get(k).getAsJsonObject();
+                                            homeDatabase.homeDao().deleteDocument(job.get("_id").getAsString());
+                                            Log.e("Document jsonArrayf ",job.get("_id").getAsString());
+                                        }
                                     }
+
                                 } catch (Exception e) {
                                     appendErrorLog("Document Delete error:"+e.getLocalizedMessage());
                                     e.printStackTrace();
@@ -859,11 +863,14 @@ public class InsertionService extends Service implements HomeView {
 
 
                                 try {
-                                    for (int k = 0; k < jsonArrayUserSett.size(); k++) {
-                                        JsonObject job = jsonArrayUserSett.get(k).getAsJsonObject();
-                                        homeDatabase.homeDao().deleteUserSettingsEntityByUserId(job.get("_id").getAsString());
-                                        Log.e("Usersett jsonArrayf",job.get("_id").getAsString());
+                                    if(jsonArrayUserSett!=null){
+                                        for (int k = 0; k < jsonArrayUserSett.size(); k++) {
+                                            JsonObject job = jsonArrayUserSett.get(k).getAsJsonObject();
+                                            homeDatabase.homeDao().deleteUserSettingsEntityByUserId(job.get("_id").getAsString());
+                                            Log.e("Usersett jsonArrayf",job.get("_id").getAsString());
+                                        }
                                     }
+
                                 } catch (Exception e) {
                                     appendErrorLog("Usersettings Delete error:"+e.getLocalizedMessage());
                                     e.printStackTrace();
@@ -871,51 +878,66 @@ public class InsertionService extends Service implements HomeView {
 
 
                                 try {
-                                    for (int k = 0; k < jsonArrayFiles.size(); k++) {
-                                        JsonObject job = jsonArrayFiles.get(k).getAsJsonObject();
-                                        homeDatabase.homeDao().deletefileListModel(job.get("_id").getAsString());
-                                        Log.e("FileCs jsonArrayF",job.get("_id").getAsString());
+                                    if(jsonArrayFiles!=null){
+                                        for (int k = 0; k < jsonArrayFiles.size(); k++) {
+                                            JsonObject job = jsonArrayFiles.get(k).getAsJsonObject();
+                                            homeDatabase.homeDao().deletefileListModel(job.get("_id").getAsString());
+                                            Log.e("FileCs jsonArrayF",job.get("_id").getAsString());
+                                        }
                                     }
+
                                 } catch (Exception e) {
                                     appendErrorLog("FileChunks Delete error:"+e.getLocalizedMessage());
                                     e.printStackTrace();
                                 }
                                 try {
-                                    for (int k = 0; k < jsonArrayBookMarks.size(); k++) {
-                                        JsonObject job = jsonArrayBookMarks.get(k).getAsJsonObject();
-                                        homeDatabase.homeDao().deleteBookmark(job.get("_id").getAsString());
-                                        Log.e("Bookmarks jsonArrayBook",job.get("_id").getAsString());
+                                    if(jsonArrayBookMarks!=null){
+                                        for (int k = 0; k < jsonArrayBookMarks.size(); k++) {
+                                            JsonObject job = jsonArrayBookMarks.get(k).getAsJsonObject();
+                                            homeDatabase.homeDao().deleteBookmarkEntrybyid(job.get("_id").getAsString());
+                                            Log.e("Bookmarks jsonArrayBook",job.get("_id").getAsString());
+                                        }
                                     }
+
                                 } catch (Exception e) {
                                     appendErrorLog("Bookmarks Delete error:"+e.getLocalizedMessage());
                                     e.printStackTrace();
                                 }
                                 try {
-                                    for (int k = 0; k < jsonArrayNotif.size(); k++) {
-                                        JsonObject job = jsonArrayNotif.get(k).getAsJsonObject();
-                                        homeDatabase.homeDao().deleteNotification(job.get("_id").getAsString());
-                                        Log.e("Notifi jsonArrayNotif ",job.get("_id").getAsString());
+                                    if(jsonArrayNotif!=null){
+                                        for (int k = 0; k < jsonArrayNotif.size(); k++) {
+                                            JsonObject job = jsonArrayNotif.get(k).getAsJsonObject();
+                                            homeDatabase.homeDao().deleteNotification(job.get("_id").getAsString());
+                                            Log.e("Notifi jsonArrayNotif ",job.get("_id").getAsString());
+                                        }
                                     }
+
                                 } catch (Exception e) {
                                     appendErrorLog("Notifications Delete error:"+e.getLocalizedMessage());
                                     e.printStackTrace();
                                 }
                                 try {
-                                    for (int k = 0; k < jsonArrayUserinfo.size(); k++) {
-                                        JsonObject job = jsonArrayUserinfo.get(k).getAsJsonObject();
-                                        homeDatabase.homeDao().deleteUserInfoEntity(job.get("_id").getAsString());
-                                        Log.e("userinfo jsonArray",job.get("_id").getAsString());
+                                    if(jsonArrayUserinfo!=null){
+                                        for (int k = 0; k < jsonArrayUserinfo.size(); k++) {
+                                            JsonObject job = jsonArrayUserinfo.get(k).getAsJsonObject();
+                                            homeDatabase.homeDao().deleteUserInfoEntity(job.get("_id").getAsString());
+                                            Log.e("userinfo jsonArray",job.get("_id").getAsString());
+                                        }
                                     }
+
                                 } catch (Exception e) {
                                     appendErrorLog("userinfo Delete error:"+e.getLocalizedMessage());
                                     e.printStackTrace();
                                 }
                                 try {
-                                    for (int k = 0; k < jsonArrayCateg.size(); k++) {
-                                        JsonObject job = jsonArrayCateg.get(k).getAsJsonObject();
-                                        homeDatabase.homeDao().deleteCategory(job.get("_id").getAsString());
-                                        Log.e("Categories jsonArray",job.get("_id").getAsString());
+                                    if(jsonArrayCateg!=null){
+                                        for (int k = 0; k < jsonArrayCateg.size(); k++) {
+                                            JsonObject job = jsonArrayCateg.get(k).getAsJsonObject();
+                                            homeDatabase.homeDao().deleteCategory(job.get("_id").getAsString());
+                                            Log.e("Categories jsonArray",job.get("_id").getAsString());
+                                        }
                                     }
+
                                 } catch (Exception e) {
                                     appendErrorLog("Categories Delete error:"+e.getLocalizedMessage());
                                     e.printStackTrace();

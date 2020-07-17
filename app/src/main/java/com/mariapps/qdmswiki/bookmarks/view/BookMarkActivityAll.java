@@ -178,6 +178,7 @@ public class BookMarkActivityAll extends AppCompatActivity implements View.OnCli
             @Override
             public void run() throws Exception {
                 list.clear();
+
                 list.addAll(HomeDatabase.getInstance(getApplicationContext()).homeDao().getBookmarkEntriesall());
             }
         }).observeOn(AndroidSchedulers.mainThread())
