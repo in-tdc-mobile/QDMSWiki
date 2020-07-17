@@ -665,8 +665,8 @@ public interface HomeDao {
             " WHERE article.Id=:articleId")
     ArticleModel getArticleInfo(String articleId);
 
-    @Query( " UPDATE DocumentEntity SET isRecommended = 'YES' WHERE Id =:documentId")
-    void updateIsRecommended(String documentId);
+    @Query( " UPDATE DocumentEntity SET isRecommended =:isRecommended WHERE Id =:documentId")
+    void updateIsRecommended(String documentId, String isRecommended);
 
     @Query("UPDATE NotificationEntity SET IsUnread = :unread where Id = :id")
     void updateNotification(String id, int unread);

@@ -457,12 +457,10 @@ public class HomeActivity extends BaseActivity implements HomeView {
                     }
                 });
                 progressDialog.dismiss();
-
             }
 
-
-
         });
+
 
         AppConfig.getInsertprogress().observe(this, new Observer<String>() {
             @Override
@@ -499,49 +497,37 @@ public class HomeActivity extends BaseActivity implements HomeView {
             e.printStackTrace();
         }
 
-       /* new AsyncTask<String,Void,String>(){
-
-            @Override
-            protected String doInBackground(String... strings) {
-           ArticleModel articleModel=     homeDatabase.homeDao().getArticleData("5f05569efdfdc33454136396");
-           Log.e("articleModel",articleModel.getArticleName()) ;
-           return null;
-            }
-        }.execute();*/
 
 
-      /* new AsyncTask<String,Void,Void>(){
-           @Override
-           protected Void doInBackground(String... strings) {
-               List<ArticleModel> artlist =homeDatabase.homeDao().getAllArticlestest();
-               int counter = 0;
-               for (int i = 0; i < artlist.size(); i++) {
-                   if (artlist.get(i).getArticleToVesselIds()!=null&&artlist.get(i).getArticleToVesselIds().size() > 0 || artlist.get(i).getArticleToPassengersVesselIds()!=null&&artlist.get(i).getArticleToPassengersVesselIds().size() > 0) {
-                     counter++;
-                   }
-               }
-               Log.e("total article count",counter+"");
-               return null;
-           }
-       }.execute();*/
+    }
 
 
+    public void testdelete(){
+        JsonParser parser = new JsonParser();
+        JsonObject data = (JsonObject) parser.parse("");//path to the JSON file.
+        JsonArray jsonArrayFiles = data.getAsJsonArray("fileChunks");
+        JsonArray jsonArrayBookMarks = data.getAsJsonArray("Bookmarks");
+        JsonArray jsonArrayNotif = data.getAsJsonArray("Notifications");
+        JsonArray jsonArrayCateg = data.getAsJsonArray("Categories");
 
-        /*new AsyncTask<String,Void,Void>(){
-            @Override
-            protected Void doInBackground(String... strings) {
-                List<DocumentModel> artlist =homeDatabase.homeDao().getAllDocstest();
-                int counter = 0;
-                for (int i = 0; i < artlist.size(); i++) {
-                    if (artlist.get(i).getVesselIds()!=null&&artlist.get(i).getVesselIds().size() > 0 || artlist.get(i).getPassengersVesselIds()!=null&&artlist.get(i).getPassengersVesselIds().size() > 0) {
-                        counter++;
-                    }
-                }
-                Log.e("total document count",counter+"");
-                return null;
-            }
-        }.execute();*/
+        for (int i = 0; i < jsonArrayFiles.size(); i++) {
+            JsonObject job = jsonArrayFiles.get(i).getAsJsonObject();
+            Log.e("ids files ",job.get("_id").getAsString());
+        }
+        for (int i = 0; i < jsonArrayBookMarks.size(); i++) {
+            JsonObject job = jsonArrayBookMarks.get(i).getAsJsonObject();
+            Log.e("ids files ",job.get("_id").getAsString());
+        }
 
+        for (int i = 0; i < jsonArrayNotif.size(); i++) {
+            JsonObject job = jsonArrayNotif.get(i).getAsJsonObject();
+            Log.e("ids files ",job.get("_id").getAsString());
+        }
+
+        for (int i = 0; i < jsonArrayCateg.size(); i++) {
+            JsonObject job = jsonArrayCateg.get(i).getAsJsonObject();
+            Log.e("ids files ",job.get("_id").getAsString());
+        }
     }
 
 
@@ -2250,7 +2236,6 @@ request.setAllowedNetworkTypes(
     }
 
     public void setRecommendedList() {
-
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
@@ -2268,42 +2253,52 @@ request.setAllowedNetworkTypes(
 
             @Override
             public void onComplete() {
-                for (int i = 0; i < documentList.size(); i++) {
-                    boolean isRecommended = false;
-                    List<TagModel> tagList = documentList.get(i).getTags();
-                    for (int j = 0; j < userSettingsList.size(); j++) {
-                        //loop tags
-                        List<UserSettingsTagModel> userSettingsTagList = userSettingsList.get(j).getTags();
-                        for (int k = 0; k < tagList.size(); k++) {
-                            for (int l = 0; l < userSettingsTagList.size(); l++) {
-                                if (tagList.get(k).getId().equals(userSettingsTagList.get(l).getId())) {
-                                    documentList.get(i).setIsRecommended("YES");
-                                    Log.e("documentList","yes");
-                                    homePresenter.updateIsRecommended(documentList.get(i).getId());
-                                    isRecommended = true;
-                                    break;
+
+                if(userSettingsList.size()==0){
+                    for (int i = 0; i < documentList.size(); i++) {
+                        documentList.get(i).setIsRecommended("NO");
+                        Log.e("documentList","no");
+                        homePresenter.updateIsRecommended(documentList.get(i).getId(),"NO");
+                    }
+                }
+                else {
+                    for (int i = 0; i < documentList.size(); i++) {
+                        boolean isRecommended = false;
+                        List<TagModel> tagList = documentList.get(i).getTags();
+                        for (int j = 0; j < userSettingsList.size(); j++) {
+                            //loop tags
+                            List<UserSettingsTagModel> userSettingsTagList = userSettingsList.get(j).getTags();
+                            for (int k = 0; k < tagList.size(); k++) {
+                                for (int l = 0; l < userSettingsTagList.size(); l++) {
+                                    if (tagList.get(k).getId().equals(userSettingsTagList.get(l).getId())) {
+                                        documentList.get(i).setIsRecommended("YES");
+                                        Log.e("documentList","yes");
+                                        homePresenter.updateIsRecommended(documentList.get(i).getId(),"YES");
+                                        isRecommended = true;
+                                        break;
+                                    }
                                 }
                             }
-                        }
-                        //loop categories
-                        if (!isRecommended) {
-                            List<UserSettingsCategoryModel> userSettingsCategoryList = userSettingsList.get(j).getCategory();
-                            for (int l = 0; l < userSettingsCategoryList.size(); l++) {
-                                if (documentList.get(i).getCategoryId().equals(userSettingsCategoryList.get(l).getId())) {
-                                    documentList.get(i).setIsRecommended("YES");
-                                    homePresenter.updateIsRecommended(documentList.get(i).getId());
-                                    isRecommended = true;
-                                    break;
+                            //loop categories
+                            if (!isRecommended) {
+                                List<UserSettingsCategoryModel> userSettingsCategoryList = userSettingsList.get(j).getCategory();
+                                for (int l = 0; l < userSettingsCategoryList.size(); l++) {
+                                    if (documentList.get(i).getCategoryId().equals(userSettingsCategoryList.get(l).getId())) {
+                                        documentList.get(i).setIsRecommended("YES");
+                                        homePresenter.updateIsRecommended(documentList.get(i).getId(),"YES");
+                                        isRecommended = true;
+                                        break;
+                                    }
                                 }
                             }
+
                         }
+
 
                     }
                 }
                 getRecommendedList();
             }
-
-
             @Override
             public void onError(Throwable e) {
 

@@ -1310,11 +1310,11 @@ public class HomePresenter {
         });
     }
 
-    public void updateIsRecommended(String documentId) {
+    public void updateIsRecommended(String documentId,String isRecommended) {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-                homeDatabase.homeDao().updateIsRecommended(documentId);
+                homeDatabase.homeDao().updateIsRecommended(documentId,isRecommended);
 
             }
         }).observeOn(AndroidSchedulers.mainThread())
