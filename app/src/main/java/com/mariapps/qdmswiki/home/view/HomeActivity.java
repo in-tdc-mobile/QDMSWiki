@@ -2412,7 +2412,6 @@ request.setAllowedNetworkTypes(
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-                homeDatabase.homeDao().deleteRecommendedDocuments();
                 documentList = homeDatabase.homeDao().getDocuments();
                 userSettingsList.clear();
                 userSettingsList.addAll(homeDatabase.homeDao().getuserSettings());
@@ -2444,7 +2443,6 @@ request.setAllowedNetworkTypes(
                                 for (int l = 0; l < userSettingsTagList.size(); l++) {
                                     if (tagList.get(k).getId().equals(userSettingsTagList.get(l).getId())) {
                                         documentList.get(i).setIsRecommended("YES");
-                                        Log.e("documentList tagrec",documentsList.get(i).documentName);
                                         homePresenter.updateIsRecommended(documentList.get(i).getId(),"YES");
                                         isRecommended = true;
                                         break;
@@ -2457,7 +2455,6 @@ request.setAllowedNetworkTypes(
                                 for (int l = 0; l < userSettingsCategoryList.size(); l++) {
                                     if (documentList.get(i).getCategoryId().equals(userSettingsCategoryList.get(l).getId())) {
                                         documentList.get(i).setIsRecommended("YES");
-                                        Log.e("documentList catrec",documentsList.get(i).documentName);
                                         homePresenter.updateIsRecommended(documentList.get(i).getId(),"YES");
                                         isRecommended = true;
                                         break;
