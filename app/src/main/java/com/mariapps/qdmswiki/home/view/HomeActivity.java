@@ -493,7 +493,8 @@ public class HomeActivity extends BaseActivity implements HomeView {
         // setRecommendedList();
 
         try {
-            getRecommendedList();
+            setRecommendedList();
+            //getRecommendedList();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -502,9 +503,16 @@ public class HomeActivity extends BaseActivity implements HomeView {
     new AsyncTask<String,Void,String>(){
         @Override
         protected String doInBackground(String... strings) {
-           // homeDatabase.homeDao().deleteBookmarkEntrybyid("5f11ac276101ce9a846e07a2");
+
+           // homeDatabase.homeDao().deleteBookmarkEntrybyid("5f12037f6101ce9a846e07f3");
             //homeDatabase.homeDao().deleteBookmarkEntrybyid("5f11adfa6101ce9a846e07a6");
-        //    testdelete();
+            //btestdelete();
+            //homeDatabase.homeDao().getBookmarks();
+        /* List<BookmarkModel> blist =   homeDatabase.homeDao().getBookmarkEntriesForDeletebyid("5f12037f6101ce9a846e07f3");
+         List<BookmarkEntryModel> belist = blist.get(0).getBookmarkEntries();
+            for (int i = 0; i < belist.size(); i++) {
+             homeDatabase.homeDao().deleteBookmarkEntrybyid(belist.get(i).getBookmarkId());
+            }*/
             return null;
         }
     }.execute();
@@ -517,24 +525,9 @@ public class HomeActivity extends BaseActivity implements HomeView {
             JsonObject data = (JsonObject) parser.parse("{\n" +
                     "\t\"Notifications\": [{\n" +
                     "\t\t\"_id\": \"5c07cb9b6101d16830cdb732\"\n" +
-                    "\t}, {\n" +
-                    "\t\t\"_id\": \"5c07cbcf6101d16830cdb733\"\n" +
-                    "\t}, {\n" +
-                    "\t\t\"_id\": \"5c07cbdf6101d16830cdb734\"\n" +
                     "\t}],\n" +
                     "\t\"Bookmarks\": [{\n" +
                     "\t\t\"_id\": \"5a7c1c663b6a9e7854a53426\"\n" +
-                    "\t}, {\n" +
-                    "\t\t\"_id\": \"5ab9fa543b6a9e9cf84a7123\"\n" +
-                    "\t}],\n" +
-                    "\t\"Categories\": [{\n" +
-                    "\t\t\"_id\": \"59c253063b6a9e789cb1b8e0\"\n" +
-                    "\t}],\n" +
-                    "\t\"UserInfo\": [{\n" +
-                    "\t\t\"_id\": \"59bc537c3b6abc8ffcf55c69\"\n" +
-                    "\t}],\n" +
-                    "\t\"UserViewedDocs\": [{\n" +
-                    "\t\t\"_id\": \"59c892153b76db7d2cf484b3\"\n" +
                     "\t}]\n" +
                     "}");
             JsonArray jsonArrayFiles = data.getAsJsonArray("fileChunks");
@@ -664,10 +657,6 @@ public class HomeActivity extends BaseActivity implements HomeView {
             e.printStackTrace();
         }
     }
-
-
-
-
 
 
 
@@ -2455,7 +2444,7 @@ request.setAllowedNetworkTypes(
                                 for (int l = 0; l < userSettingsTagList.size(); l++) {
                                     if (tagList.get(k).getId().equals(userSettingsTagList.get(l).getId())) {
                                         documentList.get(i).setIsRecommended("YES");
-                                        Log.e("documentList","yes");
+                                        Log.e("documentList tagrec",documentsList.get(i).documentName);
                                         homePresenter.updateIsRecommended(documentList.get(i).getId(),"YES");
                                         isRecommended = true;
                                         break;
@@ -2468,6 +2457,7 @@ request.setAllowedNetworkTypes(
                                 for (int l = 0; l < userSettingsCategoryList.size(); l++) {
                                     if (documentList.get(i).getCategoryId().equals(userSettingsCategoryList.get(l).getId())) {
                                         documentList.get(i).setIsRecommended("YES");
+                                        Log.e("documentList catrec",documentsList.get(i).documentName);
                                         homePresenter.updateIsRecommended(documentList.get(i).getId(),"YES");
                                         isRecommended = true;
                                         break;
@@ -2481,6 +2471,7 @@ request.setAllowedNetworkTypes(
                     }
                 }
                 getRecommendedList();
+
             }
             @Override
             public void onError(Throwable e) {

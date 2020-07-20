@@ -310,7 +310,7 @@ public class InsertionService extends Service implements HomeView {
                             try {
                                 if (receiverList.get(j).getRecevierId().equals(sessionManager.getUserInfoId())) {
                                     appendLog("Extracting notifications");
-                                    notificationList.get(i1).setIsUnread(receiverList.get(j).getUnread());
+                                    notificationList.get(i1).setIsUnread(!receiverList.get(j).getUnread());
                                     homePresenter.deleteNotification(notificationList.get(i1));
                                     break;
                                 }
@@ -323,6 +323,29 @@ public class InsertionService extends Service implements HomeView {
                 catch (Exception e){
                     Log.e("insertionservice2", e.getLocalizedMessage());
                 }
+
+
+                try {
+                    for (int i2 = 0; i2 < bookmarkList.size(); i2++) {
+                        homePresenter.deleteBookmark(bookmarkList.get(i2));
+                        // homeDatabase.homeDao().deleteBookmark(bookmarkList.get(i2).getId());
+                        List<BookmarkEntryModel> bookmarkEntryList = bookmarkList.get(i2).getBookmarkEntries();
+                        for (int j = 0; j < bookmarkEntryList.size(); j++) {
+                            bookmarkEntryList.get(j).setDocumentId(bookmarkList.get(i2).getDocumentId());
+                            if(bookmarkList.get(i2).getUserId().equals(sessionManager.getUserInfoId())){
+                                homePresenter.deleteBookmarkEntries(bookmarkEntryList.get(j));
+                            }
+                        }
+
+                            //homeDatabase.homeDao().deleteBookmarkEntrybyid(bookmarkEntryList.get(i1).getBookmarkId());
+                            //homeDatabase.homeDao().insertBookmarkEntriessingle(bookmarkEntryList.get(i1));
+                            AppConfig.getInsertprogress().postValue("Inserting bookmarks to database");
+                        //homePresenter.insertBookmarkEntries(bookmarkEntryList);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
 
                 Log.e("insertionservice", "filedelete");
                 try {
@@ -453,373 +476,16 @@ public class InsertionService extends Service implements HomeView {
                 File folder = new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()); //This is just to cast to a File type since you pass it as a String
                 Log.e("insertionfolder",folder.getAbsolutePath());
                 File[] filesInFolder = folder.listFiles(); // This returns all the folders and files in your path
-                for (int i = 0; i < filesInFolder.length; i++) { //For each of the entries do:
-                    if (filesInFolder[i].isDirectory()) {
-                        appendLog("Extracting directory " + filesInFolder[i].getName());
-                        File[] filesInsideFolder = filesInFolder[i].listFiles();
-                        for (int j = 0; j < filesInsideFolder.length; j++) {
-                            copyFile(new File(filesInsideFolder[j].getAbsolutePath()), new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/Images/" + filesInsideFolder[j].getName()));
-                        }
-                    } else {
-                        if (filesInFolder[i].getName().contains("file")) {
-                            try {
-                                fileList.clear();
-                                if (type.equals("U")) {
-                                    try {
-                                        fileList.addAll(readJsonStream(new FileInputStream(filesInFolder[i])));
-                                        for (int index = 0;index < fileList.size(); index++) {
-                                            homePresenter.deleteFile(fileList.get(index));
-                                        }
-                                    } catch (IOException e) {
-                                        sessionManager.putJsonError("y");
-                                        appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
-                                        e.printStackTrace();
-                                    }
-                                }
-
-                                else{
-                                    try {
-                                        Log.e("allocatedbefore", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
-                                        Log.e("filenameis",filesInFolder[i].getName());
-                                        fileList.addAll(readJsonStream(new FileInputStream(filesInFolder[i])));
-                                        Log.e("allocatedafter", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
-                                    } catch (Exception e) {
-                                        sessionManager.putJsonError("y");
-                                        appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
-                                        Log.e("catchedreader", "" + filesInFolder[i].getName() + "   " + e.getLocalizedMessage());
-                                    }
-                                    homeDatabase.homeDao().insertFileListModelbylist(fileList);
-                                    //Log.e("fileinsertion","list size is "+fileList.size()+"  count is "+filecount+"filenameis  "+fileList.get(0).getId());
-                                    // Log.e("allocatedafter3", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
-                                }
-
-                            } catch (JsonSyntaxException e) {
-                                sessionManager.putJsonError("y");
-                                appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
-                                appendLog("File json syntax exception : " + e.getMessage());
-                                e.printStackTrace();
-                            }
-                        }
-                        else if (filesInFolder[i].getName().contains("docs")) {
-                            try {
-                                appendLog("Extracting document " + filesInFolder[i].getName());
-                                documentList.clear();
-                                if(type.equals("U")){
-                                    try {
-                                        documentList.addAll(readJsonStreamfordoc(new FileInputStream(filesInFolder[i])));
-                                        if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
-                                            for (int i1 = 0; i1 < documentList.size(); i1++) {
-                                                if (documentList.get(i1).getVesselIds()!=null&&documentList.get(i1).getVesselIds().size() > 0 ||
-                                                        documentList.get(i1).getPassengersVesselIds()!=null&& documentList.get(i1).getPassengersVesselIds().size() > 0) {
-                                                    documentList.get(i1).setIsRecommended("NO");
-                                                    List<TagModel> tagList = documentList.get(i1).getTags();
-                                                    homeDatabase.homeDao().insertTag(tagList);
-                                                    homePresenter.deleteDocumentSingle(documentList.get(i1));
-                                                }
-                                            }
-                                            AppConfig.getInsertprogress().postValue("Inserting documents to database");
-                                        } else {
-
-                                            for (int i1 = 0; i1 < documentList.size(); i1++) {
-                                                    documentList.get(i1).setIsRecommended("NO");
-                                                    List<TagModel> tagList = documentList.get(i1).getTags();
-                                                    homeDatabase.homeDao().insertTag(tagList);
-                                                    homePresenter.deleteDocumentSingle(documentList.get(i1));
-                                            }
-
-                                        }
-                                    } catch (IOException e) {
-                                        sessionManager.putJsonError("y");
-                                        appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
-                                        e.printStackTrace();
-                                    }
-                                }
-                                else{
-                                    try {
-                                        documentList.addAll(readJsonStreamfordoc(new FileInputStream(filesInFolder[i])));
-                                    } catch (Exception e) {
-                                        sessionManager.putJsonError("y");
-                                        appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
-                                    }
-                                    //documentList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<DocumentModel>>() {}.getType());
-                                    if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
-                                        List<DocumentModelObj> objList = new ArrayList<>();
-                                        List<DocumentModel> docList = new ArrayList<>();
-                                        for (int i1 = 0; i1 < documentList.size(); i1++) {
-                                            if (documentList.get(i1).getVesselIds()!=null&&documentList.get(i1).getVesselIds().size() > 0 ||
-                                                    documentList.get(i1).getPassengersVesselIds()!=null&& documentList.get(i1).getPassengersVesselIds().size() > 0) {
-                                                documentList.get(i1).setIsRecommended("NO");
-                                                List<TagModel> tagList = documentList.get(i1).getTags();
-                                                homeDatabase.homeDao().insertTag(tagList);
-                                                DocumentModelObj obj = new DocumentModelObj(documentList.get(i1).id, documentList.get(i1).documentName, documentList.get(i1).documentData);
-                                                objList.add(obj);
-                                                docList.add(documentList.get(i1));
-                                                //homePresenter.insertDocumentsSingle(documentList.get(i));
-                                            }
-                                        }
-                                        dbox.put(objList);
-                                        homeDatabase.homeDao().insertDocumentbylist(docList);
-                                        AppConfig.getInsertprogress().postValue("Inserting documents to database");
-                                    } else {
-                                        List<DocumentModelObj> objList = new ArrayList<>();
-                                        for (int i1 = 0; i1 < documentList.size(); i1++) {
-                                            documentList.get(i1).setIsRecommended("NO");
-                                            List<TagModel> tagList = documentList.get(i1).getTags();
-                                            homeDatabase.homeDao().insertTag(tagList);
-                                            DocumentModelObj obj = new DocumentModelObj(documentList.get(i1).id, documentList.get(i1).documentName, documentList.get(i1).documentData);
-                                            objList.add(obj);
-                                            //homePresenter.insertDocumentsSingle(documentList.get(i));
-                                        }
-                                        dbox.put(objList);
-                                        homeDatabase.homeDao().insertDocumentbylist(documentList);
-                                        Log.e("docinsertion", "list size is " + documentList.size() + "docname is " + documentList.get(0).documentName);
-                                        AppConfig.getInsertprogress().postValue("Inserting documents to database");
-                                    }
-                                }
-                            } catch (JsonSyntaxException e)
-                            {
-                                sessionManager.putJsonError("y");
-                                appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
-                                appendLog("Doc json syntax exception : " + e.getMessage());
-                                e.printStackTrace();
-                            }
-                        }
-                        else if (filesInFolder[i].getName().contains("art")) { //check that it's not a dir
-                            try {
-                                appendLog("Extracting article " + filesInFolder[i].getName());
-                                articleList.clear();
-                                if(type.equals("U")){
-                                    try {
-                                        articleList.addAll(readJsonStreamforarticle(new FileInputStream(filesInFolder[i])));
-                                        if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
-                                            for (int i1 = 0; i1 < articleList.size(); i1++) {
-                                                if (articleList.get(i1).getArticleToVesselIds()!=null&&articleList.get(i1).getArticleToVesselIds().size() > 0 ||
-                                                        articleList.get(i1).getArticleToPassengersVesselIds()!=null&&articleList.get(i1).getArticleToPassengersVesselIds().size() > 0) {
-                                                    homePresenter.deleteArticlessingle(articleList.get(i1));
-                                                }
-                                            }
-                                            AppConfig.getInsertprogress().postValue("Inserting articles to database");
-                                        } else {
-                                            for (int i1 = 0; i1 < articleList.size(); i1++) {
-                                                homePresenter.deleteArticlessingle(articleList.get(i1));
-                                            }
-                                        }
-                                    } catch (IOException e) {
-                                        sessionManager.putJsonError("y");
-                                        appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
-                                        e.printStackTrace();
-                                    }
-                                }
-                                else{
-                                    try {
-                                        articleList.addAll(readJsonStreamforarticle(new FileInputStream(filesInFolder[i])));
-                                    } catch (Exception e) {
-                                        sessionManager.putJsonError("y");
-                                        appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
-                                    }
-                                    // articleList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ArticleModel>>() {}.getType());
-                                    List<ArticleModel> newlist = new ArrayList<>();
-                                    if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
-                                        List<ArticleModelObj> objList = new ArrayList<>();
-                                        for (int i1 = 0; i1 < articleList.size(); i1++) {
-                                            if (articleList.get(i1).getArticleToVesselIds()!=null&&articleList.get(i1).getArticleToVesselIds().size() > 0 ||
-                                                    articleList.get(i1).getArticleToPassengersVesselIds()!=null&&articleList.get(i1).getArticleToPassengersVesselIds().size() > 0) {
-                                                newlist.add(articleList.get(i1));
-                                                ArticleModelObj obj = new ArticleModelObj(articleList.get(i1).getId(), articleList.get(i1).getArticleName(), articleList.get(i1).documentData);
-                                                objList.add(obj);
-                                            }
-                                        }
-                                        abox.put(objList);
-                                        homeDatabase.homeDao().insertArticlebylist(newlist);
-                                        AppConfig.getInsertprogress().postValue("Inserting articles to database");
-                                    } else {
-                                        List<ArticleModelObj> objList = new ArrayList<>();
-                                        for (int i1 = 0; i1 < articleList.size(); i1++) {
-                                            ArticleModelObj obj = new ArticleModelObj(articleList.get(i1).getId(), articleList.get(i1).getArticleName(), articleList.get(i1).documentData);
-                                            objList.add(obj);
-                                        }
-                                        abox.put(objList);
-                                        homeDatabase.homeDao().insertArticlebylist(articleList);
-                                        AppConfig.getInsertprogress().postValue("Inserting articles to database");
-                                    }
-                                }
-                            } catch (JsonSyntaxException e) {
-                                sessionManager.putJsonError("y");
-                                appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
-                                appendLog("Article json syntax exception : " + e.getMessage());
-                                e.printStackTrace();
-                            }
-                        }
-                        else if (filesInFolder[i].getName().contains("image")) {
-                            try {
-                                JsonParser parser = new JsonParser();
-                                JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
-                                appendLog("Extracting image " + filesInFolder[i].getName());
-                                JsonArray jsonArray = data.getAsJsonArray("Images");
-                                imageList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ImageModel>>() {
-                                }.getType());
-                                appendLog("Extracting image size" + imageList.size()+"");
-
-//                                for (int i = 0; i < imageList.size(); i++) {
-//                                    homePresenter.deleteImage(imageList.get(i));
-//
-                                for (int i1 = 0; i1 < imageList.size(); i1++) {
-                                    try {
-                                        if (imageList.get(i1).getImageStream() != null && !imageList.get(i1).getImageStream().isEmpty())
-                                            decodeFile(imageList.get(i1).getImageStream(), imageList.get(i1).getImageName());
-                                        AppConfig.getInsertprogress().postValue("Inserting images to database");
-                                    } catch (Exception e) {
-                                        try {
-                                            if (imageList.get(i1).getImageDataAsString() != null && !imageList.get(i1).getImageDataAsString().isEmpty())
-                                                decodeFile(imageList.get(i1).getImageDataAsString(), imageList.get(i1).getImageName());
-                                            AppConfig.getInsertprogress().postValue("Inserting images to database");
-                                        } catch (Exception e1) {
-                                            Log.e("errorinimagejson",e.getLocalizedMessage());
-                                            appendLog("Extracting image size error" + e1.getLocalizedMessage());
-                                            continue;
-                                        }
-                                    }
-                                }
-
-                            } catch (JsonSyntaxException e) {
-                                sessionManager.putJsonError("y");
-                                appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
-                                appendLog("Image json syntax exception : " + e.getMessage());
-                                e.printStackTrace();
-                            }
-                        }
-                        else if (filesInFolder[i].getName().contains("category")) {
-                            try {
-                                JsonParser parser = new JsonParser();
-                                JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
-                                appendLog("Extracting category " + filesInFolder[i].getName());
-                                JsonArray jsonArray = data.getAsJsonArray("Categories");
-                                categoryList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<CategoryModel>>() {
-                                }.getType());
-                                for (int i1 = 0; i1 < categoryList.size(); i1++) {
-                                    homeDatabase.homeDao().deleteCategory(categoryList.get(i1).getId());
-                                    homeDatabase.homeDao().insertCategory(categoryList.get(i1));
-                                    AppConfig.getInsertprogress().postValue("Inserting categories to database");
-                                }
-                            } catch (JsonSyntaxException e) {
-                                sessionManager.putJsonError("y");
-                                appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
-                                appendLog("Category json syntax exception : " + e.getMessage());
-                                e.printStackTrace();
-                            }
-                        }
-                        else if (filesInFolder[i].getName().contains("bookmarks")) {
-                            try {
-                                JsonParser parser = new JsonParser();
-                                JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
-                                appendLog("Extracting bookmark " + filesInFolder[i].getName());
-                                JsonArray jsonArray = data.getAsJsonArray("Bookmarks");
-                                bookmarkList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<BookmarkModel>>() {
-                                }.getType());
-                                //homePresenter.deleteBookmarks(bookmarkList);
-                                for (int i2 = 0; i2 < bookmarkList.size(); i2++) {
-                                    homePresenter.deleteBookmark(bookmarkList.get(i2));
-                                   // homeDatabase.homeDao().deleteBookmark(bookmarkList.get(i2).getId());
-                                    List<BookmarkEntryModel> bookmarkEntryList = bookmarkList.get(i2).getBookmarkEntries();
-                                    for (int j = 0; j < bookmarkEntryList.size(); j++) {
-                                        bookmarkEntryList.get(j).setDocumentId(bookmarkList.get(i2).getDocumentId());
-                                    }
-                                    for (int i1 = 0; i1 < bookmarkEntryList.size(); i1++) {
-                                        if(bookmarkList.get(i).getUserId().equals(sessionManager.getUserInfoId())){
-                                            homePresenter.deleteBookmarkEntries(bookmarkEntryList.get(i1));
-                                        }
-                                        //homeDatabase.homeDao().deleteBookmarkEntrybyid(bookmarkEntryList.get(i1).getBookmarkId());
-                                        //homeDatabase.homeDao().insertBookmarkEntriessingle(bookmarkEntryList.get(i1));
-                                        AppConfig.getInsertprogress().postValue("Inserting bookmarks to database");
-                                    }
-                                    //homePresenter.insertBookmarkEntries(bookmarkEntryList);
-                                }
-                            } catch (JsonSyntaxException e) {
-                                sessionManager.putJsonError("y");
-                                appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
-                                appendLog("Bookmark json syntax exception : " + e.getMessage());
-                                e.printStackTrace();
-                            }
-                        }
-                        else if (filesInFolder[i].getName().contains("notifications")) {
-                            try {
-                                JsonParser parser = new JsonParser();
-                                JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
-                                JsonArray jsonArray = data.getAsJsonArray("Notifications");
-                                notificationList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<NotificationModel>>() {
-                                }.getType());
-                            } catch (JsonSyntaxException e) {
-                                sessionManager.putJsonError("y");
-                                appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
-                                appendLog("Notification json syntax exception : " + e.getMessage());
-                                e.printStackTrace();
-                            }
-                        }
-                        else if (filesInFolder[i].getName().contains("userInfo")) {
-                            try {
-                                JsonParser parser = new JsonParser();
-                                JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
-                                appendLog("Extracting user info " + filesInFolder[i].getName());
-                                JsonArray jsonArray = data.getAsJsonArray("UserInfo");
-                                userInfoList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<UserInfoModel>>() {
-                                }.getType());
-                                for (int i1 = 0; i1 < userInfoList.size(); i1++) {
-                                    if (String.valueOf(userInfoList.get(i1).getUserId()).equals(sessionManager.getUserId())) {
-                                        sessionManager.setUserInfoId(userInfoList.get(i1).getId());
-                                        break;
-                                    }
-                                }
-                                for (int i1 = 0; i1 < userInfoList.size(); i1++) {
-                                    if (!(String.valueOf(userInfoList.get(i1).getUserId()).equals(sessionManager.getUserId()))) {
-                                        userInfoList.get(i1).setImageName("");
-                                    } else {
-                                        userInfoList.get(i1).setImageName(userInfoList.get(i1).getImageName());
-                                    }
-                                    homeDatabase.homeDao().deleteUserInfoEntity(userInfoList.get(i1).getId());
-                                    homeDatabase.homeDao().insertUserInfo(userInfoList.get(i1));
-                                }
-                            } catch (JsonSyntaxException e) {
-                                sessionManager.putJsonError("y");
-                                appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
-                                appendLog("USer Info json syntax exception : " + e.getMessage());
-                                e.printStackTrace();
-                            }
-                        }
-                        else if (filesInFolder[i].getName().contains("userSet")) {
-                            try {
-                                JsonParser parser = new JsonParser();
-                                JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
-                                JsonArray jsonArray = data.getAsJsonArray("UserSettings");
-                                userSettingsList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<UserSettingsModel>>() {
-                                }.getType());
-                            } catch (JsonSyntaxException e) {
-                                sessionManager.putJsonError("y");
-                                appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
-                                appendLog("User settings json syntax exception : " + e.getMessage());
-                                e.printStackTrace();
-                            }
-                        }
-                        else if (filesInFolder[i].getName().contains("forms")) {
-                            try {
-                                JsonParser parser = new JsonParser();
-                                JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
-                                appendLog("Extracting form " + filesInFolder[i].getName());
-                                JsonArray jsonArray = data.getAsJsonArray("Forms");
-                                formsList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FormsModel>>() {
-                                }.getType());
-                                for (int i1 = 0; i1 < formsList.size(); i1++) {
-                                    homeDatabase.homeDao().deleteForm(formsList.get(i1).getId());
-                                    homeDatabase.homeDao().insertForm(formsList.get(i1));
-
-                                }
-                            } catch (JsonSyntaxException e) {
-                                sessionManager.putJsonError("y");
-                                appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
-                                appendLog("Forms json syntax exception : " + e.getMessage());
-                                e.printStackTrace();
-                            }
-                        }
-                        else if (filesInFolder[i].getName().contains("delete")) {
+                Boolean hasDelete=false;
+                for (int i = 0; i < filesInFolder.length; i++) {
+                    if(filesInFolder[i].getName().contains("delete")){
+                        hasDelete=true;
+                    }
+                }
+                if(hasDelete){
+                    for (int i = 0; i < filesInFolder.length; i++) {
+                        if(filesInFolder[i].getName().contains("delete")){
+                            hasDelete=true;
                             try {
                                 JsonParser parser = new JsonParser();
                                 JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));
@@ -894,7 +560,12 @@ public class InsertionService extends Service implements HomeView {
                                     if(jsonArrayBookMarks!=null){
                                         for (int k = 0; k < jsonArrayBookMarks.size(); k++) {
                                             JsonObject job = jsonArrayBookMarks.get(k).getAsJsonObject();
-                                            homeDatabase.homeDao().deleteBookmarkEntrybyid(job.get("_id").getAsString());
+                                            List<BookmarkModel> blist =   homeDatabase.homeDao().getBookmarkEntriesForDeletebyid(job.get("_id").getAsString());
+                                            List<BookmarkEntryModel> belist = blist.get(0).getBookmarkEntries();
+                                            for (int l = 0; l < belist.size(); l++) {
+                                                homeDatabase.homeDao().deleteBookmarkEntrybyid(belist.get(l).getBookmarkId());
+                                            }
+                                            //homeDatabase.homeDao().deleteBookmarkEntrybyid(job.get("_id").getAsString());
                                             Log.e("Bookmarks jsonArrayBook",job.get("_id").getAsString());
                                         }
                                     }
@@ -945,6 +616,716 @@ public class InsertionService extends Service implements HomeView {
                             } catch (JsonSyntaxException e) {
                                 appendErrorLog("Delete error:"+e.getLocalizedMessage());
                                 e.printStackTrace();
+                            }
+                        }
+                    }
+                    for (int i = 0; i < filesInFolder.length; i++) { //For each of the entries do:
+                        if (filesInFolder[i].isDirectory()) {
+                            appendLog("Extracting directory " + filesInFolder[i].getName());
+                            File[] filesInsideFolder = filesInFolder[i].listFiles();
+                            for (int j = 0; j < filesInsideFolder.length; j++) {
+                                copyFile(new File(filesInsideFolder[j].getAbsolutePath()), new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/Images/" + filesInsideFolder[j].getName()));
+                            }
+                        }
+                        else {
+                            if (filesInFolder[i].getName().contains("file")) {
+                                try {
+                                    fileList.clear();
+                                    if (type.equals("U")) {
+                                        try {
+                                            fileList.addAll(readJsonStream(new FileInputStream(filesInFolder[i])));
+                                            for (int index = 0;index < fileList.size(); index++) {
+                                                homePresenter.deleteFile(fileList.get(index));
+                                            }
+                                        } catch (IOException e) {
+                                            sessionManager.putJsonError("y");
+                                            appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                            e.printStackTrace();
+                                        }
+                                    }
+
+                                    else{
+                                        try {
+                                            Log.e("allocatedbefore", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
+                                            Log.e("filenameis",filesInFolder[i].getName());
+                                            fileList.addAll(readJsonStream(new FileInputStream(filesInFolder[i])));
+                                            Log.e("allocatedafter", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
+                                        } catch (Exception e) {
+                                            sessionManager.putJsonError("y");
+                                            appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                            Log.e("catchedreader", "" + filesInFolder[i].getName() + "   " + e.getLocalizedMessage());
+                                        }
+                                        homeDatabase.homeDao().insertFileListModelbylist(fileList);
+                                        //Log.e("fileinsertion","list size is "+fileList.size()+"  count is "+filecount+"filenameis  "+fileList.get(0).getId());
+                                        // Log.e("allocatedafter3", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
+                                    }
+
+                                } catch (JsonSyntaxException e) {
+                                    sessionManager.putJsonError("y");
+                                    appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                    appendLog("File json syntax exception : " + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            }
+                            else if (filesInFolder[i].getName().contains("docs")) {
+                                try {
+                                    appendLog("Extracting document " + filesInFolder[i].getName());
+                                    documentList.clear();
+                                    if(type.equals("U")){
+                                        try {
+                                            documentList.addAll(readJsonStreamfordoc(new FileInputStream(filesInFolder[i])));
+                                            if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
+                                                for (int i1 = 0; i1 < documentList.size(); i1++) {
+                                                    if (documentList.get(i1).getVesselIds()!=null&&documentList.get(i1).getVesselIds().size() > 0 ||
+                                                            documentList.get(i1).getPassengersVesselIds()!=null&& documentList.get(i1).getPassengersVesselIds().size() > 0) {
+                                                        documentList.get(i1).setIsRecommended("NO");
+                                                        List<TagModel> tagList = documentList.get(i1).getTags();
+                                                        homeDatabase.homeDao().insertTag(tagList);
+                                                        homePresenter.deleteDocumentSingle(documentList.get(i1));
+                                                    }
+                                                }
+                                                AppConfig.getInsertprogress().postValue("Inserting documents to database");
+                                            } else {
+
+                                                for (int i1 = 0; i1 < documentList.size(); i1++) {
+                                                    documentList.get(i1).setIsRecommended("NO");
+                                                    List<TagModel> tagList = documentList.get(i1).getTags();
+                                                    homeDatabase.homeDao().insertTag(tagList);
+                                                    homePresenter.deleteDocumentSingle(documentList.get(i1));
+                                                }
+
+                                            }
+                                        } catch (IOException e) {
+                                            sessionManager.putJsonError("y");
+                                            appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    else{
+                                        try {
+                                            documentList.addAll(readJsonStreamfordoc(new FileInputStream(filesInFolder[i])));
+                                        } catch (Exception e) {
+                                            sessionManager.putJsonError("y");
+                                            appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                        }
+                                        //documentList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<DocumentModel>>() {}.getType());
+                                        if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
+                                            List<DocumentModelObj> objList = new ArrayList<>();
+                                            List<DocumentModel> docList = new ArrayList<>();
+                                            for (int i1 = 0; i1 < documentList.size(); i1++) {
+                                                if (documentList.get(i1).getVesselIds()!=null&&documentList.get(i1).getVesselIds().size() > 0 ||
+                                                        documentList.get(i1).getPassengersVesselIds()!=null&& documentList.get(i1).getPassengersVesselIds().size() > 0) {
+                                                    documentList.get(i1).setIsRecommended("NO");
+                                                    List<TagModel> tagList = documentList.get(i1).getTags();
+                                                    homeDatabase.homeDao().insertTag(tagList);
+                                                    DocumentModelObj obj = new DocumentModelObj(documentList.get(i1).id, documentList.get(i1).documentName, documentList.get(i1).documentData);
+                                                    objList.add(obj);
+                                                    docList.add(documentList.get(i1));
+                                                    //homePresenter.insertDocumentsSingle(documentList.get(i));
+                                                }
+                                            }
+                                            dbox.put(objList);
+                                            homeDatabase.homeDao().insertDocumentbylist(docList);
+                                            AppConfig.getInsertprogress().postValue("Inserting documents to database");
+                                        } else {
+                                            List<DocumentModelObj> objList = new ArrayList<>();
+                                            for (int i1 = 0; i1 < documentList.size(); i1++) {
+                                                documentList.get(i1).setIsRecommended("NO");
+                                                List<TagModel> tagList = documentList.get(i1).getTags();
+                                                homeDatabase.homeDao().insertTag(tagList);
+                                                DocumentModelObj obj = new DocumentModelObj(documentList.get(i1).id, documentList.get(i1).documentName, documentList.get(i1).documentData);
+                                                objList.add(obj);
+                                                //homePresenter.insertDocumentsSingle(documentList.get(i));
+                                            }
+                                            dbox.put(objList);
+                                            homeDatabase.homeDao().insertDocumentbylist(documentList);
+                                            Log.e("docinsertion", "list size is " + documentList.size() + "docname is " + documentList.get(0).documentName);
+                                            AppConfig.getInsertprogress().postValue("Inserting documents to database");
+                                        }
+                                    }
+                                } catch (JsonSyntaxException e)
+                                {
+                                    sessionManager.putJsonError("y");
+                                    appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                    appendLog("Doc json syntax exception : " + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            }
+                            else if (filesInFolder[i].getName().contains("art")) { //check that it's not a dir
+                                try {
+                                    appendLog("Extracting article " + filesInFolder[i].getName());
+                                    articleList.clear();
+                                    if(type.equals("U")){
+                                        try {
+                                            articleList.addAll(readJsonStreamforarticle(new FileInputStream(filesInFolder[i])));
+                                            if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
+                                                for (int i1 = 0; i1 < articleList.size(); i1++) {
+                                                    if (articleList.get(i1).getArticleToVesselIds()!=null&&articleList.get(i1).getArticleToVesselIds().size() > 0 ||
+                                                            articleList.get(i1).getArticleToPassengersVesselIds()!=null&&articleList.get(i1).getArticleToPassengersVesselIds().size() > 0) {
+                                                        homePresenter.deleteArticlessingle(articleList.get(i1));
+                                                    }
+                                                }
+                                                AppConfig.getInsertprogress().postValue("Inserting articles to database");
+                                            } else {
+                                                for (int i1 = 0; i1 < articleList.size(); i1++) {
+                                                    homePresenter.deleteArticlessingle(articleList.get(i1));
+                                                }
+                                            }
+                                        } catch (IOException e) {
+                                            sessionManager.putJsonError("y");
+                                            appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    else{
+                                        try {
+                                            articleList.addAll(readJsonStreamforarticle(new FileInputStream(filesInFolder[i])));
+                                        } catch (Exception e) {
+                                            sessionManager.putJsonError("y");
+                                            appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                        }
+                                        // articleList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ArticleModel>>() {}.getType());
+                                        List<ArticleModel> newlist = new ArrayList<>();
+                                        if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
+                                            List<ArticleModelObj> objList = new ArrayList<>();
+                                            for (int i1 = 0; i1 < articleList.size(); i1++) {
+                                                if (articleList.get(i1).getArticleToVesselIds()!=null&&articleList.get(i1).getArticleToVesselIds().size() > 0 ||
+                                                        articleList.get(i1).getArticleToPassengersVesselIds()!=null&&articleList.get(i1).getArticleToPassengersVesselIds().size() > 0) {
+                                                    newlist.add(articleList.get(i1));
+                                                    ArticleModelObj obj = new ArticleModelObj(articleList.get(i1).getId(), articleList.get(i1).getArticleName(), articleList.get(i1).documentData);
+                                                    objList.add(obj);
+                                                }
+                                            }
+                                            abox.put(objList);
+                                            homeDatabase.homeDao().insertArticlebylist(newlist);
+                                            AppConfig.getInsertprogress().postValue("Inserting articles to database");
+                                        } else {
+                                            List<ArticleModelObj> objList = new ArrayList<>();
+                                            for (int i1 = 0; i1 < articleList.size(); i1++) {
+                                                ArticleModelObj obj = new ArticleModelObj(articleList.get(i1).getId(), articleList.get(i1).getArticleName(), articleList.get(i1).documentData);
+                                                objList.add(obj);
+                                            }
+                                            abox.put(objList);
+                                            homeDatabase.homeDao().insertArticlebylist(articleList);
+                                            AppConfig.getInsertprogress().postValue("Inserting articles to database");
+                                        }
+                                    }
+                                } catch (JsonSyntaxException e) {
+                                    sessionManager.putJsonError("y");
+                                    appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                    appendLog("Article json syntax exception : " + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            }
+                            else if (filesInFolder[i].getName().contains("image")) {
+                                try {
+                                    JsonParser parser = new JsonParser();
+                                    JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                                    appendLog("Extracting image " + filesInFolder[i].getName());
+                                    JsonArray jsonArray = data.getAsJsonArray("Images");
+                                    imageList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ImageModel>>() {
+                                    }.getType());
+                                    appendLog("Extracting image size" + imageList.size()+"");
+
+//                                for (int i = 0; i < imageList.size(); i++) {
+//                                    homePresenter.deleteImage(imageList.get(i));
+//
+                                    for (int i1 = 0; i1 < imageList.size(); i1++) {
+                                        try {
+                                            if (imageList.get(i1).getImageStream() != null && !imageList.get(i1).getImageStream().isEmpty())
+                                                decodeFile(imageList.get(i1).getImageStream(), imageList.get(i1).getImageName());
+                                            AppConfig.getInsertprogress().postValue("Inserting images to database");
+                                        } catch (Exception e) {
+                                            try {
+                                                if (imageList.get(i1).getImageDataAsString() != null && !imageList.get(i1).getImageDataAsString().isEmpty())
+                                                    decodeFile(imageList.get(i1).getImageDataAsString(), imageList.get(i1).getImageName());
+                                                AppConfig.getInsertprogress().postValue("Inserting images to database");
+                                            } catch (Exception e1) {
+                                                Log.e("errorinimagejson",e.getLocalizedMessage());
+                                                appendLog("Extracting image size error" + e1.getLocalizedMessage());
+                                                continue;
+                                            }
+                                        }
+                                    }
+
+                                } catch (JsonSyntaxException e) {
+                                    sessionManager.putJsonError("y");
+                                    appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                    appendLog("Image json syntax exception : " + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            }
+                            else if (filesInFolder[i].getName().contains("category")) {
+                                try {
+                                    JsonParser parser = new JsonParser();
+                                    JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                                    appendLog("Extracting category " + filesInFolder[i].getName());
+                                    JsonArray jsonArray = data.getAsJsonArray("Categories");
+                                    categoryList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<CategoryModel>>() {
+                                    }.getType());
+                                    for (int i1 = 0; i1 < categoryList.size(); i1++) {
+                                        homeDatabase.homeDao().deleteCategory(categoryList.get(i1).getId());
+                                        homeDatabase.homeDao().insertCategory(categoryList.get(i1));
+                                        AppConfig.getInsertprogress().postValue("Inserting categories to database");
+                                    }
+                                } catch (JsonSyntaxException e) {
+                                    sessionManager.putJsonError("y");
+                                    appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                    appendLog("Category json syntax exception : " + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            }
+                            else if (filesInFolder[i].getName().contains("bookmarks")) {
+                                try {
+                                    JsonParser parser = new JsonParser();
+                                    JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                                    appendLog("Extracting bookmark " + filesInFolder[i].getName());
+                                    JsonArray jsonArray = data.getAsJsonArray("Bookmarks");
+                                    bookmarkList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<BookmarkModel>>() {
+                                    }.getType());
+                                    //homePresenter.deleteBookmarks(bookmarkList);
+
+                                } catch (JsonSyntaxException e) {
+                                    sessionManager.putJsonError("y");
+                                    appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                    appendLog("Bookmark json syntax exception : " + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            }
+                            else if (filesInFolder[i].getName().contains("notifications")) {
+                                try {
+                                    JsonParser parser = new JsonParser();
+                                    JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                                    JsonArray jsonArray = data.getAsJsonArray("Notifications");
+                                    notificationList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<NotificationModel>>() {
+                                    }.getType());
+                                } catch (JsonSyntaxException e) {
+                                    sessionManager.putJsonError("y");
+                                    appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                    appendLog("Notification json syntax exception : " + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            }
+                            else if (filesInFolder[i].getName().contains("userInfo")) {
+                                try {
+                                    JsonParser parser = new JsonParser();
+                                    JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                                    appendLog("Extracting user info " + filesInFolder[i].getName());
+                                    JsonArray jsonArray = data.getAsJsonArray("UserInfo");
+                                    userInfoList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<UserInfoModel>>() {
+                                    }.getType());
+                                    for (int i1 = 0; i1 < userInfoList.size(); i1++) {
+                                        if (String.valueOf(userInfoList.get(i1).getUserId()).equals(sessionManager.getUserId())) {
+                                            sessionManager.setUserInfoId(userInfoList.get(i1).getId());
+                                            break;
+                                        }
+                                    }
+                                    for (int i1 = 0; i1 < userInfoList.size(); i1++) {
+                                        if (!(String.valueOf(userInfoList.get(i1).getUserId()).equals(sessionManager.getUserId()))) {
+                                            userInfoList.get(i1).setImageName("");
+                                        } else {
+                                            userInfoList.get(i1).setImageName(userInfoList.get(i1).getImageName());
+                                        }
+                                        homeDatabase.homeDao().deleteUserInfoEntity(userInfoList.get(i1).getId());
+                                        homeDatabase.homeDao().insertUserInfo(userInfoList.get(i1));
+                                    }
+                                } catch (JsonSyntaxException e) {
+                                    sessionManager.putJsonError("y");
+                                    appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                    appendLog("USer Info json syntax exception : " + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            }
+                            else if (filesInFolder[i].getName().contains("userSet")) {
+                                try {
+                                    JsonParser parser = new JsonParser();
+                                    JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                                    JsonArray jsonArray = data.getAsJsonArray("UserSettings");
+                                    userSettingsList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<UserSettingsModel>>() {
+                                    }.getType());
+                                } catch (JsonSyntaxException e) {
+                                    sessionManager.putJsonError("y");
+                                    appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                    appendLog("User settings json syntax exception : " + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            }
+                            else if (filesInFolder[i].getName().contains("forms")) {
+                                try {
+                                    JsonParser parser = new JsonParser();
+                                    JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                                    appendLog("Extracting form " + filesInFolder[i].getName());
+                                    JsonArray jsonArray = data.getAsJsonArray("Forms");
+                                    formsList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FormsModel>>() {
+                                    }.getType());
+                                    for (int i1 = 0; i1 < formsList.size(); i1++) {
+                                        homeDatabase.homeDao().deleteForm(formsList.get(i1).getId());
+                                        homeDatabase.homeDao().insertForm(formsList.get(i1));
+
+                                    }
+                                } catch (JsonSyntaxException e) {
+                                    sessionManager.putJsonError("y");
+                                    appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                    appendLog("Forms json syntax exception : " + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+                else {
+                    for (int i = 0; i < filesInFolder.length; i++) { //For each of the entries do:
+                        if (filesInFolder[i].isDirectory()) {
+                            appendLog("Extracting directory " + filesInFolder[i].getName());
+                            File[] filesInsideFolder = filesInFolder[i].listFiles();
+                            for (int j = 0; j < filesInsideFolder.length; j++) {
+                                copyFile(new File(filesInsideFolder[j].getAbsolutePath()), new File(Environment.getExternalStorageDirectory() + "/QDMSWiki/Images/" + filesInsideFolder[j].getName()));
+                            }
+                        }
+                        else {
+                            if (filesInFolder[i].getName().contains("file")) {
+                                try {
+                                    fileList.clear();
+                                    if (type.equals("U")) {
+                                        try {
+                                            fileList.addAll(readJsonStream(new FileInputStream(filesInFolder[i])));
+                                            for (int index = 0;index < fileList.size(); index++) {
+                                                homePresenter.deleteFile(fileList.get(index));
+                                            }
+                                        } catch (IOException e) {
+                                            sessionManager.putJsonError("y");
+                                            appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                            e.printStackTrace();
+                                        }
+                                    }
+
+                                    else{
+                                        try {
+                                            Log.e("allocatedbefore", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
+                                            Log.e("filenameis",filesInFolder[i].getName());
+                                            fileList.addAll(readJsonStream(new FileInputStream(filesInFolder[i])));
+                                            Log.e("allocatedafter", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
+                                        } catch (Exception e) {
+                                            sessionManager.putJsonError("y");
+                                            appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                            Log.e("catchedreader", "" + filesInFolder[i].getName() + "   " + e.getLocalizedMessage());
+                                        }
+                                        homeDatabase.homeDao().insertFileListModelbylist(fileList);
+                                        //Log.e("fileinsertion","list size is "+fileList.size()+"  count is "+filecount+"filenameis  "+fileList.get(0).getId());
+                                        // Log.e("allocatedafter3", "" + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
+                                    }
+
+                                } catch (JsonSyntaxException e) {
+                                    sessionManager.putJsonError("y");
+                                    appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                    appendLog("File json syntax exception : " + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            }
+                            else if (filesInFolder[i].getName().contains("docs")) {
+                                try {
+                                    appendLog("Extracting document " + filesInFolder[i].getName());
+                                    documentList.clear();
+                                    if(type.equals("U")){
+                                        try {
+                                            documentList.addAll(readJsonStreamfordoc(new FileInputStream(filesInFolder[i])));
+                                            if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
+                                                for (int i1 = 0; i1 < documentList.size(); i1++) {
+                                                    if (documentList.get(i1).getVesselIds()!=null&&documentList.get(i1).getVesselIds().size() > 0 ||
+                                                            documentList.get(i1).getPassengersVesselIds()!=null&& documentList.get(i1).getPassengersVesselIds().size() > 0) {
+                                                        documentList.get(i1).setIsRecommended("NO");
+                                                        List<TagModel> tagList = documentList.get(i1).getTags();
+                                                        homeDatabase.homeDao().insertTag(tagList);
+                                                        homePresenter.deleteDocumentSingle(documentList.get(i1));
+                                                    }
+                                                }
+                                                AppConfig.getInsertprogress().postValue("Inserting documents to database");
+                                            } else {
+
+                                                for (int i1 = 0; i1 < documentList.size(); i1++) {
+                                                    documentList.get(i1).setIsRecommended("NO");
+                                                    List<TagModel> tagList = documentList.get(i1).getTags();
+                                                    homeDatabase.homeDao().insertTag(tagList);
+                                                    homePresenter.deleteDocumentSingle(documentList.get(i1));
+                                                }
+
+                                            }
+                                        } catch (IOException e) {
+                                            sessionManager.putJsonError("y");
+                                            appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    else{
+                                        try {
+                                            documentList.addAll(readJsonStreamfordoc(new FileInputStream(filesInFolder[i])));
+                                        } catch (Exception e) {
+                                            sessionManager.putJsonError("y");
+                                            appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                        }
+                                        //documentList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<DocumentModel>>() {}.getType());
+                                        if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
+                                            List<DocumentModelObj> objList = new ArrayList<>();
+                                            List<DocumentModel> docList = new ArrayList<>();
+                                            for (int i1 = 0; i1 < documentList.size(); i1++) {
+                                                if (documentList.get(i1).getVesselIds()!=null&&documentList.get(i1).getVesselIds().size() > 0 ||
+                                                        documentList.get(i1).getPassengersVesselIds()!=null&& documentList.get(i1).getPassengersVesselIds().size() > 0) {
+                                                    documentList.get(i1).setIsRecommended("NO");
+                                                    List<TagModel> tagList = documentList.get(i1).getTags();
+                                                    homeDatabase.homeDao().insertTag(tagList);
+                                                    DocumentModelObj obj = new DocumentModelObj(documentList.get(i1).id, documentList.get(i1).documentName, documentList.get(i1).documentData);
+                                                    objList.add(obj);
+                                                    docList.add(documentList.get(i1));
+                                                    //homePresenter.insertDocumentsSingle(documentList.get(i));
+                                                }
+                                            }
+                                            dbox.put(objList);
+                                            homeDatabase.homeDao().insertDocumentbylist(docList);
+                                            AppConfig.getInsertprogress().postValue("Inserting documents to database");
+                                        } else {
+                                            List<DocumentModelObj> objList = new ArrayList<>();
+                                            for (int i1 = 0; i1 < documentList.size(); i1++) {
+                                                documentList.get(i1).setIsRecommended("NO");
+                                                List<TagModel> tagList = documentList.get(i1).getTags();
+                                                homeDatabase.homeDao().insertTag(tagList);
+                                                DocumentModelObj obj = new DocumentModelObj(documentList.get(i1).id, documentList.get(i1).documentName, documentList.get(i1).documentData);
+                                                objList.add(obj);
+                                                //homePresenter.insertDocumentsSingle(documentList.get(i));
+                                            }
+                                            dbox.put(objList);
+                                            homeDatabase.homeDao().insertDocumentbylist(documentList);
+                                            Log.e("docinsertion", "list size is " + documentList.size() + "docname is " + documentList.get(0).documentName);
+                                            AppConfig.getInsertprogress().postValue("Inserting documents to database");
+                                        }
+                                    }
+                                } catch (JsonSyntaxException e)
+                                {
+                                    sessionManager.putJsonError("y");
+                                    appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                    appendLog("Doc json syntax exception : " + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            }
+                            else if (filesInFolder[i].getName().contains("art")) { //check that it's not a dir
+                                try {
+                                    appendLog("Extracting article " + filesInFolder[i].getName());
+                                    articleList.clear();
+                                    if(type.equals("U")){
+                                        try {
+                                            articleList.addAll(readJsonStreamforarticle(new FileInputStream(filesInFolder[i])));
+                                            if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
+                                                for (int i1 = 0; i1 < articleList.size(); i1++) {
+                                                    if (articleList.get(i1).getArticleToVesselIds()!=null&&articleList.get(i1).getArticleToVesselIds().size() > 0 ||
+                                                            articleList.get(i1).getArticleToPassengersVesselIds()!=null&&articleList.get(i1).getArticleToPassengersVesselIds().size() > 0) {
+                                                        homePresenter.deleteArticlessingle(articleList.get(i1));
+                                                    }
+                                                }
+                                                AppConfig.getInsertprogress().postValue("Inserting articles to database");
+                                            } else {
+                                                for (int i1 = 0; i1 < articleList.size(); i1++) {
+                                                    homePresenter.deleteArticlessingle(articleList.get(i1));
+                                                }
+                                            }
+                                        } catch (IOException e) {
+                                            sessionManager.putJsonError("y");
+                                            appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    else{
+                                        try {
+                                            articleList.addAll(readJsonStreamforarticle(new FileInputStream(filesInFolder[i])));
+                                        } catch (Exception e) {
+                                            sessionManager.putJsonError("y");
+                                            appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                        }
+                                        // articleList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ArticleModel>>() {}.getType());
+                                        List<ArticleModel> newlist = new ArrayList<>();
+                                        if (sessionManager.getKeyIsSeafarerLogin().equals("True")) {
+                                            List<ArticleModelObj> objList = new ArrayList<>();
+                                            for (int i1 = 0; i1 < articleList.size(); i1++) {
+                                                if (articleList.get(i1).getArticleToVesselIds()!=null&&articleList.get(i1).getArticleToVesselIds().size() > 0 ||
+                                                        articleList.get(i1).getArticleToPassengersVesselIds()!=null&&articleList.get(i1).getArticleToPassengersVesselIds().size() > 0) {
+                                                    newlist.add(articleList.get(i1));
+                                                    ArticleModelObj obj = new ArticleModelObj(articleList.get(i1).getId(), articleList.get(i1).getArticleName(), articleList.get(i1).documentData);
+                                                    objList.add(obj);
+                                                }
+                                            }
+                                            abox.put(objList);
+                                            homeDatabase.homeDao().insertArticlebylist(newlist);
+                                            AppConfig.getInsertprogress().postValue("Inserting articles to database");
+                                        } else {
+                                            List<ArticleModelObj> objList = new ArrayList<>();
+                                            for (int i1 = 0; i1 < articleList.size(); i1++) {
+                                                ArticleModelObj obj = new ArticleModelObj(articleList.get(i1).getId(), articleList.get(i1).getArticleName(), articleList.get(i1).documentData);
+                                                objList.add(obj);
+                                            }
+                                            abox.put(objList);
+                                            homeDatabase.homeDao().insertArticlebylist(articleList);
+                                            AppConfig.getInsertprogress().postValue("Inserting articles to database");
+                                        }
+                                    }
+                                } catch (JsonSyntaxException e) {
+                                    sessionManager.putJsonError("y");
+                                    appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                    appendLog("Article json syntax exception : " + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            }
+                            else if (filesInFolder[i].getName().contains("image")) {
+                                try {
+                                    JsonParser parser = new JsonParser();
+                                    JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                                    appendLog("Extracting image " + filesInFolder[i].getName());
+                                    JsonArray jsonArray = data.getAsJsonArray("Images");
+                                    imageList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<ImageModel>>() {
+                                    }.getType());
+                                    appendLog("Extracting image size" + imageList.size()+"");
+
+//                                for (int i = 0; i < imageList.size(); i++) {
+//                                    homePresenter.deleteImage(imageList.get(i));
+//
+                                    for (int i1 = 0; i1 < imageList.size(); i1++) {
+                                        try {
+                                            if (imageList.get(i1).getImageStream() != null && !imageList.get(i1).getImageStream().isEmpty())
+                                                decodeFile(imageList.get(i1).getImageStream(), imageList.get(i1).getImageName());
+                                            AppConfig.getInsertprogress().postValue("Inserting images to database");
+                                        } catch (Exception e) {
+                                            try {
+                                                if (imageList.get(i1).getImageDataAsString() != null && !imageList.get(i1).getImageDataAsString().isEmpty())
+                                                    decodeFile(imageList.get(i1).getImageDataAsString(), imageList.get(i1).getImageName());
+                                                AppConfig.getInsertprogress().postValue("Inserting images to database");
+                                            } catch (Exception e1) {
+                                                Log.e("errorinimagejson",e.getLocalizedMessage());
+                                                appendLog("Extracting image size error" + e1.getLocalizedMessage());
+                                                continue;
+                                            }
+                                        }
+                                    }
+
+                                } catch (JsonSyntaxException e) {
+                                    sessionManager.putJsonError("y");
+                                    appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                    appendLog("Image json syntax exception : " + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            }
+                            else if (filesInFolder[i].getName().contains("category")) {
+                                try {
+                                    JsonParser parser = new JsonParser();
+                                    JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                                    appendLog("Extracting category " + filesInFolder[i].getName());
+                                    JsonArray jsonArray = data.getAsJsonArray("Categories");
+                                    categoryList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<CategoryModel>>() {
+                                    }.getType());
+                                    for (int i1 = 0; i1 < categoryList.size(); i1++) {
+                                        homeDatabase.homeDao().deleteCategory(categoryList.get(i1).getId());
+                                        homeDatabase.homeDao().insertCategory(categoryList.get(i1));
+                                        AppConfig.getInsertprogress().postValue("Inserting categories to database");
+                                    }
+                                } catch (JsonSyntaxException e) {
+                                    sessionManager.putJsonError("y");
+                                    appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                    appendLog("Category json syntax exception : " + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            }
+                            else if (filesInFolder[i].getName().contains("bookmarks")) {
+                                try {
+                                    JsonParser parser = new JsonParser();
+                                    JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                                    appendLog("Extracting bookmark " + filesInFolder[i].getName());
+                                    JsonArray jsonArray = data.getAsJsonArray("Bookmarks");
+                                    bookmarkList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<BookmarkModel>>() {
+                                    }.getType());
+                                    //homePresenter.deleteBookmarks(bookmarkList);
+
+                                } catch (JsonSyntaxException e) {
+                                    sessionManager.putJsonError("y");
+                                    appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                    appendLog("Bookmark json syntax exception : " + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            }
+                            else if (filesInFolder[i].getName().contains("notifications")) {
+                                try {
+                                    JsonParser parser = new JsonParser();
+                                    JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                                    JsonArray jsonArray = data.getAsJsonArray("Notifications");
+                                    notificationList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<NotificationModel>>() {
+                                    }.getType());
+                                } catch (JsonSyntaxException e) {
+                                    sessionManager.putJsonError("y");
+                                    appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                    appendLog("Notification json syntax exception : " + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            }
+                            else if (filesInFolder[i].getName().contains("userInfo")) {
+                                try {
+                                    JsonParser parser = new JsonParser();
+                                    JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                                    appendLog("Extracting user info " + filesInFolder[i].getName());
+                                    JsonArray jsonArray = data.getAsJsonArray("UserInfo");
+                                    userInfoList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<UserInfoModel>>() {
+                                    }.getType());
+                                    for (int i1 = 0; i1 < userInfoList.size(); i1++) {
+                                        if (String.valueOf(userInfoList.get(i1).getUserId()).equals(sessionManager.getUserId())) {
+                                            sessionManager.setUserInfoId(userInfoList.get(i1).getId());
+                                            break;
+                                        }
+                                    }
+                                    for (int i1 = 0; i1 < userInfoList.size(); i1++) {
+                                        if (!(String.valueOf(userInfoList.get(i1).getUserId()).equals(sessionManager.getUserId()))) {
+                                            userInfoList.get(i1).setImageName("");
+                                        } else {
+                                            userInfoList.get(i1).setImageName(userInfoList.get(i1).getImageName());
+                                        }
+                                        homeDatabase.homeDao().deleteUserInfoEntity(userInfoList.get(i1).getId());
+                                        homeDatabase.homeDao().insertUserInfo(userInfoList.get(i1));
+                                    }
+                                } catch (JsonSyntaxException e) {
+                                    sessionManager.putJsonError("y");
+                                    appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                    appendLog("USer Info json syntax exception : " + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            }
+                            else if (filesInFolder[i].getName().contains("userSet")) {
+                                try {
+                                    JsonParser parser = new JsonParser();
+                                    JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                                    JsonArray jsonArray = data.getAsJsonArray("UserSettings");
+                                    userSettingsList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<UserSettingsModel>>() {
+                                    }.getType());
+                                } catch (JsonSyntaxException e) {
+                                    sessionManager.putJsonError("y");
+                                    appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                    appendLog("User settings json syntax exception : " + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            }
+                            else if (filesInFolder[i].getName().contains("forms")) {
+                                try {
+                                    JsonParser parser = new JsonParser();
+                                    JsonObject data = (JsonObject) parser.parse(new FileReader(Environment.getExternalStorageDirectory() + "/QDMSWiki/ExtractedFiles"+sessionManager.geturlno()+"/" + filesInFolder[i].getName()));//path to the JSON file.
+                                    appendLog("Extracting form " + filesInFolder[i].getName());
+                                    JsonArray jsonArray = data.getAsJsonArray("Forms");
+                                    formsList = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<FormsModel>>() {
+                                    }.getType());
+                                    for (int i1 = 0; i1 < formsList.size(); i1++) {
+                                        homeDatabase.homeDao().deleteForm(formsList.get(i1).getId());
+                                        homeDatabase.homeDao().insertForm(formsList.get(i1));
+
+                                    }
+                                } catch (JsonSyntaxException e) {
+                                    sessionManager.putJsonError("y");
+                                    appendErrorLog("Zipfile: "+zipFilename +"File: "+filesInFolder[i].getName()+" , "+"Error: "+e.getLocalizedMessage());
+                                    appendLog("Forms json syntax exception : " + e.getMessage());
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     }

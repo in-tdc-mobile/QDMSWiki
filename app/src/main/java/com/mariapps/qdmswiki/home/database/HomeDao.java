@@ -96,6 +96,9 @@ public interface HomeDao {
 
 
 
+
+
+
     @Query("DELETE FROM ReceiverEntity WHERE notificationId=:notificationId")
     void deleteReceiver(String notificationId);
 
@@ -628,6 +631,12 @@ public interface HomeDao {
             " FROM BookMarkEntryEntity as bookmark " +
             " WHERE bookmark.DocumentId=:documentId")
     List<BookmarkEntryModel> getBookmarkEntriesbyuserid(String documentId);
+
+
+    @Query(" SELECT bookmark.BookmarkEntries "+
+            " FROM BookMarkEntity as bookmark " +
+            " WHERE bookmark.Id=:Id")
+    List<BookmarkModel> getBookmarkEntriesForDeletebyid(String Id);
 
 
 

@@ -59,7 +59,7 @@ public class BookmarkPresenter {
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-                homeDatabase.homeDao().deleteBookmarkEntry(documentId,bookmarkId);
+                homeDatabase.homeDao().deleteBookmarkEntrybyid(bookmarkId);
             }
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
