@@ -1,4 +1,6 @@
 
+
+
 var CommonFunc = CommonFunc || {};
 
 var QDMS = QDMS || {};
@@ -63,21 +65,22 @@ function RenderDocView() {
                              if ((eleBottom <= viewRangeEnd1) && (eleTop >= viewRangeStart1)) {
                              if ($(this).attr("data-visible") == "false") {
                              $(this).attr("data-visible", true);
-                             androidAppProxy.logdata("article data called now")
+                             androidAppProxy.logdata("article data called now");
                              ArticleData($(this));
                              }
                              else{
                              //new else
-                          //  androidAppProxy.logdata("article data not called")
+                            androidAppProxy.logdata("article data not called");
                              }
                              }
                              else{
                              alert("other");
-                          //   androidAppProxy.logdata("article data not called")
+                             androidAppProxy.logdata("article data not called");
                              }
                              });
-                         });}catch{
-                        // androidAppProxy.logdata("articledatacatch  "+e.message)
+                         });
+                         }catch(e){
+                         androidAppProxy.logdata("articledatacatch  "+e.message);
                          }
 }
 
@@ -153,7 +156,7 @@ function ArticleData(control) {
             "id":Id,
             "data":"",
             "name":""
-        }
+        };
         androidAppProxy.getArtcileData(Id);
         androidAppProxy.logdata("article loading>>    "+Id);
     }
@@ -173,9 +176,6 @@ function highlightbookmarks(ids) {
 
 
 }
-
-
-
 function removehighlightedbookmarks(ids) {
     androidAppProxy.logdata("removehighlightedbookmarks called");
     try {
@@ -200,10 +200,10 @@ try{
     if (data != null) {
         curArticleObj.find(">tbody>tr").remove(); // remove old article data
         // SetArticleBody("1111111", curArticleObj.find(">tbody"));
-        try{SetArticleBody(data, curArticleObj.find(">tbody"));}catch{}
+        try{SetArticleBody(data, curArticleObj.find(">tbody"));}catch(e){}
         //SetArticleBody(result.DocumentData, curArticleObj.find(">tbody"));  //NEED TO UNCOMMENT
         ToggleExpand(curArticleObj.closest("tr.draggable-item"), "article");
-        ArticleExpand(curArticleObj.closest("tr.draggable-item"))
+        ArticleExpand(curArticleObj.closest("tr.draggable-item"));
         curArticleObj.find(".drg-rmv").html("");
         curArticleObj.find(".drg-rmv-settings").html("");
         curArticleObj.find(".drg-rmv-toc").html("");
@@ -224,21 +224,21 @@ try{
         curArticleObj.find("#header").hide();
         curArticleObj.find("#footerTemplate").hide();
         curArticleObj.find("*[contenteditable]").attr("contenteditable", false);
-        curArticleObj.find('grammarly-btn').remove()
+        curArticleObj.find('grammarly-btn').remove();
 
-       
-        
+
+
         // Remove Gramamer tab from browser Extension
-        
+
         // highligh word if user serch keywork with .higlighrange
-        
+
         if ($("#View_search_field").val() != "" && $("#View_search_field").val() != "undefined" && $("#View_search_field").val() !=undefined) {
             var _searchTerm = $("#View_search_field").val();
             ////Highlight search term inside a specific context
             $(curArticleObj).unmark().mark(_searchTerm);
         }
-        
-        
+
+
         setTimeout(function () {
 //                                      curArticleObj.find(".two-column .imgresource").resizable();
 //                                      curArticleObj.find(".two-column .imgresource").resizable('destroy');
@@ -247,7 +247,7 @@ try{
                                       $("#tableDragger").find(".ol-box").removeClass("Procedure");
                                       $("#tableDragger").find(".ul-alpha-box").removeClass("Procedure");
                                       $("#tableDragger").find(".ul-hyp-box").removeClass("Procedure");
-                   
+
                                       $("#tableDragger").find(".ul-box").addClass("guidlisce");
                                       $("#tableDragger").find(".ol-box").addClass("guidlisce");
                                       $("#tableDragger").find(".ul-alpha-box").addClass("guidlisce");
@@ -258,7 +258,7 @@ try{
                                       $("#tableDragger").find(".ol-box").addClass("Procedure");
                                       $("#tableDragger").find(".ul-alpha-box").addClass("Procedure");
                                       $("#tableDragger").find(".ul-hyp-box").addClass("Procedure");
-                   
+
                                       $("#tableDragger").find(".ul-box").removeClass("guidlisce");
                                       $("#tableDragger").find(".ol-box").removeClass("guidlisce");
                                       $("#tableDragger").find(".ul-alpha-box").removeClass("guidlisce");
@@ -266,7 +266,7 @@ try{
                                       }
                    docSetBodyFont();
                    });
-        
+
     }
     else {
         ToggleExpand(curArticleObj.closest("tr.draggable-item"), curArticleObj.closest("tr.draggable-item").attr("toc-title"));
@@ -275,7 +275,7 @@ try{
     catch(e) {
                   alert("ArticleData object error " );
              }
-    
+
 }
 
 // Article data  Manipulate  from ArticleData function
@@ -290,29 +290,29 @@ function SetArticleBody(documentData, tbody) {
         if (Rootclonetbody.find(".comment-display").next()[0].nodeName == "SCRIPT") {
             Rootclonetbody.find(".comment-display").each(function () {
                                                          $(this).next().html("");
-                                                         })
+                                                         });
         }
     }
     Rootclonetbody.find(".comment-display").removeAttr("onclick");
-    Rootclonetbody.find('.comment-display').addClass("commenttiphide")
+    Rootclonetbody.find('.comment-display').addClass("commenttiphide");
     Rootclonetbody.find(".commentbox-Done").hide();
     Rootclonetbody.find(".commentbox-close").hide();
     Rootclonetbody.find(".headerTemplate").hide();
     Rootclonetbody.find(".footerTemplate").hide();
-    tbody.html($(Rootclonetbody).html())
+    tbody.html($(Rootclonetbody).html());
     $(Rootclonetbody).html("");
     tbody.closest("tr.draggable-item").find("td:first").css("position", "relative");  // applicable if any css modification
     tbody.closest(".article-table").addClass("NewDataArt");
     tbody.closest(".article-table").attr("data-visible", true);
      tbody.closest(".article-table").find("tr.temp-tr").remove();
-    $(tbody).find('grammarly-btn').remove() // Remove Gramamer tab from browser Extension
-    tbody.closest(".article-table").removeClass("islockarticle")
+    $(tbody).find('grammarly-btn').remove(); // Remove Gramamer tab from browser Extension
+    tbody.closest(".article-table").removeClass("islockarticle");
     if (!tbody.closest("tr.draggable-item").find(".toggle-article").hasClass('opentoggle')) {
         tbody.closest("tr.draggable-item").find(".toggle-article").toggleClass('opentoggle');
     }
             androidAppProxy.logdata("set article body");
     }
-    catch{
+    catch(e){
             androidAppProxy.logdata("set article body");
     }
     ///new log
@@ -327,7 +327,7 @@ function ArticleExpand(control) {
         control.find(".article-table").find("tr.temp-tr").remove();
         if ($("#tableDragger >tr.flowchartDragger").length > 0) // have flow chart control read diagram from json value.
                         {
-                            debugger;
+
                             $("#tableDragger >tr.flowchartDragger").each(function () {
                                 var TrID = $(this).find(".flow-chart-editor").attr("id");
                                 $(this).find(".flow-chart-editor").removeAttr("onfocusout");
@@ -342,7 +342,7 @@ function ArticleExpand(control) {
                             });
                            }
         ///new log
-        androidAppProxy.logdata("article expand called");}catch{
+        androidAppProxy.logdata("article expand called");}catch(e){
         }
 }
 
@@ -406,7 +406,7 @@ function docSetBodyFont()
                                                     $(this).addClass("Procedure");
                                                     $(this).removeClass("guidlisce");
                                                     });
-    }}catch{
+    }}catch(e){
     }
 }
 function _FlowchartViewPanel(ID) {
@@ -447,7 +447,7 @@ function _FlowchartViewPanel(ID) {
         return {
             font: "bold 11pt Helvetica, Arial, sans-serif",
             stroke: "whitesmoke"
-        }
+        };
     }
 
 
@@ -482,7 +482,7 @@ function _FlowchartViewPanel(ID) {
                         editable: false
                     },
                     new go.Binding("text").makeTwoWay())
-            ),
+            )
 
         );
 
@@ -538,7 +538,7 @@ function _FlowchartViewPanel(ID) {
                     font: "12pt Calibri",
                     stroke: '#454545'
                 },
-                new go.Binding("text").makeTwoWay()),
+                new go.Binding("text").makeTwoWay())
             // no ports, because no links are allowed to connect with a comment
 
 
@@ -597,13 +597,13 @@ function ToggleExpand(control, articleName) {
                           });
                            androidAppProxy.logdata("article expand function called end");
           });}
-          catch{
+          catch(e){
           }
 }
 
 // Download file from DOcument view
 
-function downloadFileObject(fileId) {
+    function downloadFileObject(fileId) {
 //    $(".progressing-loader").show();
 //    percentageUpdate();
 //
@@ -654,7 +654,7 @@ function downloadFileObject(fileId) {
 }
 
 // goto  Bookmark
-function gotoElement(id){
+    function gotoElement(id){
     try{$(".viewdoc").scrollTop(0);
     $(".viewdoc").animate({
                           scrollTop: $("#" + id).offset().top - 300
@@ -669,7 +669,7 @@ function gotoElement(id){
     }
 }
 
-function setFooterDataAfterRender(htmlObject, artNum,artdate,artversion){
+    function setFooterDataAfterRender(htmlObject, artNum,artdate,artversion){
     try{if (artNum != "" && artNum != undefined)
         htmlObject.find("#footer #docNum").text(artNum);
 
@@ -682,19 +682,19 @@ function setFooterDataAfterRender(htmlObject, artNum,artdate,artversion){
         htmlObject.find("#footer .revision").html(artversion);
     if (artdate != "" && artdate != undefined)
         htmlObject.find("#footer #docDate").text(artdate);}
-        catch{
+        catch(e){
         }
 
 }
 
-function SetDocMode(mode) {
+    function SetDocMode(mode) {
     try{viewMode = mode;
     if (mode == "view") {
         $("body").addClass("show-historyTabStrip show-bookmarkTabStrip").removeClass(" expand-doc-history hide-toolbox");
         $(".drg-rmv-settings").remove();
         $(".drg-rmv").remove();
         $(".drg-rmv-settings-toc").remove();
-        $(".drg-rmv-toc").remove
+        $(".drg-rmv-toc").remove();
         $(".drg-rmv-settings-copy").hide();
         $(".drg-rmv-copy").hide();
         $(".drg-rmv-settings-toc-copy").hide();
@@ -712,42 +712,22 @@ function SetDocMode(mode) {
         $("body").addClass("show-historyTabStrip show-bookmarkTabStrip").removeClass("docInfo-panel-close hide-toolbox expand-doc-history");
         $("#draggableContainer").removeClass("view-mode-container");
     }}
-    catch{
+    catch(e){
     }
 
 }
-
-
     function RenderLinkDocView(fileId) {
         try{androidAppProxy.getDocumentAttachment(fileId);}
-        catch{
+        catch(e){
         }
     }
     function RenderLinkArticleView(fileId) {
 
          try{androidAppProxy.getArticleAttachment(fileId);}
-         catch{
+         catch(e){
          }
     }
     function downloadFileObject(fileId) {
-           try{androidAppProxy.getFileAttachment(fileId);}catch{}
+           try{androidAppProxy.getFileAttachment(fileId);}catch(e){}
          //window.webkit.messageHandlers.showAttachedItems.postMessage(fileId);
       }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

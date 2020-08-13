@@ -37,6 +37,9 @@ public class ArticleModelObj {
         this.documentData = documentData;
     }
 
+    public ArticleModelObj() {
+    }
+
     public Long getuId() {
         return uId;
     }

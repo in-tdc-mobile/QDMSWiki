@@ -33,6 +33,10 @@ public class DocumentModelObj  {
         this.documentData = documentData;
     }
 
+
+    public DocumentModelObj() {
+    }
+
     public String getId() {
         return id;
     }

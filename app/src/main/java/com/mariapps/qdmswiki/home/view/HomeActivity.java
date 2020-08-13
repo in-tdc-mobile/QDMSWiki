@@ -441,13 +441,13 @@ public class HomeActivity extends BaseActivity implements HomeView {
                                         senderrorlogs();
                                     }
                                 }
-                                sendAllIdstoServer();
+                              //  sendAllIdstoServer();
                             }
                             else if(sessionManager.getisFirst().equals("n")){
                                 if(!sessionManager.getJsonError().equals("")){
                                     if(sessionManager.getJsonError().equals("y")){
                                         senderrorlogs();
-                                        sendAllIdstoServer();
+                                     //   sendAllIdstoServer();
                                     }
                                 }
                             }

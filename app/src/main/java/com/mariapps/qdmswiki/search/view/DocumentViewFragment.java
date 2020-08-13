@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,6 +14,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.net.http.SslError;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -37,10 +41,10 @@ import android.view.WindowManager;
 import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
 import android.webkit.MimeTypeMap;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
@@ -83,6 +87,7 @@ import com.mariapps.qdmswiki.utils.ShowCasePreferenceUtil;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
@@ -144,6 +149,7 @@ public class DocumentViewFragment extends BaseFragment {
     Box<DocumentModelObj> dbox;
     Box<ArticleModelObj> abox;
     AsyncTask loaddoc;
+    ArrayList<String> artids=new ArrayList<>();
     List<BookmarkEntryModel> bookmarkidlist = new ArrayList<>();
     String bookmarkstring="";
     List<BookmarkEntryModel> checkmodel = new ArrayList<>();
@@ -151,6 +157,7 @@ public class DocumentViewFragment extends BaseFragment {
     SessionManager sessionManager;
     private  LinearLayout linBookmark;
     private boolean isMoreShowCaseShown = false;
+    MutableLiveData<Integer> artCount = new MutableLiveData<>();
 
     @Override
     protected void setUpPresenter() {
@@ -256,6 +263,21 @@ public class DocumentViewFragment extends BaseFragment {
                     }
                 }
                 return false;
+            }
+        });
+
+        artCount.observe(this, new Observer<Integer>() {
+            @Override
+            public void onChanged(@Nullable Integer integer) {
+                if(integer!=null){
+                    if(artids.size()>integer){
+                        Log.e("tagnow", "list count "+integer+" "+artids.get(integer));
+                        loadArticle(artids.get(integer));
+                    }
+                    else {
+
+                    }
+                }
             }
         });
 
@@ -473,6 +495,9 @@ public class DocumentViewFragment extends BaseFragment {
         webView.getSettings().setUseWideViewPort(true);
         webView.getSettings().setLoadWithOverviewMode(true);
         webView.setWebContentsDebuggingEnabled(true);
+        webView.getSettings().setDomStorageEnabled(true);
+         webView.getSettings().setSupportZoom(true);
+         webView.getSettings().setDefaultTextEncodingName("utf-8");
         webView.addJavascriptInterface(new AppJavaScriptProxy(getActivity()), "androidAppProxy");
         webView.setWebViewClient(new WebViewClient() {
 //            public void onLoadResource(WebView view, String url) {
@@ -487,6 +512,11 @@ public class DocumentViewFragment extends BaseFragment {
 //                    webView.setEnabled(false);
 //                }
 //            }
+
+            @Override
+            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+                handler.proceed(); // Ignore SSL certificate errors
+            }
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
@@ -494,15 +524,19 @@ public class DocumentViewFragment extends BaseFragment {
             public void onPageFinished(WebView view, String url) {
                 // Page is done loading;
                 // hide the progress dialog and show the webview
+               // injectScriptFile(view, "file:///android_asset/templateHTML/Scripts/ScriptFileNew.js");
                 webView.setEnabled(true);
+                //webView.loadUrl("javascript:RenderDocView();");
+                artCount.postValue(0);
                 if(bookmarkall.equals("yes")){
-                    Log.e("onPageFinished","bookmark");
+                    Log.e("onPageFinished","bookmark doc");
                     gotoBookmark(bookmarkid);
                 }
                 else{
-                    Log.e("onPageFinished","bookmarkelse");
+                    Log.e("onPageFinished","bookmarkelse doc");
                 }
-                webView.loadUrl("javascript:highlightbookmarks('"+bookmarkstring +"');");
+
+             //   webView.loadUrl("javascript:highlightbookmarks('"+bookmarkstring +"');");
 
             }
             @Override
@@ -511,8 +545,7 @@ public class DocumentViewFragment extends BaseFragment {
               //  Toast.makeText(getActivity(), "Your Internet Connection May not be active Or " + error.getDescription(), Toast.LENGTH_LONG).show();
             }
         });
-/*
-        webView.setWebChromeClient(new WebChromeClient() {
+        /*webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
                 Log.e("MyApplicationQDMSa", consoleMessage.message() + " -- From line "
@@ -523,8 +556,12 @@ public class DocumentViewFragment extends BaseFragment {
         });*/
        // webView.loadDataWithBaseURL("file:///android_asset/templateHTML/TemplateHTML.html", "<style>img{display: inline;height: auto;max-width: 100%;}</style>", "text/html", "UTF-8", null);
         webView.loadUrl("file:///android_asset/templateHTML/TemplateHTML.html");
+        Log.e("tagnow","htmlloaded");
 //        webView.loadDataWithBaseURL("", data, "text/html", "UTF-8", "");
     }
+
+
+
 
 
     public void loadArticle(String id) {
@@ -532,12 +569,15 @@ public class DocumentViewFragment extends BaseFragment {
             @Override
             public void run() throws Exception {
                 articleModel = ((ArticleModel) homeDatabase.homeDao().getArticleData(id));
-                String articleData =documentData = abox.query().equal(ArticleModelObj_.id,id).build().find().get(0).documentData;;
+                String articleData=abox.query().equal(ArticleModelObj_.id,id).build().find().get(0).documentData;
                 articleData = articleData.replace("<script src=\"/WikiPALApp/Scripts/TemplateSettings/toc-template-settings.js\"></script>", "<script src=\"./Scripts/toc-template-settings.js.download\"></script>");
                 articleData = articleData.replace("src=\"/WikiPALApp/Uploads/Image/", "src= \"file://"+imageFolderPath);
                 articleData = articleData.replace("src=\"/WikiPALApp/Scripts/TemplateSettings/","src= \"file:///android_asset/templateHTML/Scripts/");
                 articleData = articleData.replace("href=\"/WikiPALApp/Content/TemplateSettings/","href= \"file:///android_asset/templateHTML/Scripts/");
                 articleData = articleData.replace("\n", "");
+                if(articleData==null){
+                    Log.e("artciledatanull",id);
+                }
                 articleModel.setDocumentData(articleData);
                 articleMap.put(id,articleModel);
             }
@@ -553,6 +593,7 @@ public class DocumentViewFragment extends BaseFragment {
                     @Override
                     public void run() {
                         try {
+                            Log.e("tagnow","load article started"+articleModel.getArticleName()+"  "+id);
                             webView.loadUrl("javascript:setArticleDataFromViewController('" + articleModel.getId() + "');");
                             if(bookmarkall.equals("yes")){
                                 Log.e("onPageFinished","bookmark");
@@ -573,10 +614,9 @@ public class DocumentViewFragment extends BaseFragment {
             }
             @Override
             public void onError(Throwable e) {
-                Log.e("artcileiderror",e.getLocalizedMessage()+"   "+articleModel.getId());
+               artCount.postValue(artCount.getValue()+1);
             }
         });
-
         /*webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
@@ -839,8 +879,9 @@ public class DocumentViewFragment extends BaseFragment {
 
         @JavascriptInterface
         public void getArtcileData(String id) {
-
-            loadArticle(id);
+            Log.e("tagnow","id  "+id);
+            artids.add(id);
+          //  loadArticle(id);
         }
 
         @JavascriptInterface
@@ -882,9 +923,19 @@ public class DocumentViewFragment extends BaseFragment {
 
         @JavascriptInterface
         public String getArticleData(String id) {
-            return (articleMap.get(id)).getDocumentData();
+            try {
+                artCount.postValue(artCount.getValue()+1);
+                Log.e("tagnow","article data called  "+articleMap.get(id).getArticleName()+"  "+id);
+                return (articleMap.get(id)).getDocumentData();
+            } catch (Exception e) {
+                e.printStackTrace();
+                artCount.postValue(artCount.getValue()+1);
+                Log.e("tagnow","article data called error "+id);
+                return  "";
+            }
         }
     }
+    //21 no
     public void checkbookmark(String documentId, BookmarkEntryModel bookmarkEntryModel) {
         Completable.fromAction(new Action() {
             @Override

@@ -48,7 +48,7 @@
     $(document).ready(function() {
                      $("body").removeClass();
                      if(typeof androidAppProxy !== "undefined"){
-                      RenderDocView();
+                     try{ RenderDocView();}catch(error){androidAppProxy.logdata("this is eror"+error.message);}
                       $(".article-table").find("tr.temp-tr").remove();
                        androidAppProxy.logdata("zero");
                          try{$('#tableDetails tbody').html(``+androidAppProxy.getDocumentData()+``);}catch(error){
@@ -59,9 +59,10 @@
                          androidAppProxy.logdata("two");
                          $(`.article-table:first`).attr(`data-visible`, true);
                          androidAppProxy.logdata("three");
-                          ArticleData($(`.article-table:first`));
+                         try{ArticleData($(`.article-table:first`));}catch(error){androidAppProxy.logdata("this is eror"+error.message);}
+
                          androidAppProxy.logdata("after render doc called here");
-                         afterRenderDocView(false);
+                         try{afterRenderDocView(false);}catch(error){androidAppProxy.logdata("this is eror"+error.message);}
                          $(`.article-table`).removeClass(`hide-state`);$(`.article-table>tbody>tr`).removeClass(`hide-article`);$(`span.toggle-article`).addClass(`opentoggle`)
                          $(`#tableDragger`).find(`.article-table`).attr(`data-visible`, false); $(`.viewdoc`).scroll();
                          androidAppProxy.getFooterData();
